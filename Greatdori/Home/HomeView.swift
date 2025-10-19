@@ -224,11 +224,9 @@ struct HomeBirthdayView: View {
     #if os(macOS)
     @Environment(\.appearsActive) var appearsActive
     #endif
-    @AppStorage("debugShowHomeBirthdayDatePicker") var debugShowHomeBirthdayDatePicker = false
     @AppStorage("showBirthdayDate") var showBirthdayDate = showBirthdayDateDefaultValue
     @State var birthdays: [DoriFrontend.Character.BirthdayCharacter]?
     @State var systemBirthdays: [DoriFrontend.Character.BirthdayCharacter]?
-    @State var debugDate: Date = Date.now
     var formatter = DateFormatter()
     var todaysDateFormatter = DateFormatter()
     var calendar = Calendar(identifier: .gregorian)
@@ -248,7 +246,7 @@ struct HomeBirthdayView: View {
         HStack {
             VStack(alignment: .leading) {
                 HStack {
-                    if birthdays != nil && todaysHerBirthday(birthdays!.first!.birthday, debugDate) {
+                    if birthdays != nil && todaysHerBirthday(birthdays!.first!.birthday) {
                         Text("Home.birthday.happy-birthday")
                             .font(.title2)
                             .bold()
@@ -266,46 +264,32 @@ struct HomeBirthdayView: View {
                     Spacer()
                     Group {
                         if showBirthdayDate == 3 {
-                            Text(todaysDateFormatter.string(from: debugDate))
+                            Text(todaysDateFormatter.string(from: .now))
                         } else if showBirthdayDate == 2 {
                             // If today's someone's birthday
-                            if (birthdays != nil && todaysHerBirthday(birthdays!.first!.birthday, debugDate)) {
-                                Text(todaysDateFormatter.string(from: debugDate))
+                            if (birthdays != nil && todaysHerBirthday(birthdays!.first!.birthday)) {
+                                Text(todaysDateFormatter.string(from: .now))
                             }
                         } else if showBirthdayDate == 1 {
                             if systemBirthdays != nil && birthdays != nil && (systemBirthdays != birthdays) {
-                                Text(todaysDateFormatter.string(from: debugDate))
+                                Text(todaysDateFormatter.string(from: .now))
                             }
                         }
                     }
                     .foregroundStyle(.secondary)
-//                    .bold()
                     .fontWeight(.light)
                     .font(.title3)
                     .wrapIf(birthdays == nil) { content in
                         content
                             .redacted(reason: .placeholder)
                     }
-                    if debugShowHomeBirthdayDatePicker {
-                        DatePicker("", selection: $debugDate)
-                            .labelsHidden()
-                        Button(action: {
-                            Task {
-                                birthdays = await DoriFrontend.Character.recentBirthdayCharacters(timeZone: getBirthdayTimeZone())
-                                if getBirthdayTimeZone() != TimeZone.autoupdatingCurrent {
-                                    systemBirthdays = await DoriFrontend.Character.recentBirthdayCharacters(timeZone: getBirthdayTimeZone(from: .adaptive))
-                                }
-                            }
-                        }, label: {
-//                            Text(verbatim: "")
-                            Image(systemName: "arrow.clockwise")
-                        })
-                    }
                 }
                 if let birthdays {
                     HStack {
                         ForEach(0..<birthdays.count, id: \.self) { i in
-                            if (i != birthdays.count-1) && (birthdays[i].birthday == birthdays[i+1].birthday) && (!todaysHerBirthday(birthdays[i].birthday, debugDate)) {
+                            if (i != birthdays.count - 1)
+                                && (birthdays[i].birthday == birthdays[i + 1].birthday)
+                                && (!todaysHerBirthday(birthdays[i].birthday)) {
                                 // If she is not the last person & the person next have the same birthday & today's not her birthday.
                                 // (Cond. 3 is because labels should be expanded to show their full name during their birthday.)
                                 Menu(content: {
@@ -352,7 +336,9 @@ struct HomeBirthdayView: View {
                                 Rectangle()
                                     .opacity(0)
                                     .frame(width: 2, height: 2)
-                            } else if (i != 0) && (birthdays[i].birthday == birthdays[i-1].birthday) && (!todaysHerBirthday(birthdays[i].birthday, debugDate)) {
+                            } else if (i != 0)
+                                        && (birthdays[i].birthday == birthdays[i - 1].birthday)
+                                        && (!todaysHerBirthday(birthdays[i].birthday)) {
                                 // If she is not the first person & the person in front have the same birthday & today's not her birthday.
                                 EmptyView()
                             } else {
@@ -363,7 +349,7 @@ struct HomeBirthdayView: View {
                                         .resizable()
                                         .clipShape(Circle())
                                         .frame(width: imageButtonSize, height: imageButtonSize)
-                                    if todaysHerBirthday(birthdays[i].birthday, debugDate) {
+                                    if todaysHerBirthday(birthdays[i].birthday) {
                                         Text(birthdays[i].characterName.forPreferredLocale() ?? "")
                                     } else {
                                         Text(formatter.string(from: birthdays[i].birthday))
@@ -396,10 +382,6 @@ struct HomeBirthdayView: View {
         .animation(.easeInOut(duration: loadingAnimationDuration), value: birthdays?.count)
         .buttonStyle(.plain)
         .foregroundStyle(.primary)
-//        .task {
-//            birthdays = await DoriFrontend.Character.recentBirthdayCharacters(timeZone: getBirthdayTimeZone())
-////            birthdays =
-//        }
         .onAppear {
             updateBirthday()
         }
@@ -417,7 +399,8 @@ struct HomeBirthdayView: View {
         }
         #endif
     }
-    func todaysHerBirthday(_ birthday: Date, _ today: Date = Date.now) -> Bool {
+    func todaysHerBirthday(_ birthday: Date) -> Bool {
+        let today = Date.now
         var calendar = Calendar(identifier: .gregorian)
         var jstCalendar = calendar
         calendar.timeZone = getBirthdayTimeZone()
@@ -434,7 +417,7 @@ struct HomeBirthdayView: View {
     func birthdayTimeIsInSameDayWithSystemTime() -> Bool {
         var birthdayCalendar = Calendar(identifier: .gregorian)
         birthdayCalendar.timeZone = getBirthdayTimeZone()
-        var systemCalendar = Calendar(identifier: .gregorian)
+        let systemCalendar = Calendar(identifier: .gregorian)
         
         let birthdayMonth: Int = birthdayCalendar.component(.month, from: Date.now)
         let birthdayDay: Int = birthdayCalendar.component(.day, from: Date.now)
@@ -450,6 +433,8 @@ struct HomeBirthdayView: View {
             birthdays = await DoriFrontend.Character.recentBirthdayCharacters(timeZone: getBirthdayTimeZone())
             if getBirthdayTimeZone() != TimeZone.autoupdatingCurrent {
                 systemBirthdays = await DoriFrontend.Character.recentBirthdayCharacters(timeZone: getBirthdayTimeZone(from: .adaptive))
+            } else {
+                systemBirthdays = nil
             }
         }
     }
