@@ -20,98 +20,64 @@ import UIKit
 #endif
 
 struct SettingsAdvancedView: View {
-    
-    @State var subjectImageData: Data? = nil
     var body: some View {
-#if os(iOS)
+        #if os(iOS)
         List {
-            Section(content: {
-                SettingsAdvancedImagePreferSystemModel()
-            }, header: {
-                Text("Settings.advanced.image")
-            })
-            
-            /*
-             Section {
-             HStack {
-             WebImage(url: URL(string: "https://bestdori.com/assets/jp/characters/resourceset/res022077_rip/card_after_training.png")!, content: { image in
-             image
-             .resizable()
-             .scaledToFit()
-             }, placeholder: {
-             ProgressView()
-             })
-             .interpolation(.high)
-             
-             Divider()
-             
-             if preferSystemVisionModel {
-             if let subjectImageData {
-             #if os(iOS)
-             if let uiImage = UIImage(data: subjectImageData) {
-             Image(uiImage: uiImage)
-             .resizable()
-             .scaledToFit()
-             }
-             #else
-             if let nsImage = NSImage(data: subjectImageData) {
-             Image(nsImage: nsImage)
-             .resizable()
-             .scaledToFit()
-             }
-             #endif
-             } else {
-             Label("Settings.advanced.image.subject.failure", systemImage: "exclamationmark.circle")
-             .foregroundStyle(.secondary)
-             }
-             } else {
-             WebImage(url: URL(string: "https://bestdori.com/assets/jp/characters/resourceset/res022077_rip/trim_after_training.png")!, content: { image in
-             image
-             .resizable()
-             .scaledToFit()
-             }, placeholder: {
-             ProgressView()
-             })
-             .interpolation(.high)
-             }
-             }
-             }
-             .onAppear {
-             DispatchQueue(label: "com.memz233.Greatdori.Resolve-Image-From-URL", qos: .userInitiated).async {
-             let imageData = try? Data(contentsOf: URL(string: "https://bestdori.com/assets/jp/characters/resourceset/res022077_rip/card_after_training.png")!)
-             Task {
-             if let imageData {
-             subjectImageData = await getImageSubject(imageData)
-             }
-             }
-             }
-             }
-             */
+            SettingsAdvancedImageSection()
         }
         .navigationTitle("Settings.advanced")
-#else
+        #else
         Group {
-            Section(content: {
-                SettingsAdvancedImagePreferSystemModel()
-            }, header: {
-                Text("Settings.advanced.image")
-            })
+            SettingsAdvancedImageSection()
         }
         .navigationTitle("Settings.advanced")
-#endif
+        #endif
     }
     
-    struct SettingsAdvancedImagePreferSystemModel: View {
+    struct SettingsAdvancedImageSection: View {
+        @AppStorage("UseImageUpscaler") var useImageUpscaler = false
         @AppStorage("preferSystemVisionModel") var preferSystemVisionModel = false
+        @State var isInLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
+        @State var thermalState = ProcessInfo.processInfo.thermalState
         var body: some View {
-            Toggle(isOn: $preferSystemVisionModel, label: {
-                VStack(alignment: .leading) {
-                    Text("Settings.advanced.image.subject-prefer-system-model")
-                    Text("Settings.advanced.image.subject-prefer-system-model.description")
-                        .foregroundStyle(.secondary)
-                        .font(.footnote)
+            Section {
+                if #available(iOS 26.0, macOS 26.0, *) {
+                    Toggle(isOn: $useImageUpscaler) { // TODO: Show a turned off toggle when the toggle is disabled.
+                                                      // TODO: (no need to actually change the `AppStorage` value)
+                        VStack(alignment: .leading) {
+                            Text("提高图像分辨率")
+                            Group {
+                                Text("对于一些分辨率过低的图像，使用神经网络提高分辨率。")
+                                if isInLowPowerMode {
+                                    Text("提高图像分辨率在低电量模式启用时不可用。")
+                                }
+                                if thermalState == .critical {
+                                    Text("需要降温以使用提高图像分辨率")
+                                }
+                            }
+                            .foregroundStyle(.secondary)
+                            .font(.footnote)
+                        }
+                    }
+                    .disabled(isInLowPowerMode || thermalState == .critical)
+                    .onReceive(ProcessInfo.processInfo.publisher(for: \.isLowPowerModeEnabled)) { lowPowerMode in
+                        isInLowPowerMode = lowPowerMode
+                    }
+                    .onReceive(ProcessInfo.processInfo.publisher(for: \.thermalState)) { state in
+                        thermalState = state
+                    }
                 }
-            })
+                Toggle(isOn: $preferSystemVisionModel) {
+                    VStack(alignment: .leading) {
+                        Text("Settings.advanced.image.subject-prefer-system-model")
+                        Text("Settings.advanced.image.subject-prefer-system-model.description")
+                            .foregroundStyle(.secondary)
+                            .font(.footnote)
+                    }
+                }
+            } header: {
+                Text("Settings.advanced.image")
+            }
         }
     }
 }

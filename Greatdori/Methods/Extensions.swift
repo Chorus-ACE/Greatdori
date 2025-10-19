@@ -739,6 +739,7 @@ extension WebImage {
 private struct _ImageUpscaleView<V: View, Result: View>: View {
     var imageView: WebImage<V>
     var layout: (Image) -> Result
+    @AppStorage("UseImageUpscaler") private var useImageUpscaler = false
     @State private var sourceImage: Image?
     @State private var upscaledImage: Image?
     var body: some View {
@@ -752,6 +753,7 @@ private struct _ImageUpscaleView<V: View, Result: View>: View {
             imageView
                 .onSuccess { image, data, _ in
                     if #available(iOS 26.0, macOS 26.0, *) {
+                        guard useImageUpscaler else { return }
                         if ProcessInfo.processInfo.isLowPowerModeEnabled
                             || ProcessInfo.processInfo.thermalState.rawValue > 2 {
                             return
