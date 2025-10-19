@@ -69,13 +69,20 @@ struct ArtsItemBuilder {
 }
 
 struct ArtsTab: Identifiable, Hashable, Equatable {
-    let id: String
     var tabName: LocalizedStringResource
     var content: [ArtsItem]
+    
+    init(_ tabName: LocalizedStringResource, content: [ArtsItem]) {
+        self.tabName = tabName
+        self.content = content
+    }
+    
+    var id: String {
+        tabName.key
+    }
 }
 extension ArtsTab {
-    init(id: String, name: LocalizedStringResource, @ArtsItemBuilder content: () -> [ArtsItem]) {
-        self.id = id
+    init(_ name: LocalizedStringResource, @ArtsItemBuilder content: () -> [ArtsItem]) {
         self.tabName = name
         self.content = content()
     }

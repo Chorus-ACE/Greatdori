@@ -26,7 +26,7 @@ struct EventDetailView: View {
             EventDetailOverviewView(information: information)
             DetailsGachasSection(gachas: information.gacha, applyLocaleFilter: false)
             DetailArtsSection {
-                ArtsTab(id: "banner", name: "Event.arts.banner") {
+                ArtsTab("Event.arts.banner") {
                     for locale in DoriLocale.allCases {
                         if let url = information.event.bannerImageURL(in: locale, allowsFallback: false) {
                             ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
@@ -36,14 +36,14 @@ struct EventDetailView: View {
                         }
                     }
                 }
-                ArtsTab(id: "logo", name: "Event.arts.logo") {
+                ArtsTab("Event.arts.logo") {
                     for locale in DoriLocale.allCases {
                         if let url = information.event.logoImageURL(in: locale, allowsFallback: false) {
                             ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
                         }
                     }
                 }
-                ArtsTab(id: "home-screen", name: "Event.arts.home-screen") {
+                ArtsTab("Event.arts.home-screen") {
                     ArtsItem(title: "Event.arts.home-screen.characters", url: information.event.topScreenTrimmedImageURL)
                     ArtsItem(title: "Event.arts.home-screen.background", url: information.event.topScreenBackgroundImageURL)
                 }

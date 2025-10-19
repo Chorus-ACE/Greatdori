@@ -26,7 +26,7 @@ struct SongDetailView: View {
             SongDetailOverviewView(information: information.song)
             SongDetailGameplayView(information: information)
             DetailArtsSection {
-                ArtsTab(id: "cover", name: "Song.arts.cover") {
+                ArtsTab("Song.arts.cover") {
                     for locale in DoriLocale.allCases {
                         if let url = information.song.jacketImageURL(in: locale, allowsFallback: false) {
                             ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url, expectedRatio: 1)

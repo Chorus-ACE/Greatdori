@@ -26,6 +26,11 @@ struct CostumeDetailView: View {
             if !information.cards.isEmpty {
                 DetailsCardsSection(cards: information.cards)
             }
+            DetailArtsSection {
+                ArtsTab("Costume.arts.thumb") {
+                    ArtsItem(title: "Costume.arts.thumb", url: information.costume.thumbImageURL)
+                }
+            }
         } switcherDestination: {
             CostumeSearchView()
         }

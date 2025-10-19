@@ -33,6 +33,29 @@ struct CardDetailView: View {
             if information.cardSource.containsSource(from: .gacha) {
                 DetailsGachasSection(sources: information.cardSource)
             }
+            DetailArtsSection {
+                ArtsTab("Card.arts.full") {
+                    ArtsItem(title: "特训前", url: information.card.coverNormalImageURL)
+                    if let url = information.card.coverAfterTrainingImageURL {
+                        ArtsItem(title: "特训后", url: url)
+                    }
+                }
+                ArtsTab("Card.arts.trimmed") {
+                    ArtsItem(title: "特训前", url: information.card.trimmedNormalImageURL)
+                    if let url = information.card.trimmedAfterTrainingImageURL {
+                        ArtsItem(title: "特训后", url: url)
+                    }
+                }
+                ArtsTab("Card.arts.thumb") {
+                    ArtsItem(title: "特训前", url: information.card.thumbNormalImageURL)
+                    if let url = information.card.thumbAfterTrainingImageURL {
+                        ArtsItem(title: "特训后", url: url)
+                    }
+                }
+                ArtsTab("Card.arts.livesd") {
+                    ArtsItem(title: "Card.arts.livesd", url: information.card.sdImageURL)
+                }
+            }
         } switcherDestination: {
             CardSearchView()
         }
