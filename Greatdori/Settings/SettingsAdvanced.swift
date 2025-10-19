@@ -35,8 +35,8 @@ struct SettingsAdvancedView: View {
     }
     
     struct SettingsAdvancedImageSection: View {
-        @AppStorage("UseImageUpscaler") var useImageUpscaler = false
-        @AppStorage("preferSystemVisionModel") var preferSystemVisionModel = false
+        @AppStorage("Adv_UseImageUpscaler") var useImageUpscaler = false
+        @AppStorage("Adv_PreferSystemVisionModel") var preferSystemVisionModel = false
         @State var isInLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
         @State var thermalState = ProcessInfo.processInfo.thermalState
         var body: some View {
@@ -79,5 +79,15 @@ struct SettingsAdvancedView: View {
                 Text("Settings.advanced.image")
             }
         }
+    }
+}
+
+func resetAllAdvancedSettings() {
+    if let _data = try? Data(contentsOf: URL(filePath: NSHomeDirectory() + "/Library/Preferences/com.memz233.Greatdori.plist")),
+       let serialization = try? PropertyListSerialization.propertyList(from: _data, format: nil) as? [String: Any] {
+        for key in serialization.keys where key.hasPrefix("Adv_") {
+            UserDefaults.standard.removeObject(forKey: key)
+        }
+        UserDefaults.standard.set(true, forKey: "AdvancedSettingsHaveReset")
     }
 }

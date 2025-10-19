@@ -208,18 +208,21 @@ struct ContentView: View {
                         if AppFlag.DEBUG {
                             showCrashAlert = true
                         } else {
+                            resetAllAdvancedSettings()
                             DoriCache.invalidateAll()
                             mainAppShouldBeDisplayed = true
                         }
                     }
                     .alert("Debug.crash-detected.title", isPresented: $showCrashAlert, actions: {
                         Button(role: .destructive, action: {
+                            resetAllAdvancedSettings()
                             DoriCache.invalidateAll()
                             mainAppShouldBeDisplayed = true
                         }, label: {
                             Text("Debug.crash-detected.invalidate-cache-enter")
                         })
                         Button(role: .destructive, action: {
+                            resetAllAdvancedSettings()
                             mainAppShouldBeDisplayed = true
                         }, label: {
                             Text("Debug.crash-detected.direct-enter")

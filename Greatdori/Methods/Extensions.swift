@@ -531,7 +531,7 @@ struct _ImageContextMenuModifier<V: View>: ViewModifier {
                                 Task {
                                     var subjectImageData: Data? = nil
                                     var onlineImageFetchSucceeded = false
-                                    if !UserDefaults.standard.bool(forKey: "preferSystemVisionModel") {
+                                    if !UserDefaults.standard.bool(forKey: "Adv_PreferSystemVisionModel") {
                                         subjectImageData = try? Data(contentsOf: URL(string: info.url.absoluteString.replacingOccurrences(of: "card", with: "trim"))!)
                                         onlineImageFetchSucceeded = subjectImageData != nil
                                     }
@@ -739,7 +739,7 @@ extension WebImage {
 private struct _ImageUpscaleView<V: View, Result: View>: View {
     var imageView: WebImage<V>
     var layout: (Image) -> Result
-    @AppStorage("UseImageUpscaler") private var useImageUpscaler = false
+    @AppStorage("Adv_UseImageUpscaler") private var useImageUpscaler = false
     @State private var sourceImage: Image?
     @State private var upscaledImage: Image?
     var body: some View {
