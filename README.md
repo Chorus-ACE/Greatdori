@@ -11,7 +11,7 @@ built with [DoriKit](https://github.com/Greatdori/DoriKit)
 | **Target** | **Status** |
 |---:|:---:|
 | Greatdori           | ![Greatdori Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori.yml)|
-| Greatdori Watch App | ![Greatdori Watch App Build Status](https://img.shields.io/github/actions/workflow/status/WindowsMEMZ/Greatdori/build-greatdori-watch.yml)|
+| Greatdori Watch App | ![Greatdori Watch App Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori-watch.yml)|
 
 ## Building
 Xcode 26.0 and Swift 6.2+ is required for building this project.

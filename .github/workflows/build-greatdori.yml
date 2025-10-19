@@ -29,16 +29,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
-      - name: Update submodules
-        run: git submodule update --init --recursive
       - name: Remove runner local related libs
         run: brew remove --ignore-dependencies libssh2
-      - name: Set Xcode version
-        run: sudo xcode-select -s /Applications/Xcode_26.0.app
+      - name: Update checkout
+        run: utils/update-checkout
+      - name: Generate workspace
+        run: utils/generate-workspace
       - name: Create build folder
         run: mkdir build
       - name: Build
-        run: xcodebuild -project Greatdori.xcodeproj -scheme Greatdori -configuration Release -derivedDataPath ./build -destination "generic/platform=${{ matrix.destination }}" build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_STYLE=Manual DEVELOPMENT_TEAM=""
+        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -derivedDataPath ./build -destination "generic/platform=${{ matrix.destination }}" build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_STYLE=Manual DEVELOPMENT_TEAM=""
       - name: Upload build result
         uses: actions/upload-artifact@v4.6.2
         with:
