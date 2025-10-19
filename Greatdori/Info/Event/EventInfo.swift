@@ -48,6 +48,13 @@ struct EventInfo: View {
                     .frame(maxWidth: 420, maxHeight: 140)
             }
             .interpolation(.high)
+            .upscale { image in
+                image
+                    .resizable()
+                    .antialiased(true)
+                    .aspectRatio(3.0, contentMode: .fit)
+                    .frame(maxWidth: 420, maxHeight: 140)
+            }
             .cornerRadius(10)
         } detail: {
             Group {

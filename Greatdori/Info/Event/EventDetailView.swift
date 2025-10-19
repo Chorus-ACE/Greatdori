@@ -87,12 +87,18 @@ struct EventDetailOverviewView: View {
                                 .frame(maxWidth: bannerWidth, maxHeight: bannerWidth/3)
                         } placeholder: {
                             RoundedRectangle(cornerRadius: 10)
-                            //                            .fill(Color.gray.opacity(0.15))
                                 .fill(getPlaceholderColor())
                                 .aspectRatio(3.0, contentMode: .fit)
                                 .frame(maxWidth: bannerWidth, maxHeight: bannerWidth/3)
                         }
                         .interpolation(.high)
+                        .upscale { image in
+                            image
+                                .antialiased(true)
+                                .resizable()
+                                .aspectRatio(3.0, contentMode: .fit)
+                                .frame(maxWidth: bannerWidth, maxHeight: bannerWidth/3)
+                        }
                         .cornerRadius(10)
                         Rectangle()
                             .opacity(0)

@@ -25,6 +25,7 @@ struct FallbackableWebImage<Content: View>: View {
     var transaction: Transaction
     var content: (WebImagePhase) -> Content
     var modifiers: [(WebImage<Content>) -> WebImage<Content>] = []
+    var upscaleLayout: ((Image) -> AnyView)?
     
     init(
         throughURLs urls: [URL?],
@@ -80,6 +81,15 @@ struct FallbackableWebImage<Content: View>: View {
     }
     
     private func _makeView() -> some View {
+        @ViewBuilder
+        func addUpscaler(_ result: WebImage<Content>) -> some View {
+            if let upscaleLayout {
+                result.upscale(layout: upscaleLayout)
+            } else {
+                result
+            }
+        }
+        
         var result = WebImage(
             url: currentImageURLIndex != nil ? urls[currentImageURLIndex!] : nil,
             scale: scale,
@@ -97,7 +107,7 @@ struct FallbackableWebImage<Content: View>: View {
         for modifier in modifiers {
             result = modifier(result)
         }
-        return result
+        return addUpscaler(result)
     }
 }
 
@@ -110,8 +120,7 @@ extension FallbackableWebImage {
     
     public func resizable(
         capInsets: EdgeInsets = EdgeInsets(),
-        resizingMode: Image.ResizingMode = .stretch) -> Self
-    {
+        resizingMode: Image.ResizingMode = .stretch) -> Self {
         configure { $0.resizable(capInsets: capInsets, resizingMode: resizingMode) }
     }
     
@@ -125,5 +134,13 @@ extension FallbackableWebImage {
     
     public func antialiased(_ isAntialiased: Bool) -> Self {
         configure { $0.antialiased(isAntialiased) }
+    }
+    
+    public func upscale<Result: View>(@ViewBuilder layout: @escaping (Image) -> Result) -> some View {
+        var mutable = self
+        mutable.upscaleLayout = {
+            AnyView(layout($0))
+        }
+        return mutable
     }
 }

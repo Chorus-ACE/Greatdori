@@ -789,6 +789,7 @@ private struct TalkView: View {
                         .lineSpacing(locale == .en ? 10 : -5)
                 }
                 .typesettingLanguage(locale.nsLocale().language)
+                .textSelection(.enabled)
                 .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
@@ -947,6 +948,7 @@ private struct BacklogView: View {
                                     }
                                     Text(talk.body)
                                         .font(.custom(fontName(in: locale), size: 16))
+                                        .textSelection(.enabled)
                                         .foregroundStyle(colorScheme == .light ? Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255) : .init(red: 238 / 255, green: 238 / 255, blue: 238 / 255))
                                         .padding(.leading, 20)
                                 }

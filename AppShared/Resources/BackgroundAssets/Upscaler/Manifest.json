@@ -1,0 +1,19 @@
+{
+	"assetPackID": "Upscaler-Model",
+	"downloadPolicy": {
+		"prefetch": {
+			"installationEventTypes": [
+				"firstInstallation"
+			]
+		}
+	},
+	"fileSelectors": [
+		{
+			"directory": "Upscaler.mlpackage"
+		}
+	],
+	"platforms": [
+		"iOS",
+		"macOS"
+	]
+}

@@ -104,6 +104,9 @@
 		8C889D9C2EA1258D00FBF01D /* CommunityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C889D9B2EA1258700FBF01D /* CommunityView.swift */; };
 		8C889DE42EA22C9700FBF01D /* StoryViewerAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C889DE32EA22C9700FBF01D /* StoryViewerAssets.xcassets */; };
 		8C889DE62EA2367900FBF01D /* StoryViewer.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8C889DE52EA2366200FBF01D /* StoryViewer.metal */; };
+		8C902F9B2EA3AD4200202812 /* Greatdori Background Assets.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 8C902F932EA3AD4200202812 /* Greatdori Background Assets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8C902FA72EA3AE7900202812 /* BackgroundDownloadHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C902FA32EA3AE7900202812 /* BackgroundDownloadHandler.swift */; };
+		8C902FAA2EA4D31900202812 /* UIBasic.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8C902FA92EA4D31300202812 /* UIBasic.metal */; };
 		8C923D782E3034AF003AFC0A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C923D772E3034AD003AFC0A /* HomeView.swift */; };
 		8C923D7D2E304882003AFC0A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8C923D7C2E304882003AFC0A /* SDWebImageSwiftUI */; };
 		8C923D802E30488E003AFC0A /* SDWebImageSVGCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 8C923D7F2E30488E003AFC0A /* SDWebImageSVGCoder */; };
@@ -290,6 +293,13 @@
 			remoteGlobalIDString = 8C0C995C2E296A4400549B5C;
 			remoteInfo = Greatdori;
 		};
+		8C902F992EA3AD4200202812 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8C0C99552E296A4400549B5C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8C902F922EA3AD4200202812;
+			remoteInfo = "Greatdori Background Assets";
+		};
 		8CB4D47D2E445F700085D57A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8C0C99552E296A4400549B5C /* Project object */;
@@ -394,6 +404,17 @@
 				8CD290172E9FFD6700831458 /* ChartViewer_LongNoteLine.fsh in Copy Shaders */,
 			);
 			name = "Copy Shaders";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C902F9C2EA3AD4200202812 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				8C902F9B2EA3AD4200202812 /* Greatdori Background Assets.appex in Embed ExtensionKit Extensions */,
+			);
+			name = "Embed ExtensionKit Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8CB4D4912E4461450085D57A /* CopyFiles */ = {
@@ -515,6 +536,11 @@
 		8C889D9B2EA1258700FBF01D /* CommunityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityView.swift; sourceTree = "<group>"; };
 		8C889DE32EA22C9700FBF01D /* StoryViewerAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = StoryViewerAssets.xcassets; sourceTree = "<group>"; };
 		8C889DE52EA2366200FBF01D /* StoryViewer.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = StoryViewer.metal; sourceTree = "<group>"; };
+		8C902F932EA3AD4200202812 /* Greatdori Background Assets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = "Greatdori Background Assets.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C902FA32EA3AE7900202812 /* BackgroundDownloadHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundDownloadHandler.swift; sourceTree = "<group>"; };
+		8C902FA42EA3AE7900202812 /* Greatdori_Background_Assets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Greatdori_Background_Assets.entitlements; sourceTree = "<group>"; };
+		8C902FA52EA3AE7900202812 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8C902FA92EA4D31300202812 /* UIBasic.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = UIBasic.metal; sourceTree = "<group>"; };
 		8C923D772E3034AD003AFC0A /* HomeView.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		8C923D862E304AF1003AFC0A /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
 		8C923D8C2E3056C8003AFC0A /* CardViews.swift.gyb */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = CardViews.swift.gyb; sourceTree = "<group>"; };
@@ -697,6 +723,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8C902F902EA3AD4200202812 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8CB4D4762E445F700085D57A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -741,6 +774,7 @@
 				8C923D982E30AF1E003AFC0A /* AppShared */,
 				8C0C99812E296A5500549B5C /* Greatdori */,
 				8C6C0EEC2E42301000D1FB0A /* Greatdori Widgets */,
+				8C902FA62EA3AE7900202812 /* Greatdori Background Assets */,
 				8C0C99882E296A5800549B5C /* Greatdori Watch App */,
 				8CB4D4DC2E449CFD0085D57A /* Greatdori Watch Widgets */,
 				8CB4D48B2E445F870085D57A /* BuiltinCardCollections */,
@@ -761,6 +795,7 @@
 				8CB4D4932E4461450085D57A /* CardCollectionGen */,
 				8CB4D4BA2E449CC80085D57A /* Greatdori Watch Widgets.appex */,
 				8C3FA2492E4B9EBF001526F2 /* GreatLyrics.app */,
+				8C902F932EA3AD4200202812 /* Greatdori Background Assets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -985,6 +1020,16 @@
 			path = Community;
 			sourceTree = "<group>";
 		};
+		8C902FA62EA3AE7900202812 /* Greatdori Background Assets */ = {
+			isa = PBXGroup;
+			children = (
+				8C902FA42EA3AE7900202812 /* Greatdori_Background_Assets.entitlements */,
+				8C902FA52EA3AE7900202812 /* Info.plist */,
+				8C902FA32EA3AE7900202812 /* BackgroundDownloadHandler.swift */,
+			);
+			path = "Greatdori Background Assets";
+			sourceTree = "<group>";
+		};
 		8C923D852E304AE5003AFC0A /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -1058,6 +1103,7 @@
 		8CD290152E9FFD3400831458 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
+				8C902FA92EA4D31300202812 /* UIBasic.metal */,
 				8C889DE52EA2366200FBF01D /* StoryViewer.metal */,
 				8CD290162E9FFD4F00831458 /* ChartViewer_LongNoteLine.fsh */,
 			);
@@ -1273,6 +1319,7 @@
 				8C0C997A2E296A4700549B5C /* Embed Watch Content */,
 				8C0C999C2E296A8C00549B5C /* Embed Frameworks */,
 				8C6C0EE12E422F9100D1FB0A /* Embed Foundation Extensions */,
+				8C902F9C2EA3AD4200202812 /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 				8C923D8B2E3055A4003AFC0A /* PBXBuildRule */,
@@ -1281,6 +1328,7 @@
 				8C0C996D2E296A4600549B5C /* PBXTargetDependency */,
 				8C6C0ED92E422F9100D1FB0A /* PBXTargetDependency */,
 				8CB4D47E2E445F700085D57A /* PBXTargetDependency */,
+				8C902F9A2EA3AD4200202812 /* PBXTargetDependency */,
 			);
 			name = Greatdori;
 			packageProductDependencies = (
@@ -1361,6 +1409,25 @@
 			productName = "Greatdori WidgetsExtension";
 			productReference = 8C6C0EC92E422F8F00D1FB0A /* Greatdori Widgets.appex */;
 			productType = "com.apple.product-type.app-extension";
+		};
+		8C902F922EA3AD4200202812 /* Greatdori Background Assets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8C902FA22EA3AD4200202812 /* Build configuration list for PBXNativeTarget "Greatdori Background Assets" */;
+			buildPhases = (
+				8C902F8F2EA3AD4200202812 /* Sources */,
+				8C902F902EA3AD4200202812 /* Frameworks */,
+				8C902F912EA3AD4200202812 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Greatdori Background Assets";
+			packageProductDependencies = (
+			);
+			productName = "Greatdori Background Assets";
+			productReference = 8C902F932EA3AD4200202812 /* Greatdori Background Assets.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
 		};
 		8CB4D4782E445F700085D57A /* BuiltinCardCollections */ = {
 			isa = PBXNativeTarget;
@@ -1448,6 +1515,9 @@
 					8C7855CE2E491E23000EA06E = {
 						CreatedOnToolsVersion = 26.0;
 					};
+					8C902F922EA3AD4200202812 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
 					8CB4D4782E445F700085D57A = {
 						CreatedOnToolsVersion = 26.0;
 						LastSwiftMigration = 2600;
@@ -1490,6 +1560,7 @@
 			targets = (
 				8C0C995C2E296A4400549B5C /* Greatdori */,
 				8C6C0EC82E422F8F00D1FB0A /* Greatdori Widgets */,
+				8C902F922EA3AD4200202812 /* Greatdori Background Assets */,
 				8C0C99692E296A4600549B5C /* Greatdori Watch App */,
 				8CB4D4B92E449CC80085D57A /* Greatdori Watch Widgets */,
 				8CB4D4782E445F700085D57A /* BuiltinCardCollections */,
@@ -1546,6 +1617,13 @@
 				8C6C0EF02E42301000D1FB0A /* Assets.xcassets in Resources */,
 				8C6C0EF22E4230B800D1FB0A /* AppIcon.icon in Resources */,
 				8CB4D4B52E44938E0085D57A /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C902F912EA3AD4200202812 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1703,6 +1781,7 @@
 				E94219332E8AA76A00F24974 /* GachaInfo.swift in Sources */,
 				8C6C0EFF2E42462A00D1FB0A /* OptionsData.swift in Sources */,
 				8C0C99842E296A5500549B5C /* GreatdoriApp.swift in Sources */,
+				8C902FAA2EA4D31900202812 /* UIBasic.metal in Sources */,
 				8C2BD6442E9248B600D003D1 /* ItemSelector.swift in Sources */,
 				E94219312E8AA74B00F24974 /* DetailsGachasSection.swift in Sources */,
 				8C6C0EF82E42352700D1FB0A /* AppIntents.swift in Sources */,
@@ -1797,6 +1876,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8C902F8F2EA3AD4200202812 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C902FA72EA3AE7900202812 /* BackgroundDownloadHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8CB4D4752E445F700085D57A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1844,6 +1931,11 @@
 			isa = PBXTargetDependency;
 			target = 8C0C995C2E296A4400549B5C /* Greatdori */;
 			targetProxy = 8C7855D52E4925BB000EA06E /* PBXContainerItemProxy */;
+		};
+		8C902F9A2EA3AD4200202812 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8C902F922EA3AD4200202812 /* Greatdori Background Assets */;
+			targetProxy = 8C902F992EA3AD4200202812 /* PBXContainerItemProxy */;
 		};
 		8CB4D47E2E445F700085D57A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2974,6 +3066,157 @@
 			};
 			name = RelWithoutPreCache;
 		};
+		8C902F9D2EA3AD4200202812 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Greatdori Background Assets/Greatdori_Background_Assets.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B57D8PP775;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Greatdori Background Assets/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Greatdori Background Assets";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.memz233.Greatdori.Background-Assets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8C902F9E2EA3AD4200202812 /* DebWithoutPreCache */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Greatdori Background Assets/Greatdori_Background_Assets.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B57D8PP775;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Greatdori Background Assets/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Greatdori Background Assets";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.memz233.Greatdori.Background-Assets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = DebWithoutPreCache;
+		};
+		8C902F9F2EA3AD4200202812 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Greatdori Background Assets/Greatdori_Background_Assets.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B57D8PP775;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Greatdori Background Assets/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Greatdori Background Assets";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.memz233.Greatdori.Background-Assets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8C902FA02EA3AD4200202812 /* RelWithoutPreCache */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Greatdori Background Assets/Greatdori_Background_Assets.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B57D8PP775;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Greatdori Background Assets/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Greatdori Background Assets";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.memz233.Greatdori.Background-Assets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = RelWithoutPreCache;
+		};
 		8CB4D4822E445F700085D57A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3462,6 +3705,17 @@
 				8C7855D12E491E24000EA06E /* DebWithoutPreCache */,
 				8C7855D22E491E24000EA06E /* Release */,
 				8C7855D32E491E24000EA06E /* RelWithoutPreCache */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8C902FA22EA3AD4200202812 /* Build configuration list for PBXNativeTarget "Greatdori Background Assets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8C902F9D2EA3AD4200202812 /* Debug */,
+				8C902F9E2EA3AD4200202812 /* DebWithoutPreCache */,
+				8C902F9F2EA3AD4200202812 /* Release */,
+				8C902FA02EA3AD4200202812 /* RelWithoutPreCache */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

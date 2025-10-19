@@ -15,9 +15,11 @@
 // (In Alphabetical Order)
 
 import Vision
+import System
 import DoriKit
 import Network
 import SwiftUI
+import BackgroundAssets
 import SDWebImageSwiftUI
 import UniformTypeIdentifiers
 import CoreImage.CIFilterBuiltins
@@ -726,5 +728,82 @@ struct AnyWindowData: Hashable, Codable {
             h &= _h
         }
         return h == _hash
+    }
+}
+
+extension WebImage {
+    func upscale<Result: View>(@ViewBuilder layout: @escaping (Image) -> Result) -> some View {
+        _ImageUpscaleView(imageView: self, layout: layout)
+    }
+}
+private struct _ImageUpscaleView<V: View, Result: View>: View {
+    var imageView: WebImage<V>
+    var layout: (Image) -> Result
+    @State private var sourceImage: Image?
+    @State private var upscaledImage: Image?
+    var body: some View {
+        if let sourceImage, let upscaledImage {
+            layout(upscaledImage)
+                .visualEffect { content, geometry in
+                    content
+                        .colorEffect(ShaderLibrary.upscaledImageFix(.image(sourceImage), .boundingRect))
+                }
+        } else {
+            imageView
+                .onSuccess { image, data, _ in
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        if ProcessInfo.processInfo.isLowPowerModeEnabled
+                            || ProcessInfo.processInfo.thermalState.rawValue > 2 {
+                            return
+                        }
+                        #if !os(macOS)
+                        guard let data = data ?? image.pngData() else { return }
+                        #else
+                        guard let data = data ?? image.tiffRepresentation else { return }
+                        #endif
+                        DispatchQueue.main.async {
+                            #if os(iOS)
+                            sourceImage = .init(uiImage: image)
+                            #else
+                            sourceImage = .init(nsImage: image)
+                            #endif
+                        }
+                        Task.detached {
+                            do {
+                                let assetPack = try await AssetPackManager.shared.assetPack(withID: "Upscaler-Model")
+                                try await AssetPackManager.shared.ensureLocalAvailability(of: assetPack)
+                                let packageURL = try AssetPackManager.shared.url(for: "Upscaler.mlpackage")
+                                let _model: MLModel
+                                if let compiledModel = UserDefaults.standard.url(forKey: "UpscalerCompiledModel"),
+                                   FileManager.default.fileExists(atPath: compiledModel.path(percentEncoded: false)) {
+                                    _model = try .init(contentsOf: compiledModel)
+                                } else {
+                                    let newURL = try await MLModel.compileModel(at: packageURL)
+                                    UserDefaults.standard.set(newURL, forKey: "UpscalerCompiledModel")
+                                    _model = try .init(contentsOf: newURL)
+                                }
+                                let model = try VNCoreMLModel(for: _model)
+                                let request = VNCoreMLRequest(model: model)
+                                request.imageCropAndScaleOption = .scaleFill
+                                let handler = VNImageRequestHandler(data: data)
+                                try handler.perform([request])
+                                if let buffer = request.results?.compactMap({ $0 as? VNPixelBufferObservation }).first?.pixelBuffer {
+                                    let image = CIImage(cvImageBuffer: buffer)
+                                    let context = CIContext()
+                                    guard let sourceImage = CIImage(data: data) else { return }
+                                    guard let cgImage = context.createCGImage(image, from: image.extent) else { return }
+                                    #if os(iOS)
+                                    upscaledImage = .init(uiImage: .init(cgImage: cgImage))
+                                    #else
+                                    upscaledImage = .init(nsImage: .init(cgImage: cgImage, size: image.extent.size))
+                                    #endif
+                                }
+                            } catch {
+                                print(error)
+                            }
+                        }
+                    }
+                }
+        }
     }
 }

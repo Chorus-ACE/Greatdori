@@ -4,6 +4,12 @@
 <dict>
 	<key>ATSApplicationFontsPath</key>
 	<string>./</string>
+	<key>BAAppGroupID</key>
+	<string>group.com.memz233.Greatdori</string>
+	<key>BAHasManagedAssetPacks</key>
+	<true/>
+	<key>BAUsesAppleHosting</key>
+	<true/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
