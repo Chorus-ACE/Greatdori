@@ -264,20 +264,20 @@ struct SettingsWidgetsCollectionView: View {
                     Text("Settings.widgets.collections.learn-more")
                         .font(isMACOS ? .body : .caption)
                 })
-            })
-            .toolbar {
-                if isMACOS {
-                    ToolbarItem {
-                        Button(action: {
-                            newCollectionInput = ""
-                            newCollectionSheetIsDisplaying = true
-                        }, label: {
-                            Label("Settings.widgets.collections.user.add", systemImage: "plus")
-                        })
-                        .disabled(newCollectionIsImporting)
+                .toolbar {
+                    if isMACOS {
+                        ToolbarItem {
+                            Button(action: {
+                                newCollectionInput = ""
+                                newCollectionSheetIsDisplaying = true
+                            }, label: {
+                                Label("Settings.widgets.collections.user.add", systemImage: "plus")
+                            })
+                            .disabled(newCollectionIsImporting)
+                        }
                     }
                 }
-            }
+            })
         }
         .navigationDestination(isPresented: $showDestination, destination: {
             if let destinationCollection {

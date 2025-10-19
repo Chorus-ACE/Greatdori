@@ -52,6 +52,7 @@ struct HomeView: View {
                         Banner(isPresented: $advSettingsHaveReset, dismissable: true) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .font(.title3)
+                                .bold()
                             VStack(alignment: .leading) {
                                 Text("Home.crash-banner.title")
                                     .bold()
@@ -80,6 +81,7 @@ struct HomeView: View {
                         Banner(isPresented: $advSettingsHaveReset, dismissable: true) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .font(.title3)
+                                .bold()
                             VStack(alignment: .leading) {
                                 Text("Home.crash-banner.title")
                                     .bold()

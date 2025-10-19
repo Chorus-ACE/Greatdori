@@ -26,7 +26,7 @@ struct SettingsAdvancedView: View {
 #if os(iOS)
             List {
                 SettingsAdvancedBannersSection(isInLowPowerMode: $isInLowPowerMode, thermalState: $thermalState)
-                SettingsAdvancedImageSection(energyCosumptionReductionIsRequired: isInLowPowerMode || thermalState == .critical)
+                SettingsAdvancedImageSection(disablePowerConsumingFeatures: isInLowPowerMode || thermalState == .critical)
             }
             .navigationTitle("Settings.advanced")
             .onReceive(ProcessInfo.processInfo.publisher(for: \.isLowPowerModeEnabled)) { lowPowerMode in
@@ -38,7 +38,7 @@ struct SettingsAdvancedView: View {
 #else
             Group {
                 SettingsAdvancedBannersSection(isInLowPowerMode: $isInLowPowerMode, thermalState: $thermalState)
-                SettingsAdvancedImageSection(energyCosumptionReductionIsRequired: isInLowPowerMode || thermalState == .critical)
+                SettingsAdvancedImageSection(disablePowerConsumingFeatures: isInLowPowerMode || thermalState == .critical)
             }
             .navigationTitle("Settings.advanced")
             .onReceive(ProcessInfo.processInfo.publisher(for: \.isLowPowerModeEnabled)) { lowPowerMode in
@@ -57,22 +57,31 @@ struct SettingsAdvancedView: View {
                 Section {
                     Banner(isPresented: $isInLowPowerMode) {
                         Image(systemName: "battery.25percent")
+                            .bold()
                         VStack(alignment: .leading) {
                             Text("Settings.advanced.banners.low-power")
+                                .bold()
+                            Text("Settings.advanced.banners.disabling-features.description")
                         }
                     }
                     .listRowBackground(Color.clear)
+                    .scrollContentBackground(.hidden)
                     if thermalState == .critical {
                         Banner {
                             Image(systemName: "thermometer.sun")
+                                .bold()
                             VStack(alignment: .leading) {
-                                Text("Settings.advanced.banners.high-temperature")
+                                Text("Settings.advanced.banners.power-saving.high-temperature")
+                                    .bold()
+                                Text("Settings.advanced.banners.disabling-features.description")
                             }
                         }
                         .listRowBackground(Color.clear)
+                        .scrollContentBackground(.hidden)
                     }
                 }
                 .listRowBackground(Color.clear)
+                .scrollContentBackground(.hidden)
             } else {
                 EmptyView()
             }
@@ -82,11 +91,11 @@ struct SettingsAdvancedView: View {
     struct SettingsAdvancedImageSection: View {
         @AppStorage("Adv_UseImageUpscaler") var useImageUpscaler = false
         @AppStorage("Adv_PreferSystemVisionModel") var preferSystemVisionModel = false
-        var energyCosumptionReductionIsRequired: Bool
+        var disablePowerConsumingFeatures: Bool
         var body: some View {
             Section {
                 if #available(iOS 26.0, macOS 26.0, *) {
-                    if !energyCosumptionReductionIsRequired {
+                    if !disablePowerConsumingFeatures {
                         Toggle(isOn: $useImageUpscaler) {
                             VStack(alignment: .leading) {
                                 Text("Settings.advanced.image.use-super-resolution")
@@ -96,13 +105,14 @@ struct SettingsAdvancedView: View {
                             }
                         }
                     } else {
+                        
                         Toggle(isOn: .constant(false)) {
                             VStack(alignment: .leading) {
                                 Text("Settings.advanced.image.use-super-resolution")
                                 Text("Settings.advanced.image.use-super-resolution.description")
-                                    .foregroundStyle(.secondary)
+                                
                                     .font(.footnote)
-                            }
+                            }.foregroundStyle(.secondary)
                         }
                         .disabled(true)
                     }
@@ -123,12 +133,14 @@ struct SettingsAdvancedView: View {
     }
 }
 
-func resetAllAdvancedSettings() {
+func resetAllAdvancedSettings(showBannerAtHome: Bool = true) {
     if let _data = try? Data(contentsOf: URL(filePath: NSHomeDirectory() + "/Library/Preferences/com.memz233.Greatdori.plist")),
        let serialization = try? PropertyListSerialization.propertyList(from: _data, format: nil) as? [String: Any] {
         for key in serialization.keys where key.hasPrefix("Adv_") {
             UserDefaults.standard.removeObject(forKey: key)
         }
-        UserDefaults.standard.set(true, forKey: "AdvancedSettingsHaveReset")
+        if showBannerAtHome {
+            UserDefaults.standard.set(true, forKey: "AdvancedSettingsHaveReset")
+        }
     }
 }

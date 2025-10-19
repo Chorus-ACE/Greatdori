@@ -210,6 +210,7 @@ struct ContentView: View {
                         } else {
                             resetAllAdvancedSettings()
                             DoriCache.invalidateAll()
+                            UserDefaults.standard.set(true, forKey: "AdvancedSettingsHaveReset")
                             mainAppShouldBeDisplayed = true
                         }
                     }
@@ -222,7 +223,6 @@ struct ContentView: View {
                             Text("Debug.crash-detected.invalidate-cache-enter")
                         })
                         Button(role: .destructive, action: {
-                            resetAllAdvancedSettings()
                             mainAppShouldBeDisplayed = true
                         }, label: {
                             Text("Debug.crash-detected.direct-enter")
@@ -237,6 +237,7 @@ struct ContentView: View {
                         startUpSucceeded = false
                         if lastStartUpWasSuccessful {
                             mainAppShouldBeDisplayed = true
+                            UserDefaults.standard.set(false, forKey: "AdvancedSettingsHaveReset")
                         } else {
                             crashViewShouldBeDisplayed = true
                         }
