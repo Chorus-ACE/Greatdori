@@ -20,51 +20,91 @@ import UIKit
 #endif
 
 struct SettingsAdvancedView: View {
+    @State var isInLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
+    @State var thermalState = ProcessInfo.processInfo.thermalState
     var body: some View {
-        #if os(iOS)
-        List {
-            SettingsAdvancedImageSection()
+#if os(iOS)
+            List {
+                SettingsAdvancedBannersSection(isInLowPowerMode: $isInLowPowerMode, thermalState: $thermalState)
+                SettingsAdvancedImageSection(energyCosumptionReductionIsRequired: isInLowPowerMode || thermalState == .critical)
+            }
+            .navigationTitle("Settings.advanced")
+            .onReceive(ProcessInfo.processInfo.publisher(for: \.isLowPowerModeEnabled)) { lowPowerMode in
+                isInLowPowerMode = lowPowerMode
+            }
+            .onReceive(ProcessInfo.processInfo.publisher(for: \.thermalState)) { state in
+                thermalState = state
+            }
+#else
+            Group {
+                SettingsAdvancedBannersSection(isInLowPowerMode: $isInLowPowerMode, thermalState: $thermalState)
+                SettingsAdvancedImageSection(energyCosumptionReductionIsRequired: isInLowPowerMode || thermalState == .critical)
+            }
+            .navigationTitle("Settings.advanced")
+            .onReceive(ProcessInfo.processInfo.publisher(for: \.isLowPowerModeEnabled)) { lowPowerMode in
+                isInLowPowerMode = lowPowerMode
+            }
+            .onReceive(ProcessInfo.processInfo.publisher(for: \.thermalState)) { state in
+                thermalState = state
+            }
+#endif
+    }
+    struct SettingsAdvancedBannersSection: View {
+        @Binding var isInLowPowerMode: Bool
+        @Binding var thermalState: ProcessInfo.ThermalState
+        var body: some View {
+            if isInLowPowerMode || thermalState == .critical {
+                Section {
+                    Banner(isPresented: $isInLowPowerMode) {
+                        Image(systemName: "battery.25percent")
+                        VStack(alignment: .leading) {
+                            Text("Settings.advanced.banners.low-power")
+                        }
+                    }
+                    .listRowBackground(Color.clear)
+                    if thermalState == .critical {
+                        Banner {
+                            Image(systemName: "thermometer.sun")
+                            VStack(alignment: .leading) {
+                                Text("Settings.advanced.banners.high-temperature")
+                            }
+                        }
+                        .listRowBackground(Color.clear)
+                    }
+                }
+                .listRowBackground(Color.clear)
+            } else {
+                EmptyView()
+            }
         }
-        .navigationTitle("Settings.advanced")
-        #else
-        Group {
-            SettingsAdvancedImageSection()
-        }
-        .navigationTitle("Settings.advanced")
-        #endif
     }
     
     struct SettingsAdvancedImageSection: View {
         @AppStorage("Adv_UseImageUpscaler") var useImageUpscaler = false
         @AppStorage("Adv_PreferSystemVisionModel") var preferSystemVisionModel = false
-        @State var isInLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
-        @State var thermalState = ProcessInfo.processInfo.thermalState
+        var energyCosumptionReductionIsRequired: Bool
         var body: some View {
             Section {
                 if #available(iOS 26.0, macOS 26.0, *) {
-                    Toggle(isOn: $useImageUpscaler) { // TODO: Show a turned off toggle when the toggle is disabled.
-                                                      // TODO: (no need to actually change the `AppStorage` value)
-                        VStack(alignment: .leading) {
-                            Text("提高图像分辨率")
-                            Group {
-                                Text("对于一些分辨率过低的图像，使用神经网络提高分辨率。")
-                                if isInLowPowerMode {
-                                    Text("提高图像分辨率在低电量模式启用时不可用。")
-                                }
-                                if thermalState == .critical {
-                                    Text("需要降温以使用提高图像分辨率")
-                                }
+                    if !energyCosumptionReductionIsRequired {
+                        Toggle(isOn: $useImageUpscaler) {
+                            VStack(alignment: .leading) {
+                                Text("Settings.advanced.image.use-super-resolution")
+                                Text("Settings.advanced.image.use-super-resolution.description")
+                                    .foregroundStyle(.secondary)
+                                    .font(.footnote)
                             }
-                            .foregroundStyle(.secondary)
-                            .font(.footnote)
                         }
-                    }
-                    .disabled(isInLowPowerMode || thermalState == .critical)
-                    .onReceive(ProcessInfo.processInfo.publisher(for: \.isLowPowerModeEnabled)) { lowPowerMode in
-                        isInLowPowerMode = lowPowerMode
-                    }
-                    .onReceive(ProcessInfo.processInfo.publisher(for: \.thermalState)) { state in
-                        thermalState = state
+                    } else {
+                        Toggle(isOn: .constant(false)) {
+                            VStack(alignment: .leading) {
+                                Text("Settings.advanced.image.use-super-resolution")
+                                Text("Settings.advanced.image.use-super-resolution.description")
+                                    .foregroundStyle(.secondary)
+                                    .font(.footnote)
+                            }
+                        }
+                        .disabled(true)
                     }
                 }
                 Toggle(isOn: $preferSystemVisionModel) {
@@ -78,6 +118,7 @@ struct SettingsAdvancedView: View {
             } header: {
                 Text("Settings.advanced.image")
             }
+            
         }
     }
 }

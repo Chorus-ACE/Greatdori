@@ -49,8 +49,14 @@ struct HomeView: View {
             ScrollView {
                 ZStack {
                     VStack {
-                        if advSettingsHaveReset {
-                            AdvancedSettingsResetBanner()
+                        Banner(isPresented: $advSettingsHaveReset, dismissable: true) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.title3)
+                            VStack(alignment: .leading) {
+                                Text("Home.crash-banner.title")
+                                    .bold()
+                                Text("Home.crash-banner.subtitle")
+                            }
                         }
                         HStack {
                             VStack {
@@ -71,8 +77,14 @@ struct HomeView: View {
                     .opacity(useCompactVariant ? 0 : 1)
                     .frame(width: useCompactVariant ? 0 : nil, height: useCompactVariant ? 0 : nil)
                     VStack {
-                        if advSettingsHaveReset {
-                            AdvancedSettingsResetBanner()
+                        Banner(isPresented: $advSettingsHaveReset, dismissable: true) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.title3)
+                            VStack(alignment: .leading) {
+                                Text("Home.crash-banner.title")
+                                    .bold()
+                                Text("Home.crash-banner.subtitle")
+                            }
                         }
                         HomeNewsView()
                         CustomGroupBox { HomeBirthdayView() }
@@ -511,37 +523,6 @@ struct HomeEventsView: View {
                     imageOpacity = 1
                 })
             }
-        }
-    }
-}
-
-struct AdvancedSettingsResetBanner: View {
-    var body: some View {
-        ZStack(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.orange.opacity(0.6))
-                .overlay {
-                    if #available(iOS 26.0, macOS 26.0, *) {
-                        RoundedRectangle(cornerRadius: 16)
-                            .strokeBorder(Color.yellow.exposureAdjust(2), lineWidth: 2)
-                    } else {
-                        RoundedRectangle(cornerRadius: 16)
-                            .strokeBorder(Color.yellow.brightness(factor: 2), lineWidth: 2)
-                    }
-                }
-                .frame(height: 100)
-            HStack {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.largeTitle)
-                    .foregroundStyle(.yellow)
-                VStack(alignment: .leading) {
-                    Text("由于出现问题，高级设置已被重置")
-                        .font(.title2)
-                    Text("前往设置 -> 高级以检查当前设置。")
-                        .font(.body)
-                }
-            }
-            .padding()
         }
     }
 }

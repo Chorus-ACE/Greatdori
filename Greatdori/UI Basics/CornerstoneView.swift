@@ -28,6 +28,47 @@ let imageButtonSize: CGFloat = isMACOS ? 30 : 35
 let cardThumbnailSideLength: CGFloat = isMACOS ? 64 : 72
 let filterItemHeight: CGFloat = isMACOS ? 25 : 35
 
+// MARK: Banner
+struct Banner<Content: View>: View {
+    var isPresented: Binding<Bool>
+    var color: Color
+    var dismissable: Bool
+    let content: () -> Content
+    init(color: Color = .yellow, isPresented: Binding<Bool> = .constant(true), dismissable: Bool = false, @ViewBuilder content: @escaping () -> Content) {
+        self.color = color
+        self.isPresented = isPresented
+        self.dismissable = dismissable
+        self.content = content
+    }
+    var body: some View {
+        if isPresented.wrappedValue {
+            HStack {
+                content()
+                Spacer()
+                if dismissable {
+                    Button(action: {
+                        isPresented.wrappedValue = false
+                    }, label: {
+                        Image(systemName: "xmark")
+                            .foregroundStyle(.secondary)
+                    })
+                    .buttonStyle(.plain)
+                }
+            }
+                .padding()
+                .background {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 15)
+                            .foregroundStyle(color)
+                            .opacity(0.5)
+                        RoundedRectangle(cornerRadius: 15)
+                            .strokeBorder(color.opacity(0.9), lineWidth: 2)
+                    }
+                }
+        }
+    }
+}
+
 // MARK: CompactToggle
 struct CompactToggle: View {
     var isLit: Bool?
