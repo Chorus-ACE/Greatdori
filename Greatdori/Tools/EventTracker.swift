@@ -106,8 +106,8 @@ struct EventTrackerView: View {
                             LazyVStack {
                                 switch trackerData {
                                 case .tracker(let trackerData):
-                                    if let startDate = selectedEvent.startAt.forPreferredLocale(),
-                                       let endDate = selectedEvent.endAt.forPreferredLocale() {
+                                    if let startDate = selectedEvent.startAt.forLocale(locale),
+                                       let endDate = selectedEvent.endAt.forLocale(locale) {
                                         ListItemView {
                                             Text("Tools.event-tracker.status")
                                                 .bold()
@@ -218,8 +218,8 @@ struct EventTrackerView: View {
                                         }
                                     }
                                 case .top(let topData):
-                                    if let startDate = selectedEvent.startAt.forPreferredLocale(),
-                                       let endDate = selectedEvent.endAt.forPreferredLocale() {
+                                    if let startDate = selectedEvent.startAt.forLocale(locale),
+                                       let endDate = selectedEvent.endAt.forLocale(locale) {
                                         ListItemView {
                                             Text("Tools.event-tracker.status")
                                                 .bold()
