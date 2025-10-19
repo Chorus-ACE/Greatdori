@@ -60,7 +60,7 @@ struct SettingsDebugView: View {
                     
                 })
                 Toggle(isOn: $enableRulerOverlay, label: {
-                    Text(verbatim: "Enable Ruler Overlay")
+                    Text(verbatim: "enableRulerOverlay")
                     
                 })
 #if !DORIKIT_ENABLE_PRECACHE

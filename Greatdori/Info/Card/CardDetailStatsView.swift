@@ -36,7 +36,7 @@ struct CardDetailStatsView: View {
                 Group {
                     if tab != 3 {
                         if tab == 2 {
-                            CustomGroupBox {
+                            CustomGroupBox(cornerRadius: 20) {
                                 VStack {
                                     Group {
                                         ListItemView(title: {
@@ -99,7 +99,7 @@ struct CardDetailStatsView: View {
                                 }
                             }
                         }
-                        CustomGroupBox {
+                        CustomGroupBox(cornerRadius: 20) {
                             VStack {
                                 Group {
                                     if tab != 2 {
@@ -160,7 +160,7 @@ struct CardDetailStatsView: View {
                             .animation(.default, value: stat)
                         }
                     } else {
-                        CustomGroupBox {
+                        CustomGroupBox(cornerRadius: 20) {
                             VStack {
                                 Group {
                                     ListItemView(title: {

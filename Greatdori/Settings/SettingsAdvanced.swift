@@ -54,34 +54,20 @@ struct SettingsAdvancedView: View {
         @Binding var thermalState: ProcessInfo.ThermalState
         var body: some View {
             if isInLowPowerMode || thermalState == .critical {
-                Section {
-                    Banner(isPresented: $isInLowPowerMode) {
-                        Image(systemName: "battery.25percent")
+                Section(content: {
+                    if isInLowPowerMode {
+                        Label("Settings.advanced.banners.low-power", systemImage: "battery.25percent")
                             .bold()
-                        VStack(alignment: .leading) {
-                            Text("Settings.advanced.banners.low-power")
-                                .bold()
-                            Text("Settings.advanced.banners.disabling-features.description")
-                        }
+                            .foregroundStyle(.yellow)
                     }
-                    .listRowBackground(Color.clear)
-                    .scrollContentBackground(.hidden)
                     if thermalState == .critical {
-                        Banner {
-                            Image(systemName: "thermometer.sun")
-                                .bold()
-                            VStack(alignment: .leading) {
-                                Text("Settings.advanced.banners.power-saving.high-temperature")
-                                    .bold()
-                                Text("Settings.advanced.banners.disabling-features.description")
-                            }
-                        }
-                        .listRowBackground(Color.clear)
-                        .scrollContentBackground(.hidden)
+                        Label("Settings.advanced.banners.power-saving.high-temperature", systemImage: "thermometer.sun")
+                            .bold()
+                            .foregroundStyle(.yellow)
                     }
-                }
-                .listRowBackground(Color.clear)
-                .scrollContentBackground(.hidden)
+                }, footer: {
+                    Text("Settings.advanced.banners.disabling-features.description")
+                })
             } else {
                 EmptyView()
             }

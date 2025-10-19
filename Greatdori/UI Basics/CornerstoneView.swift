@@ -60,7 +60,7 @@ struct Banner<Content: View>: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 15)
                             .foregroundStyle(color)
-                            .opacity(0.5)
+                            .opacity(0.3)
                         RoundedRectangle(cornerRadius: 15)
                             .strokeBorder(color.opacity(0.9), lineWidth: 2)
                     }

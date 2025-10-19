@@ -39,7 +39,6 @@ struct HomeView: View {
     @State var useCompactVariant = true
     @State var showSettingsSheet = false
     @State var currentNavigationPage: NavigationPage?
-    @AppStorage("AdvancedSettingsHaveReset") var advSettingsHaveReset = false
     @AppStorage("homeEventServer1") var homeEventServer1 = "jp"
     @AppStorage("homeEventServer2") var homeEventServer2 = "cn"
     @AppStorage("homeEventServer3") var homeEventServer3 = "tw"
@@ -49,16 +48,7 @@ struct HomeView: View {
             ScrollView {
                 ZStack {
                     VStack {
-                        Banner(isPresented: $advSettingsHaveReset, dismissable: true) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .font(.title3)
-                                .bold()
-                            VStack(alignment: .leading) {
-                                Text("Home.crash-banner.title")
-                                    .bold()
-                                Text("Home.crash-banner.subtitle")
-                            }
-                        }
+                        HomeBannersView()
                         HStack {
                             VStack {
                                 HomeNewsView()
@@ -78,16 +68,7 @@ struct HomeView: View {
                     .opacity(useCompactVariant ? 0 : 1)
                     .frame(width: useCompactVariant ? 0 : nil, height: useCompactVariant ? 0 : nil)
                     VStack {
-                        Banner(isPresented: $advSettingsHaveReset, dismissable: true) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .font(.title3)
-                                .bold()
-                            VStack(alignment: .leading) {
-                                Text("Home.crash-banner.title")
-                                    .bold()
-                                Text("Home.crash-banner.subtitle")
-                            }
-                        }
+                        HomeBannersView()
                         HomeNewsView()
                         CustomGroupBox { HomeBirthdayView() }
                         HomeEventsView(locale: localeFromStringDict[homeEventServer1] ?? .jp)
@@ -524,6 +505,23 @@ struct HomeEventsView: View {
 //                    placeholderOpacity = 0
                     imageOpacity = 1
                 })
+            }
+        }
+    }
+}
+
+struct HomeBannersView: View {
+    @AppStorage("AdvancedSettingsHaveReset") var advSettingsHaveReset = false
+    var body: some View {
+        Banner(isPresented: $advSettingsHaveReset, dismissable: true) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.title3)
+                .bold()
+            VStack(alignment: .leading) {
+                Text("Home.crash-banner.title")
+                    .bold()
+                Text("Home.crash-banner.subtitle")
+                    .font(isMACOS ? .body : .footnote)
             }
         }
     }
