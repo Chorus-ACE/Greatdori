@@ -14,9 +14,9 @@
 
 
 import DoriKit
-import SDWebImageSwiftUI
 import SwiftUI
 import QuickLook
+import SDWebImageSwiftUI
 
 @resultBuilder
 struct ArtsBuilder {
@@ -95,8 +95,8 @@ struct DetailArtsSection: View {
 #if os(macOS)
     @State private var previewController = PreviewController()
 #endif
-    @State var quickLookOnFocusItem: URL?
-    @State var isDownloadingItem = false
+    @State var nativeImages = [UUID: PlatformImage]()
+    @State var quickLookOnFocusItem: ImageLookItem?
     @State var hiddenItems: [UUID] = []
     
     let itemMinimumWidth: CGFloat = 280
@@ -111,23 +111,12 @@ struct DetailArtsSection: View {
                                 if !hiddenItems.contains(item.id) {
                                     Button(action: {
                                         #if os(iOS)
-                                        isDownloadingItem = true
-                                        DispatchQueue(label: "com.memz233.Greatdori.Quick-Look-Download", qos: .userInitiated).async {
-                                            let id = UUID()
-                                            let destination = URL(filePath: NSHomeDirectory() + "/tmp/\(id.uuidString)-\(item.url.lastPathComponent)")
-                                            if let data = try? Data(contentsOf: item.url),
-                                               (try? data.write(to: destination)) != nil {
-                                                DispatchQueue.main.async {
-                                                    quickLookOnFocusItem = destination
-                                                }
-                                            }
-                                            // Quick look takes some time
-                                            // to be presented on screen
-                                            // with animation, we add a delay
-                                            // to prevent flashes
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                                                isDownloadingItem = false
-                                            }
+                                        if let image = nativeImages[item.id] {
+                                            quickLookOnFocusItem = .init(
+                                                image: image,
+                                                title: .init(localized: tabContent.tabName),
+                                                subtitle: .init(localized: item.title)
+                                            )
                                         }
                                         #else
                                         // Build visible items and open Quick Look at the tapped item
@@ -155,23 +144,17 @@ struct DetailArtsSection: View {
                                                             .aspectRatio(3, contentMode: .fit)
                                                     }
                                                     .interpolation(.high)
-                                                    .onFailure(perform: { _ in
-                                                        hiddenItems.append(item.id)
-                                                    })
-                                                    /*
-                                                    .opacity(isDownloadingItem ? 0 : 1)
-                                                    VStack {
-                                                        ProgressView()
-                                                            .controlSize(.large)
-                                                        Text("Details.arts.loading")
-                                                            .foregroundStyle(.secondary)
-                                                            .bold()
-                                                        
+                                                    .onSuccess { image, _, _ in
+                                                        DispatchQueue.main.async { // yield
+                                                            nativeImages.updateValue(image, forKey: item.id)
+                                                        }
                                                     }
-                                                    .opacity(isDownloadingItem ? 1 : 0)
-                                                     */
+                                                    .onFailure { _ in
+                                                        DispatchQueue.main.async { // yield
+                                                            hiddenItems.append(item.id)
+                                                        }
+                                                    }
                                                 }
-                                                .animation(.spring(duration: 0.2, bounce: 0.2), value: isDownloadingItem)
                                                 Text(item.title)
                                                     .multilineTextAlignment(.center)
                                                 Spacer(minLength: 0)
@@ -207,8 +190,17 @@ struct DetailArtsSection: View {
             }
         }
         #if os(iOS)
-        .quickLookPreview($quickLookOnFocusItem)
+        .fullScreenCover(item: $quickLookOnFocusItem) { item in
+            ImageLookView(image: item.image, title: item.title, subtitle: item.subtitle)
+        }
         #endif
+    }
+    
+    struct ImageLookItem: Identifiable {
+        var id = UUID()
+        var image: PlatformImage
+        var title: String
+        var subtitle: String
     }
 }
 extension DetailArtsSection {
@@ -217,6 +209,185 @@ extension DetailArtsSection {
     }
 }
 
-extension URL: @retroactive Identifiable {
-    public var id: URL { self }
+#if os(iOS)
+struct ImageLookView: View {
+    var image: UIImage
+    var title: String
+    var subtitle: String
+    @Environment(\.dismiss) private var dismiss
+    @State private var isShareViewPresented = false
+    @State private var isFullScreen = false
+    var body: some View {
+        NavigationStack {
+            VStack {
+                _ZoomScrollView {
+                    Image(uiImage: image)
+                        .resizable()
+                        .interpolation(.high)
+                        .antialiased(true)
+                        .scaledToFit()
+                }
+                .ignoresSafeArea()
+            }
+            .onTapGesture {
+                isFullScreen.toggle()
+            }
+            .sheet(isPresented: $isShareViewPresented) {
+                _ImageShareView(image: image)
+            }
+            .toolbar {
+                if !isFullScreen {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Dismiss", systemImage: "xmark") {
+                            dismiss()
+                        }
+                    }
+                    ToolbarItem(placement: .principal) {
+                        VStack {
+                            Text(title)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                            Text(subtitle)
+                                .font(.caption2)
+                        }
+                        .padding(.vertical, 5)
+                        .padding(.horizontal, 40)
+                        .wrapIf(true) { content in
+                            if #available(iOS 26.0, *) {
+                                content
+                                    .glassEffect()
+                            } else {
+                                content
+                            }
+                        }
+                    }
+                    ToolbarItem(placement: .bottomBar) {
+                        Button("Share…", systemImage: "square.and.arrow.up") {
+                            isShareViewPresented = true
+                        }
+                    }
+                    if #available(iOS 26.0, *) {
+                        ToolbarSpacer(.fixed, placement: .bottomBar)
+                    }
+                    ToolbarItemGroup(placement: .bottomBar) {
+                        Button("Image.save.photos", systemImage: "photo.badge.plus") {
+                            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                        }
+                        Button("Image.copy.image", systemImage: "document.on.document") {
+                            UIPasteboard.general.image = image
+                        }
+                        if #available(iOS 18.0, macOS 15.0, *) {
+                            Button("Image.copy.subject", systemImage: "circle.dashed.rectangle") {
+                                Task {
+                                    if let _data = image.pngData(), let result = await getImageSubject(_data) {
+                                        UIPasteboard.general.image = .init(data: result)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .statusBarHidden(isFullScreen)
+        .animation(.spring(duration: 0.3, bounce: 0.15), value: isFullScreen)
+    }
 }
+private struct _ZoomScrollView<Content: View>: UIViewRepresentable {
+    var minimumZoomScale: CGFloat = 1
+    var maximumZoomScale: CGFloat = 5
+    let hostingController: UIHostingController<Content>
+    
+    init(
+        minimumZoomScale: CGFloat = 1,
+        maximumZoomScale: CGFloat = 5,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.minimumZoomScale = minimumZoomScale
+        self.maximumZoomScale = maximumZoomScale
+        self.hostingController = .init(rootView: content())
+    }
+    
+    let scrollView = UIScrollView()
+    
+    func makeUIView(context: Context) -> UIScrollView {
+        let hostedView = hostingController.view!
+        hostedView.translatesAutoresizingMaskIntoConstraints = false
+        
+        scrollView.addSubview(hostedView)
+        
+        scrollView.contentInsetAdjustmentBehavior = .never
+        NSLayoutConstraint.activate([
+            hostedView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            hostedView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            hostedView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            hostedView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            hostedView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+            hostedView.heightAnchor.constraint(equalTo: scrollView.frameLayoutGuide.heightAnchor)
+        ])
+        
+        scrollView.delegate = context.coordinator
+        scrollView.minimumZoomScale = minimumZoomScale
+        scrollView.maximumZoomScale = maximumZoomScale
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.showsVerticalScrollIndicator = false
+        
+        let doubleTapRecognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(ScrollZoomDelegate<Content>.onDoubleTap(with:)))
+        doubleTapRecognizer.numberOfTapsRequired = 2
+        doubleTapRecognizer.numberOfTouchesRequired = 1
+        scrollView.addGestureRecognizer(doubleTapRecognizer)
+        
+        return scrollView
+    }
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+    func makeCoordinator() -> ScrollZoomDelegate<Content> {
+        ScrollZoomDelegate(parent: self)
+    }
+    
+    class ScrollZoomDelegate<C: View>: NSObject, UIScrollViewDelegate {
+        var parent: _ZoomScrollView<C>
+        
+        init(parent: _ZoomScrollView<C>) {
+            self.parent = parent
+        }
+        
+        func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+            parent.hostingController.view
+        }
+        
+        @objc
+        func onDoubleTap(with recognizer: UITapGestureRecognizer) {
+            let pointInView = recognizer.location(in: parent.hostingController.view)
+            
+            var newZoomScale = parent.scrollView.zoomScale * 2
+            newZoomScale = min(newZoomScale, parent.scrollView.maximumZoomScale)
+            if parent.scrollView.zoomScale > 1 {
+                newZoomScale = 1
+            }
+            
+            let scrollViewSize = parent.scrollView.bounds.size
+            let w = scrollViewSize.width / newZoomScale
+            let h = scrollViewSize.height / newZoomScale
+            let x = pointInView.x - (w / 2.0)
+            let y = pointInView.y - (h / 2.0)
+            
+            let rectToZoomTo = CGRectMake(x, y, w, h);
+            
+            parent.scrollView.zoom(to: rectToZoomTo, animated: true)
+        }
+    }
+}
+
+private struct _ImageShareView: UIViewControllerRepresentable {
+    var image: UIImage
+    
+    init(image: UIImage) {
+        self.image = image
+    }
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [image], applicationActivities: nil)
+    }
+    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}
+}
+#endif // os(iOS)
