@@ -17,7 +17,7 @@ import SwiftUI
 
 struct CommunityView: View {
     @State var posts: DoriAPI.Post.PagedPosts?
-    @State var availability = true
+    @State var infoIsAvailable = true
     @State var pageOffset = 0
     @State var isLoadingMore = false
     var body: some View {
@@ -31,8 +31,13 @@ struct CommunityView: View {
                 .padding()
             }
         } else {
-            if availability {
+            if infoIsAvailable {
                 ProgressView()
+                    .onAppear {
+                        Task {
+                            await getPosts()
+                        }
+                    }
             } else {
                 ExtendedConstraints {
                     ContentUnavailableView("载入帖子时出错", systemImage: "richtext.page.fill")
@@ -66,6 +71,39 @@ struct CommunityView: View {
 private struct PostSectionView: View {
     var post: DoriAPI.Post.Post
     var body: some View {
-        EmptyView() // FIXME
+        CustomGroupBox {
+            VStack(alignment: .leading) {
+                HStack {
+                    Text(post.author.nickname)
+                    Text("@\(post.author.username)")
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text(post.time, format: .dateTime) // FIXME: Better Time Logic
+                        .foregroundStyle(.secondary)
+                    // From Nearst to Farest (CONSIDER LOCALIZATION, DONT JUST USE FORMAT CODE)
+                    // 9:41 AM (Today)
+                    // Yesterday (Yesterday)
+                    // Wednesday (A week ago)
+                    // 3/30 (A year ago)
+                    // 2017/3/30 (Further)
+                }
+                .font(.footnote)
+                Group {
+                    if !post.title.isEmpty {
+                        Text(post.title)
+                    } else {
+                        if let recipient = post.repliesTo?.author {
+                            Text("Re: @\(recipient)")
+                        } else {
+                            Text("Cmt: \("Title")") //FIXME: Cmt:
+                        }
+                    }
+                }
+                .bold()
+                .font(.title3)
+//                Text(post.content)
+            }
+        }
+        .frame(maxWidth: 600)
     }
 }
