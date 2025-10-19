@@ -760,9 +760,9 @@ private struct StoryDetailView: View {
                 await loadTranscript()
             }
             .toolbar {
-                Button("Go Interactive", systemImage: "exclamationmark.triangle.fill") {
-                    interactiveViewer.toggle()
-                }
+                Toggle(isOn: $interactiveViewer, label: {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                })
             }
         } else if let asset {
             InteractiveStoryView(asset: asset, voiceBundleURL: URL(string: {
