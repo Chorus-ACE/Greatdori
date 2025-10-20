@@ -22,33 +22,41 @@ struct CommunityView: View {
     @State var pageOffset = 0
     @State var isLoadingMore = false
     var body: some View {
-        if let posts {
-            ScrollView {
-                LazyVStack {
-                    ForEach(posts.content) { post in
-                        PostSectionView(post: post)
+        NavigationStack {
+            Group {
+                if let posts {
+                    ScrollView {
+                        LazyVStack {
+                            ForEach(posts.content) { post in
+                                PostSectionView(post: post)
+                            }
+                        }
+                        .padding()
                     }
-                }
-                .padding()
-            }
-        } else {
-            if infoIsAvailable {
-                ProgressView()
-                    .onAppear {
-                        Task {
-                            await getPosts()
+                } else {
+                    if infoIsAvailable {
+                        ExtendedConstraints {
+                            ProgressView()
+                        }
+                        .onAppear {
+                            Task {
+                                await getPosts()
+                            }
+                        }
+                    } else {
+                        ExtendedConstraints {
+                            ContentUnavailableView("Community.unavailable", systemImage: "richtext.page.fill")
+                        }
+                        .onTapGesture {
+                            Task {
+                                await getPosts()
+                            }
                         }
                     }
-            } else {
-                ExtendedConstraints {
-                    ContentUnavailableView("载入帖子时出错", systemImage: "richtext.page.fill")
-                }
-                .onTapGesture {
-                    Task {
-                        await getPosts()
-                    }
                 }
             }
+            .withSystemBackground()
+            .navigationTitle(isMACOS || posts != nil ? "Community" : "")
         }
     }
     
@@ -71,24 +79,26 @@ struct CommunityView: View {
 
 private struct PostSectionView: View {
     var post: DoriAPI.Post.Post
+    @State var commentSourceTitle: String?
     var body: some View {
         CustomGroupBox {
             VStack(alignment: .leading) {
                 HStack {
-                    Text(post.author.nickname)
-                    Text("@\(post.author.username)")
-                        .foregroundStyle(.secondary)
+                    if !post.author.nickname.isEmpty {
+                        Text(post.author.nickname)
+                        Text("@\(post.author.username)")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text("@\(post.author.username)")
+                    }
                     Spacer()
-                    Text(post.time, format: .dateTime) // FIXME: Better Time Logic
+                    Text(post.time.formattedRelatively())
                         .foregroundStyle(.secondary)
-                    // From Nearst to Farest (CONSIDER LOCALIZATION, DONT JUST USE FORMAT CODE)
-                    // 9:41 AM (Today)
-                    // Yesterday (Yesterday)
-                    // Wednesday (A week ago)
-                    // 3/30 (A year ago)
-                    // 2017/3/30 (Further)
+                    Image(systemName: post.getPostTypeSymbol())
+                        .foregroundStyle(.secondary)
                 }
                 .font(.footnote)
+                .padding(.bottom, 1)
                 Group {
                     if !post.title.isEmpty {
                         Text(post.title)
@@ -96,7 +106,11 @@ private struct PostSectionView: View {
                         if let recipient = post.repliesTo?.author {
                             Text("Re: @\(recipient)")
                         } else {
-                            Text("Cmt: \("Title")") //FIXME: Cmt:
+                            Text("Cmt: \(commentSourceTitle)")
+                                .wrapIf(commentSourceTitle == nil, in: { content in
+                                    content
+                                        .redacted(reason: .placeholder)
+                                })
                         }
                     }
                 }
@@ -108,6 +122,20 @@ private struct PostSectionView: View {
             }
         }
         .frame(maxWidth: 600)
+    }
+}
+
+extension DoriAPI.Post.Post {
+    func getPostTypeSymbol() -> String {
+        if self.categoryID == "chart" {
+            return "apple.classical.pages"
+        } else if self.categoryID == "story" {
+            return "book"
+        } else if self.categoryName == .selfPost {
+            return "text.bubble"
+        } else {
+            return "arrowshape.turn.up.left"
+        }
     }
 }
 

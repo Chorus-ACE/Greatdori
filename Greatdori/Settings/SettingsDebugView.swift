@@ -34,7 +34,6 @@ struct SettingsDebugView: View {
     }
     
     struct SettingsDebugControlsView: View {
-        @AppStorage("debugShowHomeBirthdayDatePicker") var debugShowHomeBirthdayDatePicker = false
         @AppStorage("isFirstLaunch") var isFirstLaunch = true
         @AppStorage("isFirstLaunchResettable") var isFirstLaunchResettable = true
         @AppStorage("startUpSucceeded") var startUpSucceeded = true
@@ -43,10 +42,6 @@ struct SettingsDebugView: View {
         
         var body: some View {
             Group {
-                Toggle(isOn: $debugShowHomeBirthdayDatePicker, label: {
-                    Text(verbatim: "debugShowHomeBirthdayDatePicker")
-                        .fontDesign(.monospaced)
-                })
                 Toggle(isOn: $isFirstLaunch, label: {
                     Text(verbatim: "isFirstLaunch")
                         .fontDesign(.monospaced)

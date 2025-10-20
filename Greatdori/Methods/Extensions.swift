@@ -111,6 +111,53 @@ extension Date {
             return self
         }
     }
+    
+    public func formattedRelatively() -> String {
+            let calendar = Calendar.current
+            let formatter = DateFormatter()
+            formatter.locale = .current
+            formatter.doesRelativeDateFormatting = true
+            
+            // 判断是不是今天
+            if calendar.isDateInToday(self) {
+                formatter.timeStyle = .short
+                formatter.dateStyle = .none
+                return formatter.string(from: self)
+            }
+            
+            // 判断是不是昨天
+            if calendar.isDateInYesterday(self) {
+                formatter.timeStyle = .none
+                formatter.dateStyle = .medium
+                formatter.doesRelativeDateFormatting = true
+                return formatter.string(from: self)
+            }
+            
+            // 判断是否在本周内
+            if let weekAgo = calendar.date(byAdding: .day, value: -7, to: Date()),
+               self >= weekAgo {
+                let weekdayFormatter = DateFormatter()
+                weekdayFormatter.locale = .current
+                weekdayFormatter.setLocalizedDateFormatFromTemplate("EEEE") // 例如 "Wednesday" / "周三"
+                return weekdayFormatter.string(from: self)
+            }
+            
+            // 判断是否在今年内
+            let nowYear = calendar.component(.year, from: Date())
+            let targetYear = calendar.component(.year, from: self)
+            if nowYear == targetYear {
+                let shortFormatter = DateFormatter()
+                shortFormatter.locale = .current
+                shortFormatter.setLocalizedDateFormatFromTemplate("Md") // 例如 "3/30"
+                return shortFormatter.string(from: self)
+            }
+            
+            // 更早的日期（不同年份）
+            let fullFormatter = DateFormatter()
+            fullFormatter.locale = .current
+            fullFormatter.setLocalizedDateFormatFromTemplate("yMd") // 例如 "2017/3/30"
+            return fullFormatter.string(from: self)
+        }
 }
 
 extension DoriAPI.LocalizedData<Set<DoriFrontend.Card.ExtendedCard.Source>> {
