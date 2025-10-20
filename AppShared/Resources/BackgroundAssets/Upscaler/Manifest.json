@@ -10,7 +10,10 @@
 	"fileSelectors": [
 		{
 			"directory": "Upscaler.mlpackage"
-		}
+		},
+		{
+                        "file": "UpscalerInfo.plist"
+                }
 	],
 	"platforms": [
 		"iOS",
