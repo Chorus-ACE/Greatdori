@@ -58,12 +58,13 @@ struct SettingsAboutDetailView: View {
                 VStack {
                     SettingsAboutDetailIconView()
                         .listRowBackground(Color.clear)
-                    Section {
-                        List {
+                    Form {
+//                        Section {
                             SettingsAboutDetailListView()
-                        }
-                        .scrollDisabled(true)
+//                        }
                     }
+                    .formStyle(.grouped)
+                    .scrollDisabled(true)
                 }
                 .padding()
             }
@@ -133,12 +134,12 @@ struct SettingsAboutDetailIconView: View {
 
 struct SettingsAboutDetailListView: View {
     var body: some View {
-        Group {
+//        Group {
             NavigationLink(destination: {
                 
             }, label: {
                 Text("Settings.about.acknowledgements")
             })
-        }
+//        }
     }
 }
