@@ -93,6 +93,7 @@ struct CommunityView: View {
 private struct PostSectionView: View {
     var post: DoriAPI.Post.Post
     @State var commentSourceTitle: String?
+    @State var tagsText: String = ""
     var body: some View {
         CustomGroupBox {
             VStack(alignment: .leading) {
@@ -115,14 +116,14 @@ private struct PostSectionView: View {
                         Text(post.time.formattedRelatively())
                         Image(systemName: post.getPostTypeSymbol())
                     }
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.gray)
                     .wrapIf(!isMACOS, in: { content in
                         #if os(iOS)
                         Menu(content: {
                             Button(action: {
                                 
                             }, label: {
-                                if post.liked {
+                                if !post.liked {
                                     Label("Community.like", systemImage: "heart")
                                 } else {
                                     Label("Community.remove-like", systemImage: "heart.slash")
@@ -142,9 +143,9 @@ private struct PostSectionView: View {
                         Text(post.title)
                     } else {
                         if let recipient = post.repliesTo?.author {
-                            Text("Re: @\(recipient)")
+                            Text("Community.title.re.\("@\(recipient)")")
                         } else {
-                            Text("Cmt: \(commentSourceTitle)")
+                            Text("Community.title.cmt.\(commentSourceTitle ?? "nil")")
                                 .wrapIf(commentSourceTitle == nil, in: { content in
                                     content
                                         .redacted(reason: .placeholder)
@@ -156,7 +157,9 @@ private struct PostSectionView: View {
                 .font(.title3)
                 Markdown(post.content.toMarkdown())
                     .markdownInlineImageProvider(.postContent(imageFrame: .init(width: 20, height: 20)))
-                    
+                if !tagsText.isEmpty {
+                    Text(tagsText)
+                }
             }
         }
         .frame(maxWidth: 600)
@@ -164,10 +167,89 @@ private struct PostSectionView: View {
         .onAppear {
             if commentSourceTitle == nil {
                 Task {
-                    commentSourceTitle = await DoriAPI.Post.basicData(of: post.id)?.title
+                    switch post.categoryName {
+                    case .cardComment:
+                        commentSourceTitle = await Card(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
+//                    case .chartSimulatorComment:
+//                        commentSourceTitle = await()
+                    case .characterComment:
+                        commentSourceTitle = await Character(id: Int(post.categoryID) ?? -1)?.characterName.forPreferredLocale()
+                    case .comicComment:
+                        commentSourceTitle = await Comic(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
+                    case .costumeComment:
+                        commentSourceTitle = await Costume(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
+                    case .eventArchiveComment:
+                        commentSourceTitle = await Event(id: Int(post.categoryID.split(separator: "_").first!) ?? -1)?.title.forPreferredLocale()
+                    case .eventComment:
+                        commentSourceTitle = await Event(id: Int(post.categoryID.split(separator: "_").first!) ?? -1)?.title.forPreferredLocale()
+                    case .eventTrackerComment:
+                        commentSourceTitle = await Event(id: Int(post.categoryID.split(separator: "_").first!) ?? -1)?.title.forPreferredLocale()
+                    case .gachaComment:
+                        commentSourceTitle = await Gacha(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
+                    case .live2dComment:
+                        commentSourceTitle = String(post.categoryID.split(separator: "/").last ?? "nil")
+                    case .loginCampaignComment:
+                        commentSourceTitle = await LoginCampaign(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
+                    case .newsComment:
+                        commentSourceTitle = await NewsItem(id: Int(post.categoryID) ?? -1)?.title
+                    case .songComment:
+                        commentSourceTitle = await Song(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
+                    case .storyComment:
+                        commentSourceTitle = String(post.categoryID.split(separator: "/").last ?? "nil")
+                    default:
+                        commentSourceTitle = await DoriAPI.Post.basicData(of: post.id)?.title
+                    }
+                }
+            }
+            
+            Task {
+                await handleTags()
+            }
+        }
+    }
+    
+    @MainActor
+    func handleTags() async {
+        var allTags: [String] = []
+        
+        if !post.tags.isEmpty {
+            for (index, tag) in post.tags.enumerated() {
+                if index != 0 {
+                    allTags.append("  ")
+                }
+                switch tag {
+                case .card(let id):
+                    allTags.append(String(localized: "Community.tags.card.id.\(id)"))
+                case .character(let id):
+                    allTags.append(String(localized: "Community.tags.character.id.\(id)"))
+                case .text(let content):
+                    allTags.append(content)
+                default:
+                    allTags.append(String(localized: "Community.tags.unknown"))
                 }
             }
         }
+        
+        tagsText = allTags.map { "#\($0)" }.joined(separator: "  ")
+        
+        await withTaskGroup { group in
+            for (index, tag) in post.tags.enumerated() {
+                group.addTask {
+                    //FIXME: [251020] Data Race
+                    switch tag {
+                    case .card(let id):
+                        allTags[index] = await Card(id: id)?.title.forPreferredLocale() ?? String(localized: "Community.tags.card.id.\(id)")
+                    case .character(let id):
+                        allTags[index] = await Character(id: id)?.characterName.forPreferredLocale() ?? String(localized: "Community.tags.character.id.\(id)")
+                    case .text(let content):
+                        allTags[index] = content
+                    default:
+                        allTags[index] = String(localized: "Community.tags.unknown")
+                    }
+                }
+            }
+        }
+        tagsText = allTags.map { "#\($0)" }.joined(separator: "  ")
     }
 }
 

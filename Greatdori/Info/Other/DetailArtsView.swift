@@ -318,7 +318,7 @@ struct ImageLookView: View {
             .toolbar {
                 if !isFullScreen {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button("Dismiss", systemImage: "xmark") {
+                        Button("Details.arts.dismiss", systemImage: "xmark") {
                             dismiss()
                         }
                     }
@@ -370,6 +370,14 @@ struct ImageLookView: View {
                     }
                     ToolbarItem(placement: .bottomBar) {
                         Button("Share…", systemImage: "square.and.arrow.up") {
+                            isShareViewPresented = true
+                        }
+                    }
+                    if #available(iOS 26.0, *) {
+                        ToolbarSpacer(.flexible, placement: .bottomBar)
+                    }
+                    ToolbarItem(placement: .bottomBar) {
+                        Button("Details.arts.share", systemImage: "square.and.arrow.up") {
                             isShareViewPresented = true
                         }
                     }
