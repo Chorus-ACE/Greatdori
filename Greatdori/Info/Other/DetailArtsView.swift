@@ -103,6 +103,7 @@ struct DetailArtsSection: View {
     @State private var previewController = PreviewController()
 #endif
     @State var nativeImages = [UUID: PlatformImage]()
+    @State var imageFrames = [UUID: CGRect]()
     @State var quickLookOnFocusItem: ImageLookItem?
     @State var hiddenItems: [UUID] = []
     
@@ -118,11 +119,12 @@ struct DetailArtsSection: View {
                                 if !hiddenItems.contains(item.id) {
                                     Button(action: {
                                         #if os(iOS)
-                                        if let image = nativeImages[item.id] {
+                                        if let image = nativeImages[item.id], let frame = imageFrames[item.id] {
                                             quickLookOnFocusItem = .init(
                                                 image: image,
                                                 title: .init(localized: tabContent.tabName),
-                                                subtitle: .init(localized: item.title)
+                                                subtitle: .init(localized: item.title),
+                                                imageFrame: frame
                                             )
                                         }
                                         #else
@@ -139,27 +141,34 @@ struct DetailArtsSection: View {
                                         CustomGroupBox {
                                             VStack {
                                                 Spacer(minLength: 0)
-                                                ZStack {
-                                                    WebImage(url: item.url) { image in
-                                                        image
-                                                            .resizable()
-                                                            .antialiased(true)
-                                                            .scaledToFit()
-                                                    } placeholder: {
-                                                        RoundedRectangle(cornerRadius: 10)
-                                                            .fill(getPlaceholderColor())
-                                                            .aspectRatio(3, contentMode: .fit)
+                                                WebImage(url: item.url) { image in
+                                                    image
+                                                        .resizable()
+                                                        .antialiased(true)
+                                                        .scaledToFit()
+                                                } placeholder: {
+                                                    RoundedRectangle(cornerRadius: 10)
+                                                        .fill(getPlaceholderColor())
+                                                        .aspectRatio(3, contentMode: .fit)
+                                                }
+                                                .interpolation(.high)
+                                                .onSuccess { image, _, _ in
+                                                    DispatchQueue.main.async { // yield
+                                                        nativeImages.updateValue(image, forKey: item.id)
                                                     }
-                                                    .interpolation(.high)
-                                                    .onSuccess { image, _, _ in
-                                                        DispatchQueue.main.async { // yield
-                                                            nativeImages.updateValue(image, forKey: item.id)
-                                                        }
+                                                }
+                                                .onFailure { _ in
+                                                    DispatchQueue.main.async { // yield
+                                                        hiddenItems.append(item.id)
                                                     }
-                                                    .onFailure { _ in
-                                                        DispatchQueue.main.async { // yield
-                                                            hiddenItems.append(item.id)
-                                                        }
+                                                }
+                                                .background {
+                                                    GeometryReader { geometry in
+                                                        let frame = geometry.frame(in: .global)
+                                                        Color.clear
+                                                            .onChange(of: frame) {
+                                                                imageFrames.updateValue(frame, forKey: item.id)
+                                                            }
                                                     }
                                                 }
                                                 Text(item.title)
@@ -198,7 +207,7 @@ struct DetailArtsSection: View {
         }
         #if os(iOS)
         .fullScreenCover(item: $quickLookOnFocusItem) { item in
-            ImageLookView(image: item.image, title: item.title, subtitle: item.subtitle)
+            ImageLookView(image: item.image, title: item.title, subtitle: item.subtitle, imageFrame: item.imageFrame)
         }
         #endif
     }
@@ -208,6 +217,7 @@ struct DetailArtsSection: View {
         var image: PlatformImage
         var title: String
         var subtitle: String
+        var imageFrame: CGRect
     }
 }
 extension DetailArtsSection {
@@ -221,24 +231,87 @@ struct ImageLookView: View {
     var image: UIImage
     var title: String
     var subtitle: String
+    var imageFrame: CGRect
     @Environment(\.dismiss) private var dismiss
+    @State private var dismissingOffset = CGSize.zero
+    @State private var dismissingScale: CGFloat = 1
+    @State private var dismissingOpacity = 1.0
+    @State private var imageOpacity = 1.0
     @State private var isShareViewPresented = false
     @State private var isFullScreen = false
+    @State private var currentZoomScale: CGFloat = 1
+    @State private var imageSourceFrame = CGRect()
+    @State private var isCopied = false
     var body: some View {
         NavigationStack {
             VStack {
-                _ZoomScrollView {
+                _ZoomScrollView(current: $currentZoomScale) {
                     Image(uiImage: image)
                         .resizable()
                         .interpolation(.high)
                         .antialiased(true)
                         .scaledToFit()
+                        .background {
+                            GeometryReader { geometry in
+                                Color.clear
+                                    .ignoresSafeArea()
+                                    .onAppear {
+                                        imageSourceFrame = geometry.frame(in: .global)
+                                    }
+                            }
+                        }
                 }
                 .ignoresSafeArea()
+                .offset(dismissingOffset)
+                .scaleEffect(dismissingScale)
+                .opacity(imageOpacity)
+            }
+            .background {
+                Rectangle()
+                    .fill(Color(.systemBackground))
+                    .ignoresSafeArea()
+                    .opacity(dismissingOpacity)
             }
             .onTapGesture {
                 isFullScreen.toggle()
             }
+            .simultaneousGesture(
+                DragGesture()
+                    .onChanged { value in
+                        dismissingOffset = value.translation
+                    }
+                    .onChanged { value in
+                        dismissingScale = max(min(1.0 - value.translation.height * 0.001, 1), 0)
+                    }
+                    .onChanged { value in
+                        dismissingOpacity = max(min(1.0 - value.translation.height * 0.01, 1), 0)
+                    }
+                    .onEnded { value in
+                        if value.translation.height > 100 {
+                            withAnimation {
+                                dismissingOffset = .init(
+                                    width: imageFrame.origin.x - imageSourceFrame.origin.x,
+                                    height: imageFrame.origin.y - imageSourceFrame.origin.y
+                                )
+                                dismissingScale = imageFrame.width / imageSourceFrame.width
+                                imageOpacity = 0
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                var transaction = Transaction()
+                                transaction.disablesAnimations = true
+                                withTransaction(transaction) {
+                                    dismiss()
+                                }
+                            }
+                        } else {
+                            withAnimation(.spring(duration: 0.3, bounce: 0.15)) {
+                                dismissingOffset = .zero
+                                dismissingScale = 1
+                                dismissingOpacity = 1
+                            }
+                        }
+                    }
+            )
             .sheet(isPresented: $isShareViewPresented) {
                 _ImageShareView(image: image)
             }
@@ -268,29 +341,36 @@ struct ImageLookView: View {
                             }
                         }
                     }
-                    ToolbarItem(placement: .bottomBar) {
-                        Button("Share…", systemImage: "square.and.arrow.up") {
-                            isShareViewPresented = true
-                        }
-                    }
-                    if #available(iOS 26.0, *) {
-                        ToolbarSpacer(.fixed, placement: .bottomBar)
-                    }
                     ToolbarItemGroup(placement: .bottomBar) {
-                        Button("Image.save.photos", systemImage: "photo.badge.plus") {
-                            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                        }
-                        Button("Image.copy.image", systemImage: "document.on.document") {
-                            UIPasteboard.general.image = image
-                        }
-                        if #available(iOS 18.0, macOS 15.0, *) {
-                            Button("Image.copy.subject", systemImage: "circle.dashed.rectangle") {
-                                Task {
-                                    if let _data = image.pngData(), let result = await getImageSubject(_data) {
-                                        UIPasteboard.general.image = .init(data: result)
+                        if !isCopied {
+                            Button("Image.save.photos", systemImage: "photo.badge.plus") {
+                                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                                didCopied()
+                            }
+                            Button("Image.copy.image", systemImage: "document.on.document") {
+                                UIPasteboard.general.image = image
+                                didCopied()
+                            }
+                            if #available(iOS 18.0, macOS 15.0, *) {
+                                Button("Image.copy.subject", systemImage: "circle.dashed.rectangle") {
+                                    Task {
+                                        if let _data = image.pngData(), let result = await getImageSubject(_data) {
+                                            UIPasteboard.general.image = .init(data: result)
+                                            didCopied()
+                                        }
                                     }
                                 }
                             }
+                        } else {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                    if #available(iOS 26.0, *) {
+                        ToolbarSpacer(placement: .bottomBar)
+                    }
+                    ToolbarItem(placement: .bottomBar) {
+                        Button("Share…", systemImage: "square.and.arrow.up") {
+                            isShareViewPresented = true
                         }
                     }
                 }
@@ -298,18 +378,33 @@ struct ImageLookView: View {
         }
         .statusBarHidden(isFullScreen)
         .animation(.spring(duration: 0.3, bounce: 0.15), value: isFullScreen)
+        .presentationBackground(.clear)
+    }
+    
+    func didCopied() {
+        withAnimation {
+            isCopied = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            withAnimation {
+                isCopied = false
+            }
+        }
     }
 }
 private struct _ZoomScrollView<Content: View>: UIViewRepresentable {
+    var currentZoomScale: Binding<CGFloat>
     var minimumZoomScale: CGFloat = 1
     var maximumZoomScale: CGFloat = 5
     let hostingController: UIHostingController<Content>
     
     init(
+        current: Binding<CGFloat>,
         minimumZoomScale: CGFloat = 1,
         maximumZoomScale: CGFloat = 5,
         @ViewBuilder content: @escaping () -> Content
     ) {
+        self.currentZoomScale = current
         self.minimumZoomScale = minimumZoomScale
         self.maximumZoomScale = maximumZoomScale
         self.hostingController = .init(rootView: content())
@@ -319,6 +414,7 @@ private struct _ZoomScrollView<Content: View>: UIViewRepresentable {
     
     func makeUIView(context: Context) -> UIScrollView {
         let hostedView = hostingController.view!
+        hostedView.backgroundColor = .clear
         hostedView.translatesAutoresizingMaskIntoConstraints = false
         
         scrollView.addSubview(hostedView)
@@ -333,6 +429,7 @@ private struct _ZoomScrollView<Content: View>: UIViewRepresentable {
             hostedView.heightAnchor.constraint(equalTo: scrollView.frameLayoutGuide.heightAnchor)
         ])
         
+        scrollView.backgroundColor = .clear
         scrollView.delegate = context.coordinator
         scrollView.minimumZoomScale = minimumZoomScale
         scrollView.maximumZoomScale = maximumZoomScale
@@ -360,6 +457,9 @@ private struct _ZoomScrollView<Content: View>: UIViewRepresentable {
         
         func viewForZooming(in scrollView: UIScrollView) -> UIView? {
             parent.hostingController.view
+        }
+        func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+            parent.currentZoomScale.wrappedValue = scale
         }
         
         @objc
