@@ -169,37 +169,34 @@ private struct PostSectionView: View {
         .onAppear {
             if commentSourceTitle == nil {
                 Task {
-                    switch post.categoryName {
-                    case .cardComment:
-                        commentSourceTitle = await Card(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
-//                    case .chartSimulatorComment:
-//                        commentSourceTitle = await()
-                    case .characterComment:
-                        commentSourceTitle = await Character(id: Int(post.categoryID) ?? -1)?.characterName.forPreferredLocale()
-                    case .comicComment:
-                        commentSourceTitle = await Comic(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
-                    case .costumeComment:
-                        commentSourceTitle = await Costume(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
-                    case .eventArchiveComment:
-                        commentSourceTitle = await Event(id: Int(post.categoryID.split(separator: "_").first!) ?? -1)?.title.forPreferredLocale()
-                    case .eventComment:
-                        commentSourceTitle = await Event(id: Int(post.categoryID.split(separator: "_").first!) ?? -1)?.title.forPreferredLocale()
-                    case .eventTrackerComment:
-                        commentSourceTitle = await Event(id: Int(post.categoryID.split(separator: "_").first!) ?? -1)?.title.forPreferredLocale()
-                    case .gachaComment:
-                        commentSourceTitle = await Gacha(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
-                    case .live2dComment:
+                    switch await post.parent {
+                    case .post(let basicData):
+                        commentSourceTitle = basicData.title
+                    case .news(let item):
+                        commentSourceTitle = item.title
+                    case .character(let character):
+                        commentSourceTitle = character.characterName.forPreferredLocale()
+                    case .card(let card):
+                        commentSourceTitle = card.prefix.forPreferredLocale()
+                    case .costume(let costume):
+                        commentSourceTitle = costume.description.forPreferredLocale()
+                    case .event(let event):
+                        commentSourceTitle = event.eventName.forPreferredLocale()
+                    case .gacha(let gacha):
+                        commentSourceTitle = gacha.gachaName.forPreferredLocale()
+                    case .song(let song):
+                        commentSourceTitle = song.musicTitle.forPreferredLocale()
+                    case .loginCampaign(let campaign):
+                        commentSourceTitle = campaign.caption.forPreferredLocale()
+                    case .comic(let comic):
+                        commentSourceTitle = comic.title.forPreferredLocale()
+                    case .eventTracker(let event):
+                        commentSourceTitle = event.eventName.forPreferredLocale()
+                    case .chartSimulator(let song):
+                        commentSourceTitle = song.musicTitle.forPreferredLocale()
+                    case .live2d, .story:
                         commentSourceTitle = String(post.categoryID.split(separator: "/").last ?? "nil")
-                    case .loginCampaignComment:
-                        commentSourceTitle = await LoginCampaign(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
-                    case .newsComment:
-                        commentSourceTitle = await NewsItem(id: Int(post.categoryID) ?? -1)?.title
-                    case .songComment:
-                        commentSourceTitle = await Song(id: Int(post.categoryID) ?? -1)?.title.forPreferredLocale()
-                    case .storyComment:
-                        commentSourceTitle = String(post.categoryID.split(separator: "/").last ?? "nil")
-                    default:
-                        commentSourceTitle = await DoriAPI.Post.basicData(of: post.id)?.title
+                    default: break
                     }
                 }
             }
