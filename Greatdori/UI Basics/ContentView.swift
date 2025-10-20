@@ -284,7 +284,7 @@ struct WelcomeView: View {
     @Binding var showWelcomeScreen: Bool
     var body: some View {
         VStack(alignment: .leading) {
-            Image("MacAppIcon")
+            Image("MacAppIcon\(colorScheme == .dark ? "Dark" : "")")
                 .resizable()
                 .antialiased(true)
                 .frame(width: 64, height: 64)

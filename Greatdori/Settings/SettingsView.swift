@@ -70,6 +70,8 @@ struct SettingsView: View {
                     .tag(3)
                 Label("Settings.advanced", systemImage: "hammer")
                     .tag(20)
+                Label("Settings.about", systemImage: "info.circle")
+                    .tag(21)
                 if AppFlag.DEBUG {
                     Label("Settings.debug", systemImage: "ant")
                         .tag(23)
@@ -78,28 +80,45 @@ struct SettingsView: View {
 //            .toolbar(removing: .sidebarToggle)
         }, detail: {
             NavigationStack {
-                Form {
-                    switch selectionItem {
-                    case 0:
+                switch selectionItem {
+                case 0:
+                    Form {
                         SettingsLocaleView()
-                    case 1:
-                        SettingsHomeView()
-                    case 2:
-                        SettingsPermissionsView()
-                    case 3:
-                        SettingsWidgetsView()
-                    case 20:
-                        SettingsAdvancedView()
-                    case 23:
-                        SettingsDebugView()
-                    default:
-                        ProgressView()
                     }
+                    .formStyle(.grouped)
+                case 1:
+                    Form {
+                        SettingsHomeView()
+                    }
+                    .formStyle(.grouped)
+                case 2:
+                    Form {
+                        SettingsPermissionsView()
+                    }
+                    .formStyle(.grouped)
+                case 3:
+                    Form {
+                        SettingsWidgetsView()
+                    }
+                    .formStyle(.grouped)
+                case 20:
+                    Form {
+                        SettingsAdvancedView()
+                    }
+                    .formStyle(.grouped)
+                case 21:
+                    SettingsAboutView()
+                case 23:
+                    Form {
+                        SettingsDebugView()
+                    }
+                    .formStyle(.grouped)
+                default:
+                    ProgressView()
                 }
-                .formStyle(.grouped)
             }
         })
-//        .toolbar(removing: .sidebarToggle)
+        //        .toolbar(removing: .sidebarToggle)
         #endif
     }
 }
@@ -133,6 +152,7 @@ struct SettingsOfflineDataView: View {
     }
 }
 
+/*
 struct SettingsAboutView: View {
     @State var showDebugVerificationAlert = false
     @State var password = ""
@@ -185,16 +205,7 @@ struct SettingsAboutView: View {
         })
     }
 }
-
-enum BirthdayTimeZone: String, CaseIterable {
-    case adaptive
-    case JST
-    case UTC
-    case CST
-    case PT
-    
-    
-}
+ */
 
 enum DataSourcePreference: String, CaseIterable {
     case useInternet

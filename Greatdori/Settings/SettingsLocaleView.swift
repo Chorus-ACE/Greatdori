@@ -209,3 +209,11 @@ struct SettingsLocaleView: View {
     }
 }
 
+
+enum BirthdayTimeZone: String, CaseIterable {
+    case adaptive
+    case JST
+    case UTC
+    case CST
+    case PT
+}

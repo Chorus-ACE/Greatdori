@@ -229,6 +229,7 @@
 		E98B8B532E7E922A00B4C8A8 /* NavigationComponentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */; };
 		E9A126FC2E8CB62000BBD39E /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A126FB2E8CB61900BBD39E /* EventTracker.swift */; };
 		E9AE9E082E909EDF00AAB049 /* CardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE9E072E909ED100AAB049 /* CardSelector.swift */; };
+		E9B17BBB2EA5DC430049C92C /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */; };
 		E9CD3A482E58975D00BF5EA9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A472E58975900BF5EA9 /* Extensions.swift */; };
 		E9CD3A4A2E58984400BF5EA9 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A492E58984200BF5EA9 /* Functions.swift */; };
 		E9E3C05A2E35D0150059BCE8 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E9E3C0592E35D0150059BCE8 /* Localizable.xcstrings */; };
@@ -652,6 +653,7 @@
 		E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationComponentsView.swift; sourceTree = "<group>"; };
 		E9A126FB2E8CB61900BBD39E /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
 		E9AE9E072E909ED100AAB049 /* CardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSelector.swift; sourceTree = "<group>"; };
+		E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
 		E9CD3A472E58975900BF5EA9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E9CD3A492E58984200BF5EA9 /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		E9D96AA42E752BE7005E0F2C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -1285,6 +1287,7 @@
 				E94443CB2E8E6ED700593F07 /* SettingsPermissionsView.swift */,
 				E97C5B872E8E9A4A004858A3 /* SettingsWidgetsView.swift */,
 				E9076E2E2E8B839D00A9F5AE /* SettingsAdvanced.swift */,
+				E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */,
 				E94443CD2E8E80BC00593F07 /* SettingsDebugView.swift */,
 				E9AE9E072E909ED100AAB049 /* CardSelector.swift */,
 				E90769D12E546D5B00C9871C /* DebugView.swift */,
@@ -1736,6 +1739,7 @@
 				E94218F22E8AA32000F24974 /* CharacterSearchView.swift in Sources */,
 				E942190E2E8AA4D700F24974 /* SongDetailGameplayView.swift in Sources */,
 				E94443CE2E8E80C200593F07 /* SettingsDebugView.swift in Sources */,
+				E9B17BBB2EA5DC430049C92C /* SettingsAboutView.swift in Sources */,
 				E90769CD2E546D5500C9871C /* HomeView.swift in Sources */,
 				E90769CE2E546D5500C9871C /* NewsView.swift in Sources */,
 				8CC046DC2E6C8F63009FDC13 /* AppFlags.swift in Sources */,
