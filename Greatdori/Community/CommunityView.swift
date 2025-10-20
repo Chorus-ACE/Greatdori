@@ -27,7 +27,7 @@ struct CommunityView: View {
                 if let posts {
                     ScrollView {
                         LazyVStack {
-                            ForEach(posts.content) { post in
+                            ForEach(Array(posts.content.enumerated()), id: \.element.id) { index, post in
                                 PostSectionView(post: post)
                                     .swipeActions {
                                         Button(action: {
@@ -42,14 +42,26 @@ struct CommunityView: View {
                                             }
                                         })
                                     }
+                                    .onAppear {
+                                        if index == posts.content.count - 1 {
+                                            continueLoadPosts()
+                                        }
+                                    }
+                            }
+                            if isLoadingMore {
+                                ProgressView()
                             }
                         }
                         .padding()
+                    }
+                    .refreshable {
+                        await getPosts()
                     }
                 } else {
                     if infoIsAvailable {
                         ExtendedConstraints {
                             ProgressView()
+                                .controlSize(.large)
                         }
                         .onAppear {
                             Task {
@@ -77,6 +89,7 @@ struct CommunityView: View {
         posts = await DoriAPI.Post.communityAll(offset: pageOffset)
     }
     func continueLoadPosts() {
+        guard !isLoadingMore else { return }
         if let posts, posts.hasMore {
             pageOffset = posts.nextOffset
             Task {
