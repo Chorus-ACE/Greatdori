@@ -29,6 +29,19 @@ struct CommunityView: View {
                         LazyVStack {
                             ForEach(posts.content) { post in
                                 PostSectionView(post: post)
+                                    .swipeActions {
+                                        Button(action: {
+                                            
+                                        }, label: {
+                                            if post.liked {
+                                                Label("Community.like", systemImage: "heart")
+                                                    .foregroundStyle(.red)
+                                            } else {
+                                                Label("Community.remove-like", systemImage: "heart.slash.fill")
+                                                    .foregroundStyle(.red)
+                                            }
+                                        })
+                                    }
                             }
                         }
                         .padding()
@@ -92,13 +105,38 @@ private struct PostSectionView: View {
                         Text("@\(post.author.username)")
                     }
                     Spacer()
-                    Text(post.time.formattedRelatively())
-                        .foregroundStyle(.secondary)
-                    Image(systemName: post.getPostTypeSymbol())
-                        .foregroundStyle(.secondary)
+                    Group {
+                        if post.likes != 0 {
+                            HStack(spacing: 0) {
+                                Image(systemName: post.liked ? "heart.fill" : "heart")
+                                Text("\(post.likes)")
+                            }
+                        }
+                        Text(post.time.formattedRelatively())
+                        Image(systemName: post.getPostTypeSymbol())
+                    }
+                    .foregroundStyle(.secondary)
+                    .wrapIf(!isMACOS, in: { content in
+                        #if os(iOS)
+                        Menu(content: {
+                            Button(action: {
+                                
+                            }, label: {
+                                if post.liked {
+                                    Label("Community.like", systemImage: "heart")
+                                } else {
+                                    Label("Community.remove-like", systemImage: "heart.slash")
+                                }
+                            })
+                        }, label: {
+                            content
+                        })
+                        .menuStyle(.borderlessButton)
+                        #endif
+                    })
+                    
                 }
                 .font(.footnote)
-                .padding(.bottom, 1)
                 Group {
                     if !post.title.isEmpty {
                         Text(post.title)
@@ -122,6 +160,7 @@ private struct PostSectionView: View {
             }
         }
         .frame(maxWidth: 600)
+        .textSelection(.enabled)
     }
 }
 
