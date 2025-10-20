@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import MarkdownUI
 
 struct CommunityView: View {
     @State var posts: DoriAPI.Post.PagedPosts?
@@ -101,9 +102,28 @@ private struct PostSectionView: View {
                 }
                 .bold()
                 .font(.title3)
-//                Text(post.content)
+                Markdown(post.content.toMarkdown())
+                    .markdownInlineImageProvider(.postContent(imageFrame: .init(width: 20, height: 20)))
+                    
             }
         }
         .frame(maxWidth: 600)
+    }
+}
+
+struct PostContentInlineImageProvider: InlineImageProvider {
+    var imageFrame: CGSize
+    func image(with url: URL, label: String) async throws -> Image {
+        await RichContentGroup.resolveMarkdownImage(
+            url: url,
+            label: label,
+            emojiIdealSize: imageFrame
+        )
+            
+    }
+}
+extension InlineImageProvider where Self == PostContentInlineImageProvider {
+    static func postContent(imageFrame: CGSize) -> Self {
+        .init(imageFrame: imageFrame)
     }
 }

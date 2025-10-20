@@ -2234,10 +2234,6 @@
 					"@executable_path/../Frameworks",
 					/Library/Frameworks,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/clib/libgit2/bin",
-				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
@@ -2304,10 +2300,6 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../Frameworks",
 					/Library/Frameworks,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/clib/libgit2/bin",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
@@ -2441,10 +2433,6 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../Frameworks",
 					/Library/Frameworks,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/clib/libgit2/bin",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
@@ -2607,10 +2595,6 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../Frameworks",
 					/Library/Frameworks,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/clib/libgit2/bin",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
