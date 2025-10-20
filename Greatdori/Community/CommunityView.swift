@@ -159,6 +159,8 @@ private struct PostSectionView: View {
                     .markdownInlineImageProvider(.postContent(imageFrame: .init(width: 20, height: 20)))
                 if !tagsText.isEmpty {
                     Text(tagsText)
+                        .foregroundStyle(.secondary)
+                        .font(.caption)
                 }
             }
         }
@@ -210,6 +212,7 @@ private struct PostSectionView: View {
     
     @MainActor
     func handleTags() async {
+        /*
         var allTags: [String] = []
         
         if !post.tags.isEmpty {
@@ -250,6 +253,7 @@ private struct PostSectionView: View {
             }
         }
         tagsText = allTags.map { "#\($0)" }.joined(separator: "  ")
+         */
     }
 }
 
