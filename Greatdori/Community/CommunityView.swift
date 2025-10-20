@@ -210,9 +210,7 @@ private struct PostSectionView: View {
         }
     }
     
-    @MainActor
     func handleTags() async {
-        /*
         var allTags: [String] = []
         
         if !post.tags.isEmpty {
@@ -237,23 +235,24 @@ private struct PostSectionView: View {
         
         await withTaskGroup { group in
             for (index, tag) in post.tags.enumerated() {
-                group.addTask {
-                    //FIXME: [251020] Data Race
+                group.addTask { () -> (Int, String) in
                     switch tag {
                     case .card(let id):
-                        allTags[index] = await Card(id: id)?.title.forPreferredLocale() ?? String(localized: "Community.tags.card.id.\(id)")
+                        (index, await Card(id: id)?.title.forPreferredLocale() ?? String(localized: "Community.tags.card.id.\(id)"))
                     case .character(let id):
-                        allTags[index] = await Character(id: id)?.characterName.forPreferredLocale() ?? String(localized: "Community.tags.character.id.\(id)")
+                        (index, await Character(id: id)?.characterName.forPreferredLocale() ?? String(localized: "Community.tags.character.id.\(id)"))
                     case .text(let content):
-                        allTags[index] = content
+                        (index, content)
                     default:
-                        allTags[index] = String(localized: "Community.tags.unknown")
+                        (index, String(localized: "Community.tags.unknown"))
                     }
                 }
             }
+            for await (index, newTag) in group {
+                allTags[index] = newTag
+            }
         }
         tagsText = allTags.map { "#\($0)" }.joined(separator: "  ")
-         */
     }
 }
 
