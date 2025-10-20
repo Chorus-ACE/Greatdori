@@ -161,6 +161,13 @@ private struct PostSectionView: View {
         }
         .frame(maxWidth: 600)
         .textSelection(.enabled)
+        .onAppear {
+            if commentSourceTitle == nil {
+                Task {
+                    commentSourceTitle = await DoriAPI.Post.basicData(of: post.id)?.title
+                }
+            }
+        }
     }
 }
 
