@@ -12,9 +12,14 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Metal
+import System
 import DoriKit
 import SwiftUI
+import MetalKit
 import SpriteKit
+import Alamofire
+import AppleArchive
 
 struct ChartSimulatorView: View {
     @State private var selectedSong: PreviewSong?
@@ -103,6 +108,10 @@ struct ChartSimulatorView: View {
         }
     }
 }
+
+// MARK: - Chart Viewer
+// For identifying, Chart Viewer is a plain chart view without any motion,
+// whereas Chart Player is like the one in GBP with moving notes.
 
 private class ChartViewerScene: SKScene {
     let chart: [DoriAPI.Song.Chart]
@@ -491,4 +500,98 @@ private func chartLastBeat(_ chart: [DoriAPI.Song.Chart]) -> Double {
         }
     }
     return lastBeat
+}
+
+// MARK: - Chart Player
+
+private final class ChartPlayerAssetManager {
+    static var assetBaseURL: URL {
+        .init(filePath: NSHomeDirectory() + "/Documents/Assets/ChartPlayer")
+    }
+    
+    static var isAvailable: Bool {
+        FileManager.default.fileExists(atPath: assetBaseURL.appending(path: "Info.plist").path(percentEncoded: false))
+    }
+    
+    static func download() async -> Bool {
+        if isAvailable {
+            return true
+        }
+        
+        let archiveURL = URL(filePath: NSHomeDirectory() + "/tmp/ChartPlayerAssets.aar")
+        return await withCheckedContinuation { continuation in
+            AF.download("https://asset.greatdori.com/ChartPlayerAssets100.aar", to: { _, _ in
+                (archiveURL, [.createIntermediateDirectories, .removePreviousFile])
+            }).response { response in
+                if response.error != nil {
+                    continuation.resume(returning: false)
+                    return
+                }
+                guard let readFileStream = ArchiveByteStream.fileStream(
+                    path: .init(archiveURL.path(percentEncoded: false)),
+                    mode: .readOnly,
+                    options: [],
+                    permissions: .init(rawValue: 0o644)
+                ) else {
+                    continuation.resume(returning: false)
+                    return
+                }
+                defer { try? readFileStream.close() }
+                guard let decompressStream = ArchiveByteStream.decompressionStream(readingFrom: readFileStream) else {
+                    continuation.resume(returning: false)
+                    return
+                }
+                defer { try? decompressStream.close() }
+                guard let decodeStream = ArchiveStream.decodeStream(readingFrom: decompressStream) else {
+                    continuation.resume(returning: false)
+                    return
+                }
+                defer { try? decodeStream.close() }
+                try? FileManager.default.createDirectory(at: assetBaseURL, withIntermediateDirectories: true)
+                let destination = FilePath(assetBaseURL.path(percentEncoded: false))
+                guard let extractStream = ArchiveStream.extractStream(
+                    extractingTo: destination,
+                    flags: .ignoreOperationNotPermitted
+                ) else {
+                    continuation.resume(returning: false)
+                    return
+                }
+                defer { try? extractStream.close() }
+                if (try? ArchiveStream.process(readingFrom: decodeStream, writingTo: extractStream)) != nil {
+                    continuation.resume(returning: true)
+                } else {
+                    continuation.resume(returning: false)
+                }
+            }
+        }
+    }
+}
+
+private class ChartPlayerRenderer: NSObject, MTKViewDelegate {
+    
+    private var drawableSize = CGSize.zero
+    
+    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        drawableSize = size
+    }
+    
+    func draw(in view: MTKView) {
+        
+    }
+}
+
+private class ChartPlayerScene: SKScene {
+    init(size: CGSize, chart: [DoriAPI.Song.Chart]) {
+        super.init(size: size)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        self.removeAllChildren()
+        
+        
+    }
 }
