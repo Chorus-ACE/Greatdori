@@ -19,6 +19,7 @@ import SwiftUI
 import MetalKit
 import SpriteKit
 import Alamofire
+import SwiftyJSON
 import AppleArchive
 
 struct ChartSimulatorView: View {
@@ -27,6 +28,10 @@ struct ChartSimulatorView: View {
     @State private var selectedDifficulty: DoriAPI.Song.DifficultyType = .easy
     @State private var chart: [DoriAPI.Song.Chart]?
     @State private var chartScenes: [ChartViewerScene] = []
+    @State private var showChartPlayer = false
+    @State private var isChartPlayerAssetAvailable = ChartPlayerAssetManager.isAvailable
+    @State private var isDownloadingChartPlayerAsset = false
+    @State private var availableWidth: CGFloat = 0
     var body: some View {
         ScrollView {
             HStack {
@@ -72,14 +77,51 @@ struct ChartSimulatorView: View {
                                     }
                                 }
                             }
+                            ListItemView {
+                                Text("显示模拟器") // FIXME: Text style
+                                    .bold()
+                            } value: {
+                                Toggle(isOn: $showChartPlayer) {
+                                    EmptyView()
+                                }
+                                .toggleStyle(.switch)
+                                .labelsHidden()
+                            }
                         }
                     }
                     CustomGroupBox(cornerRadius: 20) {
-                        ScrollView(.horizontal) {
-                            HStack(spacing: 0) {
-                                ForEach(chartScenes, id: \.self) { scene in
-                                    SpriteView(scene: scene)
-                                        .frame(width: 240, height: 500)
+                        if !showChartPlayer {
+                            ScrollView(.horizontal) {
+                                HStack(spacing: 0) {
+                                    ForEach(chartScenes, id: \.self) { scene in
+                                        SpriteView(scene: scene)
+                                            .frame(width: 240, height: 500)
+                                    }
+                                }
+                            }
+                        } else {
+                            if isChartPlayerAssetAvailable {
+                                if let chart {
+                                    ChartPlayerView(chart: chart)
+                                        .frame(idealWidth: availableWidth, idealHeight: availableWidth / 16 * 9)
+                                        
+                                }
+                            } else {
+                                HStack {
+                                    Spacer()
+                                    VStack {
+                                        Text("使用谱面模拟器前需要下载附加资源（约38MB）")
+                                        Button("下载") {
+                                            Task {
+                                                isDownloadingChartPlayerAsset = true
+                                                _ = await ChartPlayerAssetManager.download()
+                                                isChartPlayerAssetAvailable = ChartPlayerAssetManager.isAvailable
+                                                isDownloadingChartPlayerAsset = false
+                                            }
+                                        }
+                                        .disabled(isDownloadingChartPlayerAsset)
+                                    }
+                                    Spacer()
                                 }
                             }
                         }
@@ -90,6 +132,9 @@ struct ChartSimulatorView: View {
             }
         }
         .navigationTitle("谱面模拟器")
+        .onFrameChange { geometry in
+            availableWidth = geometry.size.width
+        }
     }
     
     func loadChart() {
@@ -398,6 +443,7 @@ private class ChartViewerScene: SKScene {
         }
     }
 }
+
 private class ChartViewerConfiguration {
     init() {}
     
@@ -567,21 +613,98 @@ private final class ChartPlayerAssetManager {
     }
 }
 
-private class ChartPlayerRenderer: NSObject, MTKViewDelegate {
+#if os(macOS)
+private struct ChartPlayerView: NSViewRepresentable {
+    var chart: [DoriAPI.Song.Chart]
+    var configuration: ChartPlayerConfiguration
+    private let device: MTLDevice
     
-    private var drawableSize = CGSize.zero
+    init(chart: [DoriAPI.Song.Chart], configuration: ChartPlayerConfiguration = .init()) {
+        self.chart = chart
+        self.configuration = configuration
+        self.device = MTLCreateSystemDefaultDevice()!
+    }
+    
+    func makeNSView(context: Context) -> some NSView {
+        let view = MTKView()
+        view.device = device
+        view.delegate = context.coordinator
+        view.preferredFramesPerSecond = NSScreen.main?.maximumFramesPerSecond ?? 60
+        return view
+    }
+    func updateNSView(_ nsView: NSViewType, context: Context) {}
+    func makeCoordinator() -> ChartPlayerRenderer {
+        .init(device: device, chart: chart, configuration: configuration)
+    }
+}
+#else
+private struct ChartPlayerView: UIViewRepresentable {
+    var chart: [DoriAPI.Song.Chart]
+    var configuration: ChartPlayerConfiguration
+    private let device: MTLDevice
+    
+    init(chart: [DoriAPI.Song.Chart], configuration: ChartPlayerConfiguration = .init()) {
+        self.chart = chart
+        self.configuration = configuration
+        self.device = MTLCreateSystemDefaultDevice()!
+    }
+    
+    func makeUIView(context: Context) -> some UIView {
+        let view = MTKView()
+        view.device = device
+        view.delegate = context.coordinator
+        view.preferredFramesPerSecond = UIScreen.main.maximumFramesPerSecond
+        return view
+    }
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+    func makeCoordinator() -> ChartPlayerRenderer {
+        .init(device: device, chart: chart, configuration: configuration)
+    }
+}
+#endif
+
+private class ChartPlayerRenderer: NSObject, MTKViewDelegate {
+    private let renderer: SKRenderer
+    private let commandQueue: MTLCommandQueue
+    
+    init(device: any MTLDevice, chart: [DoriAPI.Song.Chart], configuration: ChartPlayerConfiguration) {
+        self.renderer = .init(device: device)
+        self.renderer.scene = ChartPlayerScene(size: .zero, chart: chart, configuration: configuration)
+        self.commandQueue = device.makeCommandQueue()!
+    }
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        drawableSize = size
+        renderer.scene?.size = size
     }
     
     func draw(in view: MTKView) {
-        
+        renderer.update(atTime: Date.now.timeIntervalSince1970)
+        if let commandBuffer = commandQueue.makeCommandBuffer() {
+            if let onscreenDescriptor = view.currentRenderPassDescriptor,
+               let onscreenCommandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: onscreenDescriptor) {
+                renderer.render(
+                    withViewport: view.bounds,
+                    renderCommandEncoder: onscreenCommandEncoder,
+                    renderPassDescriptor: onscreenDescriptor,
+                    commandQueue: commandQueue
+                )
+                onscreenCommandEncoder.endEncoding()
+                if let drawable = view.currentDrawable {
+                    commandBuffer.present(drawable)
+                }
+            }
+            commandBuffer.commit()
+        }
     }
 }
 
 private class ChartPlayerScene: SKScene {
-    init(size: CGSize, chart: [DoriAPI.Song.Chart]) {
+    let chart: [DoriAPI.Song.Chart]
+    let tex: ChartPlayerConfiguration._TextureGroup
+    
+    init(size: CGSize, chart: [DoriAPI.Song.Chart], configuration: ChartPlayerConfiguration) {
+        self.chart = chart
+        self.tex = configuration.textureGroup()
         super.init(size: size)
     }
     
@@ -592,6 +715,250 @@ private class ChartPlayerScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         self.removeAllChildren()
         
+        renderBackground()
+    }
+    
+    private func renderBackground() {
+        // Background tex
+        let backgroundNode = SKSpriteNode(texture: tex.background)
+        backgroundNode.size = .init(width: size.width, height: size.width / 4 * 3)
+        backgroundNode.position = .init(x: size.width / 2, y: size.height / 2)
+        addChild(backgroundNode)
         
+        // Rhythm line
+        let rhythmLineNode = SKSpriteNode(texture: tex.backgroundRhythmLine)
+        let rhythmLineAspectRatio = rhythmLineNode.size.width / rhythmLineNode.size.height
+        rhythmLineNode.size.height = size.height - (150 + 40)
+        rhythmLineNode.size.width = rhythmLineNode.size.height * rhythmLineAspectRatio
+        rhythmLineNode.position = .init(x: size.width / 2, y: (size.height + 100) / 2)
+        addChild(rhythmLineNode)
+        
+        // Judge line
+        let judgeLineNode = SKSpriteNode(texture: tex.gamePlayLine)
+        let judgeLineAspectRatio = judgeLineNode.size.width / judgeLineNode.size.height
+        judgeLineNode.size.width = rhythmLineNode.size.width * 1.5
+        judgeLineNode.size.height = judgeLineNode.size.width / judgeLineAspectRatio
+        judgeLineNode.position = .init(x: size.width / 2, y: 150)
+        addChild(judgeLineNode)
+    }
+}
+
+private final class ChartPlayerConfiguration: @unchecked Sendable {
+    init() {}
+    
+    var backgroundStyle: BackgroundStyle = .skin0
+    var lineStyle: LineStyle = .skin0
+    var noteStyle: NoteStyle = .skin0
+    var flickStyle: FlickStyle = .skin0
+    
+    func textureGroup() -> _TextureGroup {
+        struct NoteSpriteMetadata {
+            var name: String
+            var rect: CGRect
+            var offset: CGPoint
+            var textureRect: CGRect
+            var textureRectOffset: CGPoint
+            
+            init(json: JSON) {
+                let base = json["Base"]
+                self.name = base["m_Name"].stringValue
+                self.rect = .init(
+                    x: base["m_Rect"]["x"].doubleValue,
+                    y: base["m_Rect"]["y"].doubleValue,
+                    width: base["m_Rect"]["width"].doubleValue,
+                    height: base["m_Rect"]["height"].doubleValue
+                )
+                self.offset = .init(x: base["m_Offset"]["x"].doubleValue, y: base["m_Offset"]["y"].doubleValue)
+                self.textureRect = .init(
+                    x: base["m_RD"]["textureRect"]["x"].doubleValue,
+                    y: base["m_RD"]["textureRect"]["y"].doubleValue,
+                    width: base["m_RD"]["textureRect"]["width"].doubleValue,
+                    height: base["m_RD"]["textureRect"]["height"].doubleValue
+                )
+                self.textureRectOffset = .init(x: base["m_RD"]["textureRectOffset"]["x"].doubleValue, y: base["m_RD"]["textureRectOffset"]["y"].doubleValue)
+            }
+        }
+        
+        func fixedTextureRect(_ rect: CGRect, in texture: SKTexture) -> CGRect {
+            let size = texture.size()
+            return .init(x: rect.minX / size.width, y: rect.minY / size.height, width: rect.width / size.width, height: rect.height / size.height)
+        }
+        func directedTextures(baseName: String, metadata: [NoteSpriteMetadata], texture: SKTexture) -> [SKTexture] {
+            var result: [SKTexture] = []
+            for i in 0..<7 {
+                let rect = metadata.first { $0.name == baseName + "_\(i)" }!.rect
+                result.append(.init(rect: fixedTextureRect(rect, in: texture), in: texture))
+            }
+            return result
+        }
+        
+        let baseURL = ChartPlayerAssetManager.assetBaseURL
+        
+        let rhythmSprites = SKTexture(image: .init(data: try! .init(contentsOf: baseURL.appending(path: noteStyle.rawValue).appending(path: "RhythmGameSprites.png")))!)
+        let directionalFlickSprites = SKTexture(image: .init(data: try! .init(contentsOf: baseURL.appending(path: flickStyle.rawValue).appending(path: "DirectionalFlickSprites.png")))!)
+        
+        // Parse metadata
+        guard let rhythmSpriteMetadata = try? JSON(data: try! Data(contentsOf: baseURL.appending(path: noteStyle.rawValue).appending(path: ".sprites"))),
+              let directionalFlickSpriteMetadata = try? JSON(data: try! Data(contentsOf: baseURL.appending(path: flickStyle.rawValue).appending(path: ".sprites"))) else {
+            fatalError("Failed to load sprite metadata, broken bundle?")
+        }
+        
+        let decoder = PropertyListDecoder()
+        var rhythmSpriteMeta = [NoteSpriteMetadata]()
+        var directionalFlickSpriteMeta = [NoteSpriteMetadata]()
+        for (_, json) in rhythmSpriteMetadata {
+            rhythmSpriteMeta.append(.init(json: json))
+        }
+        for (_, json) in directionalFlickSpriteMetadata {
+            directionalFlickSpriteMeta.append(.init(json: json))
+        }
+        
+        return .init(
+            background: .init(image: .init(data: try! .init(contentsOf: baseURL.appending(path: backgroundStyle.rawValue)))!),
+            backgroundRhythmLine: .init(image: .init(data: try! .init(contentsOf: baseURL.appending(path: lineStyle.rawValue).appending(path: "bg_line_rhythm.png")))!),
+            gamePlayLine: .init(image: .init(data: try! .init(contentsOf: baseURL.appending(path: lineStyle.rawValue).appending(path: "game_play_line.png")))!),
+            gamePlayLineSkillAdjust: .init(image: .init(data: try! .init(contentsOf: baseURL.appending(path: lineStyle.rawValue).appending(path: "game_play_line_skill_adjust_effect.png")))!),
+            normal: directedTextures(baseName: "note_normal", metadata: rhythmSpriteMeta, texture: rhythmSprites),
+            long: directedTextures(baseName: "note_long", metadata: rhythmSpriteMeta, texture: rhythmSprites),
+            flick: directedTextures(baseName: "note_flick", metadata: rhythmSpriteMeta, texture: rhythmSprites),
+            flickTop: .init(rect: fixedTextureRect(rhythmSpriteMeta.first { $0.name == "note_flick_top" }!.rect, in: rhythmSprites), in: rhythmSprites),
+            skill: directedTextures(baseName: "note_skill", metadata: rhythmSpriteMeta, texture: rhythmSprites),
+            slideAmong: .init(rect: fixedTextureRect(rhythmSpriteMeta.first { $0.name == "note_slide_among" }!.rect, in: rhythmSprites), in: rhythmSprites),
+            simultaneousLine: .init(image: .init(data: try! .init(contentsOf: baseURL.appending(path: noteStyle.rawValue).appending(path: "simultaneous_line.png")))!),
+            flickLeft: directedTextures(baseName: "note_flick_l", metadata: directionalFlickSpriteMeta, texture: directionalFlickSprites),
+            flickRight: directedTextures(baseName: "note_flick_r", metadata: directionalFlickSpriteMeta, texture: directionalFlickSprites),
+            flickLeftEndpoint: .init(rect: fixedTextureRect(directionalFlickSpriteMeta.first { $0.name == "note_flick_top_l" }!.rect, in: directionalFlickSprites), in: directionalFlickSprites),
+            flickRightEndpoint: .init(rect: fixedTextureRect(directionalFlickSpriteMeta.first { $0.name == "note_flick_top_r" }!.rect, in: directionalFlickSprites), in: directionalFlickSprites),
+            longNoteLine: .init(image: .init(data: try! .init(contentsOf: baseURL.appending(path: noteStyle.rawValue).appending(path: "longNoteLine.png")))!),
+            longNoteLine2: .init(image: .init(data: try! .init(contentsOf: baseURL.appending(path: noteStyle.rawValue).appending(path: "longNoteLine2.png")))!)
+        )
+    }
+    
+    struct _TextureGroup {
+        let background: SKTexture
+        let backgroundRhythmLine: SKTexture
+        let gamePlayLine: SKTexture
+        let gamePlayLineSkillAdjust: SKTexture
+        let normal: [SKTexture]
+        let long: [SKTexture]
+        let flick: [SKTexture]
+        let flickTop: SKTexture
+        let skill: [SKTexture]
+        let slideAmong: SKTexture
+        let simultaneousLine: SKTexture
+        let flickLeft: [SKTexture]
+        let flickRight: [SKTexture]
+        let flickLeftEndpoint: SKTexture
+        let flickRightEndpoint: SKTexture
+        let longNoteLine: SKTexture
+        let longNoteLine2: SKTexture
+    }
+    
+    enum BackgroundStyle: String {
+        case skin0 = "tex/bgskin/skin00_rip/liveBG_normal.png"
+        case skin0Fever = "tex/bgskin/skin00_rip/liveBG_fever.png"
+        case skin2 = "tex/bgskin/skin02_rip/liveBG_normal.png"
+        case skin3 = "tex/bgskin/skin03_rip/liveBG_normal.png"
+        case practice = "tex/bgskin/skinpractice_rip/liveBG_normal.png"
+        case skin5th = "tex/bgskin/skin_5th_rip/liveBG.png"
+        case skin5thFever = "tex/bgskin/skin_5th_rip/liveBG_fever.png"
+        case april2019 = "tex/bgskin/skin_april2019_rip/liveBG.png"
+        case april2019Fever = "tex/bgskin/skin_april2019_rip/liveBG_fever.png"
+        case april2021 = "tex/bgskin/skin_april2021_rip/liveBG.png"
+        case april2021Fever = "tex/bgskin/skin_april2021_rip/liveBG_fever.png"
+        case april2024 = "tex/bgskin/skin_april_2024_rip/liveBG.png"
+        case april2024Fever = "tex/bgskin/skin_april_2024_rip/liveBG_fever.png"
+        case bike = "tex/bgskin/skin_bike_rip/liveBG.png"
+        case bikeFever = "tex/bgskin/skin_bike_rip/liveBG_fever.png"
+        case cafe = "tex/bgskin/skin_cafe_rip/liveBG.png"
+        case cafeFever = "tex/bgskin/skin_cafe_rip/liveBG_fever.png"
+        case coin = "tex/bgskin/skin_coin_rip/liveBG.png"
+        case coinFever = "tex/bgskin/skin_coin_rip/liveBG_fever.png"
+        case collabo23Summer = "tex/bgskin/skin_collabo23_summer_g_rip/liveBG.png"
+        case collabo23SummerFever = "tex/bgskin/skin_collabo23_summer_g_rip/liveBG_fever.png"
+        case collabo23Winter = "tex/bgskin/skin_collabo23_winter_d_rip/liveBG.png"
+        case collabo23WinterFever = "tex/bgskin/skin_collabo23_winter_d_rip/liveBG_fever.png"
+        case collabo24Autumn = "tex/bgskin/skin_collabo24_autumn_i_rip/liveBG.png"
+        case collabo24AutumnFever = "tex/bgskin/skin_collabo24_autumn_i_rip/liveBG_fever.png"
+        case delta = "tex/bgskin/skin_delta_rip/liveBG.png"
+        case deltaFever = "tex/bgskin/skin_delta_rip/liveBG_fever.png"
+        case gbp2020 = "tex/bgskin/skin_gbp2020_rip/liveBG.png"
+        case gbp2020Fever = "tex/bgskin/skin_gbp2020_rip/liveBG_fever.png"
+        case maid = "tex/bgskin/skin_maid_rip/liveBG.png"
+        case maidFever = "tex/bgskin/skin_maid_rip/liveBG_fever.png"
+        case miku = "tex/bgskin/skin_miku_rip/liveBG.png"
+        case mikuFever = "tex/bgskin/skin_miku_rip/liveBG_fever.png"
+        case persona = "tex/bgskin/skin_persona_rip/liveBG.png"
+        case personaFever = "tex/bgskin/skin_persona_rip/liveBG_fever.png"
+        case satan = "tex/bgskin/skin_satan_rip/liveBG.png"
+        case satanFever = "tex/bgskin/skin_satan_rip/liveBG_fever.png"
+        case stage = "tex/bgskin/skin_stage_rip/liveBG.png"
+        case stageFever = "tex/bgskin/skin_stage_rip/liveBG_fever.png"
+        case witch = "tex/bgskin/skin_witch_rip/liveBG.png"
+        case witchFever = "tex/bgskin/skin_witch_rip/liveBG_fever.png"
+        case teamLiveFestivalComboStage = "tex/bgskin/skin_teamlivefestival_rip/ComboStage.png"
+        case teamLiveFestivalLifeStage = "tex/bgskin/skin_teamlivefestival_rip/LifeStage.png"
+        case teamLiveFestivalPerfectStage = "tex/bgskin/skin_teamlivefestival_rip/PerfectStage.png"
+        case teamLiveFestivalFever = "tex/bgskin/skin_teamlivefestival_rip/Fever.png"
+    }
+    enum LineStyle: String {
+        case skin0 = "tex/fieldskin/skin00_rip"
+        case skin1 = "tex/fieldskin/skin01_rip"
+        case skin2 = "tex/fieldskin/skin02_rip"
+        case skin3 = "tex/fieldskin/skin03_rip"
+        case skin4 = "tex/fieldskin/skin04_rip"
+        case skin5 = "tex/fieldskin/skin05_rip"
+        case skin6 = "tex/fieldskin/skin06_rip"
+        case skin7 = "tex/fieldskin/skin07_rip"
+        case skin8 = "tex/fieldskin/skin08_rip"
+        case skin9 = "tex/fieldskin/skin09_rip"
+        case skin10 = "tex/fieldskin/skin10_rip"
+        case skin11 = "tex/fieldskin/skin11_rip"
+        case skin12 = "tex/fieldskin/skin12_rip"
+        case skin13 = "tex/fieldskin/skin13_rip"
+        case skin14 = "tex/fieldskin/skin14_rip"
+        case april2019 = "tex/fieldskin/skin_april2019_rip"
+        case april2021 = "tex/fieldskin/skin_april2021_rip"
+        case april2024 = "tex/fieldskin/skin_april_2024_rip"
+        case bike = "tex/fieldskin/skin_bike_rip"
+        case cafe = "tex/fieldskin/skin_cafe_rip"
+        case coin = "tex/fieldskin/skin_coin_rip"
+        case collabo23Summer = "tex/fieldskin/collabo23_summer_g_rip"
+        case collabo24Autumn = "tex/fieldskin/skin_collabo24_autumn_i_rip"
+        case delta = "tex/fieldskin/skin_delta_rip"
+        case gbp2020 = "tex/fieldskin/skin_gbp2020_rip"
+        case maid = "tex/fieldskin/skin_maid_rip"
+        case miku = "tex/fieldskin/skin_miku_rip"
+        case persona = "tex/fieldskin/skin_persona_rip"
+        case satan = "tex/fieldskin/skin_satan_rip"
+        case stage = "tex/fieldskin/skin_stage_rip"
+        case witch = "tex/fieldskin/skin_witch_rip"
+    }
+    enum NoteStyle: String {
+        case skin0 = "tex/noteskin/skin00_rip"
+        case skin1 = "tex/noteskin/skin01_rip"
+        case skin2 = "tex/noteskin/skin02_rip"
+        case skin3 = "tex/noteskin/skin03_rip"
+        case skin4 = "tex/noteskin/skin04_rip"
+        case skin5 = "tex/noteskin/skin05_rip"
+        case skin6 = "tex/noteskin/skin06_rip"
+        case april2018 = "tex/noteskin/skin_april_2018_rip"
+        case april2019 = "tex/noteskin/skin_april_2019_rip"
+        case april2021 = "tex/noteskin/skin_april_2021_rip"
+        case april2024 = "tex/noteskin/skin_april_2024_rip"
+        case collabo23Summer = "tex/noteskin/collabo23_summer_g_rip"
+        case collabo24Autumn = "tex/noteskin/skin_collabo24_autumn_i_rip"
+        case delta = "tex/noteskin/skin_delta_rip"
+        case maid = "tex/noteskin/skin_maid_rip"
+        case persona = "tex/noteskin/skin_persona_rip"
+        case stage = "tex/noteskin/skin_stage_rip"
+    }
+    enum FlickStyle: String {
+        case skin0 = "tex/noteskin/directionalflickskin00_rip"
+        case skin1 = "tex/noteskin/directionalflickskin01_rip"
+        case skin2 = "tex/noteskin/directionalflickskin02_rip"
+        case skin3 = "tex/noteskin/directionalflickskin03_rip"
+        case skin4 = "tex/noteskin/directionalflickskin04_rip"
+        case persona = "tex/noteskin/directionalflickskin_persona_rip"
     }
 }

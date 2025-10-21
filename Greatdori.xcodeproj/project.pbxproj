@@ -59,6 +59,7 @@
 		8C32640A2E3CB4D000081F4F /* GachaDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3264092E3CB4CC00081F4F /* GachaDetailView.swift */; };
 		8C32BA362E8E90D9002D183A /* ReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C32BA352E8E90D3002D183A /* ReflectionView.swift */; };
 		8C32BA382E8EA955002D183A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8C32BA372E8EA955002D183A /* SDWebImageSwiftUI */; };
+		8C3D4E7C2EA7AABE0034E831 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 8C3D4E7B2EA7AABE0034E831 /* SwiftyJSON */; };
 		8C3FA2422E4B5699001526F2 /* MiracleTicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA2412E4B5690001526F2 /* MiracleTicketView.swift */; };
 		8C3FA2442E4B5D1E001526F2 /* InfoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA2432E4B5D19001526F2 /* InfoTextView.swift */; };
 		8C3FA25A2E4B9EC6001526F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C3FA2562E4B9EC6001526F2 /* Assets.xcassets */; };
@@ -685,6 +686,7 @@
 			files = (
 				8CB4D47F2E445F700085D57A /* BuiltinCardCollections.framework in Frameworks */,
 				8CD2A9D22E9F690D00831458 /* Alamofire in Frameworks */,
+				8C3D4E7C2EA7AABE0034E831 /* SwiftyJSON in Frameworks */,
 				8C923D842E304899003AFC0A /* SDWebImageSVGCoder in Frameworks */,
 				8C923D822E304899003AFC0A /* SDWebImageSwiftUI in Frameworks */,
 				8C2C89262E9E153400058FF7 /* DoriKit.framework in Frameworks */,
@@ -1340,6 +1342,7 @@
 				8C6264EE2E9105D600FF6950 /* SwiftUIIntrospect */,
 				E94944E12E92A19600E50D3F /* MarkdownUI */,
 				8CD2A9D12E9F690D00831458 /* Alamofire */,
+				8C3D4E7B2EA7AABE0034E831 /* SwiftyJSON */,
 			);
 			productName = Greatdori;
 			productReference = 8C0C995D2E296A4400549B5C /* Greatdori!.app */;
@@ -3875,6 +3878,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8C923D7B2E304882003AFC0A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		8C3D4E7B2EA7AABE0034E831 /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C0C99AF2E296F3900549B5C /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
 		};
 		8C499F8C2E4FD9CE0073FCB6 /* SwiftUIIntrospect */ = {
 			isa = XCSwiftPackageProductDependency;
