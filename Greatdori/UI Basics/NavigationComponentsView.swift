@@ -114,6 +114,12 @@ import SwiftUI
         tabValue: .live2dViewer,
         destination: {Live2DViewerView()}
     ),
+    ToolDestinationItem(
+        title: "数据包浏览器",
+        symbol: "folder",
+        tabValue: .assetExplorer,
+        destination: {AssetExplorerView()}
+    )
 ]
 
 
