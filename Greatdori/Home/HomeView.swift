@@ -513,14 +513,27 @@ struct HomeEventsView: View {
 struct HomeBannersView: View {
     @AppStorage("AdvancedSettingsHaveReset") var advSettingsHaveReset = false
     var body: some View {
-        Banner(isPresented: $advSettingsHaveReset, dismissable: true) {
-            Image(systemName: "exclamationmark.triangle.fill")
+        #if !(DORIKIT_ENABLE_PRECACHE)
+        Banner(color: .red) {
+            Image(systemName: "exclamationmark.circle")
                 .font(.title3)
                 .bold()
             VStack(alignment: .leading) {
-                Text("Home.crash-banner.title")
+                Text("Home.banner.no-pre-cahce.title")
                     .bold()
-                Text("Home.crash-banner.subtitle")
+                Text("Home.banner.no-pre-cahce.subtitle")
+                    .font(isMACOS ? .body : .footnote)
+            }
+        }
+        #endif
+        Banner(isPresented: $advSettingsHaveReset, dismissable: true) {
+            Image(systemName: "exclamationmark.circle")
+                .font(.title3)
+                .bold()
+            VStack(alignment: .leading) {
+                Text("Home.banner.crash.title")
+                    .bold()
+                Text("Home.banner.crash.subtitle")
                     .font(isMACOS ? .body : .footnote)
             }
         }

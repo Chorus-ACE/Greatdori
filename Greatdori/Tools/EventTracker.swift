@@ -19,6 +19,7 @@ import SDWebImageSwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct EventTrackerView: View {
+    @Environment(\.horizontalSizeClass) var sizeClass
     @State private var locale: DoriLocale = DoriLocale.primaryLocale
     @State private var isEventSelectorPresented = false
     @State private var focusOnLatestEvent = false
@@ -145,7 +146,7 @@ struct EventTrackerView: View {
                     }
                     .frame(maxWidth: 600)
 
-                    DetailSectionsSpacer()
+                    DetailSectionsSpacer(height: 15)
                     
                     if let selectedEvent {
                         Section(content: {
@@ -246,11 +247,15 @@ struct EventTrackerView: View {
                                                         AxisMarks(values: .stride(by: .day)) { value in
                                                             AxisGridLine()
                                                             AxisTick()
-                                                            AxisValueLabel(format: .dateTime.day().month(.abbreviated))
+                                                            if sizeClass == .regular {
+                                                                AxisValueLabel(format: .dateTime.day().month(.abbreviated))
+                                                            } else {
+                                                                AxisValueLabel(format: .dateTime.day())
+                                                            }
                                                         }
                                                     }
                                                     .chartYAxis {
-                                                        AxisMarks(position: .leading, values: .stride(by: stride(of: trackerData))) { value in
+                                                        AxisMarks(position: .leading, values: .automatic) { value in
                                                             AxisGridLine()
                                                             AxisTick()
                                                             AxisValueLabel {
@@ -287,7 +292,7 @@ struct EventTrackerView: View {
                                                let endDate = selectedEvent.endAt.forLocale(locale) {
                                                 ListItemView {
                                                     Text("Tools.event-tracker.status")
-                                                        .bold()
+                                                        .bold(isMACOS)
                                                 } value: {
                                                     VStack(alignment: .trailing) {
                                                         if startDate > .now {
@@ -337,7 +342,7 @@ struct EventTrackerView: View {
                                                     }
                                                 }
                                                 .chartYAxis {
-                                                    AxisMarks(position: .leading, values: .stride(by: stride(of: topData))) { value in
+                                                    AxisMarks(position: .leading, values: .automatic) { value in
                                                         AxisGridLine()
                                                         AxisTick()
                                                         AxisValueLabel {
@@ -408,7 +413,7 @@ struct EventTrackerView: View {
                             }
                         }, header: {
                             HStack {
-                                Text(verbatim: "Tools.event-trackter.data")
+                                Text("Tools.event-trackter.data")
                                     .font(.title2)
                                     .bold()
                                 Spacer()
@@ -421,6 +426,7 @@ struct EventTrackerView: View {
                 Spacer(minLength: 0)
             }
         }
+        .withSystemBackground()
         .scrollDisablesMultilingualTextPopover()
         .navigationTitle("Tools.event-trackter")
         .task {

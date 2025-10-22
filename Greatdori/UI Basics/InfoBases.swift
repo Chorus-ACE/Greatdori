@@ -113,7 +113,7 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
         .wrapIf(showSubtitle) { content in
             if #available(iOS 26, macOS 14.0, *) {
                 content
-                    .navigationSubtitle(information?.title.forPreferredLocale() != nil ? "#\(Int(currentID))" : "")
+                    .navigationSubtitle(information?.title.forPreferredLocale() != nil ? "#\(String(currentID))" : "")
             } else {
                 content
             }

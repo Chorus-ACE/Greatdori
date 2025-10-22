@@ -419,9 +419,30 @@ struct LayoutPicker<T: Hashable>: View {
     @Binding var selection: T
     var options: [(LocalizedStringKey, String, T)]
     var body: some View {
+        if options.count > 1 {
 #if os(iOS)
-        Menu {
-            Picker("", selection: $selection.animation(.easeInOut(duration: 0.2))) {
+            Menu {
+                Picker("", selection: $selection.animation(.easeInOut(duration: 0.2))) {
+                    ForEach(options, id: \.2) { item in
+                        Label(title: {
+                            Text(item.0)
+                        }, icon: {
+                            Image(_internalSystemName: item.1)
+                        })
+                        .tag(item.2)
+                    }
+                }
+                .pickerStyle(.inline)
+                .labelsHidden()
+            } label: {
+                Label(title: {
+                    Text("Search.layout")
+                }, icon: {
+                    Image(_internalSystemName: options.first(where: { $0.2 == selection })!.1)
+                })
+            }
+#else
+            Picker("Search.layout", selection: $selection) {
                 ForEach(options, id: \.2) { item in
                     Label(title: {
                         Text(item.0)
@@ -432,27 +453,8 @@ struct LayoutPicker<T: Hashable>: View {
                 }
             }
             .pickerStyle(.inline)
-            .labelsHidden()
-        } label: {
-            Label(title: {
-                Text("Search.layout")
-            }, icon: {
-                Image(_internalSystemName: options.first(where: { $0.2 == selection })!.1)
-            })
-        }
-#else
-        Picker("Search.layout", selection: $selection) {
-            ForEach(options, id: \.2) { item in
-                Label(title: {
-                    Text(item.0)
-                }, icon: {
-                    Image(_internalSystemName: item.1)
-                })
-                .tag(item.2)
-            }
-        }
-        .pickerStyle(.inline)
 #endif
+        }
     }
 }
 // # Guidance for `LayoutPicker`

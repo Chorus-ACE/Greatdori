@@ -189,14 +189,9 @@ struct ContentView: View {
             .sheet(isPresented: $showWelcomeScreen, content: {
                 WelcomeView(showWelcomeScreen: $showWelcomeScreen)
             })
-            .alert("Debug.pre-cache-unavailable-alert.title", isPresented: $showPreCacheAlert, actions: {
-                Button(role: .destructive, action: {}, label: {
-                    Text("Debug.pre-cache-unavailable-alert.dismiss")
-                })
+            .alert("Home.banner.no-pre-cahce.title", isPresented: $showPreCacheAlert, actions: {
             }, message: {
-                VStack {
-                    Text("Debug.pre-cache-unavailable-alert.message")
-                }
+                Text("Home.banner.no-pre-cahce.subtitle")
             })
             
         } else {

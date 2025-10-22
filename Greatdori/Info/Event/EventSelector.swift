@@ -18,7 +18,7 @@ import SwiftUI
 struct EventSelector: View {
     @Binding var selection: [PreviewEvent]
     var body: some View {
-        ItemSelectorView("Events", selection: $selection, initialLayout: true, layoutOptions: bannerLayouts) { showDetails, elements, content, eachContent in
+        ItemSelectorView("Events", selection: $selection, initialLayout: true, layoutOptions: [("Filter.view.banner-and-details", "text.below.rectangle", true)]) { showDetails, elements, content, eachContent in
             ViewThatFits {
                 LazyVStack(spacing: showDetails ? nil : 15) {
                     let events = elements.chunked(into: 2)

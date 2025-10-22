@@ -67,25 +67,6 @@ struct GreatdoriApp: App {
                 .keyboardShortcut(",", modifiers: .command)
             }
         }
-        /*
-        .commands {
-            #if os(macOS)
-            if AppFlag.DEBUG {
-//                /Users/t785/Xcode/Greatdori/Greatdori/GreatdoriApp.swift
-                CommandGroup(after: .appSettings) {
-                    Button(String("Menu-bar.window.offline-asset-debug"), systemImage: "ant.fill") {
-                        openWindow(id: "OfflineAssetDebugWindow")
-                    }
-                }
-                CommandGroup(after: .appSettings) {
-                    Button(String("Menu-bar.window.filter-experiment-debug"), systemImage: "ant.fill") {
-                        openWindow(id: "FilterExperimentDebugWindow")
-                    }
-                }
-            }
-            #endif
-        }
-        */
         .onChange(of: scenePhase) {
             switch scenePhase {
             case .background:
@@ -103,18 +84,9 @@ struct GreatdoriApp: App {
             }
         }
         #if os(macOS)
-//        Settings {
-//            SettingsView()
-//        }
         Window("Settings", id: "Secchi") {
             SettingsView()
         }
-//        Window(String("Window.offline-asset-debug"), id: "OfflineAssetDebugWindow") {
-//            DebugOfflineAssetView()
-//        }
-//        Window(String("Window.filter-experiment-debug"), id: "FilterExperimentDebugWindow") {
-//            DebugFilterExperimentView()
-//        }
         #endif
         
         WindowGroup("Window", id: "AnyWindow", for: AnyWindowData.self) { $data in

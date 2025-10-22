@@ -1084,7 +1084,7 @@ private struct StrokeTextModifier: ViewModifier {
     }
 }
 
-private func fontName(in locale: DoriLocale) -> String {
+func fontName(in locale: DoriLocale) -> String {
     switch locale {
     case .jp: "RodinPro-DB"
     case .en: "NewRodinPro-DB"

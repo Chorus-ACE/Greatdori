@@ -22,10 +22,11 @@ import QuickLook
 
 // MARK: DetailSectionsSpacer
 struct DetailSectionsSpacer: View {
+    var height: CGFloat = 30
     var body: some View {
         Rectangle()
             .opacity(0)
-            .frame(height: 30)
+            .frame(height: height)
     }
 }
 

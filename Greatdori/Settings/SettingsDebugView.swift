@@ -58,11 +58,6 @@ struct SettingsDebugView: View {
                     Text(verbatim: "enableRulerOverlay")
                     
                 })
-#if !DORIKIT_ENABLE_PRECACHE
-                Text("Settings.debug.pre-cache-unavailable")
-                    .foregroundStyle(.red)
-                    .fontDesign(.monospaced)
-#endif
                 NavigationLink(destination: {
                     DebugBirthdayView()
                 }, label: {
@@ -78,6 +73,11 @@ struct SettingsDebugView: View {
                     DoriCache.invalidateAll()
                 }, label: {
                     Text("Settings.debug.clear-cache")
+                })
+                Button(role: .destructive, action: {
+                    
+                }, label: {
+                    Text("Settings.debug.clean-chart-asset")
                 })
                 Button(role: .destructive, action: {
                     showDebugDisactivationAlert = true
