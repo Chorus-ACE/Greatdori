@@ -129,6 +129,7 @@ struct InteractiveStoryView: View {
                         data: currentTalk,
                         locale: locale,
                         isDelaying: isDelaying,
+                        isAutoPlaying: isAutoPlaying,
                         isAnimating: $isTalkTextAnimating,
                         shakeDuration: $talkShakeDuration
                     )
@@ -710,12 +711,15 @@ private struct TalkView: View {
     var data: DoriAPI.Misc.StoryAsset.TalkData
     var locale: DoriLocale
     var isDelaying: Bool
+    var isAutoPlaying: Bool
     @Binding var isAnimating: Bool
     @Binding var shakeDuration: Double
     @State private var currentBody = ""
     @State private var bodyAnimationTimer: Timer?
     @State private var shakeTimer: Timer?
     @State private var shakingOffset = CGSize(width: 0, height: 0)
+    @State private var autoPlayLabelBlinkTimer: Timer?
+    @State private var isShowingAutoPlayLabel = false
     var body: some View {
         ZStack(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: 16)
@@ -821,6 +825,21 @@ private struct TalkView: View {
                     .padding()
             }
             .offset(y: -38)
+            HStack {
+                Spacer()
+                if isShowingAutoPlayLabel {
+                    HStack(spacing: 2) {
+                        Image(systemName: "arrowtriangle.forward.fill")
+                            .scaleEffect(x: 0.7, y: 1, anchor: .trailing)
+                        Text(verbatim: "AUTO")
+                    }
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .modifier(StrokeTextModifier(width: Double(1.5), color: .white))
+                    .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
+                }
+            }
+            .padding(.horizontal, 30)
+            .offset(y: -5)
         }
         .offset(shakingOffset)
         .onAppear {
@@ -828,6 +847,18 @@ private struct TalkView: View {
         }
         .onChange(of: data.body) {
             animateText()
+        }
+        .onChange(of: isAutoPlaying) {
+            if isAutoPlaying {
+                autoPlayLabelBlinkTimer = .scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                    DispatchQueue.main.async {
+                        isShowingAutoPlayLabel.toggle()
+                    }
+                }
+            } else {
+                autoPlayLabelBlinkTimer?.invalidate()
+                isShowingAutoPlayLabel = false
+            }
         }
         .onChange(of: isAnimating) {
             if !isAnimating {
@@ -923,14 +954,10 @@ private struct BacklogView: View {
                                                 }
                                             }
                                         }, label: {
-                                            ZStack {
-                                                Image(systemName: "speaker.wave.3.fill")
-                                                    .fontWeight(.bold)
-                                                    .foregroundStyle(.white)
-                                                Image(systemName: "speaker.wave.3.fill")
-                                                    .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
-                                            }
-                                            .shadow(radius: 1)
+                                            Image(systemName: "speaker.wave.3.fill")
+                                                .modifier(StrokeTextModifier(width: 1, color: .white))
+                                                .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
+                                                .shadow(radius: 1)
                                         })
                                         .buttonStyle(.plain)
                                         .offset(x: 5, y: 5)
@@ -1024,6 +1051,35 @@ private struct ShakeScreenModifier: ViewModifier {
                     }
                 }
             }
+    }
+}
+
+private struct StrokeTextModifier: ViewModifier {
+    var width: CGFloat
+    var color: Color
+    func body(content: Content) -> some View {
+        ZStack {
+            ZStack {
+                content
+                    .offset(x: width, y: width)
+                content
+                    .offset(x: -width, y: -width)
+                content
+                    .offset(x: -width, y: width)
+                content
+                    .offset(x: width, y: -width)
+                content
+                    .offset(x: width * sqrt(2), y: 0)
+                content
+                    .offset(x: 0, y: width * sqrt(2))
+                content
+                    .offset(x: -width * sqrt(2), y: 0)
+                content
+                    .offset(x: 0, y: -width * sqrt(2))
+            }
+            .foregroundStyle(color)
+            content
+        }
     }
 }
 
