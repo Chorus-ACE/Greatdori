@@ -575,6 +575,7 @@ struct InteractiveStoryView: View {
                 next()
             case .telop:
                 withAnimation {
+                    currentTalk = nil
                     currentTelop = effect.stringVal
                 }
                 if isAutoPlaying {

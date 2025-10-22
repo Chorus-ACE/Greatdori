@@ -741,6 +741,9 @@ private class ChartPlayerScene: SKScene {
         judgeLineNode.position = .init(x: size.width / 2, y: 150)
         addChild(judgeLineNode)
     }
+    private func renderNotes(at time: TimeInterval) {
+        
+    }
 }
 
 private final class ChartPlayerConfiguration: @unchecked Sendable {

@@ -146,7 +146,11 @@ private struct AssetListView: View {
                             content
                                 .onTapGesture {
                                     if (item == tintingItem && CFAbsoluteTimeGetCurrent() - previousTapTime < 0.5) {
-                                        navigatingItem = item
+                                        if item.type == .file {
+                                            openItem(item)
+                                        } else {
+                                            navigatingItem = item
+                                        }
                                     }
                                     tintingItem = item
                                     previousTapTime = CFAbsoluteTimeGetCurrent()
@@ -157,7 +161,11 @@ private struct AssetListView: View {
                         } else: { content in
                             content
                                 .onTapGesture {
-                                    navigatingItem = item
+                                    if item.type == .file {
+                                        openItem(item)
+                                    } else {
+                                        navigatingItem = item
+                                    }
                                 }
                         }
                     }
@@ -180,9 +188,7 @@ private struct AssetListView: View {
                             Task {
                                 if let contents = await DoriAPI.Asset.contentsOf(currentPath) {
                                     items = contents.map {
-                                        .init(type: .file, name: $0) {
-                                            // TODO
-                                        }
+                                        .init(type: .file, name: $0) {}
                                     }
                                 }
                             }
@@ -212,6 +218,12 @@ private struct AssetListView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color.gray.opacity(0.11))
             }
+        }
+    }
+    
+    private func openItem(_ item: AssetItem) {
+        if let path = currentPath {
+            
         }
     }
 }

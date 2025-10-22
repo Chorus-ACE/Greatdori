@@ -278,15 +278,19 @@ struct ImageLookView: View {
             .simultaneousGesture(
                 DragGesture()
                     .onChanged { value in
+                        guard currentZoomScale <= 1 else { return }
                         dismissingOffset = value.translation
                     }
                     .onChanged { value in
+                        guard currentZoomScale <= 1 else { return }
                         dismissingScale = max(min(1.0 - value.translation.height * 0.001, 1), 0)
                     }
                     .onChanged { value in
+                        guard currentZoomScale <= 1 else { return }
                         dismissingOpacity = max(min(1.0 - value.translation.height * 0.01, 1), 0)
                     }
                     .onEnded { value in
+                        guard currentZoomScale <= 1 else { return }
                         if value.translation.height > 100 {
                             withAnimation {
                                 dismissingOffset = .init(
@@ -367,14 +371,6 @@ struct ImageLookView: View {
                     }
                     if #available(iOS 26.0, *) {
                         ToolbarSpacer(placement: .bottomBar)
-                    }
-                    ToolbarItem(placement: .bottomBar) {
-                        Button("Share…", systemImage: "square.and.arrow.up") {
-                            isShareViewPresented = true
-                        }
-                    }
-                    if #available(iOS 26.0, *) {
-                        ToolbarSpacer(.flexible, placement: .bottomBar)
                     }
                     ToolbarItem(placement: .bottomBar) {
                         Button("Details.arts.share", systemImage: "square.and.arrow.up") {
