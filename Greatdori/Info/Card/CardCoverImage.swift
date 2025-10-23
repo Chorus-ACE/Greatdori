@@ -21,7 +21,7 @@ import SwiftUI
 struct CardCoverImage: View {
     private var normalBackgroundImageURL: URL
     private var trainedBackgroundImageURL: URL?
-    private var cardType: DoriAPI.Card.CardType
+    private var cardType: CardType
     private var attribute: DoriAPI.Attribute
     private var rarity: Int
     private var bandIconImageURL: URL?
@@ -35,7 +35,7 @@ struct CardCoverImage: View {
     //    @State var cardDestinationID: Int = 0
     
     //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 104)
-    init(_ card: DoriAPI.Card.PreviewCard, band: DoriAPI.Band.Band?, showNavigationHints: Bool = true, displayType: CardImageDisplayType = .both) {
+    init(_ card: PreviewCard, band: Band?, showNavigationHints: Bool = true, displayType: CardImageDisplayType = .both) {
         self.normalBackgroundImageURL = card.coverNormalImageURL
         self.trainedBackgroundImageURL = card.coverAfterTrainingImageURL
         self.cardType = card.type
@@ -49,7 +49,7 @@ struct CardCoverImage: View {
         self.displayType = displayType
     }
     //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 104)
-    init(_ card: DoriAPI.Card.Card, band: DoriAPI.Band.Band?, showNavigationHints: Bool = true, displayType: CardImageDisplayType = .both) {
+    init(_ card: Card, band: Band?, showNavigationHints: Bool = true, displayType: CardImageDisplayType = .both) {
         self.normalBackgroundImageURL = card.coverNormalImageURL
         self.trainedBackgroundImageURL = card.coverAfterTrainingImageURL
         self.cardType = card.type

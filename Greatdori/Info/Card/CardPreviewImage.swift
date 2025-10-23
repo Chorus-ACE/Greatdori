@@ -18,11 +18,11 @@ import SwiftUI
 
 // MARK: CardPreviewImage
 struct CardPreviewImage: View {
-    private var inputtedPreviewCard: DoriAPI.Card.PreviewCard?
+    private var inputtedPreviewCard: PreviewCard?
     private var cardID: Int
     private var thumbNormalImageURL: URL
     private var thumbTrainedImageURL: URL?
-    private var cardType: DoriAPI.Card.CardType
+    private var cardType: DoriAPI.Cards.CardType
     private var attribute: DoriAPI.Attribute
     private var rarity: Int
     private var bandIconImageURL: URL?
@@ -39,7 +39,7 @@ struct CardPreviewImage: View {
     @State var isHovering: Bool = false
     
     //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 323)
-    init(_ card: DoriAPI.Card.PreviewCard, showTrainedVersion: Bool = false, sideLength: CGFloat = 72, showNavigationHints: Bool = false/*, cardNavigationDestinationID: Binding<Int?>*/) {
+    init(_ card: PreviewCard, showTrainedVersion: Bool = false, sideLength: CGFloat = 72, showNavigationHints: Bool = false/*, cardNavigationDestinationID: Binding<Int?>*/) {
         self.inputtedPreviewCard = card
         self.cardID = card.id
         self.thumbNormalImageURL = card.thumbNormalImageURL
@@ -56,7 +56,7 @@ struct CardPreviewImage: View {
         //        self._cardNavigationDestinationID = cardNavigationDestinationID
     }
     //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 323)
-    init(_ card: DoriAPI.Card.Card, showTrainedVersion: Bool = false, sideLength: CGFloat = 72, showNavigationHints: Bool = false/*, cardNavigationDestinationID: Binding<Int?>*/) {
+    init(_ card: Card, showTrainedVersion: Bool = false, sideLength: CGFloat = 72, showNavigationHints: Bool = false/*, cardNavigationDestinationID: Binding<Int?>*/) {
         self.cardID = card.id
         self.thumbNormalImageURL = card.thumbNormalImageURL
         self.thumbTrainedImageURL = card.thumbAfterTrainingImageURL

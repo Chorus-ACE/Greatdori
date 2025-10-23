@@ -21,7 +21,7 @@ import SwiftUI
 struct DetailsEventsSection: View {
     var events: [PreviewEvent]?
     var event: DoriAPI.LocalizedData<PreviewEvent>?
-    var sources: DoriAPI.LocalizedData<Set<DoriFrontend.Card.ExtendedCard.Source>>?
+    var sources: DoriAPI.LocalizedData<Set<ExtendedCard.Source>>?
     var applyLocaleFilter: Bool = false
     @State var locale: DoriLocale = DoriLocale.primaryLocale
     @State var eventsFromList: [PreviewEvent] = []
@@ -37,7 +37,7 @@ struct DetailsEventsSection: View {
         self.applyLocaleFilter = applyLocaleFilter
         self.sourcePreference = 0
     }
-    init(event: DoriAPI.LocalizedData<PreviewEvent>, sources: DoriAPI.LocalizedData<Set<DoriFrontend.Card.ExtendedCard.Source>>) {
+    init(event: DoriAPI.LocalizedData<PreviewEvent>, sources: DoriAPI.LocalizedData<Set<ExtendedCard.Source>>) {
         self.events = nil
         self.event = event
         self.sources = sources

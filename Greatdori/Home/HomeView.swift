@@ -124,9 +124,9 @@ struct HomeView: View {
 
 struct HomeNewsView: View {
     @State var news: [DoriFrontend.News.ListItem]?
-    @State var allEvents: [DoriAPI.Event.PreviewEvent]?
-    @State var allGacha: [DoriAPI.Gacha.PreviewGacha]?
-    @State var allSongs: [DoriAPI.Song.PreviewSong]?
+    @State var allEvents: [PreviewEvent]?
+    @State var allGacha: [PreviewGacha]?
+    @State var allSongs: [PreviewSong]?
     var dateFormatter = DateFormatter()
     init() {
         dateFormatter.dateStyle = .medium
@@ -201,19 +201,19 @@ struct HomeNewsView: View {
             }
             await withTaskGroup { group in
                 group.addTask {
-                    let events = await DoriAPI.Event.all()
+                    let events = await DoriAPI.Events.all()
                     await MainActor.run {
                         allEvents = events
                     }
                 }
                 group.addTask {
-                    let gacha = await DoriAPI.Gacha.all()
+                    let gacha = await DoriAPI.Gachas.all()
                     await MainActor.run {
                         allGacha = gacha
                     }
                 }
                 group.addTask {
-                    let songs = await DoriAPI.Song.all()
+                    let songs = await DoriAPI.Songs.all()
                     await MainActor.run {
                         allSongs = songs
                     }
@@ -229,8 +229,8 @@ struct HomeBirthdayView: View {
     @Environment(\.appearsActive) var appearsActive
     #endif
     @AppStorage("showBirthdayDate") var showBirthdayDate = showBirthdayDateDefaultValue
-    @State var birthdays: [DoriFrontend.Character.BirthdayCharacter]?
-    @State var systemBirthdays: [DoriFrontend.Character.BirthdayCharacter]?
+    @State var birthdays: [DoriFrontend.Characters.BirthdayCharacter]?
+    @State var systemBirthdays: [DoriFrontend.Characters.BirthdayCharacter]?
     var formatter = DateFormatter()
     var todaysDateFormatter = DateFormatter()
     var calendar = Calendar(identifier: .gregorian)
@@ -434,9 +434,9 @@ struct HomeBirthdayView: View {
     
     func updateBirthday() {
         Task {
-            birthdays = await DoriFrontend.Character.recentBirthdayCharacters(timeZone: getBirthdayTimeZone())
+            birthdays = await DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone())
             if getBirthdayTimeZone() != TimeZone.autoupdatingCurrent {
-                systemBirthdays = await DoriFrontend.Character.recentBirthdayCharacters(timeZone: getBirthdayTimeZone(from: .adaptive))
+                systemBirthdays = await DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone(from: .adaptive))
             } else {
                 systemBirthdays = nil
             }
@@ -445,7 +445,7 @@ struct HomeBirthdayView: View {
 }
 
 struct HomeEventsView: View {
-    @State var latestEvents: DoriAPI.LocalizedData<DoriFrontend.Event.PreviewEvent>?
+    @State var latestEvents: DoriAPI.LocalizedData<DoriFrontend.Events.PreviewEvent>?
     @State var imageOpacity: Double = 0
     @State var placeholderOpacity: Double = 1
     var locale: DoriAPI.Locale = .jp
@@ -498,7 +498,7 @@ struct HomeEventsView: View {
         .foregroundStyle(.primary)
         .task {
             DoriCache.withCache(id: "Home_LatestEvents", trait: .realTime) {
-                await DoriFrontend.Event.localizedLatestEvent()
+                await DoriFrontend.Events.localizedLatestEvent()
             } .onUpdate {
                 latestEvents = $0
                 withAnimation(.easeInOut(duration: loadingAnimationDuration), {

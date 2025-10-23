@@ -27,7 +27,7 @@ struct EventInfoForHome: View {
     private var showsCountdown: Bool
     
     //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 24)
-    init(_ event: DoriAPI.Event.PreviewEvent, inLocale locale: DoriAPI.Locale?, showsCountdown: Bool = false) {
+    init(_ event: PreviewEvent, inLocale locale: DoriAPI.Locale?, showsCountdown: Bool = false) {
         self.eventImageURL = event.bannerImageURL(in: locale ?? DoriAPI.preferredLocale)!
         self.title = event.eventName
         self.startAt = event.startAt
@@ -36,7 +36,7 @@ struct EventInfoForHome: View {
         self.showsCountdown = showsCountdown
     }
     //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 24)
-    init(_ event: DoriAPI.Event.Event, inLocale locale: DoriAPI.Locale?, showsCountdown: Bool = false) {
+    init(_ event: Event, inLocale locale: DoriAPI.Locale?, showsCountdown: Bool = false) {
         self.eventImageURL = event.bannerImageURL(in: locale ?? DoriAPI.preferredLocale)!
         self.title = event.eventName
         self.startAt = event.startAt

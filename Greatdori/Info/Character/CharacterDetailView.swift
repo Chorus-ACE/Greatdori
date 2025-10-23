@@ -32,11 +32,11 @@ struct CharacterDetailView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @State var allCharacterIDs: [Int] = []
     @State var currentID: Int = 0
-    @State var informationLoadPromise: DoriCache.Promise<DoriFrontend.Character.ExtendedCharacter?>?
-    @State var information: DoriFrontend.Character.ExtendedCharacter?
+    @State var informationLoadPromise: DoriCache.Promise<ExtendedCharacter?>?
+    @State var information: ExtendedCharacter?
     @State var infoIsAvailable = true
     @State var cardNavigationDestinationID: Int?
-    @State var randomCard: DoriAPI.Card.PreviewCard?
+    @State var randomCard: PreviewCard?
     @State var showSubtitle: Bool = false
     @State var randomCardHadUpdatedOnce = false
     var body: some View {
@@ -171,7 +171,7 @@ struct CharacterDetailView: View {
         informationLoadPromise?.cancel()
         
         informationLoadPromise = DoriCache.withCache(id: "CharacterDetail_\(id)") {
-            await DoriFrontend.Character.extendedInformation(of: id)
+            await DoriFrontend.Characters.extendedInformation(of: id)
         }.onUpdate {
             if let information = $0 {
                 self.information = information
@@ -197,7 +197,7 @@ struct CharacterDetailView: View {
 //MARK: CharacterDetailOverviewView
 struct CharacterDetailOverviewView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
-    let information: DoriFrontend.Character.ExtendedCharacter
+    let information: ExtendedCharacter
     var dateFormatter: DateFormatter {
         let df = DateFormatter()
         df.timeZone = .init(identifier: "Asia/Tokyo")!

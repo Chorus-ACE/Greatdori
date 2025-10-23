@@ -23,9 +23,9 @@ struct NewsView: View {
     @Environment(\.colorScheme) var colorScheme
     @State var newsList: [DoriFrontend.News.ListItem]?
     @State var filter: DoriFrontend.News.ListFilter? = nil
-    @State var allEvents: [DoriAPI.Event.PreviewEvent]?
-    @State var allGacha: [DoriAPI.Gacha.PreviewGacha]?
-    @State var allSongs: [DoriAPI.Song.PreviewSong]?
+    @State var allEvents: [PreviewEvent]?
+    @State var allGacha: [PreviewGacha]?
+    @State var allSongs: [PreviewSong]?
     var dateFormatter = DateFormatter()
     init() {
         dateFormatter.dateStyle = .medium
@@ -82,19 +82,19 @@ struct NewsView: View {
             }
             await withTaskGroup { group in
                 group.addTask {
-                    let events = await DoriAPI.Event.all()
+                    let events = await DoriAPI.Events.all()
                     await MainActor.run {
                         allEvents = events
                     }
                 }
                 group.addTask {
-                    let gacha = await DoriAPI.Gacha.all()
+                    let gacha = await DoriAPI.Gachas.all()
                     await MainActor.run {
                         allGacha = gacha
                     }
                 }
                 group.addTask {
-                    let songs = await DoriAPI.Song.all()
+                    let songs = await DoriAPI.Songs.all()
                     await MainActor.run {
                         allSongs = songs
                     }
@@ -180,9 +180,9 @@ struct NewsView: View {
 
 //MARK: NewsPreview
 struct NewsPreview: View {
-    var allEvents: [DoriAPI.Event.PreviewEvent]?
-    var allGacha: [DoriAPI.Gacha.PreviewGacha]?
-    var allSongs: [DoriAPI.Song.PreviewSong]?
+    var allEvents: [PreviewEvent]?
+    var allGacha: [PreviewGacha]?
+    var allSongs: [PreviewSong]?
     @Environment(\.horizontalSizeClass) var sizeClass
     @State var imageURL: URL? = nil
     var news: DoriFrontend.News.ListItem
@@ -191,9 +191,9 @@ struct NewsPreview: View {
     var showImages: Bool = false
     var dateFormatter = DateFormatter()
     init(
-        allEvents: [DoriAPI.Event.PreviewEvent]?,
-        allGacha: [DoriAPI.Gacha.PreviewGacha]?,
-        allSongs: [DoriAPI.Song.PreviewSong]?,
+        allEvents: [PreviewEvent]?,
+        allGacha: [PreviewGacha]?,
+        allSongs: [PreviewSong]?,
         news: DoriFrontend.News.ListItem,
         showLocale: Bool = true,
         showDetails: Bool = false,

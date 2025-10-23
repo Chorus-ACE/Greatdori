@@ -380,3 +380,30 @@ private struct _ImageUpscaleView<V: View, Result: View>: View {
     }
 }
 
+extension View {
+    // MARK: scrollDisablesMultilingualTextPopover
+    func scrollDisablesMultilingualTextPopover(_ isEnabled: Bool = true) -> some View {
+        ModifiedContent(content: self, modifier: ScrollDisableMultilingualTextPopoverModifier(isEnabled: isEnabled))
+    }
+}
+
+private struct ScrollDisableMultilingualTextPopoverModifier: ViewModifier {
+    var isEnabled: Bool
+    @State private var disablesPopover = false
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, macOS 15.0, *) {
+            content
+                .environment(\._multilingualTextDisablePopover, disablesPopover)
+                .onScrollPhaseChange { _, newPhase in
+                    disablesPopover = newPhase != .idle
+                }
+        } else {
+            content
+        }
+    }
+}
+
+// MARK: EnvironmentValues
+extension EnvironmentValues {
+    @Entry var _multilingualTextDisablePopover: Bool = false
+}

@@ -22,8 +22,8 @@ struct CollectionEditorView: View {
     @State var collection: CardCollectionManager.Collection
     @State var filter = DoriFrontend.Filter()
     @State var sorter = DoriFrontend.Sorter(keyword: .releaseDate(in: .jp), direction: .descending)
-    @State var cards: [DoriFrontend.Card.CardWithBand]?
-    @State var searchedCards: [DoriFrontend.Card.CardWithBand]?
+    @State var cards: [CardWithBand]?
+    @State var searchedCards: [CardWithBand]?
     @State var infoIsAvailable = true
     @State var searchedText = ""
     @State var layoutType = 1

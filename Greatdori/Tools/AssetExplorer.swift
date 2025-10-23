@@ -41,7 +41,7 @@ struct AssetExplorerView: View {
 
 private struct LocaleAssetView: View {
     var locale: DoriLocale
-    @State private var assetList: DoriAPI.Asset.AssetList?
+    @State private var assetList: DoriAPI.Assets.AssetList?
     var body: some View {
         if let assetList {
             AssetListView(items: .init(assetList, path: .init(locale: locale)))
@@ -50,7 +50,7 @@ private struct LocaleAssetView: View {
                 .controlSize(.large)
                 .onAppear {
                     Task {
-                        assetList = await DoriAPI.Asset.info(in: locale)
+                        assetList = await DoriAPI.Assets.info(in: locale)
                     }
                 }
         }
@@ -83,8 +83,8 @@ extension AssetItem {
     }
 }
 extension Array<AssetItem> {
-    init(_ info: DoriAPI.Asset.AssetList, path: DoriAPI.Asset.PathDescriptor) {
-        func resolveInfo(_ info: DoriAPI.Asset.AssetList, path: DoriAPI.Asset.PathDescriptor) -> [AssetItem] {
+    init(_ info: DoriAPI.Assets.AssetList, path: DoriAPI.Assets.PathDescriptor) {
+        func resolveInfo(_ info: DoriAPI.Assets.AssetList, path: DoriAPI.Assets.PathDescriptor) -> [AssetItem] {
             var result = [AssetItem]()
             let keys = info.keys.sorted()
             for key in keys {
@@ -110,7 +110,7 @@ extension Array<AssetItem> {
 
 private struct AssetListView: View {
     @State var items: [AssetItem]?
-    var currentPath: DoriAPI.Asset.PathDescriptor?
+    var currentPath: DoriAPI.Assets.PathDescriptor?
     @State private var tintingItem: AssetItem?
     @State private var navigatingItem: AssetItem?
     @State private var previousTapTime = 0.0
@@ -119,7 +119,9 @@ private struct AssetListView: View {
     var body: some View {
         Group {
             if let items {
+                /*
                 List {
+                    /*
                     ForEach(Array(items.enumerated()), id: \.element.self) { index, item in
                         HStack {
                             Label {
@@ -181,6 +183,7 @@ private struct AssetListView: View {
                                 }
                         }
                     }
+                     */
                 }
                 .listStyle(.plain)
                 .wrapIf(isMACOS) { content in
@@ -204,13 +207,14 @@ private struct AssetListView: View {
                     content.view
                 }
                 #endif
+                 */
             } else if let currentPath {
                 ExtendedConstraints {
                     ProgressView()
                         .controlSize(.large)
                         .onAppear {
                             Task {
-                                if let contents = await DoriAPI.Asset.contentsOf(currentPath) {
+                                if let contents = await DoriAPI.Assets.contentsOf(currentPath) {
                                     items = contents.map {
                                         .init(type: .file, name: $0) {}
                                     }

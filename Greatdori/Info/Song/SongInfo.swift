@@ -24,13 +24,13 @@ struct SongInfo: View {
     var subtitle: LocalizedStringKey? = nil
     var layout: SummaryLayout
     
-    init(_ song: DoriAPI.Song.PreviewSong, subtitle: LocalizedStringKey? = nil, layout: SummaryLayout = .horizontal) {
+    init(_ song: PreviewSong, subtitle: LocalizedStringKey? = nil, layout: SummaryLayout = .horizontal) {
         self.information = song
         self.subtitle = subtitle
         self.layout = layout
     }
     
-    init(_ song: DoriAPI.Song.Song, subtitle: LocalizedStringKey? = nil, layout: SummaryLayout = .horizontal) {
+    init(_ song: Song, subtitle: LocalizedStringKey? = nil, layout: SummaryLayout = .horizontal) {
         self.information = PreviewSong(song)
         self.subtitle = subtitle
         self.layout = layout

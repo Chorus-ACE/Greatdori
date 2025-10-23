@@ -31,13 +31,13 @@ struct CardInfo: View {
     @State var cardCharacterName: DoriAPI.LocalizedData<String>?
     @State var isNormalCardAvailable = true
     
-    init(_ card: DoriAPI.Card.PreviewCard, layoutType: Int = 1, displayType: CardImageDisplayType = .both) {
+    init(_ card: PreviewCard, layoutType: Int = 1, displayType: CardImageDisplayType = .both) {
         self.layoutType = layoutType
         self.band = DoriCache.preCache.categorizedCharacters.first(where: { $0.value.contains(where: { $0.id == card.characterID }) })?.key
         self.previewCard = card
         self.displayType = displayType
     }
-    init(_ card: DoriAPI.Card.Card, layoutType: Int = 1, displayType: CardImageDisplayType = .both) {
+    init(_ card: Card, layoutType: Int = 1, displayType: CardImageDisplayType = .both) {
         self.layoutType = layoutType
         self.band = DoriCache.preCache.categorizedCharacters.first(where: { $0.value.contains(where: { $0.id == card.characterID }) })?.key
         self.previewCard = PreviewCard(card)

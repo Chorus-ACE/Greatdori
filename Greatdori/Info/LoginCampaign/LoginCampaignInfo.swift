@@ -23,12 +23,12 @@ struct LoginCampaignInfo: View {
     @State var information: PreviewLoginCampaign
     var layout: SummaryLayout
     
-    init(_ campaign: DoriAPI.LoginCampaign.PreviewCampaign, layout: SummaryLayout = .horizontal) {
+    init(_ campaign: PreviewLoginCampaign, layout: SummaryLayout = .horizontal) {
         self.information = campaign
         self.layout = layout
     }
     
-    init(_ campaign: DoriAPI.LoginCampaign.Campaign, layout: SummaryLayout = .horizontal) {
+    init(_ campaign: LoginCampaign, layout: SummaryLayout = .horizontal) {
         self.information = PreviewLoginCampaign(campaign)
         self.layout = layout
     }

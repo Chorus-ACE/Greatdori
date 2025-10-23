@@ -22,12 +22,12 @@ struct EventInfo: View {
     var showDetails: Bool
     @State var information: PreviewEvent
     
-    init(_ event: DoriAPI.Event.PreviewEvent, subtitle: LocalizedStringKey? = nil, showDetails: Bool = true) {
+    init(_ event: PreviewEvent, subtitle: LocalizedStringKey? = nil, showDetails: Bool = true) {
         self.information = event
         self.subtitle = subtitle
         self.showDetails = showDetails
     }
-    init(_ event: DoriAPI.Event.Event, subtitle: LocalizedStringKey? = nil, showDetails: Bool = true) {
+    init(_ event: Event, subtitle: LocalizedStringKey? = nil, showDetails: Bool = true) {
         self.information = PreviewEvent(event)
         self.subtitle = subtitle
         self.showDetails = showDetails

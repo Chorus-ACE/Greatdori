@@ -23,7 +23,7 @@ struct StoryViewerView: View {
     @State var informationIsAvailable = true
     
     @State var selectedEvent: PreviewEvent?
-    @State var allEventStories: [DoriAPI.Event.EventStory]?
+    @State var allEventStories: [DoriAPI.Events.EventStory]?
     
     var body: some View {
         ScrollView {
@@ -133,7 +133,7 @@ struct StoryViewerView: View {
         case .event:
             if allEventStories == nil {
                 withDoriCache(id: "EventStories") {
-                    await DoriAPI.Event.allStories()
+                    await DoriAPI.Events.allStories()
                 }.onUpdate {
                     if let stories = $0 {
                         self.allEventStories = stories
@@ -174,7 +174,7 @@ private enum StoryType: String, CaseIterable, Hashable {
     }
 }
 
-
+/*
 struct EventStoryViewer: View {
     @State var isEventSelectorPresented = false
     @State var selectedEvent: PreviewEvent?
@@ -920,3 +920,4 @@ private struct StoryDetailView: View {
         transcript = asset?.transcript
     }
 }
+*/

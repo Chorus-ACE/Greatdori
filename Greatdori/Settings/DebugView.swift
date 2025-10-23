@@ -53,7 +53,7 @@ struct DebugBirthdayView: View {
 }
 
 struct DebugBirthdayViewUnit: View {
-    @State var birthdays: [DoriFrontend.Character.BirthdayCharacter]?
+    @State var birthdays: [DoriFrontend.Characters.BirthdayCharacter]?
     var receivedToday: Date?
     var formatter = DateFormatter()
     init(receivedToday: Date? = Date.now) {
@@ -87,7 +87,7 @@ struct DebugBirthdayViewUnit: View {
             }
         }
         .task {
-            birthdays = await DoriFrontend.Character.recentBirthdayCharacters(aroundDate: receivedToday ?? Date.now)
+            birthdays = await DoriFrontend.Characters.recentBirthdayCharacters(aroundDate: receivedToday ?? Date.now)
         }
     }
 }
@@ -96,7 +96,7 @@ struct DebugBirthdayViewUnit: View {
 struct DebugOfflineAssetView: View {
     @AppStorage("_OfflineAssetDebugFilePath") var filePath = ""
     @State var contents = [String]()
-    @State var testCard: DoriAPI.Card.Card?
+    @State var testCard: Card?
     @State var updateCheckerResult: DoriOfflineAsset.UpdateCheckerResult?
     var body: some View {
         #if os(macOS)
@@ -231,7 +231,7 @@ struct DebugOfflineAssetView: View {
         .formStyle(.grouped)
         .task {
             await withOfflineAsset {
-                testCard = await DoriAPI.Card.detail(of: 2125)
+                testCard = await DoriAPI.Cards.detail(of: 2125)
             }
         }
         #else
@@ -247,32 +247,32 @@ struct DebugFilterExperimentView: View {
     @State var focusingList: Int = -1
     
     // 0 - Event
-    @State var eventList: [DoriAPI.Event.PreviewEvent] = []
-    @State var eventListFiltered: [DoriAPI.Event.PreviewEvent] = []
+    @State var eventList: [PreviewEvent] = []
+    @State var eventListFiltered: [PreviewEvent] = []
     
     // 1 - Gacha
-    @State var gachaList: [DoriAPI.Gacha.PreviewGacha] = []
-    @State var gachaListFiltered: [DoriAPI.Gacha.PreviewGacha] = []
+    @State var gachaList: [PreviewGacha] = []
+    @State var gachaListFiltered: [PreviewGacha] = []
     
     // 2 - Card
-    @State var cardList: [DoriFrontend.Card.CardWithBand] = []
-    @State var cardListFiltered: [DoriFrontend.Card.CardWithBand] = []
+    @State var cardList: [CardWithBand] = []
+    @State var cardListFiltered: [CardWithBand] = []
     
     // 3 - Song
-    @State var songList: [DoriFrontend.Song.PreviewSong] = []
-    @State var songListFiltered: [DoriFrontend.Song.PreviewSong] = []
+    @State var songList: [PreviewSong] = []
+    @State var songListFiltered: [PreviewSong] = []
     
     // 4 - Comic
-    @State var comicList: [DoriAPI.Comic.Comic] = []
-    @State var comicListFiltered: [DoriAPI.Comic.Comic] = []
+    @State var comicList: [Comic] = []
+    @State var comicListFiltered: [Comic] = []
     
     // 5 - Campaign
-    @State var campaignList: [DoriAPI.LoginCampaign.PreviewCampaign] = []
-    @State var campaignListFiltered: [DoriAPI.LoginCampaign.PreviewCampaign] = []
+    @State var campaignList: [PreviewLoginCampaign] = []
+    @State var campaignListFiltered: [PreviewLoginCampaign] = []
     
     // 6 - Costume
-    @State var costumeList: [DoriAPI.Costume.PreviewCostume] = []
-    @State var costumeListFiltered: [DoriAPI.Costume.PreviewCostume] = []
+    @State var costumeList: [PreviewCostume] = []
+    @State var costumeListFiltered: [PreviewCostume] = []
     
     @State var showFilterSheet = false
     @State var showOptimizedFilter = false
@@ -378,33 +378,33 @@ struct DebugFilterExperimentView: View {
 //            focusingList = 0
             for i in 0...6 {
                 if i == 0 {
-                    optimizedKeys.updateValue(DoriAPI.Event.PreviewEvent.applicableFilteringKeys, forKey: i)
-                    optimizedSortingTypes.updateValue(DoriFrontend.Event.PreviewEvent.applicableSortingTypes, forKey: i)
-                    sortingItemsHaveEndingDate.updateValue(DoriFrontend.Event.PreviewEvent.hasEndingDate, forKey: i)
+                    optimizedKeys.updateValue(PreviewEvent.applicableFilteringKeys, forKey: i)
+                    optimizedSortingTypes.updateValue(PreviewEvent.applicableSortingTypes, forKey: i)
+                    sortingItemsHaveEndingDate.updateValue(PreviewEvent.hasEndingDate, forKey: i)
                 } else if i == 1 {
-                    optimizedKeys.updateValue(DoriAPI.Gacha.PreviewGacha.applicableFilteringKeys, forKey: i)
-                    optimizedSortingTypes.updateValue(DoriFrontend.Gacha.PreviewGacha.applicableSortingTypes, forKey: i)
-                    sortingItemsHaveEndingDate.updateValue(DoriFrontend.Gacha.PreviewGacha.hasEndingDate, forKey: i)
+                    optimizedKeys.updateValue(PreviewGacha.applicableFilteringKeys, forKey: i)
+                    optimizedSortingTypes.updateValue(PreviewGacha.applicableSortingTypes, forKey: i)
+                    sortingItemsHaveEndingDate.updateValue(PreviewGacha.hasEndingDate, forKey: i)
                 } else if i == 2 {
-                    optimizedKeys.updateValue(DoriFrontend.Card.CardWithBand.applicableFilteringKeys, forKey: i)
-                    optimizedSortingTypes.updateValue(DoriFrontend.Card.CardWithBand.applicableSortingTypes, forKey: i)
-                    sortingItemsHaveEndingDate.updateValue(DoriFrontend.Card.CardWithBand.hasEndingDate, forKey: i)
+                    optimizedKeys.updateValue(CardWithBand.applicableFilteringKeys, forKey: i)
+                    optimizedSortingTypes.updateValue(CardWithBand.applicableSortingTypes, forKey: i)
+                    sortingItemsHaveEndingDate.updateValue(CardWithBand.hasEndingDate, forKey: i)
                 } else if i == 3 {
-                    optimizedKeys.updateValue(DoriAPI.Song.PreviewSong.applicableFilteringKeys, forKey: i)
-                    optimizedSortingTypes.updateValue(DoriAPI.Song.PreviewSong.applicableSortingTypes, forKey: i)
-                    sortingItemsHaveEndingDate.updateValue(DoriAPI.Song.PreviewSong.hasEndingDate, forKey: i)
+                    optimizedKeys.updateValue(PreviewSong.applicableFilteringKeys, forKey: i)
+                    optimizedSortingTypes.updateValue(PreviewSong.applicableSortingTypes, forKey: i)
+                    sortingItemsHaveEndingDate.updateValue(PreviewSong.hasEndingDate, forKey: i)
                 } else if i == 4 {
-                    optimizedKeys.updateValue(DoriAPI.Comic.Comic.applicableFilteringKeys, forKey: i)
-                    optimizedSortingTypes.updateValue(DoriAPI.Comic.Comic.applicableSortingTypes, forKey: i)
-                    sortingItemsHaveEndingDate.updateValue(DoriAPI.Comic.Comic.hasEndingDate, forKey: i)
+                    optimizedKeys.updateValue(Comic.applicableFilteringKeys, forKey: i)
+                    optimizedSortingTypes.updateValue(Comic.applicableSortingTypes, forKey: i)
+                    sortingItemsHaveEndingDate.updateValue(Comic.hasEndingDate, forKey: i)
                 } else if i == 5 {
-                    optimizedKeys.updateValue(DoriAPI.LoginCampaign.PreviewCampaign.applicableFilteringKeys, forKey: i)
-                    optimizedSortingTypes.updateValue(DoriAPI.LoginCampaign.PreviewCampaign.applicableSortingTypes, forKey: i)
-                    sortingItemsHaveEndingDate.updateValue(DoriAPI.LoginCampaign.PreviewCampaign.hasEndingDate, forKey: i)
+                    optimizedKeys.updateValue(PreviewLoginCampaign.applicableFilteringKeys, forKey: i)
+                    optimizedSortingTypes.updateValue(PreviewLoginCampaign.applicableSortingTypes, forKey: i)
+                    sortingItemsHaveEndingDate.updateValue(PreviewLoginCampaign.hasEndingDate, forKey: i)
                 } else if i == 6 {
-                    optimizedKeys.updateValue(DoriFrontend.Costume.PreviewCostume.applicableFilteringKeys, forKey: i)
-                    optimizedSortingTypes.updateValue(DoriFrontend.Costume.PreviewCostume.applicableSortingTypes, forKey: i)
-                    sortingItemsHaveEndingDate.updateValue(DoriFrontend.Costume.PreviewCostume.hasEndingDate, forKey: i)
+                    optimizedKeys.updateValue(PreviewCostume.applicableFilteringKeys, forKey: i)
+                    optimizedSortingTypes.updateValue(PreviewCostume.applicableSortingTypes, forKey: i)
+                    sortingItemsHaveEndingDate.updateValue(PreviewCostume.hasEndingDate, forKey: i)
                 }
             }
         }
@@ -412,25 +412,25 @@ struct DebugFilterExperimentView: View {
             updating = true
             Task {
                 if focusingList == 0 {
-                    eventList = await DoriFrontend.Event.list() ?? []
+                    eventList = await DoriFrontend.Events.list() ?? []
                     eventListFiltered = eventList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 1 {
-                    gachaList = await DoriFrontend.Gacha.list() ?? []
+                    gachaList = await DoriFrontend.Gachas.list() ?? []
                     gachaListFiltered = gachaList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 2 {
-                    cardList = await DoriFrontend.Card.list() ?? []
+                    cardList = await DoriFrontend.Cards.list() ?? []
                     cardListFiltered = cardList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 3 {
-                    songList = await DoriFrontend.Song.list() ?? []
+                    songList = await DoriFrontend.Songs.list() ?? []
                     songListFiltered = songList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 4 {
-                    comicList = await DoriFrontend.Comic.list() ?? []
+                    comicList = await DoriFrontend.Comics.list() ?? []
                     comicListFiltered = comicList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 5 {
-                    campaignList = await DoriFrontend.LoginCampaign.list() ?? []
+                    campaignList = await DoriFrontend.LoginCampaigns.list() ?? []
                     campaignListFiltered = campaignList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 6 {
-                    costumeList = await DoriFrontend.Costume.list() ?? []
+                    costumeList = await DoriFrontend.Costumes.list() ?? []
                     costumeListFiltered = costumeList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 }
                 updating = false

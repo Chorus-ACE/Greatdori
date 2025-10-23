@@ -24,12 +24,12 @@ struct GachaInfo: View {
     @Environment(\.searchedKeyword) private var searchedKeyword: Binding<String>?
     @State var information: PreviewGacha
     
-    init(_ gacha: DoriAPI.Gacha.PreviewGacha, subtitle: LocalizedStringKey? = nil, showDetails: Bool = true) {
+    init(_ gacha: PreviewGacha, subtitle: LocalizedStringKey? = nil, showDetails: Bool = true) {
         self.information = gacha
         self.subtitle = subtitle
         self.showDetails = showDetails
     }
-    init(_ gacha: DoriAPI.Gacha.Gacha, subtitle: LocalizedStringKey? = nil, showDetails: Bool = true) {
+    init(_ gacha: Gacha, subtitle: LocalizedStringKey? = nil, showDetails: Bool = true) {
         self.information = PreviewGacha(gacha)
         self.subtitle = subtitle
         self.showDetails = showDetails

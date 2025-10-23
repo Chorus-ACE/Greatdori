@@ -33,13 +33,13 @@ struct GachaDetailView: View {
 
 // MARK: GachaDetailOverviewView
 struct GachaDetailOverviewView: View {
-    let information: DoriFrontend.Gacha.ExtendedGacha
+    let information: ExtendedGacha
     //    @State var gachaCharacterPercentageDict: [Int: [DoriAPI.Gacha.GachaCharacter]] = [:]
     //    @State var gachaCharacterNameDict: [Int: DoriAPI.LocalizedData<String>] = [:]
-    @State var cardsArray: [DoriFrontend.Card.PreviewCard] = []
-    @State var cardsArraySeperated: [[DoriFrontend.Card.PreviewCard?]] = []
+    @State var cardsArray: [PreviewCard] = []
+    @State var cardsArraySeperated: [[PreviewCard?]] = []
     @State var cardsPercentage: Int = -100
-    @State var rewardsArray: [DoriFrontend.Card.PreviewCard] = []
+    @State var rewardsArray: [PreviewCard] = []
     @State var cardsTitleWidth: CGFloat = 0 // Fixed
     @State var cardsPercentageWidth: CGFloat = 0 // Fixed
     @State var cardsContentRegularWidth: CGFloat = 0 // Fixed

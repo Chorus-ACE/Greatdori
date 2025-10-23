@@ -23,7 +23,7 @@ struct ComicInfo: View {
     @State var information: Comic
     var layout: SummaryLayout
     
-    init(_ comic: DoriAPI.Comic.Comic, layout: SummaryLayout = .horizontal) {
+    init(_ comic: Comic, layout: SummaryLayout = .horizontal) {
         self.information = comic
         self.layout = layout
     }

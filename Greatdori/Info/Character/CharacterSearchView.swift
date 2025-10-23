@@ -27,9 +27,9 @@ fileprivate let charVisualImageCornerRadius: CGFloat = 10
 struct CharacterSearchView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @Namespace var detailNavigation
-    @State var charactersDict: DoriFrontend.Character.CategorizedCharacters?
+    @State var charactersDict: DoriFrontend.Characters.CategorizedCharacters?
     @State var allCharacters: [PreviewCharacter]? = nil
-    @State var bandArray: [DoriAPI.Band.Band?] = []
+    @State var bandArray: [Band?] = []
     @State var infoIsAvailable = true
     @State var infoIsReady = false
     @State var chunkedOtherCharacters: [[PreviewCharacter]] = [[]]
@@ -188,7 +188,7 @@ struct CharacterSearchView: View {
         infoIsAvailable = true
         infoIsReady = false
         DoriCache.withCache(id: "CharacterList") {
-            await DoriFrontend.Character.categorizedCharacters()
+            await DoriFrontend.Characters.categorizedCharacters()
         } .onUpdate {
             if let characters = $0 {
                 self.charactersDict = characters
@@ -207,7 +207,7 @@ struct CharacterSearchView: View {
         }
         
         DoriCache.withCache(id: "AllCharacters", trait: .realTime) {
-            await DoriAPI.Character.all()
+            await DoriAPI.Characters.all()
         } .onUpdate {
             if let characters = $0 {
                 allCharacters = characters
@@ -216,7 +216,7 @@ struct CharacterSearchView: View {
     }
     
     struct CharacterImageView: View {
-        var character: DoriFrontend.Character.PreviewCharacter
+        var character: PreviewCharacter
         @Environment(\.horizontalSizeClass) var sizeClass
         @State var isHovering = false
         var body: some View {

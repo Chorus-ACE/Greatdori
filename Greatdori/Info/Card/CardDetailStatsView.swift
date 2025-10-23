@@ -26,7 +26,7 @@ struct CardDetailStatsView: View {
     @State var masterRank: Float = 4
     @State var episodes: Float = 2
     @State var trained: Bool = false
-    @State var stat: DoriAPI.Card.Stat = .zero
+    @State var stat: DoriAPI.Cards.Stat = .zero
     
     @State private var allSkills: [Skill] = []
     var body: some View {

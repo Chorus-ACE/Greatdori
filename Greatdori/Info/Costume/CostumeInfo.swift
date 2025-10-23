@@ -22,12 +22,12 @@ struct CostumeInfo: View {
     @State var information: PreviewCostume
     var layout: SummaryLayout
     
-    init(_ costume: DoriAPI.Costume.PreviewCostume, layout: SummaryLayout = .horizontal) {
+    init(_ costume: PreviewCostume, layout: SummaryLayout = .horizontal) {
         self.information = costume
         self.layout = layout
     }
     
-    init(_ costume: DoriAPI.Costume.Costume, layout: SummaryLayout = .horizontal) {
+    init(_ costume: Costume, layout: SummaryLayout = .horizontal) {
         self.information = PreviewCostume(costume)
         self.layout = layout
     }
