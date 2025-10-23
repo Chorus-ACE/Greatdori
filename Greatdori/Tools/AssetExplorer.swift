@@ -120,9 +120,7 @@ private struct AssetListView: View {
     var body: some View {
         Group {
             if let items {
-                /*
                 List {
-                    /*
                     ForEach(Array(items.enumerated()), id: \.element.self) { index, item in
                         HStack {
                             Label {
@@ -184,7 +182,6 @@ private struct AssetListView: View {
                                 }
                         }
                     }
-                     */
                 }
                 .listStyle(.plain)
                 .wrapIf(isMACOS) { content in
@@ -208,7 +205,6 @@ private struct AssetListView: View {
                     content.view
                 }
                 #endif
-                 */
             } else if let currentPath {
                 ExtendedConstraints {
                     ProgressView()
@@ -459,7 +455,9 @@ private struct AssetAudioPlayer: View {
                 .gesture(
                     DragGesture()
                         .onChanged { value in
-                            dismissingOffset = value.translation.height
+                            withAnimation {
+                                dismissingOffset = max(value.translation.height, 0)
+                            }
                         }
                         .onEnded { value in
                             if value.translation.height > 100 {
@@ -482,8 +480,8 @@ private struct AssetAudioPlayer: View {
                 )
             VStack(spacing: 20) {
                 Capsule()
-                    .fill(Color.gray.opacity(0.5))
-                    .frame(width: 50, height: 2)
+                    .fill(Color.white.opacity(0.5))
+                    .frame(width: 50, height: 5)
                 Spacer()
                 Image(_internalSystemName: "music")
                     .font(.system(size: 140))
@@ -494,9 +492,16 @@ private struct AssetAudioPlayer: View {
                             .fill(Color.black.opacity(0.7))
                     }
                     .scaleEffect(isPlaying ? 1 : 0.9)
+                    .animation(.spring(duration: 0.3, bounce: 0.2), value: isPlaying)
                     .allowsHitTesting(false)
                 Spacer()
                 VStack(spacing: 0) {
+                    HStack {
+                        Text(name)
+                            .font(.system(size: 17, weight: .semibold))
+                        Spacer()
+                    }
+                    .padding(.bottom)
                     Slider(value: $currentTime, in: 0...duration) { isEditing in
                         if !isEditing {
                             player.seek(to: .init(seconds: currentTime, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
@@ -508,7 +513,7 @@ private struct AssetAudioPlayer: View {
                         Spacer()
                         Text(formatTime(duration))
                     }
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
                 }
                 .padding(.horizontal)
                 Spacer()
