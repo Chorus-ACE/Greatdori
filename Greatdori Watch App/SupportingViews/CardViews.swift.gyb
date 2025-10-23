@@ -569,7 +569,7 @@ struct GachaCardView: View {
 struct SongCardView: View {
     private var jacketImageURL: URL
     private var title: LocalizedData<String>
-    private var difficulty: [DoriAPI.Song.DifficultyType: DoriAPI.Song.PreviewSong.Difficulty]
+    private var difficulty: [DoriAPI.Songs.DifficultyType: DoriAPI.Songs.PreviewSong.Difficulty]
     
 %{
     songTypes = ["PreviewSong", "Song"]
@@ -579,7 +579,7 @@ struct SongCardView: View {
         self.jacketImageURL = song.jacketImageURL
         self.title = song.musicTitle
         % if songType == "Song":
-        self.difficulty = song.difficulty.mapValues { DoriAPI.Song.PreviewSong.Difficulty($0) }
+        self.difficulty = song.difficulty.mapValues { DoriAPI.Songs.PreviewSong.Difficulty($0) }
         % else:
         self.difficulty = song.difficulty
         % end

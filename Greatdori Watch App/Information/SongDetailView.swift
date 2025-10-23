@@ -20,7 +20,7 @@ struct SongDetailView: View {
     var id: Int
     @State var information: ExtendedSong?
     @State var availability = true
-    @State var selectedDifficulty: DoriAPI.Song.DifficultyType?
+    @State var selectedDifficulty: DoriAPI.Songs.DifficultyType?
     var body: some View {
         List {
             if let information {

@@ -78,7 +78,7 @@ extension StoryViewerView {
         @State var eventList: [PreviewEvent]?
         @State var eventListAvailability = true
         @State var selectedEvent: PreviewEvent?
-        @State var stories: [DoriAPI.Event.EventStory]?
+        @State var stories: [DoriAPI.Events.EventStory]?
         @State var storyAvailability = true
         var body: some View {
             if let eventList {
@@ -169,7 +169,7 @@ extension StoryViewerView {
         func getStories() async {
             storyAvailability = true
             withDoriCache(id: "EventStories") {
-                await DoriAPI.Event.allStories()
+                await DoriAPI.Events.allStories()
             }.onUpdate {
                 if let stories = $0 {
                     self.stories = stories
@@ -226,8 +226,8 @@ extension StoryViewerView {
     
     struct BandStoryViewer: View {
         @State var isFirstShowing = true
-        @State var bands: [DoriAPI.Band.Band]?
-        @State var selectedBand: DoriAPI.Band.Band?
+        @State var bands: [DoriAPI.Bands.Band]?
+        @State var selectedBand: DoriAPI.Bands.Band?
         @State var stories: [DoriAPI.Misc.BandStory]?
         @State var storyAvailability = true
         @State var selectedStoryGroup: DoriAPI.Misc.BandStory?
@@ -235,7 +235,7 @@ extension StoryViewerView {
             if let bands, let stories {
                 Section {
                     Picker("乐团", selection: $selectedBand) {
-                        Text("(选择乐团)").tag(Optional<DoriAPI.Band.Band>.none)
+                        Text("(选择乐团)").tag(Optional<DoriAPI.Bands.Band>.none)
                         ForEach(bands) { band in
                             Text(band.bandName.forPreferredLocale() ?? "").tag(band)
                         }
@@ -280,7 +280,7 @@ extension StoryViewerView {
             storyAvailability = true
             Task {
                 DoriCache.withCache(id: "BandList") {
-                    await DoriAPI.Band.main()
+                    await DoriAPI.Bands.main()
                 }.onUpdate {
                     self.bands = $0
                 }
@@ -298,8 +298,8 @@ extension StoryViewerView {
     }
     
     struct CardStoryViewer: View {
-        @State var selectedCard: DoriFrontend.Card.CardWithBand?
-        @State var selectedCardDetail: DoriFrontend.Card.ExtendedCard?
+        @State var selectedCard: DoriFrontend.Cards.CardWithBand?
+        @State var selectedCardDetail: DoriFrontend.Cards.ExtendedCard?
         @State var cardDetailAvailability = true
         var body: some View {
             Section {
@@ -375,7 +375,7 @@ extension StoryViewerView {
             if let selectedCard {
                 cardDetailAvailability = true
                 DoriCache.withCache(id: "CardDetail_\(selectedCard.id)") {
-                    await DoriFrontend.Card.extendedInformation(of: selectedCard.id)
+                    await DoriFrontend.Cards.extendedInformation(of: selectedCard.id)
                 }.onUpdate {
                     if let information = $0 {
                         self.selectedCardDetail = information
@@ -391,7 +391,7 @@ extension StoryViewerView {
         @State var isFirstShowing = true
         @State var filter = DoriFrontend.Filter()
         @State var isFilterSettingsPresented = false
-        @State var characters: [DoriFrontend.Character.PreviewCharacter]?
+        @State var characters: [DoriFrontend.Characters.PreviewCharacter]?
         @State var actionSets: [DoriAPI.Misc.ActionSet]?
         @State var actionSetAvailability = true
         var body: some View {
@@ -454,7 +454,7 @@ extension StoryViewerView {
             actionSetAvailability = true
             Task {
                 DoriCache.withCache(id: "CharacterList") {
-                    await DoriFrontend.Character.categorizedCharacters()
+                    await DoriFrontend.Characters.categorizedCharacters()
                 }.onUpdate {
                     self.characters = $0?.values.flatMap { $0 }
                 }

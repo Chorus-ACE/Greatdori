@@ -144,7 +144,7 @@ struct HomeView: View {
         result.timeZone = .init(identifier: "Asia/Tokyo")
         return result
     }
-    func isTodayBirthday(of character: DoriAPI.Character.BirthdayCharacter) -> Bool {
+    func isTodayBirthday(of character: DoriAPI.Characters.BirthdayCharacter) -> Bool {
         let timeZone = TimeZone(identifier: "Asia/Tokyo")!
         let componments = character.birthday.components(in: timeZone)
         let nowComponments = Date.now.components

@@ -105,7 +105,7 @@ struct CostumeListView: View {
 struct CostumeLive2DViewer: _UIViewRepresentable {
     var id: Int
     func makeUIView(context: Context) -> some NSObject {
-        DoriFrontend.Costume.live2dViewer(for: id)
+        DoriFrontend.Costumes.live2dViewer(for: id)
     }
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 }

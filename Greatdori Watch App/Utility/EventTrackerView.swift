@@ -333,13 +333,13 @@ struct EventTrackerView: View {
             trackerData = nil
             trackerAvailability = true
             if tier > 10 {
-                if let trackerData = await DoriFrontend.Event.trackerData(for: event, in: DoriAPI.preferredLocale, tier: tier, smooth: true) {
+                if let trackerData = await DoriFrontend.Events.trackerData(for: event, in: DoriAPI.preferredLocale, tier: tier, smooth: true) {
                     self.trackerData = .tracker(trackerData)
                 } else {
                     trackerAvailability = false
                 }
             } else {
-                if let topData = await DoriFrontend.Event.topData(of: event.id, in: DoriAPI.preferredLocale) {
+                if let topData = await DoriFrontend.Events.topData(of: event.id, in: DoriAPI.preferredLocale) {
                     self.trackerData = .top(topData)
                 } else {
                     trackerAvailability = false
@@ -348,7 +348,7 @@ struct EventTrackerView: View {
         }
     }
     
-    func stride(of trackerData: DoriFrontend.Event.TrackerData) -> Double {
+    func stride(of trackerData: DoriFrontend.Events.TrackerData) -> Double {
         let cutoffs = trackerData.cutoffs
         let predictions = trackerData.predictions
         var maxValue = 0.0
@@ -362,7 +362,7 @@ struct EventTrackerView: View {
         let result = "1" + String(repeating: "0", count: count - 1)
         return Double(result)!
     }
-    func stride(of topData: [DoriFrontend.Event.TopData]) -> Double {
+    func stride(of topData: [DoriFrontend.Events.TopData]) -> Double {
         var maxValue = 0.0
         for data in topData {
             for point in data.points where Double(point.value) > maxValue {
@@ -389,6 +389,6 @@ private func formatNumber(_ number: Double) -> String {
 }
 
 private enum TrackerData {
-    case tracker(DoriFrontend.Event.TrackerData)
-    case top([DoriFrontend.Event.TopData])
+    case tracker(DoriFrontend.Events.TrackerData)
+    case top([DoriFrontend.Events.TopData])
 }
