@@ -12,10 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
-import WebKit
+import AVKit
 import DoriKit
 import SwiftUI
 import Alamofire
+@_spi(Advanced) import SwiftUIIntrospect
 
 struct AssetExplorerView: View {
     var body: some View {
@@ -234,18 +235,15 @@ private struct AssetListView: View {
     
     @ViewBuilder
     private func itemBackground(for item: AssetItem, index: Int) -> some View {
-        if tintingItem == item {
+        ZStack {
             RoundedRectangle(cornerRadius: 8)
             #if os(macOS)
                 .fill(Color(.selectedContentBackgroundColor))
             #endif
-        } else {
-            if index % 2 == 0 {
-                Color.clear
-            } else {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.11))
-            }
+                .opacity(tintingItem == item ? 1 : 0)
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.gray.opacity(0.11))
+                .opacity(tintingItem != item && index % 2 != 0 ? 1 : 0)
         }
     }
     
@@ -283,6 +281,10 @@ private struct AssetListView: View {
                         contentLoadingItem = nil
                     }
                 }
+            } else if item.name.hasSuffix(".mp3") {
+                itemLookViewContent = .init {
+                    AssetAudioPlayer(url: path.resourceURL(name: item.name), name: item.name)
+                }
             }
         }
     }
@@ -296,3 +298,306 @@ private struct AssetListView: View {
         }
     }
 }
+
+#if os(macOS)
+private struct AssetAudioPlayer: View {
+    var url: URL
+    var name: String
+    private var player: AVPlayer
+    
+    init(url: URL, name: String) {
+        self.url = url
+        self.name = name
+        self.player = .init(url: url)
+    }
+    
+    @State private var isPlaying = false
+    @State private var currentTime = 0.0
+    @State private var duration = 0.0
+    @State private var timeUpdateTimer: Timer?
+    @State private var isTimeEditing = false
+    @State private var volume = 1.0
+    @State private var volumeSymbol = "speaker.wave.3.fill"
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            HStack(spacing: 20) {
+                Text(formatTime(currentTime))
+                Slider(value: $currentTime, in: 0...duration) { isEditing in
+                    if !isEditing {
+                        player.seek(to: .init(seconds: currentTime, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                    }
+                    isTimeEditing = isEditing
+                }
+                Text(formatTime(duration))
+            }
+            Spacer(minLength: 0)
+            HStack(spacing: 40) {
+                Button(action: {
+                    player.seek(to: .init(seconds: currentTime - 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                }, label: {
+                    Image(systemName: "15.arrow.trianglehead.counterclockwise")
+                })
+                .font(.system(size: 20))
+                Button(action: {
+                    if isPlaying {
+                        player.pause()
+                    } else {
+                        player.play()
+                    }
+                }, label: {
+                    if isPlaying {
+                        Image(systemName: "pause.fill")
+                    } else {
+                        Image(systemName: "play.fill")
+                    }
+                })
+                .font(.system(size: 40))
+                Button(action: {
+                    player.seek(to: .init(seconds: currentTime + 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                }, label: {
+                    Image(systemName: "15.arrow.trianglehead.clockwise")
+                })
+                .font(.system(size: 20))
+            }
+            .buttonStyle(.plain)
+            Spacer(minLength: 0)
+            HStack(spacing: 20) {
+                Image(systemName: volumeSymbol)
+                Slider(value: $volume)
+                    .onChange(of: volume) {
+                        player.volume = Float(volume)
+                        withAnimation {
+                            if volume >= 0.7 {
+                                volumeSymbol = "speaker.wave.3.fill"
+                            } else if volume > 0.3 {
+                                volumeSymbol = "speaker.wave.2.fill"
+                            } else if volume > 0 {
+                                volumeSymbol = "speaker.wave.1.fill"
+                            } else {
+                                volumeSymbol = "speaker.slash.fill"
+                            }
+                        }
+                    }
+            }
+            .buttonStyle(.plain)
+        }
+        .padding()
+        .tint(.white)
+        .foregroundStyle(.white)
+        .frame(minWidth: 350, minHeight: 150)
+        .navigationTitle(name)
+        .preferredColorScheme(.dark)
+        .onAppear {
+            player.play()
+            timeUpdateTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                DispatchQueue.main.async {
+                    if !isTimeEditing {
+                        currentTime = player.currentTime().seconds
+                    }
+                }
+            }
+        }
+        .onDisappear {
+            timeUpdateTimer?.invalidate()
+            player.pause()
+        }
+        .onReceive(player.publisher(for: \.currentItem?.duration)) { duration in
+            if let duration, duration.seconds.isFinite {
+                self.duration = duration.seconds
+            }
+        }
+        .onReceive(player.publisher(for: \.timeControlStatus)) { status in
+            isPlaying = status == .playing
+        }
+        .introspect(.window, on: .macOS(.v14...)) { window in
+            window.styleMask.insert(.fullSizeContentView)
+            window.backgroundColor = .init(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
+            window.titlebarAppearsTransparent = true
+            window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
+            window.standardWindowButton(.zoomButton)?.isEnabled = false
+            window.isRestorable = false
+        }
+    }
+    
+    private func formatTime(_ time: Double) -> String {
+        var minutes = String(Int(time) / 60)
+        var seconds = String(Int(time.truncatingRemainder(dividingBy: 60)))
+        if minutes.count == 1 {
+            minutes = "0" + minutes
+        }
+        if seconds.count == 1 {
+            seconds = "0" + seconds
+        }
+        return "\(minutes):\(seconds)"
+    }
+}
+#else // os(macOS)
+private struct AssetAudioPlayer: View {
+    var url: URL
+    var name: String
+    private var player: AVPlayer
+    
+    init(url: URL, name: String) {
+        self.url = url
+        self.name = name
+        self.player = .init(url: url)
+    }
+    
+    @Environment(\.dismiss) private var dismiss
+    @State private var isPlaying = false
+    @State private var currentTime = 0.0
+    @State private var duration = 0.0
+    @State private var timeUpdateTimer: Timer?
+    @State private var isTimeEditing = false
+    @State private var volume = 1.0
+    @State private var dismissingOffset: CGFloat = 0
+    
+    var body: some View {
+        ZStack {
+            Color.gray.ignoresSafeArea()
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            dismissingOffset = value.translation.height
+                        }
+                        .onEnded { value in
+                            if value.translation.height > 100 {
+                                withAnimation {
+                                    dismissingOffset = 1000
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    var transaction = Transaction()
+                                    transaction.disablesAnimations = true
+                                    withTransaction(transaction) {
+                                        dismiss()
+                                    }
+                                }
+                            } else {
+                                withAnimation(.spring(duration: 0.3, bounce: 0.15)) {
+                                    dismissingOffset = 0
+                                }
+                            }
+                        }
+                )
+            VStack(spacing: 20) {
+                Capsule()
+                    .fill(Color.gray.opacity(0.5))
+                    .frame(width: 50, height: 2)
+                Spacer()
+                Image(_internalSystemName: "music")
+                    .font(.system(size: 140))
+                    .foregroundStyle(.gray)
+                    .padding(60)
+                    .background {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.black.opacity(0.7))
+                    }
+                    .scaleEffect(isPlaying ? 1 : 0.9)
+                    .allowsHitTesting(false)
+                Spacer()
+                VStack(spacing: 0) {
+                    Slider(value: $currentTime, in: 0...duration) { isEditing in
+                        if !isEditing {
+                            player.seek(to: .init(seconds: currentTime, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                        }
+                        isTimeEditing = isEditing
+                    }
+                    HStack {
+                        Text(formatTime(currentTime))
+                        Spacer()
+                        Text(formatTime(duration))
+                    }
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                }
+                .padding(.horizontal)
+                Spacer()
+                    .frame(height: 20)
+                HStack(spacing: 60) {
+                    Button(action: {
+                        player.seek(to: .init(seconds: currentTime - 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                    }, label: {
+                        Image(systemName: "15.arrow.trianglehead.counterclockwise")
+                    })
+                    .font(.system(size: 30))
+                    Button(action: {
+                        if isPlaying {
+                            player.pause()
+                        } else {
+                            player.play()
+                        }
+                    }, label: {
+                        if isPlaying {
+                            Image(systemName: "pause.fill")
+                        } else {
+                            Image(systemName: "play.fill")
+                        }
+                    })
+                    .font(.system(size: 60))
+                    Button(action: {
+                        player.seek(to: .init(seconds: currentTime + 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                    }, label: {
+                        Image(systemName: "15.arrow.trianglehead.clockwise")
+                    })
+                    .font(.system(size: 30))
+                }
+                .buttonStyle(.plain)
+                Spacer()
+                    .frame(height: 20)
+                HStack(spacing: 20) {
+                    Image(systemName: "speaker.fill")
+                    Slider(value: $volume)
+                        .onChange(of: volume) {
+                            player.volume = Float(volume)
+                        }
+                    Image(systemName: "speaker.wave.3.fill")
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal)
+            }
+            .padding()
+        }
+        .tint(.white)
+        .foregroundStyle(.white)
+        .frame(minWidth: 350, minHeight: 150)
+        .offset(y: dismissingOffset)
+        .navigationTitle(name)
+        .preferredColorScheme(.dark)
+        .presentationBackground(Color.clear)
+        .onAppear {
+            player.play()
+            timeUpdateTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                DispatchQueue.main.async {
+                    if !isTimeEditing {
+                        currentTime = player.currentTime().seconds
+                    }
+                }
+            }
+        }
+        .onDisappear {
+            timeUpdateTimer?.invalidate()
+            player.pause()
+        }
+        .onReceive(player.publisher(for: \.currentItem?.duration)) { duration in
+            if let duration, duration.seconds.isFinite {
+                self.duration = duration.seconds
+            }
+        }
+        .onReceive(player.publisher(for: \.timeControlStatus)) { status in
+            isPlaying = status == .playing
+        }
+    }
+    
+    private func formatTime(_ time: Double) -> String {
+        var minutes = String(Int(time) / 60)
+        var seconds = String(Int(time.truncatingRemainder(dividingBy: 60)))
+        if minutes.count == 1 {
+            minutes = "0" + minutes
+        }
+        if seconds.count == 1 {
+            seconds = "0" + seconds
+        }
+        return "\(minutes):\(seconds)"
+    }
+}
+#endif // os(macOS)
