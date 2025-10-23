@@ -12,8 +12,10 @@
 //
 //===----------------------------------------------------------------------===//
 
+import WebKit
 import DoriKit
 import SwiftUI
+import Alamofire
 
 struct AssetExplorerView: View {
     var body: some View {
@@ -55,7 +57,7 @@ private struct LocaleAssetView: View {
     }
 }
 
-private struct AssetItem: Hashable {
+private struct AssetItem: @unchecked Sendable, Hashable {
     var type: AssetType
     var name: String
     var view: AnyView
@@ -112,6 +114,8 @@ private struct AssetListView: View {
     @State private var tintingItem: AssetItem?
     @State private var navigatingItem: AssetItem?
     @State private var previousTapTime = 0.0
+    @State private var itemLookViewContent: ItemPresenter?
+    @State private var contentLoadingItem: AssetItem?
     var body: some View {
         Group {
             if let items {
@@ -121,22 +125,26 @@ private struct AssetListView: View {
                             Label {
                                 Text(item.name)
                             } icon: {
-                                switch item.type {
-                                case .file:
-                                    Image(systemName: "document")
-                                        .foregroundStyle(.gray)
-                                case .folder:
-                                    Image(systemName: "folder.fill")
-                                        .foregroundStyle(Color(red: 121 / 255, green: 190 / 255, blue: 230 / 255).gradient)
-                                        .background {
-                                            Rectangle()
-                                                .fill(Color.white)
-                                                .padding(isMACOS ? 3 : 4)
-                                                .offset(y: 1)
-                                        }
-                                case .rip:
-                                    Image(systemName: "zipper.page")
-                                        .foregroundStyle(.gray)
+                                if contentLoadingItem != item {
+                                    switch item.type {
+                                    case .file:
+                                        Image(systemName: "document")
+                                            .foregroundStyle(.gray)
+                                    case .folder:
+                                        Image(systemName: "folder.fill")
+                                            .foregroundStyle(Color(red: 121 / 255, green: 190 / 255, blue: 230 / 255).gradient)
+                                            .background {
+                                                Rectangle()
+                                                    .fill(Color.white)
+                                                    .padding(isMACOS ? 3 : 4)
+                                                    .offset(y: 1)
+                                            }
+                                    case .rip:
+                                        Image(systemName: "zipper.page")
+                                            .foregroundStyle(.gray)
+                                    }
+                                } else {
+                                    ProgressView()
                                 }
                             }
                             Spacer()
@@ -167,6 +175,10 @@ private struct AssetListView: View {
                                         navigatingItem = item
                                     }
                                 }
+                                .wrapIf(index == 0 || index == items.count - 1) { content in
+                                    content
+                                        .listRowSeparator(.hidden, edges: index == 0 ? .top : .bottom)
+                                }
                         }
                     }
                 }
@@ -177,9 +189,21 @@ private struct AssetListView: View {
                         .padding(.horizontal, 10)
                 }
                 .navigationTitle(currentPath?.componments.last ?? String(localized: "数据包浏览器"))
+                #if !os(macOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
                 .navigationDestination(item: $navigatingItem) { item in
                     item.view
                 }
+                #if os(macOS)
+                .window(item: $itemLookViewContent) { content in
+                    content.view
+                }
+                #else
+                .fullScreenCover(item: $itemLookViewContent) { content in
+                    content.view
+                }
+                #endif
             } else if let currentPath {
                 ExtendedConstraints {
                     ProgressView()
@@ -223,7 +247,48 @@ private struct AssetListView: View {
     
     private func openItem(_ item: AssetItem) {
         if let path = currentPath {
-            
+            if item.name.hasSuffix(".png") || item.name.hasSuffix(".jpg") {
+                contentLoadingItem = item
+                AF.request(path.resourceURL(name: item.name)).response { response in
+                    if let data = response.data {
+                        #if os(macOS)
+                        let image = NSImage(data: data)
+                        #else
+                        let image = UIImage(data: data)
+                        #endif
+                        if let image {
+                            DispatchQueue.main.async {
+                                #if os(macOS)
+                                itemLookViewContent = .init {
+                                    ImageLookView(image: image, title: item.name)
+                                }
+                                #else
+                                itemLookViewContent = .init {
+                                    ImageLookView(
+                                        image: image,
+                                        title: item.name,
+                                        subtitle: path.locale.rawValue.uppercased(),
+                                        imageFrame: .zero
+                                    )
+                                }
+                                #endif
+                            }
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        contentLoadingItem = nil
+                    }
+                }
+            }
+        }
+    }
+    
+    private struct ItemPresenter: Identifiable {
+        var id = UUID()
+        var view: AnyView
+        
+        init(@ViewBuilder content: () -> some View) {
+            self.view = AnyView(content())
         }
     }
 }

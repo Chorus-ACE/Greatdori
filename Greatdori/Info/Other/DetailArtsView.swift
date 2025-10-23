@@ -501,4 +501,96 @@ private struct _ImageShareView: UIViewControllerRepresentable {
     }
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}
 }
+#else // os(iOS)
+struct ImageLookView: View {
+    var image: NSImage
+    var title: String
+    var body: some View {
+        GeometryReader { geometry in
+            _ZoomScrollView(viewSize: geometry.size) {
+                Image(nsImage: image)
+                    .resizable()
+                    .interpolation(.high)
+                    .antialiased(true)
+                    .scaledToFit()
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+        }
+        .navigationTitle(title)
+    }
+}
+
+private struct _ZoomScrollView<Content: View>: NSViewRepresentable {
+    var viewSize: CGSize
+    var minimumZoomScale: CGFloat = 1
+    var maximumZoomScale: CGFloat = 5
+    var content: Content
+    
+    init(
+        viewSize: CGSize,
+        minimumZoomScale: CGFloat = 1,
+        maximumZoomScale: CGFloat = 5,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.viewSize = viewSize
+        self.minimumZoomScale = minimumZoomScale
+        self.maximumZoomScale = maximumZoomScale
+        self.content = content()
+    }
+    
+    let scrollView = NSScrollView()
+    
+    func makeNSView(context: Context) -> NSScrollView {
+        let hostingController = NSHostingController(rootView: content)
+        let hostingView = hostingController.view
+        hostingView.wantsLayer = true
+        hostingView.layer?.backgroundColor = NSColor.clear.cgColor
+        hostingView.translatesAutoresizingMaskIntoConstraints = false
+        
+        context.coordinator.hostingController = hostingController
+        
+        let containerView = NSView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.wantsLayer = true
+        containerView.layer?.backgroundColor = NSColor.clear.cgColor
+        containerView.addSubview(hostingView)
+        NSLayoutConstraint.activate([
+            hostingView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            hostingView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            hostingView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            hostingView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            containerView.widthAnchor.constraint(equalToConstant: viewSize.width),
+            containerView.heightAnchor.constraint(equalToConstant: viewSize.height)
+        ])
+        scrollView.documentView = containerView
+        
+        scrollView.backgroundColor = .clear
+        scrollView.drawsBackground = false
+        scrollView.minMagnification = minimumZoomScale
+        scrollView.maxMagnification = maximumZoomScale
+        scrollView.allowsMagnification = true
+        
+        return scrollView
+    }
+    func updateNSView(_ uiView: NSViewType, context: Context) {
+        if let hostingController = context.coordinator.hostingController {
+            hostingController.rootView = content
+        }
+        
+        if let documentView = scrollView.documentView {
+            NSLayoutConstraint.deactivate(documentView.constraints)
+            NSLayoutConstraint.activate([
+                documentView.widthAnchor.constraint(equalToConstant: viewSize.width),
+                documentView.heightAnchor.constraint(equalToConstant: viewSize.height)
+            ])
+        }
+    }
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+    
+    class Coordinator {
+        var hostingController: NSHostingController<Content>?
+    }
+}
 #endif // os(iOS)
