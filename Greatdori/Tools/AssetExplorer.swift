@@ -281,6 +281,10 @@ private struct AssetListView: View {
                 itemLookViewContent = .init {
                     AssetAudioPlayer(url: path.resourceURL(name: item.name), name: item.name)
                 }
+            } else if item.name.hasSuffix(".mp4") {
+                itemLookViewContent = .init {
+                    AssetVideoPlayer(url: path.resourceURL(name: item.name))
+                }
             }
         }
     }
@@ -606,3 +610,44 @@ private struct AssetAudioPlayer: View {
     }
 }
 #endif // os(macOS)
+
+private struct AssetVideoPlayer: View {
+    private var player: AVPlayer
+    
+    init(url: URL) {
+        self.player = .init(url: url)
+        #if os(iOS)
+        setDeviceOrientation(allowing: .landscape)
+        #endif
+    }
+    
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        NavigationStack {
+            VideoPlayer(player: player)
+                .ignoresSafeArea()
+                .wrapIf(!isMACOS) { content in
+                    content
+                        .toolbar {
+                            ToolbarItem {
+                                Button(action: {
+                                    #if os(iOS)
+                                    setDeviceOrientation(to: .portrait, allowing: .portrait)
+                                    #endif
+                                    dismiss()
+                                }, label: {
+                                    Image(systemName: "xmark")
+                                })
+                            }
+                        }
+                }
+        }
+        .onAppear {
+            player.play()
+        }
+        .onDisappear {
+            player.pause()
+        }
+    }
+}

@@ -286,6 +286,21 @@ func timeZoneUTCOffsetDescription(for timeZone: TimeZone) -> String {
     }
 }
 
+#if os(iOS)
+@MainActor
+func setDeviceOrientation(to orientation: UIInterfaceOrientationMask? = nil, allowing mask: UIInterfaceOrientationMask) {
+    AppDelegate.orientationLock = mask
+    if let orientation {
+        if let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first {
+            scene.requestGeometryUpdate(.iOS(interfaceOrientations: orientation))
+        } else {
+            // This is deprecated, we use it as a fallback
+            UIDevice.current.setValue(orientation.rawValue, forKey: "orientation")
+        }
+    }
+    UIViewController.attemptRotationToDeviceOrientation()
+}
+#endif
 
 // MARK: ListItemType
 enum ListItemType: Hashable, Equatable {
@@ -294,5 +309,3 @@ enum ListItemType: Hashable, Equatable {
     case automatic
     case basedOnUISizeClass
 }
-
-

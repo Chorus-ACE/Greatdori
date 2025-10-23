@@ -60,14 +60,7 @@ struct InteractiveStoryView: View {
         unsafe voicePlayer.initialize(to: .init())
         
         #if os(iOS)
-        AppDelegate.orientationLock = .landscape
-        if let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first {
-            scene.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeLeft))
-        } else {
-            // This is deprecated, we use it as a fallback
-            UIDevice.current.setValue(UIInterfaceOrientation.landscapeLeft.rawValue, forKey: "orientation")
-        }
-        UIViewController.attemptRotationToDeviceOrientation()
+        setDeviceOrientation(to: .landscapeLeft, allowing: .landscape)
         #endif
     }
     
@@ -644,14 +637,7 @@ struct InteractiveStoryView: View {
         dismiss()
         
         #if os(iOS)
-        AppDelegate.orientationLock = .portrait
-        if let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first {
-            scene.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait))
-        } else {
-            // This is deprecated, we use it as a fallback
-            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-        }
-        UIViewController.attemptRotationToDeviceOrientation()
+        setDeviceOrientation(to: .portrait, allowing: .portrait)
         #endif
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
