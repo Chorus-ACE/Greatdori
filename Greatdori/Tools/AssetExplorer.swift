@@ -285,6 +285,10 @@ private struct AssetListView: View {
                 itemLookViewContent = .init {
                     AssetVideoPlayer(url: path.resourceURL(name: item.name))
                 }
+            } else if [".txt", ".json", ".asset", ".bundle", ".sprites"].contains(where: { item.name.hasSuffix($0) }) {
+                itemLookViewContent = .init {
+                    AssetTextViewer(url: path.resourceURL(name: item.name), name: item.name)
+                }
             }
         }
     }
@@ -651,3 +655,85 @@ private struct AssetVideoPlayer: View {
         }
     }
 }
+
+private struct AssetTextViewer: View {
+    var url: URL
+    var name: String
+    @Environment(\.dismiss) private var dismiss
+    @State private var content: String?
+    @State private var isFailedToLoad = false
+    var body: some View {
+        NavigationStack {
+            Group {
+                if let content {
+                    #if os(iOS)
+                    _SelectableTextView(content: content)
+                        .ignoresSafeArea()
+                    #else
+                    ScrollView {
+                        Text(content)
+                            .textSelection(.enabled)
+                    }
+                    #endif
+                } else {
+                    if !isFailedToLoad {
+                        ProgressView()
+                            .controlSize(.large)
+                            .onAppear {
+                                AF.request(url).response { response in
+                                    if let data = response.data,
+                                       let content = String(data: data, encoding: .utf8) {
+                                        DispatchQueue.main.async {
+                                            self.content = content
+                                        }
+                                    } else {
+                                        DispatchQueue.main.async {
+                                            isFailedToLoad = true
+                                        }
+                                    }
+                                }
+                            }
+                    } else {
+                        ExtendedConstraints {
+                            ContentUnavailableView("载入文本时出错", systemImage: "exclamationmark.triangle.fill", description: Text("轻触以重试"))
+                        }
+                        .onTapGesture {
+                            isFailedToLoad = false
+                        }
+                    }
+                }
+            }
+            .navigationTitle(name)
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem {
+                    Button(action: {
+                        dismiss()
+                    }, label: {
+                        Image(systemName: "xmark")
+                    })
+                }
+            }
+            #endif
+        }
+    }
+}
+#if os(iOS)
+private struct _SelectableTextView: UIViewRepresentable {
+    var content: String
+    func makeUIView(context: Context) -> UITextView {
+        let view = UITextView()
+        view.isEditable = false
+        view.isSelectable = true
+        view.backgroundColor = .clear
+        view.text = content
+        view.font = .preferredFont(forTextStyle: .body)
+        view.textColor = .label
+        return view
+    }
+    func updateUIView(_ uiView: UIViewType, context: Context) {
+        uiView.text = content
+    }
+}
+#endif
