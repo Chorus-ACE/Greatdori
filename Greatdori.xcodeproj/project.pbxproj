@@ -224,6 +224,8 @@
 		E94443CC2E8E6EDE00593F07 /* SettingsPermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94443CB2E8E6ED700593F07 /* SettingsPermissionsView.swift */; };
 		E94443CE2E8E80C200593F07 /* SettingsDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94443CD2E8E80BC00593F07 /* SettingsDebugView.swift */; };
 		E94944E22E92A19600E50D3F /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = E94944E12E92A19600E50D3F /* MarkdownUI */; };
+		E949A5612EAA00CB007441A6 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E949A5602EAA00C8007441A6 /* WelcomeView.swift */; };
+		E949A5632EAA0231007441A6 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E949A5622EAA0228007441A6 /* ViewModifiers.swift */; };
 		E949D28B2E93805E00E50D3F /* CollectionCode_ZH-HANS.md in Resources */ = {isa = PBXBuildFile; fileRef = E9490BB52E937BBB00E50D3F /* CollectionCode_ZH-HANS.md */; };
 		E949D28E2E93D9F800E50D3F /* Live2DViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E949D28D2E93D9F100E50D3F /* Live2DViewer.swift */; };
 		E97888C62E8A79EA00ABD33E /* QuickLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97888C52E8A79E500ABD33E /* QuickLook.swift */; };
@@ -650,6 +652,8 @@
 		E94443CB2E8E6ED700593F07 /* SettingsPermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPermissionsView.swift; sourceTree = "<group>"; };
 		E94443CD2E8E80BC00593F07 /* SettingsDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDebugView.swift; sourceTree = "<group>"; };
 		E9490BB52E937BBB00E50D3F /* CollectionCode_ZH-HANS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "CollectionCode_ZH-HANS.md"; sourceTree = "<group>"; };
+		E949A5602EAA00C8007441A6 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		E949A5622EAA0228007441A6 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
 		E949D28D2E93D9F100E50D3F /* Live2DViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Live2DViewer.swift; sourceTree = "<group>"; };
 		E97888C52E8A79E500ABD33E /* QuickLook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLook.swift; sourceTree = "<group>"; };
 		E97C5B872E8E9A4A004858A3 /* SettingsWidgetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWidgetsView.swift; sourceTree = "<group>"; };
@@ -1140,6 +1144,7 @@
 			isa = PBXGroup;
 			children = (
 				E90769CF2E546D5B00C9871C /* ContentView.swift */,
+				E949A5602EAA00C8007441A6 /* WelcomeView.swift */,
 				E90769D02E546D5B00C9871C /* CornerstoneView.swift */,
 				E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */,
 				E942C37F2E8B63E900F24974 /* FallbackableWebImage.swift */,
@@ -1246,6 +1251,7 @@
 			isa = PBXGroup;
 			children = (
 				E9CD3A472E58975900BF5EA9 /* Extensions.swift */,
+				E949A5622EAA0228007441A6 /* ViewModifiers.swift */,
 				E9CD3A492E58984200BF5EA9 /* Functions.swift */,
 				8C08B8BC2E73DC8B00447B05 /* CalendarEvents.swift */,
 				E97888C52E8A79E500ABD33E /* QuickLook.swift */,
@@ -1742,6 +1748,7 @@
 				E942192A2E8AA6CE00F24974 /* EventSearchView.swift in Sources */,
 				E94218FA2E8AA3B000F24974 /* CardPreviewImage.swift in Sources */,
 				E94219072E8AA48A00F24974 /* ComicDetailView.swift in Sources */,
+				E949A5612EAA00CB007441A6 /* WelcomeView.swift in Sources */,
 				E94218F22E8AA32000F24974 /* CharacterSearchView.swift in Sources */,
 				E942190E2E8AA4D700F24974 /* SongDetailGameplayView.swift in Sources */,
 				E94443CE2E8E80C200593F07 /* SettingsDebugView.swift in Sources */,
@@ -1794,6 +1801,7 @@
 				8C902FAA2EA4D31900202812 /* UIBasic.metal in Sources */,
 				8C2BD6442E9248B600D003D1 /* ItemSelector.swift in Sources */,
 				E94219312E8AA74B00F24974 /* DetailsGachasSection.swift in Sources */,
+				E949A5632EAA0231007441A6 /* ViewModifiers.swift in Sources */,
 				8C6C0EF82E42352700D1FB0A /* AppIntents.swift in Sources */,
 				E94218F52E8AA38300F24974 /* CardInfo.swift in Sources */,
 				E9076E2F2E8B83A100A9F5AE /* SettingsAdvanced.swift in Sources */,

@@ -15,7 +15,7 @@
 import DoriKit
 import SwiftUI
 
-struct EventSelector: View {
+struct MultiEventSelector: View {
     @Binding var selection: [PreviewEvent]
     var body: some View {
         ItemSelectorView("Events", selection: $selection, initialLayout: true, layoutOptions: [("Filter.view.banner-and-details", "text.below.rectangle", true)]) { showDetails, elements, content, eachContent in
@@ -49,5 +49,13 @@ struct EventSelector: View {
         .resultCountDescription { count in
             "Event.count.\(count)"
         }
+    }
+}
+
+struct EventSelector: View {
+    @Binding var selection: PreviewEvent?
+    var body: some View {
+        MultiEventSelector(selection: .init { [selection].compactMap { $0 } } set: { selection = $0.first })
+            .selectorDisablesMultipleSelection()
     }
 }

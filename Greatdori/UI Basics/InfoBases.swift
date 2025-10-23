@@ -76,7 +76,7 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
     @State private var allPreviewIDs: [Int] = []
     
     var body: some View {
-        EmptyContainer {
+        Group {
             if let information {
                 ScrollView {
                     HStack {

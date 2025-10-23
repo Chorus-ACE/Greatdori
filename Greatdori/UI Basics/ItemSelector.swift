@@ -307,3 +307,49 @@ extension View {
 extension EnvironmentValues {
     @Entry fileprivate var _itemSelectorMultiSelectionDisabled = false
 }
+
+struct ItemSelectorButton<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable & TitleDescribable>: View {
+    @Binding var selection: Element?
+    @State var selectorWindowIsPresented = false
+    var closeWindowOnSelectionChange = false
+    var body: some View {
+        Button(action: {
+            selectorWindowIsPresented = true
+        }, label: {
+            if let selection {
+                HStack {
+                    Text(selection.title.forPreferredLocale() ?? "#\(selection.id)")
+                    Image(systemName: "chevron.up.chevron.down")
+                        .bold(isMACOS)
+                        .font(.footnote)
+                }
+            } else {
+                Text("Selector.prompt")
+            }
+        })
+        .onChange(of: selection, {
+            if closeWindowOnSelectionChange {
+                selectorWindowIsPresented = false
+            }
+        })
+        .onDisappear {
+            selectorWindowIsPresented = false
+        }
+        .window(isPresented: $selectorWindowIsPresented) {
+            Group {
+                if let eventBinding = bindingCast($selection, to: PreviewEvent.self) {
+                    EventSelector(selection: eventBinding.optional)
+                }
+            }
+//#if os(macOS)
+//                .introspect(.window, on: .macOS(.v14...)) { window in
+//                    window.standardWindowButton(.zoomButton)?.isEnabled = false
+//                    window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
+//                    window.level = .floating
+//                }
+//#endif
+        }
+    }
+}
+
+

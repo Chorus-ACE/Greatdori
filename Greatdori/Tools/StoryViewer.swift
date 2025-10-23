@@ -19,47 +19,139 @@ import SDWebImageSwiftUI
 
 struct StoryViewerView: View {
     @State private var storyType = StoryType.event
+    @State var displayingStories: [DoriAPI.Story] = []
+    @State var informationIsAvailable = true
+    
+    @State var selectedEvent: PreviewEvent?
+    @State var allEventStories: [DoriAPI.Event.EventStory]?
+    
     var body: some View {
         ScrollView {
             HStack {
                 Spacer(minLength: 0)
                 VStack {
-                    ListItemView {
-                        Text("Tools.story-viewer.type")
-                            .bold()
-                    } value: {
-                        Picker(selection: $storyType) {
-                            ForEach(StoryType.allCases, id: \.self) { type in
-                                Text(type.name).tag(type)
+                    Section {
+                        CustomGroupBox {
+                            VStack {
+                                Group {
+                                    ListItemView(title: {
+                                        Text("Tools.story-viewer.type")
+                                            .bold()
+                                    }, value: {
+                                        Picker(selection: $storyType) {
+                                            ForEach(StoryType.allCases, id: \.self) { type in
+                                                Text(type.name).tag(type)
+                                            }
+                                        } label: {
+                                            EmptyView()
+                                        }
+                                        .labelsHidden()
+                                    })
+                                    
+                                }
+                                switch storyType {
+                                case .event:
+                                    ListItemView(title: {
+                                        Text("Tools.story-viewer.type.event")
+                                            .bold()
+                                    }, value: {
+                                        ItemSelectorButton(selection: $selectedEvent)
+                                    })
+                                case .main:
+                                    EmptyView()
+                                case .band:
+                                    EmptyView()
+                                case .card:
+                                    EmptyView()
+                                case .actionSet:
+                                    EmptyView()
+                                case .afterLive:
+                                    EmptyView()
+                                }
                             }
-                        } label: {
+                        }
+                        .frame(maxWidth: 600)
+                        /*
+                        switch storyType {
+                        case .event:
+                            ListItemView {
+                                Text("Tools.story-viewer.type.event")
+                                    .bold()
+                            } value: {
+                                Button(action: {
+                                    eventSelectorIsPresented = true
+                                }, label: {
+                                    if let selectedEvent {
+                                        Text(selectedEvent.eventName.forPreferredLocale() ?? "")
+                                    } else {
+                                        Text("选择活动…")
+                                    }
+                                })
+                                .window(isPresented: $eventSelectorIsPresented) {
+                                    EventSelector(selection: .init { [selectedEvent].compactMap { $0 } } set: { selectedEvent = $0.first })
+                                        .selectorDisablesMultipleSelection()
+                                }
+                            }
+                        case .main:
+                            EmptyView()
+                        case .band:
+                            EmptyView()
+                        case .card:
+                            EmptyView()
+                        case .actionSet:
+                            EmptyView()
+                        case .afterLive:
                             EmptyView()
                         }
-                        .labelsHidden()
+                         */
                     }
-                    switch storyType {
-                    case .event:
-                        EventStoryViewer()
-                    case .main:
-                        MainStoryViewer()
-                    case .band:
-                        BandStoryViewer()
-                    case .card:
-                        CardStoryViewer()
-                    case .actionSet:
-                        ActionSetStoryViewer()
-                    case .afterLive:
-                        AfterLiveStoryViewer()
-                    }
+                    
+                    DetailSectionsSpacer(height: 15)
                 }
-                .frame(maxWidth: 600)
                 .padding()
                 Spacer(minLength: 0)
             }
         }
         .withSystemBackground()
         .navigationTitle("Tools.story-viewer")
+        .onAppear {
+            Task {
+                await updateStories()
+            }
+        }
+        .onChange(of: storyType) {
+            Task {
+                await updateStories()
+            }
+        }
     }
+    
+    func updateStories() async {
+        informationIsAvailable = true
+        
+        switch storyType {
+        case .event:
+            if allEventStories == nil {
+                withDoriCache(id: "EventStories") {
+                    await DoriAPI.Event.allStories()
+                }.onUpdate {
+                    if let stories = $0 {
+                        self.allEventStories = stories
+                    } else {
+                        informationIsAvailable = false
+                    }
+                }
+            }
+//        case .main:
+//        case .band:
+//        case .card:
+//        case .actionSet:
+//        case .afterLive:
+        default:
+            print("1")
+        }
+    }
+    
 }
 
 private enum StoryType: String, CaseIterable, Hashable {
@@ -82,90 +174,94 @@ private enum StoryType: String, CaseIterable, Hashable {
     }
 }
 
-extension StoryViewerView {
-    struct EventStoryViewer: View {
-        @State var isEventSelectorPresented = false
-        @State var selectedEvent: PreviewEvent?
-        @State var stories: [DoriAPI.Event.EventStory]?
-        @State var storyAvailability = true
-        var body: some View {
-            ListItemView {
-                Text("Tools.story-viewer.type.event")
-                    .bold()
-            } value: {
-                Button(action: {
-                    isEventSelectorPresented = true
-                }, label: {
-                    if let selectedEvent {
-                        Text(selectedEvent.eventName.forPreferredLocale() ?? "")
-                    } else {
-                        Text("选择活动…")
-                    }
-                })
-                .window(isPresented: $isEventSelectorPresented) {
-                    EventSelector(selection: .init { [selectedEvent].compactMap { $0 } } set: { selectedEvent = $0.first })
-                        .selectorDisablesMultipleSelection()
-                }
-            }
-            .task {
-                if stories == nil {
-                    await getStories()
-                }
-            }
-            if let selectedEvent {
-                NavigationLink(destination: { EventDetailView(id: selectedEvent.id) }) {
-                    EventInfo(selectedEvent)
-                }
-                .buttonStyle(.plain)
-            }
-            if let selectedEvent {
-                if let stories {
-                    if let story = stories.first(where: { $0.id == selectedEvent.id }),
-                       let locale = story.eventName.availableLocale() {
-                        ForEach(Array(story.stories.enumerated()), id: \.element.id) { (index, story) in
-                            StoryCardView(story: story, type: .event, locale: locale, unsafeAssociatedID: String(selectedEvent.id), unsafeSecondaryAssociatedID: String(index))
-                        }
-                    } else {
-                        HStack {
-                            Spacer()
-                            ContentUnavailableView("Tools.story-viewer.type.event.unavailable", systemImage: "text.rectangle.page")
-                            Spacer()
-                        }
-                    }
-                } else {
-                    if storyAvailability {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
-                    } else {
-                        ExtendedConstraints {
-                            ContentUnavailableView("Tools.story-viewer.error", systemImage: "text.rectangle.page")
-                                .onTapGesture {
-                                    Task {
-                                        await getStories()
-                                    }
-                                }
-                        }
-                    }
-                }
+
+struct EventStoryViewer: View {
+    @State var isEventSelectorPresented = false
+    @State var selectedEvent: PreviewEvent?
+    @State var stories: [DoriAPI.Event.EventStory]?
+    @State var storyAvailability = true
+    var body: some View {
+        ListItemView {
+            Text("Tools.story-viewer.type.event")
+                .bold()
+        } value: {
+//            Button(action: {
+//                isEventSelectorPresented = true
+//            }, label: {
+//                if let selectedEvent {
+//                    Text(selectedEvent.eventName.forPreferredLocale() ?? "")
+//                } else {
+//                    Text("选择活动…")
+//                }
+//            })
+//            .window(isPresented: $isEventSelectorPresented) {
+//                EventSelector(selection: .init { [selectedEvent].compactMap { $0 } } set: { selectedEvent = $0.first })
+//                    .selectorDisablesMultipleSelection()
+//            }
+        }
+        .task {
+            if stories == nil {
+                await getStories()
             }
         }
-        
-        func getStories() async {
-            storyAvailability = true
-            withDoriCache(id: "EventStories") {
-                await DoriAPI.Event.allStories()
-            }.onUpdate {
-                if let stories = $0 {
-                    self.stories = stories
+        if let selectedEvent {
+            NavigationLink(destination: { EventDetailView(id: selectedEvent.id) }) {
+                EventInfo(selectedEvent)
+            }
+            .buttonStyle(.plain)
+        }
+        if let selectedEvent {
+            if let stories {
+                if let story = stories.first(where: { $0.id == selectedEvent.id }),
+                   let locale = story.eventName.availableLocale() {
+                    ForEach(Array(story.stories.enumerated()), id: \.element.id) { (index, story) in
+                        StoryCardView(story: story, type: .event, locale: locale, unsafeAssociatedID: String(selectedEvent.id), unsafeSecondaryAssociatedID: String(index))
+                    }
                 } else {
-                    storyAvailability = false
+                    HStack {
+                        Spacer()
+                        ContentUnavailableView("Tools.story-viewer.type.event.unavailable", systemImage: "text.rectangle.page")
+                        Spacer()
+                    }
+                }
+            } else {
+                if storyAvailability {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                } else {
+                    ExtendedConstraints {
+                        ContentUnavailableView("Tools.story-viewer.error", systemImage: "text.rectangle.page")
+                            .onTapGesture {
+                                Task {
+                                    await getStories()
+                                }
+                            }
+                    }
                 }
             }
         }
     }
+    
+    func getStories() async {
+        storyAvailability = true
+        withDoriCache(id: "EventStories") {
+            await DoriAPI.Event.allStories()
+        }.onUpdate {
+            if let stories = $0 {
+                self.stories = stories
+            } else {
+                storyAvailability = false
+            }
+        }
+    }
+}
+
+
+
+extension StoryViewerView {
     
     struct MainStoryViewer: View {
         @State var isFirstShowing = true

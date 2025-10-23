@@ -743,9 +743,8 @@ struct SettingsWidgetsCollectionsItemView: View {
         .onAppear {
             Task {
                 doriCard = await Card(id: collectionCard.id)
-                characterName = DoriCache.preCache.characterDetails[doriCard!.characterID]?.characterName
+                characterName = DoriCache.preCache.characterDetails[doriCard?.characterID ?? -1]?.characterName
             }
-            
         }
         .wrapIf(doriCard == nil, in: { content in
             content

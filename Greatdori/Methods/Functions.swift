@@ -26,6 +26,17 @@ import Vision
 import UIKit
 #endif
 
+// MARK: bindingCast
+func bindingCast<T, U>(_ binding: Binding<T>, to type: U.Type) -> Binding<U>? {
+    guard let value = binding.wrappedValue as? U else { return nil }
+    return Binding<U>(
+        get: { value },
+        set: { newValue in
+            binding.wrappedValue = newValue as! T
+        }
+    )
+}
+
 // MARK: compare
 func compare<T: Comparable>(_ lhs: T?, _ rhs: T?, ascending: Bool = true) -> Bool {
     if lhs == nil {
@@ -202,6 +213,36 @@ func highlightOccurrences(of keyword: String, in content: String?) -> Attributed
     }
 }
 
+// MARK: NetworkMonitor
+final class NetworkMonitor: Sendable {
+    @MainActor static let shared = NetworkMonitor()
+    
+    private let monitor = NWPathMonitor()
+    private let queue = DispatchQueue(label: "NetworkMonitor")
+    
+    @MainActor private(set) var isConnected: Bool = false
+    @MainActor private(set) var connectionType: NWInterface.InterfaceType?
+    
+    private init() {
+        monitor.pathUpdateHandler = { path in
+            DispatchQueue.main.async {
+                self.isConnected = path.status == .satisfied
+                
+                if path.usesInterfaceType(.wifi) {
+                    self.connectionType = .wifi
+                } else if path.usesInterfaceType(.cellular) {
+                    self.connectionType = .cellular
+                } else if path.usesInterfaceType(.wiredEthernet) {
+                    self.connectionType = .wiredEthernet
+                } else {
+                    self.connectionType = nil
+                }
+            }
+        }
+        monitor.start(queue: queue)
+    }
+}
+
 func timeZoneDifference(to targetTimeZone: TimeZone) -> String {
     let now = Date()
     let systemTimeZone = TimeZone.current
@@ -253,4 +294,5 @@ enum ListItemType: Hashable, Equatable {
     case automatic
     case basedOnUISizeClass
 }
+
 

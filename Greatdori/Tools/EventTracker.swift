@@ -21,7 +21,6 @@ import SDWebImageSwiftUI
 struct EventTrackerView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @State private var locale: DoriLocale = DoriLocale.primaryLocale
-    @State private var isEventSelectorPresented = false
     @State private var focusOnLatestEvent = false
     @State private var eventList: [PreviewEvent]?
     @State private var eventListIsAvailabile = true
@@ -41,35 +40,11 @@ struct EventTrackerView: View {
                                     Text("Tools.event-tracker.event")
                                         .bold()
                                 }, value: {
-                                    Button(action: {
-                                        isEventSelectorPresented = true
-                                    }, label: {
-                                        if let selectedEvent {
-                                            HStack {
-                                                Text(selectedEvent.title.forPreferredLocale() ?? "#\(selectedEvent.id)")
-                                                Image(systemName: "chevron.up.chevron.down")
-                                                    .bold()
-                                                    .font(.footnote)
-                                            }
-                                        } else {
-                                            Text("Tools.event-tracker.event.select")
-                                        }
-                                    })
+                                    ItemSelectorButton(selection: $selectedEvent)
                                     .disabled(focusOnLatestEvent)
                                 })
-                                .window(isPresented: $isEventSelectorPresented) {
-                                    EventSelector(selection: .init { [selectedEvent].compactMap { $0 } } set: { selectedEvent = $0.first })
-                                        .selectorDisablesMultipleSelection()
-#if os(macOS)
-                                        .introspect(.window, on: .macOS(.v14...)) { window in
-                                            window.standardWindowButton(.zoomButton)?.isEnabled = false
-                                            window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
-                                            window.level = .floating
-                                        }
-#endif
-                                }
                                 .onChange(of: selectedEvent) {
-                                    isEventSelectorPresented = false
+//                                    isEventSelectorPresented = false
                                     Task {
                                         await updateTrackerData()
                                     }

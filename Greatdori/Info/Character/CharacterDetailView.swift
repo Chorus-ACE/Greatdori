@@ -40,7 +40,7 @@ struct CharacterDetailView: View {
     @State var showSubtitle: Bool = false
     @State var randomCardHadUpdatedOnce = false
     var body: some View {
-        EmptyContainer {
+        Group {
             if let information {
                 ScrollView {
                     VStack {
