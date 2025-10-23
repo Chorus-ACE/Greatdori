@@ -64,7 +64,7 @@ let ids = formattedCardInfoString
     }
 print("Please wait...", terminator: .init())
 fflush(stdout)
-if let cards = await DoriAPI.Card.all() {
+if let cards = await DoriAPI.Cards.all() {
     let relatedCards = cards.compactMap { card in
         if ids.map({ $0.id }).contains(card.id) {
             (card: card, trained: ids.first(where: { $0.id == card.id })!.trained)
