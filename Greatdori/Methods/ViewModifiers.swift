@@ -362,12 +362,12 @@ private struct _ImageUpscaleView<V: View, Result: View>: View {
                                 try await AssetPackManager.shared.ensureLocalAvailability(of: assetPack)
                                 let packageURL = try AssetPackManager.shared.url(for: "Upscaler.mlpackage")
                                 let _model: MLModel
-                                if let compiledModel = UserDefaults.standard.url(forKey: "UpscalerCompiledModel"),
-                                   FileManager.default.fileExists(atPath: compiledModel.path(percentEncoded: false)) {
-                                    _model = try .init(contentsOf: compiledModel)
+                                if let compiledModel = UserDefaults.standard.string(forKey: "UpscalerCompiledModel"),
+                                   FileManager.default.fileExists(atPath: NSHomeDirectory() + "/tmp/\(compiledModel)") {
+                                    _model = try .init(contentsOf: .init(filePath: NSHomeDirectory() + "/tmp/\(compiledModel)"))
                                 } else {
                                     let newURL = try await MLModel.compileModel(at: packageURL)
-                                    UserDefaults.standard.set(newURL, forKey: "UpscalerCompiledModel")
+                                    UserDefaults.standard.set(newURL.lastPathComponent, forKey: "UpscalerCompiledModel")
                                     _model = try .init(contentsOf: newURL)
                                 }
                                 let model = try VNCoreMLModel(for: _model)
