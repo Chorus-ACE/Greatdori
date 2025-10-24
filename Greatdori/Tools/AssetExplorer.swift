@@ -16,6 +16,7 @@ import AVKit
 import DoriKit
 import SwiftUI
 import Alamofire
+import UniformTypeIdentifiers
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct AssetExplorerView: View {
@@ -117,6 +118,9 @@ private struct AssetListView: View {
     @State private var previousTapTime = 0.0
     @State private var itemLookViewContent: ItemPresenter?
     @State private var contentLoadingItem: AssetItem?
+    @State private var fileExporterDocument: AssetFileDocument?
+    @State private var fileExporterDefaultFileName: String?
+    @State private var isFileExporterPresented = false
     var body: some View {
         Group {
             if let items {
@@ -146,6 +150,10 @@ private struct AssetListView: View {
                                     }
                                 } else {
                                     ProgressView()
+                                        .wrapIf(isMACOS) { content in
+                                            content
+                                                .controlSize(.small)
+                                        }
                                 }
                             }
                             Spacer()
@@ -181,6 +189,15 @@ private struct AssetListView: View {
                                         .listRowSeparator(.hidden, edges: index == 0 ? .top : .bottom)
                                 }
                         }
+                        .contextMenu {
+                            Section {
+                                if item.type == .file, let path = currentPath {
+                                    Button("下载", systemImage: "arrow.down.circle") {
+                                        downloadItem(item, withPath: path)
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 .listStyle(.plain)
@@ -205,6 +222,15 @@ private struct AssetListView: View {
                     content.view
                 }
                 #endif
+                .fileExporter(
+                    isPresented: $isFileExporterPresented,
+                    document: fileExporterDocument,
+                    contentType: .content,
+                    defaultFilename: fileExporterDefaultFileName
+                ) { _ in
+                    fileExporterDocument = nil
+                    fileExporterDefaultFileName = nil
+                }
             } else if let currentPath {
                 ExtendedConstraints {
                     ProgressView()
@@ -292,6 +318,36 @@ private struct AssetListView: View {
             }
         }
     }
+    private func downloadItem(_ item: AssetItem, withPath path: DoriAPI.Assets.PathDescriptor) {
+        contentLoadingItem = item
+        #if os(macOS)
+        let downloadURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!.appending(path: item.name)
+        AF.download(path.resourceURL(name: item.name), to: { _, _ in
+            (downloadURL, [])
+        }).response { response in
+            if response.error == nil {
+                DistributedNotificationCenter.default.post(
+                    name: .init("com.apple.DownloadFileFinished"),
+                    object: downloadURL.resolvingSymlinksInPath().path
+                )
+            }
+            DispatchQueue.main.async {
+                contentLoadingItem = nil
+            }
+        }
+        #else // os(macOS)
+        AF.request(path.resourceURL(name: item.name)).response { response in
+            DispatchQueue.main.async {
+                if let data = response.data {
+                    fileExporterDocument = .init(data: data)
+                    fileExporterDefaultFileName = item.name
+                    isFileExporterPresented = true
+                }
+                contentLoadingItem = nil
+            }
+        }
+        #endif // os(macOS)
+    }
     
     private struct ItemPresenter: Identifiable {
         var id = UUID()
@@ -300,6 +356,32 @@ private struct AssetListView: View {
         init(@ViewBuilder content: () -> some View) {
             self.view = AnyView(content())
         }
+    }
+}
+
+private struct AssetFileDocument: FileDocument {
+    static var readableContentTypes: [UTType] {
+        [] // readnone
+    }
+    static var writableContentTypes: [UTType] {
+        [.content]
+    }
+    
+    private let data: Data
+    
+    init(data: Data) {
+        self.data = data
+    }
+    init(configuration: ReadConfiguration) throws {
+        if let data = configuration.file.regularFileContents {
+            self.data = data
+        } else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+    }
+    
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        .init(regularFileWithContents: data)
     }
 }
 
