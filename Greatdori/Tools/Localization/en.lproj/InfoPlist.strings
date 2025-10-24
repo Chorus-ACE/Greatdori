@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  Greatdori
+
+  Created by ThreeManager785 on 2025/9/13.
+  
+*/
+
+"NSCalendarsUsageDescription" = "Allow calendar access to allow Greatdori! manage birthdays. No events other than character birthday events will be accessed.";
