@@ -23,7 +23,6 @@ import System
 import UniformTypeIdentifiers
 import Vision
 
-
 extension View {
     func imageContextMenu<V: View>(
         _ info: [_ImageContextMenuModifier<V>.ImageInfo],

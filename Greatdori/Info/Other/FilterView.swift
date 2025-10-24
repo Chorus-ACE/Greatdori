@@ -58,7 +58,6 @@ struct FilterView: View {
                     Text("Filter.clear-all")
                 })
                 .disabled(!filter.isFiltered)
-//                .buttonStyle(.borderless)
             }
         }
         .geometryGroup()

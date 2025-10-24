@@ -15,7 +15,7 @@
 import SwiftUI
 @_private(sourceFile: "FrontendSong.swift") import DoriKit
 
-typealias Lyrics = DoriFrontend.Song.Lyrics
+typealias Lyrics = DoriFrontend.Songs.Lyrics
 
 /// A utility for generating lyric files.
 ///
