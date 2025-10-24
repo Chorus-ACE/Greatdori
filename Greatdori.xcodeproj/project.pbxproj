@@ -171,6 +171,7 @@
 		8CD290172E9FFD6700831458 /* ChartViewer_LongNoteLine.fsh in Copy Shaders */ = {isa = PBXBuildFile; fileRef = 8CD290162E9FFD4F00831458 /* ChartViewer_LongNoteLine.fsh */; };
 		8CD2A9D22E9F690D00831458 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8CD2A9D12E9F690D00831458 /* Alamofire */; };
 		8CD580BC2EA7CE73007A3F49 /* AssetExplorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */; };
+		8CEA20C52EAB6362009D41C5 /* SongDetailMatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEA20C42EAB62DA009D41C5 /* SongDetailMatchView.swift */; };
 		8CF826D42E8AC1120045CA97 /* FallingWebImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF826D32E8AC10D0045CA97 /* FallingWebImage.swift */; };
 		8CF827A92E8ACD380045CA97 /* LoginCampaignInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF827A82E8ACD380045CA97 /* LoginCampaignInfo.swift */; };
 		8CF827AB2E8ACE1D0045CA97 /* LoginCampaignSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF827AA2E8ACE1D0045CA97 /* LoginCampaignSearchView.swift */; };
@@ -599,6 +600,7 @@
 		8CD290132E9FCBB700831458 /* ChartSimAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ChartSimAssets.xcassets; sourceTree = "<group>"; };
 		8CD290162E9FFD4F00831458 /* ChartViewer_LongNoteLine.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ChartViewer_LongNoteLine.fsh; sourceTree = "<group>"; };
 		8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetExplorer.swift; sourceTree = "<group>"; };
+		8CEA20C42EAB62DA009D41C5 /* SongDetailMatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailMatchView.swift; sourceTree = "<group>"; };
 		8CF826D32E8AC10D0045CA97 /* FallingWebImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallingWebImage.swift; sourceTree = "<group>"; };
 		8CF827A82E8ACD380045CA97 /* LoginCampaignInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginCampaignInfo.swift; sourceTree = "<group>"; };
 		8CF827AA2E8ACE1D0045CA97 /* LoginCampaignSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginCampaignSearchView.swift; sourceTree = "<group>"; };
@@ -1194,6 +1196,7 @@
 				E94219102E8AA51500F24974 /* SongInfo.swift */,
 				E94219092E8AA4AE00F24974 /* SongSearchView.swift */,
 				E942190B2E8AA4C200F24974 /* SongDetailView.swift */,
+				8CEA20C42EAB62DA009D41C5 /* SongDetailMatchView.swift */,
 				E942190D2E8AA4D200F24974 /* SongDetailGameplayView.swift */,
 				E94219142E8AA55200F24974 /* SongDifficultyIndicators.swift */,
 				E94219212E8AA65100F24974 /* DetailSongsSection.swift */,
@@ -1748,6 +1751,7 @@
 				E942192A2E8AA6CE00F24974 /* EventSearchView.swift in Sources */,
 				E94218FA2E8AA3B000F24974 /* CardPreviewImage.swift in Sources */,
 				E94219072E8AA48A00F24974 /* ComicDetailView.swift in Sources */,
+				8CEA20C52EAB6362009D41C5 /* SongDetailMatchView.swift in Sources */,
 				E949A5612EAA00CB007441A6 /* WelcomeView.swift in Sources */,
 				E94218F22E8AA32000F24974 /* CharacterSearchView.swift in Sources */,
 				E942190E2E8AA4D700F24974 /* SongDetailGameplayView.swift in Sources */,

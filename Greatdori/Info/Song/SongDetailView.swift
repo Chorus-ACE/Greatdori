@@ -16,7 +16,6 @@ import SwiftUI
 import DoriKit
 import SDWebImageSwiftUI
 
-
 // MARK: SongDetailView
 struct SongDetailView: View {
     var id: Int
@@ -24,6 +23,7 @@ struct SongDetailView: View {
     var body: some View {
         DetailViewBase("Song", previewList: allSongs, initialID: id) { information in
             SongDetailOverviewView(information: information.song)
+            SongDetailMatchView(song: information.song)
             SongDetailGameplayView(information: information)
             DetailArtsSection {
                 ArtsTab("Song.arts.cover") {
