@@ -20,7 +20,7 @@ import SDWebImageSwiftUI
 struct CostumeSearchView: View {
     let gridLayoutItemWidth: CGFloat = 200
     var body: some View {
-        SearchViewBase("Costumes", forType: PreviewCostume.self, initialLayout: SummaryLayout.horizontal, layoutOptions: verticalAndHorizontalLayouts) { layout, _, content, _ in
+        SearchViewBase(forType: PreviewCostume.self, initialLayout: SummaryLayout.horizontal, layoutOptions: verticalAndHorizontalLayouts) { layout, _, content, _ in
             if layout == .horizontal {
                 LazyVStack {
                     content
@@ -36,7 +36,6 @@ struct CostumeSearchView: View {
         } destination: { element, list in
             CostumeDetailView(id: element.id, allCostumes: list)
         }
-        .contentUnavailableImage(systemName: "swatchpalette")
         .resultCountDescription { count in
             "Costume.count.\(count)"
         }

@@ -21,7 +21,7 @@ import SwiftUI
 struct DetailsSongsSection: View {
     var songs: [PreviewSong]
     var body: some View {
-        DetailSectionBase("Details.songs", elements: songs.sorted(withDoriSorter: DoriSorter(keyword: .releaseDate(in: .jp)))) { item in
+        DetailSectionBase(elements: songs.sorted(withDoriSorter: DoriSorter(keyword: .releaseDate(in: .jp)))) { item in
             NavigationLink(destination: {
                 SongDetailView(id: item.id)
             }, label: {

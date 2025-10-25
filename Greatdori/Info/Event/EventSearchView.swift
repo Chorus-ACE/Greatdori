@@ -22,7 +22,7 @@ struct EventSearchView: View {
     
     @Namespace var eventNamespace
     var body: some View {
-        SearchViewBase("Events", forType: PreviewEvent.self, initialLayout: true, layoutOptions: bannerLayouts) { showDetails, elements, content, eachContent in
+        SearchViewBase(forType: PreviewEvent.self, initialLayout: true, layoutOptions: bannerLayouts) { showDetails, elements, content, eachContent in
             ViewThatFits {
                 LazyVStack(spacing: showDetails ? nil : 15) {
                     let events = elements.chunked(into: 2)
@@ -51,7 +51,6 @@ struct EventSearchView: View {
         } destination: { element, list in
             EventDetailView(id: element.id, allEvents: list)
         }
-        .contentUnavailableImage(systemName: "star.hexagon")
         .resultCountDescription { count in
             "Event.count.\(count)"
         }

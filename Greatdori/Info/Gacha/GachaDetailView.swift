@@ -22,7 +22,7 @@ struct GachaDetailView: View {
     var id: Int
     var allGachas: [PreviewGacha]? = nil
     var body: some View {
-        DetailViewBase("Gacha", previewList: allGachas, initialID: id) { information in
+        DetailViewBase(previewList: allGachas, initialID: id) { information in
             GachaDetailOverviewView(information: information)
         } switcherDestination: {
             GachaSearchView()

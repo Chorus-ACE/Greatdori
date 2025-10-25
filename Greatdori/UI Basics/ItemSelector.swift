@@ -309,7 +309,7 @@ extension EnvironmentValues {
     @Entry fileprivate var _itemSelectorMultiSelectionDisabled = false
 }
 
-struct ItemSelectorButton<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable & TitleDescribable>: View {
+struct ItemSelectorButton<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable & TitleDescribable & DoriTypeDescribable>: View {
     @Binding var selection: Element?
     @State var selectorWindowIsPresented = false
     var closeWindowOnSelectionChange = false
@@ -325,7 +325,7 @@ struct ItemSelectorButton<Element: Sendable & Hashable & DoriCacheable & DoriFil
                         .font(.footnote)
                 }
             } else {
-                Text("Selector.prompt")
+                Text("Selector.prompt.\(Element.singularName)")
             }
         })
         .onChange(of: selection, {

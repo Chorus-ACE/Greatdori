@@ -22,7 +22,7 @@ struct SongDetailView: View {
     var allSongs: [PreviewSong]? = nil
     var songMatches: [Int: DoriFrontend.Songs._SongMatchResult]?
     var body: some View {
-        DetailViewBase("Song", previewList: allSongs, initialID: id) { information in
+        DetailViewBase(previewList: allSongs, initialID: id) { information in
             SongDetailOverviewView(information: information.song)
             SongDetailMatchView(song: information.song, songMatches: songMatches)
             SongDetailGameplayView(information: information)

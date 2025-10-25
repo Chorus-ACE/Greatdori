@@ -20,7 +20,7 @@ import SDWebImageSwiftUI
 // MARK: GachaSearchView
 struct GachaSearchView: View {
     var body: some View {
-        SearchViewBase("Gacha", forType: PreviewGacha.self, initialLayout: true, layoutOptions: bannerLayouts) { layout, elements, content, eachContent in
+        SearchViewBase(forType: PreviewGacha.self, initialLayout: true, layoutOptions: bannerLayouts) { layout, elements, content, eachContent in
             ViewThatFits {
                 LazyVStack(spacing: layout ? nil : 15) {
                     let gachas = elements.chunked(into: 2)
@@ -52,7 +52,6 @@ struct GachaSearchView: View {
         } destination: { element, list in
             GachaDetailView(id: element.id, allGachas: list)
         }
-        .contentUnavailableImage(systemName: "line.horizontal.star.fill.line.horizontal")
         .resultCountDescription { count in
             "Gacha.count.\(count)"
         }

@@ -22,7 +22,7 @@ struct EventDetailView: View {
     var id: Int
     var allEvents: [PreviewEvent]?
     var body: some View {
-        DetailViewBase("Event", previewList: allEvents, initialID: id) { information in
+        DetailViewBase(previewList: allEvents, initialID: id) { information in
             EventDetailOverviewView(information: information)
             DetailsGachasSection(gachas: information.gacha, applyLocaleFilter: false)
             DetailArtsSection {

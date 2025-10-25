@@ -20,7 +20,7 @@ import SDWebImageSwiftUI
 struct LoginCampaignSearchView: View {
     let gridLayoutItemWidth: CGFloat = 260*0.9
     var body: some View {
-        SearchViewBase("Login-campaigns", forType: PreviewLoginCampaign.self, initialLayout: SummaryLayout.horizontal, layoutOptions: verticalAndHorizontalLayouts) { layout, _, content, _ in
+        SearchViewBase(forType: PreviewLoginCampaign.self, initialLayout: SummaryLayout.horizontal, layoutOptions: verticalAndHorizontalLayouts) { layout, _, content, _ in
             if layout == .horizontal {
                 LazyVStack {
                     content
@@ -36,7 +36,6 @@ struct LoginCampaignSearchView: View {
         } destination: { element, list in
             LoginCampaignDetailView(id: element.id, allLoginCampaigns: list)
         }
-        .contentUnavailableImage(systemName: "calendar")
         .resultCountDescription { count in
             "Login-campaign.count.\(count)"
         }

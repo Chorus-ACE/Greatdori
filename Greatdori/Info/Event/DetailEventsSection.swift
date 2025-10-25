@@ -46,7 +46,7 @@ struct DetailsEventsSection: View {
     }
     
     var body: some View {
-        DetailSectionBase("Details.events", elements: sourcePreference == 0 ? eventsFromList : eventsFromSources) { item in
+        DetailSectionBase(elements: sourcePreference == 0 ? eventsFromList : eventsFromSources) { item in
             if sourcePreference == 0 {
                 NavigationLink(destination: {
                     EventDetailView(id: item.id)

@@ -23,7 +23,7 @@ struct CardDetailView: View {
     var id: Int
     var allCards: [CardWithBand]? = nil
     var body: some View {
-        DetailViewBase("Card", forType: ExtendedCard.self, previewList: allCards, initialID: id) { information in
+        DetailViewBase(forType: ExtendedCard.self, previewList: allCards, initialID: id) { information in
             CardDetailOverviewView(information: information)
             CardDetailStatsView(card: information.card)
             DetailsCostumesSection(costumes: [information.costume])

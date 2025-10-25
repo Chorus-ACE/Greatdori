@@ -22,7 +22,7 @@ struct ComicDetailView: View {
     var id: Int
     var allComics: [Comic]? = nil
     var body: some View {
-        DetailViewBase("Comic", forType: Comic.self, previewList: allComics, initialID: id) { information in
+        DetailViewBase(forType: Comic.self, previewList: allComics, initialID: id) { information in
             // FIXME: Implement `ComicDetailOverviewView` first
             //                            ComicDetailOverviewView(information: information, cardNavigationDestinationID: $cardNavigationDestinationID)
             

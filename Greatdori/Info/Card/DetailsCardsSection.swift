@@ -22,7 +22,7 @@ import SwiftUI
 struct DetailsCardsSection: View {
     var cards: [PreviewCard]
     var body: some View {
-        DetailSectionBase("Details.cards", elements: cards.sorted {
+        DetailSectionBase(elements: cards.sorted {
             compare($0.releasedAt.forLocale(.jp)?.corrected(), $1.releasedAt.forLocale(.jp)?.corrected())
         }) { item in
             NavigationLink(destination: {

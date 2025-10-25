@@ -16,10 +16,9 @@ import SwiftUI
 import DoriKit
 
 struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & TitleDescribable,
-                      PreviewInformation: Identifiable,
+                      PreviewInformation: Identifiable & DoriTypeDescribable,
                       Content: View,
                       SwitcherDestination: View>: View where Information.ID == Int, PreviewInformation.ID == Int {
-    var titleKey: LocalizedStringResource
     var previewList: [PreviewInformation]?
     var initialID: Int
     var updateInformation: @Sendable (Int) async -> Information?
@@ -28,43 +27,39 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
     var unavailablePrompt: LocalizedStringResource
     
     init(
-        _ titleKey: LocalizedStringResource,
         previewList: [PreviewInformation]?,
         initialID: Int,
         @ViewBuilder content: @escaping (Information) -> Content,
         @ViewBuilder switcherDestination: @escaping () -> SwitcherDestination
     ) where Information: GettableByID, PreviewInformation: ExtendedTypeConvertible, PreviewInformation.ExtendedType == Information {
-        self.init(titleKey, previewList: previewList, initialID: initialID, updateInformation: {
+        self.init(previewList: previewList, initialID: initialID, updateInformation: {
             await PreviewInformation.ExtendedType.init(id: $0)
         }, content: content, switcherDestination: switcherDestination)
     }
     init(
-        _ titleKey: LocalizedStringResource,
         forType infoType: Information.Type,
         previewList: [PreviewInformation]?,
         initialID: Int,
         @ViewBuilder content: @escaping (Information) -> Content,
         @ViewBuilder switcherDestination: @escaping () -> SwitcherDestination
     ) where Information: GettableByID {
-        self.init(titleKey, previewList: previewList, initialID: initialID, updateInformation: {
+        self.init(previewList: previewList, initialID: initialID, updateInformation: {
             await infoType.init(id: $0)
         }, content: content, switcherDestination: switcherDestination)
     }
     init(
-        _ titleKey: LocalizedStringResource,
         previewList: [PreviewInformation]?,
         initialID: Int,
         updateInformation: @Sendable @escaping (_ id: Int) async -> Information?,
         @ViewBuilder content: @escaping (Information) -> Content,
         @ViewBuilder switcherDestination: @escaping () -> SwitcherDestination
     ) {
-        self.titleKey = titleKey
         self.previewList = previewList
         self.initialID = initialID
         self.updateInformation = updateInformation
         self.makeContent = content
         self.makeSwitcherDestination = switcherDestination
-        self.unavailablePrompt = "Content.unavailable.\(String(localized: titleKey))"
+        self.unavailablePrompt = "Content.unavailable.\(PreviewInformation.singularName)"
     }
     
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -108,7 +103,7 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
                 }
             }
         }
-        .navigationTitle(Text(information?.title.forPreferredLocale() ?? "\(isMACOS ? String(localized: titleKey) : "")"))
+        .navigationTitle(Text(information?.title.forPreferredLocale() ?? (isMACOS ? String(localized: "\(PreviewInformation.singularName.key)") : "")))
         #if os(iOS)
         .wrapIf(showSubtitle) { content in
             if #available(iOS 26, macOS 14.0, *) {
@@ -152,7 +147,7 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
     private func getInformation(id: Int) async {
         infoIsAvailable = true
         informationLoadPromise?.cancel()
-        informationLoadPromise = withDoriCache(id: "\(titleKey.key)Detail_\(id)", trait: .realTime) {
+        informationLoadPromise = withDoriCache(id: "\(PreviewInformation.singularName)Detail_\(id)", trait: .realTime) {
             await updateInformation(id)
         } .onUpdate {
             if let information = $0 {
@@ -241,6 +236,7 @@ enum SummaryLayout: Hashable {
         }
     }
 }
+
 extension View {
     func preferHiddenInCompactLayout() -> some View {
         modifier(_CompactHiddenModifier())
@@ -250,6 +246,7 @@ extension View {
         environment(\.searchedKeyword, keyword)
     }
 }
+
 private struct _CompactHiddenModifier: ViewModifier {
     @Environment(\.isCompactHidden) private var isCompactHidden: Bool
     func body(content: Content) -> some View {
@@ -266,8 +263,7 @@ extension EnvironmentValues {
 @MainActor let verticalAndHorizontalLayouts: [(LocalizedStringKey, String, SummaryLayout)] = [("Filter.view.list", "list.bullet", SummaryLayout.horizontal), ("Filter.view.grid", "square.grid.2x2", SummaryLayout.vertical(hidesDetail: false))]
 @MainActor let bannerLayouts: [(LocalizedStringKey, String, Bool)] = [("Filter.view.banner-and-details", "text.below.rectangle", true), ("Filter.view.banner-only", "rectangle.grid.1x2", false)]
 
-struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable, Layout, LayoutPicker: View, Container: View, Content: View, Destination: View>: View {
-    var titleKey: LocalizedStringResource
+struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable & DoriTypeDescribable, Layout, LayoutPicker: View, Container: View, Content: View, Destination: View>: View {
     var updateList: @Sendable () async -> [Element]?
     var makeLayoutPicker: (Binding<Layout>) -> LayoutPicker
     var makeContainer: (Layout, [Element], AnyView, @escaping (Element) -> AnyView) -> Container
@@ -276,12 +272,10 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
     @State var currentLayout: Layout
     
     var unavailablePrompt: LocalizedStringResource
-    var unavailableSystemImage: String = "bolt.horizontal.fill"
     var searchPlaceholder: LocalizedStringResource
     var getResultCountDescription: ((Int) -> LocalizedStringResource)?
 
     init(
-        _ titleKey: LocalizedStringResource,
         forType type: Element.Type,
         initialLayout: Layout,
         layoutOptions: [(LocalizedStringKey, String, Layout)],
@@ -290,7 +284,6 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         @ViewBuilder destination: @escaping (_ element: Element, _ list: [Element]) -> Destination
     ) where Element: ListGettable, Layout: Hashable, LayoutPicker == Greatdori.LayoutPicker<Layout> {
         self.init(
-            titleKey,
             forType: type,
             initialLayout: initialLayout,
             layoutPicker: { layout in
@@ -302,7 +295,6 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         )
     }
     init(
-        _ titleKey: LocalizedStringResource,
         initialLayout: Layout,
         updateList: @Sendable @escaping () async -> [Element]?,
         layoutOptions: [(LocalizedStringKey, String, Layout)],
@@ -311,7 +303,6 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         @ViewBuilder destination: @escaping (_ element: Element, _ list: [Element]) -> Destination
     ) where Layout: Hashable, LayoutPicker == Greatdori.LayoutPicker<Layout> {
         self.init(
-            titleKey,
             initialLayout: initialLayout,
             updateList: updateList,
             layoutPicker: { layout in
@@ -323,7 +314,6 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         )
     }
     init(
-        _ titleKey: LocalizedStringResource,
         forType _: Element.Type,
         initialLayout: Layout,
         @ViewBuilder layoutPicker: @escaping (Binding<Layout>) -> LayoutPicker,
@@ -332,7 +322,6 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         @ViewBuilder destination: @escaping (_ element: Element, _ list: [Element]) -> Destination
     ) where Element: ListGettable {
         self.init(
-            titleKey,
             initialLayout: initialLayout,
             updateList: Element.all,
             layoutPicker: layoutPicker,
@@ -342,7 +331,6 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         )
     }
     init(
-        _ titleKey: LocalizedStringResource,
         initialLayout: Layout,
         updateList: @Sendable @escaping () async -> [Element]?,
         @ViewBuilder layoutPicker: @escaping (Binding<Layout>) -> LayoutPicker,
@@ -350,16 +338,15 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         @ViewBuilder eachContent: @escaping (_ layout: Layout, _ element: Element) -> Content,
         @ViewBuilder destination: @escaping (_ element: Element, _ list: [Element]) -> Destination
     ) {
-        self.titleKey = titleKey
         self.updateList = updateList
         self.makeLayoutPicker = layoutPicker
         self.makeContainer = container
         self.makeSomeContent = eachContent
         self.makeDestination = destination
         self._currentLayout = .init(initialValue: initialLayout)
-        self.unavailablePrompt = "Search.unavailable.\(String(localized: titleKey))"
-        self.searchPlaceholder = "Search.prompt.\(String(localized: titleKey))"
-        self._filter = .init(initialValue: .recoverable(id: titleKey.key))
+        self.unavailablePrompt = "Search.unavailable.\(Element.singularName)"
+        self.searchPlaceholder = "Search.prompt.\(Element.pluralName)"
+        self._filter = .init(initialValue: .recoverable(id: Element.pluralName.key))
     }
     
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -459,7 +446,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                         }
                     } else {
                         ExtendedConstraints {
-                            ContentUnavailableView(unavailablePrompt, systemImage: unavailableSystemImage, description: Text("Search.unavailable.description"))
+                            ContentUnavailableView(unavailablePrompt, systemImage: Element.symbol, description: Text("Search.unavailable.description"))
                                 .onTapGesture {
                                     Task {
                                         await getList()
@@ -470,7 +457,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                 }
             }
             .searchable(text: $searchedText, prompt: searchPlaceholder)
-            .navigationTitle(titleKey)
+            .navigationTitle(Element.pluralName)
             .wrapIf(searchedElements != nil, in: { content in
                 if #available(iOS 26.0, *) {
                     content.navigationSubtitle((searchedText.isEmpty && !filter.isFiltered) ? (getResultCountDescription?(searchedElements!.count) ?? "Search.item.\(searchedElements!.count)") :  "Search.result.\(searchedElements!.count)")
@@ -524,7 +511,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
     
     func getList() async {
         infoIsAvailable = true
-        withDoriCache(id: "\(titleKey.key)List_\(filter.identity)", trait: .realTime) {
+        withDoriCache(id: "\(Element.pluralName)List_\(filter.identity)", trait: .realTime) {
             await updateList()
         }.onUpdate {
             if let cards = $0 {
@@ -536,12 +523,8 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         }
     }
 }
+
 extension SearchViewBase {
-    func contentUnavailableImage(systemName: String) -> Self {
-        var mutable = self
-        mutable.unavailableSystemImage = systemName
-        return mutable
-    }
     func resultCountDescription(content: ((Int) -> LocalizedStringResource)?) -> Self {
         var mutable = self
         mutable.getResultCountDescription = content
@@ -549,8 +532,7 @@ extension SearchViewBase {
     }
 }
 
-struct DetailSectionBase<Element: Hashable, Content: View>: View {
-    var titleKey: LocalizedStringResource
+struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>: View {
     var localizedElements: LocalizedData<[Element]>
     var showLocalePicker: Bool
     var makeEachContent: (Element) -> Content
@@ -559,11 +541,9 @@ struct DetailSectionBase<Element: Hashable, Content: View>: View {
     var unavailableSystemImage: String = "bolt.horizontal.fill"
     
     init(
-        _ titleKey: LocalizedStringResource,
         elements: [Element],
         @ViewBuilder eachContent: @escaping (Element) -> Content
     ) {
-        self.titleKey = titleKey
         self.localizedElements = .init(_jp: elements, en: elements, tw: elements, cn: elements, kr: elements)
         self.showLocalePicker = false
         self.makeEachContent = eachContent
@@ -573,7 +553,6 @@ struct DetailSectionBase<Element: Hashable, Content: View>: View {
         elements: LocalizedData<[Element]>,
         @ViewBuilder eachContent: @escaping (Element) -> Content
     ) {
-        self.titleKey = titleKey
         self.localizedElements = elements
         self.showLocalePicker = false
         self.makeEachContent = eachContent
@@ -598,7 +577,7 @@ struct DetailSectionBase<Element: Hashable, Content: View>: View {
                 .frame(maxWidth: 600)
             } header: {
                 HStack {
-                    Text(titleKey)
+                    Text(Element.pluralName)
                         .font(.title2)
                         .bold()
                     if showLocalePicker {
@@ -620,6 +599,7 @@ struct DetailSectionBase<Element: Hashable, Content: View>: View {
         }
     }
 }
+
 extension DetailSectionBase {
     func contentUnavailablePrompt(_ prompt: LocalizedStringResource) -> Self {
         var mutable = self
@@ -664,6 +644,7 @@ struct DetailInfoBase<Head: View>: View {
         .frame(maxWidth: 600)
     }
 }
+
 @MainActor
 struct DetailInfoItem: Identifiable {
     var id: UUID = .init()
@@ -681,6 +662,7 @@ struct DetailInfoItem: Identifiable {
         }
     }
 }
+
 extension DetailInfoItem {
     init<S: StringProtocol>(_ titleKey: LocalizedStringResource, text: S) {
         self.init(titleKey) {
@@ -706,6 +688,7 @@ extension DetailInfoItem {
         self.init(titleKey, text: date.map { $0 != nil ? df.string(from: $0!) : nil })
     }
 }
+
 extension DetailInfoItem {
     @ViewBuilder
     func _makeView() -> some View {
@@ -717,6 +700,7 @@ extension DetailInfoItem {
         }
     }
 }
+
 extension DetailInfoItem {
     func showsLocaleKey(_ showing: Bool = true) -> Self {
         var mutating = self
@@ -724,6 +708,7 @@ extension DetailInfoItem {
         return mutating
     }
 }
+
 @resultBuilder
 struct DetailInfoBuilder {
     static func buildExpression(_ expression: DetailInfoItem) -> [DetailInfoItem] {

@@ -22,7 +22,7 @@ struct CardSearchView: View {
     let galleryLayoutItemMinimumWidth: CGFloat = 400
     let galleryLayoutItemMaximumWidth: CGFloat = 500
     var body: some View {
-        SearchViewBase("Cards", forType: CardWithBand.self, initialLayout: 1, layoutOptions: [("Filter.view.list", "list.bullet", 1), ("Filter.view.grid", "square.grid.2x2", 2), ("Filter.view.gallery", "text.below.rectangle", 3)]) { layout, _, content, _ in
+        SearchViewBase(forType: CardWithBand.self, initialLayout: 1, layoutOptions: [("Filter.view.list", "list.bullet", 1), ("Filter.view.grid", "square.grid.2x2", 2), ("Filter.view.gallery", "text.below.rectangle", 3)]) { layout, _, content, _ in
             if layout == 1 {
                 LazyVStack {
                     content
@@ -38,7 +38,6 @@ struct CardSearchView: View {
         } destination: { element, list in
             CardDetailView(id: element.id, allCards: list)
         }
-        .contentUnavailableImage(systemName: "line.horizontal.star.fill.line.horizontal")
         .resultCountDescription { count in
             "Card.count.\(count)"
         }

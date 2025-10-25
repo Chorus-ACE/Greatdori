@@ -20,7 +20,7 @@ struct SongSearchView: View {
     let gridLayoutItemWidth: CGFloat = 225
     @State private var songMatches: [Int: DoriFrontend.Songs._SongMatchResult]?
     var body: some View {
-        SearchViewBase("Songs", forType: PreviewSong.self, initialLayout: SummaryLayout.horizontal, layoutOptions: verticalAndHorizontalLayouts) { layout, _, content, _ in
+        SearchViewBase(forType: PreviewSong.self, initialLayout: SummaryLayout.horizontal, layoutOptions: verticalAndHorizontalLayouts) { layout, _, content, _ in
             if layout == .horizontal {
                 LazyVStack {
                     content
@@ -36,7 +36,6 @@ struct SongSearchView: View {
         } destination: { element, list in
             SongDetailView(id: element.id, allSongs: list, songMatches: songMatches)
         }
-        .contentUnavailableImage(systemName: "music.note")
         .resultCountDescription { count in
             "Song.count.\(count)"
         }

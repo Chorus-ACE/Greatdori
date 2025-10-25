@@ -22,7 +22,7 @@ struct LoginCampaignDetailView: View {
     var id: Int
     var allLoginCampaigns: [PreviewLoginCampaign]? = nil
     var body: some View {
-        DetailViewBase("Login-campaign", forType: LoginCampaign.self, previewList: allLoginCampaigns, initialID: id) { information in
+        DetailViewBase(forType: LoginCampaign.self, previewList: allLoginCampaigns, initialID: id) { information in
 //            LoginCampaignDetailOverviewView(information: information)
         } switcherDestination: {
             LoginCampaignSearchView()

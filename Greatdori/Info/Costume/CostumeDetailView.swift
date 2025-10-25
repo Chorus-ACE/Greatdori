@@ -21,7 +21,7 @@ struct CostumeDetailView: View {
     var id: Int
     var allCostumes: [PreviewCostume]? = nil
     var body: some View {
-        DetailViewBase("Costume", previewList: allCostumes, initialID: id) { information in
+        DetailViewBase(previewList: allCostumes, initialID: id) { information in
             CostumeDetailOverviewView(information: information)
             if !information.cards.isEmpty {
                 DetailsCardsSection(cards: information.cards)
