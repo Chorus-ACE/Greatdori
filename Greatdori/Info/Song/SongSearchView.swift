@@ -18,6 +18,7 @@ import DoriKit
 // MARK: SongSearchView
 struct SongSearchView: View {
     let gridLayoutItemWidth: CGFloat = 225
+    @State private var songMatches: [Int: DoriFrontend.Songs._SongMatchResult]?
     var body: some View {
         SearchViewBase("Songs", forType: PreviewSong.self, initialLayout: SummaryLayout.horizontal, layoutOptions: verticalAndHorizontalLayouts) { layout, _, content, _ in
             if layout == .horizontal {
@@ -33,11 +34,16 @@ struct SongSearchView: View {
         } eachContent: { layout, element in
             SongInfo(element, layout: layout)
         } destination: { element, list in
-            SongDetailView(id: element.id, allSongs: list)
+            SongDetailView(id: element.id, allSongs: list, songMatches: songMatches)
         }
         .contentUnavailableImage(systemName: "music.note")
         .resultCountDescription { count in
             "Song.count.\(count)"
+        }
+        .onAppear {
+            Task {
+                songMatches = await DoriFrontend.Songs._allMatches()
+            }
         }
     }
 }
