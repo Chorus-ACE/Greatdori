@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable, Layout, LayoutPicker: View, Container: View, Content: View>: View {
     var titleKey: LocalizedStringResource
@@ -337,17 +338,17 @@ struct ItemSelectorButton<Element: Sendable & Hashable & DoriCacheable & DoriFil
         }
         .window(isPresented: $selectorWindowIsPresented) {
             Group {
-                if let eventBinding = bindingCast($selection, to: PreviewEvent.self) {
-                    EventSelector(selection: eventBinding.optional)
+                if let eventBinding = bindingCast($selection, to: PreviewEvent?.self) {
+                    EventSelector(selection: eventBinding)
                 }
             }
-//#if os(macOS)
-//                .introspect(.window, on: .macOS(.v14...)) { window in
-//                    window.standardWindowButton(.zoomButton)?.isEnabled = false
-//                    window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
-//                    window.level = .floating
-//                }
-//#endif
+            #if os(macOS)
+            .introspect(.window, on: .macOS(.v14...)) { window in
+                window.standardWindowButton(.zoomButton)?.isEnabled = false
+                window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
+                window.level = .floating
+            }
+            #endif
         }
     }
 }

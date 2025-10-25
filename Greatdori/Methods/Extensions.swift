@@ -33,20 +33,6 @@ extension Array {
     }
 }
 
-// MARK: Binding
-extension Binding {
-    var optional: Binding<Value?> {
-        Binding<Value?>(
-            get: { self.wrappedValue },
-            set: { newValue in
-                if let value = newValue {
-                    self.wrappedValue = value
-                }
-            }
-        )
-    }
-}
-
 // MARK: Color
 extension Color {
     func toHex() -> String? {

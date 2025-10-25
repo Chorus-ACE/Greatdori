@@ -23,135 +23,85 @@ struct StoryViewerView: View {
     @State var informationIsAvailable = true
     
     @State var selectedEvent: PreviewEvent?
-    @State var allEventStories: [DoriAPI.Events.EventStory]?
-    
+    @State var allBands: [Band]?
+    @State var selectedBand: Band?
     var body: some View {
         ScrollView {
             HStack {
                 Spacer(minLength: 0)
                 VStack {
-                    Section {
-                        CustomGroupBox {
-                            VStack {
-                                Group {
-                                    ListItemView(title: {
-                                        Text("Tools.story-viewer.type")
-                                            .bold()
-                                    }, value: {
-                                        Picker(selection: $storyType) {
-                                            ForEach(StoryType.allCases, id: \.self) { type in
-                                                Text(type.name).tag(type)
-                                            }
-                                        } label: {
-                                            EmptyView()
+                    CustomGroupBox {
+                        VStack {
+                            Group {
+                                ListItemView(title: {
+                                    Text("Tools.story-viewer.type")
+                                        .bold()
+                                }, value: {
+                                    Picker(selection: $storyType) {
+                                        ForEach(StoryType.allCases, id: \.self) { type in
+                                            Text(type.name).tag(type)
                                         }
-                                        .labelsHidden()
-                                    })
-                                    
-                                }
-                                switch storyType {
-                                case .event:
-                                    ListItemView(title: {
-                                        Text("Tools.story-viewer.type.event")
-                                            .bold()
-                                    }, value: {
-                                        ItemSelectorButton(selection: $selectedEvent)
-                                    })
-                                case .main:
-                                    EmptyView()
-                                case .band:
-                                    EmptyView()
-                                case .card:
-                                    EmptyView()
-                                case .actionSet:
-                                    EmptyView()
-                                case .afterLive:
-                                    EmptyView()
-                                }
-                            }
-                        }
-                        .frame(maxWidth: 600)
-                        /*
-                        switch storyType {
-                        case .event:
-                            ListItemView {
-                                Text("Tools.story-viewer.type.event")
-                                    .bold()
-                            } value: {
-                                Button(action: {
-                                    eventSelectorIsPresented = true
-                                }, label: {
-                                    if let selectedEvent {
-                                        Text(selectedEvent.eventName.forPreferredLocale() ?? "")
-                                    } else {
-                                        Text("选择活动…")
+                                    } label: {
+                                        EmptyView()
                                     }
+                                    .labelsHidden()
                                 })
-                                .window(isPresented: $eventSelectorIsPresented) {
-                                    EventSelector(selection: .init { [selectedEvent].compactMap { $0 } } set: { selectedEvent = $0.first })
-                                        .selectorDisablesMultipleSelection()
-                                }
+                                
                             }
-                        case .main:
-                            EmptyView()
-                        case .band:
-                            EmptyView()
-                        case .card:
-                            EmptyView()
-                        case .actionSet:
-                            EmptyView()
-                        case .afterLive:
-                            EmptyView()
+                            switch storyType {
+                            case .event:
+                                ListItemView(title: {
+                                    Text("Tools.story-viewer.type.event")
+                                        .bold()
+                                }, value: {
+                                    ItemSelectorButton(selection: $selectedEvent)
+                                })
+                            case .main:
+                                EmptyView()
+                            case .band:
+                                EmptyView()
+                            case .card:
+                                EmptyView()
+                            case .actionSet:
+                                EmptyView()
+                            case .afterLive:
+                                EmptyView()
+                            }
                         }
-                         */
                     }
-                    
                     DetailSectionsSpacer(height: 15)
+                    switch storyType {
+                    case .event:
+                        if let selectedEvent {
+                            EventStoryViewer(event: selectedEvent)
+                        }
+                    case .main:
+                        MainStoryViewer()
+                    case .band:
+                        EmptyView()
+                    case .card:
+                        EmptyView()
+                    case .actionSet:
+                        EmptyView()
+                    case .afterLive:
+                        EmptyView()
+                    }
                 }
                 .padding()
+                .frame(maxWidth: 600)
                 Spacer(minLength: 0)
             }
         }
         .withSystemBackground()
         .navigationTitle("Tools.story-viewer")
         .onAppear {
-            Task {
-                await updateStories()
-            }
-        }
-        .onChange(of: storyType) {
-            Task {
-                await updateStories()
+            DoriCache.withCache(id: "BandList") {
+                await DoriAPI.Bands.main()
+            }.onUpdate {
+                self.allBands = $0
             }
         }
     }
-    
-    func updateStories() async {
-        informationIsAvailable = true
-        
-        switch storyType {
-        case .event:
-            if allEventStories == nil {
-                withDoriCache(id: "EventStories") {
-                    await DoriAPI.Events.allStories()
-                }.onUpdate {
-                    if let stories = $0 {
-                        self.allEventStories = stories
-                    } else {
-                        informationIsAvailable = false
-                    }
-                }
-            }
-//        case .main:
-//        case .band:
-//        case .card:
-//        case .actionSet:
-//        case .afterLive:
-        default:
-            print("1")
-        }
-    }
-    
 }
 
 private enum StoryType: String, CaseIterable, Hashable {
@@ -174,81 +124,53 @@ private enum StoryType: String, CaseIterable, Hashable {
     }
 }
 
-/*
 struct EventStoryViewer: View {
-    @State var isEventSelectorPresented = false
-    @State var selectedEvent: PreviewEvent?
-    @State var stories: [DoriAPI.Event.EventStory]?
-    @State var storyAvailability = true
+    var event: PreviewEvent
+    @State private var stories: [DoriAPI.Events.EventStory]?
+    @State private var storyAvailability = true
     var body: some View {
-        ListItemView {
-            Text("Tools.story-viewer.type.event")
-                .bold()
-        } value: {
-//            Button(action: {
-//                isEventSelectorPresented = true
-//            }, label: {
-//                if let selectedEvent {
-//                    Text(selectedEvent.eventName.forPreferredLocale() ?? "")
-//                } else {
-//                    Text("选择活动…")
-//                }
-//            })
-//            .window(isPresented: $isEventSelectorPresented) {
-//                EventSelector(selection: .init { [selectedEvent].compactMap { $0 } } set: { selectedEvent = $0.first })
-//                    .selectorDisablesMultipleSelection()
-//            }
+        NavigationLink(destination: { EventDetailView(id: event.id) }) {
+            EventInfo(event)
         }
-        .task {
-            if stories == nil {
-                await getStories()
-            }
-        }
-        if let selectedEvent {
-            NavigationLink(destination: { EventDetailView(id: selectedEvent.id) }) {
-                EventInfo(selectedEvent)
-            }
-            .buttonStyle(.plain)
-        }
-        if let selectedEvent {
-            if let stories {
-                if let story = stories.first(where: { $0.id == selectedEvent.id }),
-                   let locale = story.eventName.availableLocale() {
-                    ForEach(Array(story.stories.enumerated()), id: \.element.id) { (index, story) in
-                        StoryCardView(story: story, type: .event, locale: locale, unsafeAssociatedID: String(selectedEvent.id), unsafeSecondaryAssociatedID: String(index))
-                    }
-                } else {
-                    HStack {
-                        Spacer()
-                        ContentUnavailableView("Tools.story-viewer.type.event.unavailable", systemImage: "text.rectangle.page")
-                        Spacer()
-                    }
+        .buttonStyle(.plain)
+        if let stories {
+            if let story = stories.first(where: { $0.id == event.id }),
+               let locale = story.eventName.availableLocale() {
+                ForEach(Array(story.stories.enumerated()), id: \.element.id) { (index, story) in
+                    StoryCardView(story: story, type: .event, locale: locale, unsafeAssociatedID: String(event.id), unsafeSecondaryAssociatedID: String(index))
                 }
             } else {
-                if storyAvailability {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
-                } else {
-                    ExtendedConstraints {
-                        ContentUnavailableView("Tools.story-viewer.error", systemImage: "text.rectangle.page")
-                            .onTapGesture {
-                                Task {
-                                    await getStories()
-                                }
-                            }
-                    }
+                HStack {
+                    Spacer()
+                    ContentUnavailableView("Tools.story-viewer.type.event.unavailable", systemImage: "text.rectangle.page")
+                    Spacer()
+                }
+            }
+        } else {
+            if storyAvailability {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .onAppear {
+                            getStories()
+                        }
+                    Spacer()
+                }
+            } else {
+                ExtendedConstraints {
+                    ContentUnavailableView("Tools.story-viewer.error", systemImage: "text.rectangle.page")
+                }
+                .onTapGesture {
+                    getStories()
                 }
             }
         }
     }
     
-    func getStories() async {
+    func getStories() {
         storyAvailability = true
         withDoriCache(id: "EventStories") {
-            await DoriAPI.Event.allStories()
+            await DoriAPI.Events.allStories()
         }.onUpdate {
             if let stories = $0 {
                 self.stories = stories
@@ -259,14 +181,10 @@ struct EventStoryViewer: View {
     }
 }
 
-
-
 extension StoryViewerView {
-    
     struct MainStoryViewer: View {
-        @State var isFirstShowing = true
-        @State var stories: [DoriAPI.Story]?
-        @State var storyAvailability = true
+        @State private var stories: [DoriAPI.Story]?
+        @State private var storyAvailability = true
         var body: some View {
             if let stories {
                 Section {
@@ -281,26 +199,21 @@ extension StoryViewerView {
                         ProgressView()
                         Spacer()
                     }
-                    .task {
-                        if isFirstShowing {
-                            isFirstShowing = false
-                            await getStories()
-                        }
+                    .onAppear {
+                        getStories()
                     }
                 } else {
                     ExtendedConstraints {
                         ContentUnavailableView("Tools.story-viewer.error", systemImage: "text.rectangle.page")
-                            .onTapGesture {
-                                Task {
-                                    await getStories()
-                                }
-                            }
+                    }
+                    .onTapGesture {
+                        getStories()
                     }
                 }
             }
         }
         
-        func getStories() async {
+        func getStories() {
             storyAvailability = true
             DoriCache.withCache(id: "MainStories") {
                 await DoriAPI.Misc.mainStories()
@@ -315,9 +228,8 @@ extension StoryViewerView {
     }
     
     struct BandStoryViewer: View {
-        @State var isFirstShowing = true
-        @State var bands: [DoriAPI.Band.Band]?
-        @State var selectedBand: DoriAPI.Band.Band?
+        @State var bands: [DoriAPI.Bands.Band]?
+        @State var selectedBand: DoriAPI.Bands.Band?
         @State var stories: [DoriAPI.Misc.BandStory]?
         @State var storyAvailability = true
         @State var selectedStoryGroup: DoriAPI.Misc.BandStory?
@@ -328,7 +240,7 @@ extension StoryViewerView {
                         .bold()
                 } value: {
                     Picker("Tools.story-viewer.type.band", selection: $selectedBand) {
-                        Text("Tools.story-viewer.type.band.prompt").tag(Optional<DoriAPI.Band.Band>.none)
+                        Text("Tools.story-viewer.type.band.prompt").tag(Optional<DoriAPI.Bands.Band>.none)
                         ForEach(bands) { band in
                             Text(band.bandName.forPreferredLocale() ?? "").tag(band)
                         }
@@ -361,34 +273,22 @@ extension StoryViewerView {
                         ProgressView()
                         Spacer()
                     }
-                    .task {
-                        if isFirstShowing {
-                            isFirstShowing = false
-                            await getStories()
-                        }
+                    .onAppear {
+                        getStories()
                     }
                 } else {
                     ExtendedConstraints {
                         ContentUnavailableView("Tools.story-viewer.error", systemImage: "text.rectangle.page")
-                            .onTapGesture {
-                                Task {
-                                    await getStories()
-                                }
-                            }
+                    }
+                    .onTapGesture {
+                        getStories()
                     }
                 }
             }
         }
         
-        func getStories() async {
+        func getStories() {
             storyAvailability = true
-            Task {
-                DoriCache.withCache(id: "BandList") {
-                    await DoriAPI.Band.main()
-                }.onUpdate {
-                    self.bands = $0
-                }
-            }
             DoriCache.withCache(id: "BandStories") {
                 await DoriAPI.Misc.bandStories()
             }.onUpdate {
@@ -402,8 +302,8 @@ extension StoryViewerView {
     }
     
     struct CardStoryViewer: View {
-        @State var selectedCard: DoriFrontend.Card.PreviewCard?
-        @State var selectedCardDetail: DoriFrontend.Card.ExtendedCard?
+        @State var selectedCard: DoriFrontend.Cards.PreviewCard?
+        @State var selectedCardDetail: DoriFrontend.Cards.ExtendedCard?
         @State var cardDetailAvailability = true
         @State var isCardSelectorPresented = false
         var body: some View {
@@ -509,7 +409,7 @@ extension StoryViewerView {
             if let selectedCard {
                 cardDetailAvailability = true
                 DoriCache.withCache(id: "CardDetail_\(selectedCard.id)") {
-                    await DoriFrontend.Card.extendedInformation(of: selectedCard.id)
+                    await DoriFrontend.Cards.extendedInformation(of: selectedCard.id)
                 }.onUpdate {
                     if let information = $0 {
                         self.selectedCardDetail = information
@@ -525,7 +425,7 @@ extension StoryViewerView {
         @State var isFirstShowing = true
         @State var filter = DoriFrontend.Filter()
         @State var isFilterSettingsPresented = false
-        @State var characters: [DoriFrontend.Character.PreviewCharacter]?
+        @State var characters: [DoriFrontend.Characters.PreviewCharacter]?
         @State var actionSets: [DoriAPI.Misc.ActionSet]?
         @State var actionSetAvailability = true
         var body: some View {
@@ -599,7 +499,7 @@ extension StoryViewerView {
             actionSetAvailability = true
             Task {
                 DoriCache.withCache(id: "CharacterList") {
-                    await DoriFrontend.Character.categorizedCharacters()
+                    await DoriFrontend.Characters.categorizedCharacters()
                 }.onUpdate {
                     self.characters = $0?.values.flatMap { $0 }
                 }
@@ -920,4 +820,3 @@ private struct StoryDetailView: View {
         transcript = asset?.transcript
     }
 }
-*/
