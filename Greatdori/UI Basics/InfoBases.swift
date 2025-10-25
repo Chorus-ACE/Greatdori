@@ -103,7 +103,7 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
                 }
             }
         }
-        .navigationTitle(Text(information?.title.forPreferredLocale() ?? (isMACOS ? String(localized: "\(PreviewInformation.singularName.key)") : "")))
+        .navigationTitle(Text(information?.title.forPreferredLocale() ?? (isMACOS ? String(localized: String.LocalizationValue(PreviewInformation.singularName.key)) : "")))
         #if os(iOS)
         .wrapIf(showSubtitle) { content in
             if #available(iOS 26, macOS 14.0, *) {
@@ -544,7 +544,7 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
         elements: [Element],
         @ViewBuilder eachContent: @escaping (Element) -> Content
     ) {
-        self.localizedElements = .init(_jp: elements, en: elements, tw: elements, cn: elements, kr: elements)
+        self.localizedElements = .init(forEveryLocale: elements)
         self.showLocalePicker = false
         self.makeEachContent = eachContent
     }

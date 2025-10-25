@@ -169,7 +169,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
                                             }, label: {
                                                 makeSomeContent(currentLayout, element)
                                                     .highlightKeyword($searchedText)
-                                                    .groupBoxStrokeLineWidth(selection.contains(element) ? 2 : 0)
+                                                    .groupBoxStrokeLineWidth(selection.contains(element) ? 3 : 0)
                                             })
                                             .buttonStyle(.plain)
                                         )

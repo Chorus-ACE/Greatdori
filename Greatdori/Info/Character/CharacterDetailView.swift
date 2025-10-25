@@ -348,7 +348,7 @@ struct CharacterDetailOverviewView: View {
                                         .bold()
                                 }, value: {
                                     MultilingualText({
-                                        var localizedContent = DoriAPI.LocalizedData<String>.init(_jp: nil, en: nil, tw: nil, cn: nil, kr: nil)
+                                        var localizedContent = DoriAPI.LocalizedData<String>()
                                         for locale in DoriAPI.Locale.allCases {
                                             localizedContent._set("\(profile.schoolYear.forLocale(locale) ?? "nil") - \(profile.schoolClass.forLocale(locale) ?? "nil")", forLocale: locale)
                                         }

@@ -710,6 +710,7 @@ private struct TalkView: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: 16)
+            /*
                 .fill(Color.white.opacity(0.8))
                 .overlay {
                     RoundedRectangle(cornerRadius: 16)
@@ -827,6 +828,7 @@ private struct TalkView: View {
             }
             .padding(.horizontal, 30)
             .offset(y: -5)
+             */
         }
         .offset(shakingOffset)
         .onAppear {

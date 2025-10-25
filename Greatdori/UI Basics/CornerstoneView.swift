@@ -1218,14 +1218,8 @@ struct HighlightableText: View {
                 Text(prefixText) + Text(attributedText) + Text(suffixText)
             }
         }
-            .onAppear {
-                attributedText = highlightOccurrences(of: searchedKeyword?.wrappedValue ?? "", in: resolvedText) ?? .init(resolvedText)
-            }
-            .onChange(of: resolvedText) {
-                attributedText = highlightOccurrences(of: searchedKeyword?.wrappedValue ?? "", in: resolvedText) ?? .init(resolvedText)
-            }
-            .onChange(of: searchedKeyword?.wrappedValue) {
-                attributedText = highlightOccurrences(of: searchedKeyword?.wrappedValue ?? "", in: resolvedText) ?? .init(resolvedText)
-            }
+        .onChange(of: resolvedText, searchedKeyword?.wrappedValue, initial: true) {
+            attributedText = highlightOccurrences(of: searchedKeyword?.wrappedValue ?? "", in: resolvedText) ?? .init(resolvedText)
+        }
     }
 }

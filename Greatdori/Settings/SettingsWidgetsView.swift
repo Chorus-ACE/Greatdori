@@ -639,7 +639,7 @@ struct SettingsWidgetsCollectionsItemView: View {
     @State var doriCard: Card?
     @State var characterName: LocalizedData<String>? = nil
     
-    let titlePlaceholder = LocalizedData(_jp: "Lorem Ipsum Dolor", en: nil, tw: nil, cn: nil, kr: nil)
+    let titlePlaceholder = LocalizedData(jp: "Lorem Ipsum Dolor")
     var body: some View {
         CustomGroupBox {
             CustomStack(axis: layoutType == 1 ? .horizontal : .vertical) {

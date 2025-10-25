@@ -564,3 +564,21 @@ struct DebugRulerOverlay: View {
         .ignoresSafeArea()
     }
 }
+
+struct DebugPlaygroundView: View {
+    @State var valueOne: Double = 0
+    @State var valueTwo: Double = 1
+    @State var color: Color = Color.gray
+    var body: some View {
+        VStack {
+            Slider(value: $valueOne, in: 0...10)
+            Slider(value: $valueTwo, in: 0...10)
+            RoundedRectangle(cornerRadius: 10)
+                .frame(width: 50, height: 50)
+                .foregroundStyle(color)
+        }
+        .onChange(of: valueOne, valueTwo, initial: true) {
+            color = Color.random()
+        }
+    }
+}

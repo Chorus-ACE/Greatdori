@@ -100,6 +100,13 @@ extension Color {
 #endif
     }
     
+    static func random() -> Color {
+        .init(
+            red: .random(in: 0...1),
+            green: .random(in: 0...1),
+            blue: .random(in: 0...1)
+        )
+    }
 }
 
 // MARK: Date
@@ -189,6 +196,17 @@ extension Int?: @retroactive Identifiable {
     public var id: Int? { self }
 }
 
+// MARK: LocalizedData
+extension LocalizedData {
+    init(jp: T? = nil, en: T? = nil, tw: T? = nil, cn: T? = nil, kr: T? = nil) {
+        self.init(_jp: jp, en: en, tw: tw, cn: cn, kr: kr)
+    }
+    
+    init(forEveryLocale item: T?) {
+        self.init(jp: item, en: item, tw: item, cn: item, kr: item)
+    }
+}
+
 // MARK: LocalizedStringResource
 extension LocalizedStringResource: Hashable {
     public static func == (lhs: LocalizedStringResource, rhs: LocalizedStringResource) -> Bool {
@@ -237,15 +255,29 @@ public extension View {
         background(
             GeometryReader { geometry in
                 Color.clear
-                    .onAppear {
-                        action(geometry)
-                    }
-                    .onChange(of: geometry.size) {
+                    .onChange(of: geometry.size, initial: true) {
                         action(geometry)
                     }
             }
         )
     }
+    
+    @_disfavoredOverload
+    func onChange<each V: Equatable>(
+        of value: repeat each V,
+        initial: Bool = false,
+        _ action: @escaping () -> Void
+    ) -> some View {
+        var result = AnyView(self)
+        for v in repeat each value {
+            result = AnyView(result.onChange(of: v, action))
+        }
+        if initial {
+            result = AnyView(result.onAppear { action() })
+        }
+        return result
+    }
+    
     
     // MARK: withSystemBackground
     @ViewBuilder
@@ -285,3 +317,4 @@ extension MutableCollection {
         return copy
     }
 }
+

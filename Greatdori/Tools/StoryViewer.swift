@@ -19,12 +19,14 @@ import SDWebImageSwiftUI
 
 struct StoryViewerView: View {
     @State private var storyType = StoryType.event
-    @State var displayingStories: [DoriAPI.Story] = []
+    @State var displayingStories: LocalizedData<[CustomStory]> = LocalizedData<[CustomStory]>(forEveryLocale: [])
     @State var informationIsAvailable = true
+    @State var locale: DoriLocale = DoriLocale.primaryLocale
+    @State var sectionTitle: String = ""
     
     @State var selectedEvent: PreviewEvent?
-    @State var allBands: [Band]?
-    @State var selectedBand: Band?
+    @State var allEventStories: [DoriAPI.Events.EventStory] = []
+    
     var body: some View {
         ScrollView {
             HStack {
@@ -46,8 +48,9 @@ struct StoryViewerView: View {
                                     }
                                     .labelsHidden()
                                 })
-                                
+                                Divider()
                             }
+                            
                             switch storyType {
                             case .event:
                                 ListItemView(title: {
@@ -56,6 +59,7 @@ struct StoryViewerView: View {
                                 }, value: {
                                     ItemSelectorButton(selection: $selectedEvent)
                                 })
+                                Divider()
                             case .main:
                                 EmptyView()
                             case .band:
@@ -67,25 +71,67 @@ struct StoryViewerView: View {
                             case .afterLive:
                                 EmptyView()
                             }
+                            
+                            ListItemView(title: {
+                                Text("Tools.story-viewer.locale")
+                                    .bold()
+                            }, value: {
+                                Picker(selection: $locale) {
+                                    ForEach(DoriLocale.allCases, id: \.self) { item in
+                                        Text(item.rawValue.uppercased()).tag(item)
+                                    }
+                                } label: {
+                                    EmptyView()
+                                }
+                                .labelsHidden()
+                            })
                         }
                     }
                     DetailSectionsSpacer(height: 15)
-                    switch storyType {
-                    case .event:
-                        if let selectedEvent {
-                            EventStoryViewer(event: selectedEvent)
+                    
+                    Section(content: {
+                        if let localizedStories = displayingStories.forLocale(locale), !localizedStories.isEmpty {
+                            ForEach(Array(localizedStories.enumerated()), id: \.element.self) { (index, item) in
+                                switch storyType {
+                                case .event:
+                                    StoryCardView(story: item, type: storyType, locale: locale, unsafeAssociatedID: String(selectedEvent?.id ?? -1), unsafeSecondaryAssociatedID: String(index))
+                                case .main:
+                                    StoryCardView(story: item, type: storyType, locale: DoriAPI.preferredLocale, unsafeAssociatedID: String(index + 1))
+//                                case .band:
+//                                    <#code#>
+//                                case .card:
+//                                    <#code#>
+//                                case .actionSet:
+//                                    <#code#>
+//                                case .afterLive:
+//                                    <#code#>
+                                default:
+                                    EmptyView()
+                                }
+                            }
+                        } else {
+                            if selectionIsMeaningful() {
+                                CustomGroupBox {
+                                    HStack {
+                                        Spacer()
+                                        if informationIsAvailable && !(displayingStories.forLocale(locale)?.isEmpty ?? true) {
+                                            ProgressView()
+                                        } else {
+                                            ContentUnavailableView("Tools.story-viewer.unavailable", systemImage: "book")
+                                        }
+                                        Spacer()
+                                    }
+                                }
+                                .onTapGesture {
+                                    if !informationIsAvailable {
+                                        Task {
+                                            await getStories()
+                                        }
+                                    }
+                                }
+                            }
                         }
-                    case .main:
-                        MainStoryViewer()
-                    case .band:
-                        EmptyView()
-                    case .card:
-                        EmptyView()
-                    case .actionSet:
-                        EmptyView()
-                    case .afterLive:
-                        EmptyView()
-                    }
+                    })
                 }
                 .padding()
                 .frame(maxWidth: 600)
@@ -95,11 +141,65 @@ struct StoryViewerView: View {
         .withSystemBackground()
         .navigationTitle("Tools.story-viewer")
         .onAppear {
-            DoriCache.withCache(id: "BandList") {
-                await DoriAPI.Bands.main()
-            }.onUpdate {
-                self.allBands = $0
+            informationIsAvailable = true
+            DoriCache.withCache(id: "EventStories") {
+                await DoriAPI.Events.allStories()
+            } .onUpdate {
+                if let stories = $0 {
+                    self.allEventStories = stories
+                } else {
+                    informationIsAvailable = false
+                }
             }
+            Task {
+                await getStories()
+            }
+        }
+        .onChange(of: locale, selectedEvent, storyType) {
+            Task {
+                await getStories()
+            }
+        }
+    }
+    
+    func getStories() async {
+        informationIsAvailable = true
+        switch storyType {
+        case .event:
+            if allEventStories.isEmpty {
+                DoriCache.withCache(id: "EventStories") {
+                    await DoriAPI.Events.allStories()
+                } .onUpdate {
+                    if let stories = $0 {
+                        self.allEventStories = stories
+                    } else {
+                        informationIsAvailable = false
+                    }
+                }
+            }
+            let eventStory = allEventStories.first(where: { $0.id == (selectedEvent?.id ?? -1) })
+            displayingStories = eventStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
+//        case .main:
+//            <#code#>
+//        case .band:
+//            <#code#>
+//        case .card:
+//            <#code#>
+//        case .actionSet:
+//            <#code#>
+//        case .afterLive:
+//            <#code#>
+        default:
+            print("1")
+        }
+    }
+    
+    func selectionIsMeaningful() -> Bool {
+        switch storyType {
+        case .event:
+            return selectedEvent != nil
+        default:
+            return true
         }
     }
 }
@@ -120,63 +220,6 @@ private enum StoryType: String, CaseIterable, Hashable {
         case .card: "Tools.story-viewer.type.card"
         case .actionSet: "Tools.story-viewer.type.action-set"
         case .afterLive: "Tools.story-viewer.type.after-live"
-        }
-    }
-}
-
-struct EventStoryViewer: View {
-    var event: PreviewEvent
-    @State private var stories: [DoriAPI.Events.EventStory]?
-    @State private var storyAvailability = true
-    var body: some View {
-        NavigationLink(destination: { EventDetailView(id: event.id) }) {
-            EventInfo(event)
-        }
-        .buttonStyle(.plain)
-        if let stories {
-            if let story = stories.first(where: { $0.id == event.id }),
-               let locale = story.eventName.availableLocale() {
-                ForEach(Array(story.stories.enumerated()), id: \.element.id) { (index, story) in
-                    StoryCardView(story: story, type: .event, locale: locale, unsafeAssociatedID: String(event.id), unsafeSecondaryAssociatedID: String(index))
-                }
-            } else {
-                HStack {
-                    Spacer()
-                    ContentUnavailableView("Tools.story-viewer.type.event.unavailable", systemImage: "text.rectangle.page")
-                    Spacer()
-                }
-            }
-        } else {
-            if storyAvailability {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                        .onAppear {
-                            getStories()
-                        }
-                    Spacer()
-                }
-            } else {
-                ExtendedConstraints {
-                    ContentUnavailableView("Tools.story-viewer.error", systemImage: "text.rectangle.page")
-                }
-                .onTapGesture {
-                    getStories()
-                }
-            }
-        }
-    }
-    
-    func getStories() {
-        storyAvailability = true
-        withDoriCache(id: "EventStories") {
-            await DoriAPI.Events.allStories()
-        }.onUpdate {
-            if let stories = $0 {
-                self.stories = stories
-            } else {
-                storyAvailability = false
-            }
         }
     }
 }
@@ -620,17 +663,45 @@ extension StoryViewerView {
 }
 
 private struct StoryCardView: View {
-    var story: DoriAPI.Story
+    var scenarioID: String
+    var caption: String
+    var title: String
+    var synopsis: String
+    var voiceAssetBundleName: String?
+    
     var type: StoryType
     var locale: DoriAPI.Locale
     var unsafeAssociatedID: String
     var unsafeSecondaryAssociatedID: String?
+    
+    init(story: DoriAPI.Story, type: StoryType, locale: DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil) {
+        self.scenarioID = story.scenarioID
+        self.caption = story.caption.forLocale(locale) ?? ""
+        self.title = story.title.forLocale(locale) ?? ""
+        self.synopsis = story.synopsis.forLocale(locale) ?? ""
+        self.voiceAssetBundleName = story.voiceAssetBundleName
+        self.type = type
+        self.locale = locale
+        self.unsafeAssociatedID = unsafeAssociatedID
+        self.unsafeSecondaryAssociatedID = unsafeSecondaryAssociatedID
+    }
+    init(story: CustomStory, type: StoryType, locale: DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil) {
+        self.scenarioID = story.scenarioID
+        self.caption = story.caption
+        self.title = story.title
+        self.synopsis = story.synopsis
+        self.voiceAssetBundleName = story.voiceAssetBundleName
+        self.type = type
+        self.locale = locale
+        self.unsafeAssociatedID = unsafeAssociatedID
+        self.unsafeSecondaryAssociatedID = unsafeSecondaryAssociatedID
+    }
     var body: some View {
         NavigationLink(destination: {
             StoryDetailView(
-                title: story.title.forLocale(locale) ?? "",
-                scenarioID: story.scenarioID,
-                voiceAssetBundleName: story.voiceAssetBundleName,
+                title: title,
+                scenarioID: scenarioID,
+                voiceAssetBundleName: voiceAssetBundleName,
                 type: type,
                 locale: locale,
                 unsafeAssociatedID: unsafeAssociatedID,
@@ -640,9 +711,9 @@ private struct StoryCardView: View {
             CustomGroupBox {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(verbatim: "\(story.caption.forPreferredLocale() ?? ""): \(story.title.forPreferredLocale() ?? "")")
+                        Text(verbatim: "\(caption)\(locale == .en ? ": " : "：")\(title)")
                             .font(.headline)
-                        Text(story.synopsis.forPreferredLocale() ?? "")
+                        Text(synopsis)
                             .foregroundStyle(.gray)
                     }
                     Spacer()
@@ -820,3 +891,42 @@ private struct StoryDetailView: View {
         transcript = asset?.transcript
     }
 }
+
+
+public struct CustomStory: Sendable, Identifiable, Hashable, DoriCache.Cacheable, Equatable {
+    public var scenarioID: String
+    public var caption: String
+    public var title: String
+    public var synopsis: String
+    public var voiceAssetBundleName: String?
+    
+    public var id: String { scenarioID }
+}
+
+extension DoriAPI.Story {
+    func convertToLocalizedData() -> LocalizedData<CustomStory> {
+        var result = LocalizedData<CustomStory>()
+        for locale in DoriLocale.allCases {
+            if self.title.availableInLocale(locale) {
+                result._set(CustomStory(scenarioID: self.scenarioID, caption: self.caption.forLocale(locale) ?? "", title: self.title.forLocale(locale) ?? "", synopsis: self.synopsis.forLocale(locale) ?? "", voiceAssetBundleName: self.voiceAssetBundleName), forLocale: locale)
+            }
+        }
+        return result
+    }
+}
+
+extension Array<DoriAPI.Story> {
+    func convertToLocalizedData() -> LocalizedData<[CustomStory]> {
+        var result = LocalizedData<[CustomStory]>()
+        for story in self {
+            for locale in DoriLocale.allCases {
+                if story.title.availableInLocale(locale) {
+                    result._set((result.forLocale(locale) ?? []) + [CustomStory(scenarioID: story.scenarioID, caption: story.caption.forLocale(locale) ?? "", title: story.title.forLocale(locale) ?? "", synopsis: story.synopsis.forLocale(locale) ?? "", voiceAssetBundleName: story.voiceAssetBundleName)], forLocale: locale)
+                }
+            }
+        }
+        return result
+    }
+}
+
+

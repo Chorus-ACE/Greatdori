@@ -69,6 +69,11 @@ struct SettingsDebugView: View {
                 }, label: {
                     Text(verbatim: "DebugFilterExperimentView")
                 })
+                NavigationLink(destination: {
+                    DebugPlaygroundView()
+                }, label: {
+                    Text(verbatim: "DebugPlaygroundView")
+                })
                 Button(role: .destructive, action: {
                     DoriCache.invalidateAll()
                 }, label: {
