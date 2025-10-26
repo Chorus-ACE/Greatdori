@@ -709,126 +709,9 @@ private struct TalkView: View {
     @State private var isShowingAutoPlayLabel = false
     var body: some View {
         ZStack(alignment: .topLeading) {
-            RoundedRectangle(cornerRadius: 16)
-            /*
-                .fill(Color.white.opacity(0.8))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(Color.gray.opacity(0.8))
-                }
-                .overlay {
-                    HStack {
-                        Spacer()
-                        VStack(spacing: 0) {
-                            Spacer()
-                            if !isDelaying {
-                                TimelineView(.animation(minimumInterval: 1 / 120)) { context in
-                                    Image("ContinuableMark")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 25)
-                                        .visualEffect { content, geometry in
-                                            content
-                                                .colorEffect(ShaderLibrary.continuableMark(.float2(geometry.size)))
-                                        }
-                                        .offset(y: sin(context.date.timeIntervalSince1970 * 5) * 7)
-                                        .scaleEffect(x: 1, y: 0.95 + (1.05 - 0.95) * sin(-context.date.timeIntervalSince1970 * 5), anchor: .bottom)
-                                }
-                                .zIndex(1)
-                                Circle()
-                                    .fill(Color.gray.opacity(0.8))
-                                    .blur(radius: 5)
-                                    .transformEffect(.init(scaleX: 1, y: 0.5))
-                                    .frame(width: 25, height: 25)
-                                    .offset(x: -3)
-                            }
-                        }
-                        .transition(.opacity)
-                        .animation(.spring(duration: 0.2, bounce: 0.15), value: isDelaying)
-                    }
-                    .padding(.trailing)
-                }
-                .containerRelativeFrame(.vertical) { length, _ in
-                    min(length / 2 - 80, 130)
-                }
-            Text({
-                var result = AttributedString()
-                for character in currentBody {
-                    var str = AttributedString(String(character))
-                    if locale == .cn && "[，。！？；：（）【】「」『』、“”‘’——…]".contains(character) {
-                        // The font for cn has too wide punctuations,
-                        // we have to fix it here.
-                        // System font seems higher than cn font,
-                        // we use a smaller size for it to prevent
-                        // the line height being changed during animation
-                        #if os(macOS)
-                        str.font = .system(size: 19, weight: .medium)
-                        #else
-                        str.font = .system(size: 15, weight: .medium)
-                        #endif
-                    }
-                    result.append(str)
-                }
-                return result
-            }())
-            #if os(macOS)
-                .font(.custom(fontName(in: locale), size: 20))
-            #else
-                .font(.custom(fontName(in: locale), size: 16))
-            #endif
-                .wrapIf(locale == .en || locale == .tw) { content in
-                    content
-                        .lineSpacing(locale == .en ? 10 : -5)
-                }
-                .typesettingLanguage(locale.nsLocale().language)
-                .textSelection(.enabled)
-                .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
-            ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
-                    .overlay {
-                        HStack {
-                            Spacer()
-                            Image("NameSideStar")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 31)
-                        }
-                        .clipShape(Capsule())
-                    }
-                    .overlay {
-                        Capsule()
-                            .strokeBorder(Color.white, lineWidth: 2)
-                    }
-                    .frame(width: 200, height: 32)
-                Text(data.windowDisplayName)
-                #if os(macOS)
-                    .font(.custom(fontName(in: locale), size: 21))
-                #else
-                    .font(.custom(fontName(in: locale), size: 17))
-                #endif
-                    .foregroundStyle(.white)
-                    .padding()
-            }
-            .offset(y: -38)
-            HStack {
-                Spacer()
-                if isShowingAutoPlayLabel {
-                    HStack(spacing: 2) {
-                        Image(systemName: "arrowtriangle.forward.fill")
-                            .scaleEffect(x: 0.7, y: 1, anchor: .trailing)
-                        Text(verbatim: "AUTO")
-                    }
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .modifier(StrokeTextModifier(width: Double(1.5), color: .white))
-                    .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
-                }
-            }
-            .padding(.horizontal, 30)
-            .offset(y: -5)
-             */
+            backgroundLayer
+            textLayer
+            labelLayer
         }
         .offset(shakingOffset)
         .onAppear {
@@ -871,6 +754,134 @@ private struct TalkView: View {
                 }
             }
         }
+    }
+    
+    @ViewBuilder
+    private var backgroundLayer: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .fill(Color.white.opacity(0.8))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(Color.gray.opacity(0.8))
+            }
+            .overlay {
+                HStack {
+                    Spacer()
+                    VStack(spacing: 0) {
+                        Spacer()
+                        if !isDelaying {
+                            TimelineView(.animation(minimumInterval: 1 / 120)) { context in
+                                Image("ContinuableMark")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 25)
+                                    .visualEffect { content, geometry in
+                                        content
+                                            .colorEffect(ShaderLibrary.continuableMark(.float2(geometry.size)))
+                                    }
+                                    .offset(y: sin(context.date.timeIntervalSince1970 * 5) * 7)
+                                    .scaleEffect(x: 1, y: 0.95 + (1.05 - 0.95) * sin(-context.date.timeIntervalSince1970 * 5), anchor: .bottom)
+                            }
+                            .zIndex(1)
+                            Circle()
+                                .fill(Color.gray.opacity(0.8))
+                                .blur(radius: 5)
+                                .transformEffect(.init(scaleX: 1, y: 0.5))
+                                .frame(width: 25, height: 25)
+                                .offset(x: -3)
+                        }
+                    }
+                    .transition(.opacity)
+                    .animation(.spring(duration: 0.2, bounce: 0.15), value: isDelaying)
+                }
+                .padding(.trailing)
+            }
+            .containerRelativeFrame(.vertical) { length, _ in
+                min(length / 2 - 80, 130)
+            }
+    }
+    @ViewBuilder
+    private var textLayer: some View {
+        Text({
+            var result = AttributedString()
+            for character in currentBody {
+                var str = AttributedString(String(character))
+                if locale == .cn && "[，。！？；：（）【】「」『』、“”‘’——…]".contains(character) {
+                    // The font for cn has too wide punctuations,
+                    // we have to fix it here.
+                    // System font seems higher than cn font,
+                    // we use a smaller size for it to prevent
+                    // the line height being changed during animation
+                    #if os(macOS)
+                    str.font = .system(size: 19, weight: .medium)
+                    #else
+                    str.font = .system(size: 15, weight: .medium)
+                    #endif
+                }
+                result.append(str)
+            }
+            return result
+        }())
+        #if os(macOS)
+        .font(.custom(fontName(in: locale), size: 20))
+        #else
+        .font(.custom(fontName(in: locale), size: 16))
+        #endif
+        .wrapIf(locale == .en || locale == .tw) { content in
+            content
+                .lineSpacing(locale == .en ? 10 : -5)
+        }
+        .typesettingLanguage(locale.nsLocale().language)
+        .textSelection(.enabled)
+        .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
+        .padding(.horizontal, 20)
+        .padding(.top, 12)
+    }
+    @ViewBuilder
+    private var labelLayer: some View {
+        ZStack(alignment: .leading) {
+            Capsule()
+                .fill(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
+                .overlay {
+                    HStack {
+                        Spacer()
+                        Image("NameSideStar")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 31)
+                    }
+                    .clipShape(Capsule())
+                }
+                .overlay {
+                    Capsule()
+                        .strokeBorder(Color.white, lineWidth: 2)
+                }
+                .frame(width: 200, height: 32)
+            Text(data.windowDisplayName)
+            #if os(macOS)
+                .font(.custom(fontName(in: locale), size: 21))
+            #else
+                .font(.custom(fontName(in: locale), size: 17))
+            #endif
+                .foregroundStyle(.white)
+                .padding()
+        }
+        .offset(y: -38)
+        HStack {
+            Spacer()
+            if isShowingAutoPlayLabel {
+                HStack(spacing: 2) {
+                    Image(systemName: "arrowtriangle.forward.fill")
+                        .scaleEffect(x: 0.7, y: 1, anchor: .trailing)
+                    Text(verbatim: "AUTO")
+                }
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .modifier(StrokeTextModifier(width: Double(1.5), color: .white))
+                .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
+            }
+        }
+        .padding(.horizontal, 30)
+        .offset(y: -5)
     }
     
     func animateText() {
