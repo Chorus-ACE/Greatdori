@@ -311,8 +311,8 @@ extension EnvironmentValues {
 
 struct ItemSelectorButton<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable & TitleDescribable & DoriTypeDescribable>: View {
     @Binding var selection: Element?
-    @State var selectorWindowIsPresented = false
     var closeWindowOnSelectionChange = false
+    @State private var selectorWindowIsPresented = false
     var body: some View {
         Button(action: {
             selectorWindowIsPresented = true
@@ -340,6 +340,10 @@ struct ItemSelectorButton<Element: Sendable & Hashable & DoriCacheable & DoriFil
             Group {
                 if let eventBinding = bindingCast($selection, to: PreviewEvent?.self) {
                     EventSelector(selection: eventBinding)
+                } else if let cardBinding = bindingCast($selection, to: PreviewCard?.self) {
+                    CardSelector(selection: cardBinding)
+                } else if let costumeBinding = bindingCast($selection, to: PreviewCostume?.self) {
+                    CostumeSelector(selection: costumeBinding)
                 }
             }
             #if os(macOS)
@@ -352,5 +356,3 @@ struct ItemSelectorButton<Element: Sendable & Hashable & DoriCacheable & DoriFil
         }
     }
 }
-
-

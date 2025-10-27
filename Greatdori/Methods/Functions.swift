@@ -28,7 +28,7 @@ import UIKit
 
 // MARK: bindingCast
 func bindingCast<T, U>(_ binding: Binding<T>, to type: U.Type) -> Binding<U>? {
-    guard let value = binding.wrappedValue as? U else { return nil }
+    guard T.self == U.self, let value = binding.wrappedValue as? U else { return nil }
     return Binding<U>(
         get: { value },
         set: { newValue in

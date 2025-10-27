@@ -394,8 +394,7 @@ extension StoryViewerView {
                     })
                     .buttonStyle(.borderless)
                     .window(isPresented: $isCardSelectorPresented) {
-                        CardSelector(selection: .init { [selectedCard].compactMap { $0 } } set: { selectedCard = $0.first })
-                            .selectorDisablesMultipleSelection()
+                        CardSelector(selection: $selectedCard)
                     }
                 }
                 .onChange(of: selectedCard) {

@@ -60,6 +60,8 @@
 		8C32BA362E8E90D9002D183A /* ReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C32BA352E8E90D3002D183A /* ReflectionView.swift */; };
 		8C32BA382E8EA955002D183A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8C32BA372E8EA955002D183A /* SDWebImageSwiftUI */; };
 		8C3D4E7C2EA7AABE0034E831 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 8C3D4E7B2EA7AABE0034E831 /* SwiftyJSON */; };
+		8C3DFB0E2EAF6B8D0004E1F5 /* CharacterSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB0D2EAF6B880004E1F5 /* CharacterSelector.swift */; };
+		8C3DFB102EAF84BB0004E1F5 /* CostumeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB0F2EAF84B30004E1F5 /* CostumeSelector.swift */; };
 		8C3FA2422E4B5699001526F2 /* MiracleTicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA2412E4B5690001526F2 /* MiracleTicketView.swift */; };
 		8C3FA2442E4B5D1E001526F2 /* InfoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA2432E4B5D19001526F2 /* InfoTextView.swift */; };
 		8C3FA25A2E4B9EC6001526F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C3FA2562E4B9EC6001526F2 /* Assets.xcassets */; };
@@ -489,6 +491,8 @@
 		8C3264072E3C723F00081F4F /* GachaListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GachaListView.swift; sourceTree = "<group>"; };
 		8C3264092E3CB4CC00081F4F /* GachaDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GachaDetailView.swift; sourceTree = "<group>"; };
 		8C32BA352E8E90D3002D183A /* ReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflectionView.swift; sourceTree = "<group>"; };
+		8C3DFB0D2EAF6B880004E1F5 /* CharacterSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSelector.swift; sourceTree = "<group>"; };
+		8C3DFB0F2EAF84B30004E1F5 /* CostumeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostumeSelector.swift; sourceTree = "<group>"; };
 		8C3FA2412E4B5690001526F2 /* MiracleTicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiracleTicketView.swift; sourceTree = "<group>"; };
 		8C3FA2432E4B5D19001526F2 /* InfoTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoTextView.swift; sourceTree = "<group>"; };
 		8C3FA2492E4B9EBF001526F2 /* GreatLyrics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreatLyrics.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1163,6 +1167,7 @@
 			children = (
 				E94218EF2E8AA2FB00F24974 /* CharacterDetailView.swift */,
 				E94218F12E8AA31D00F24974 /* CharacterSearchView.swift */,
+				8C3DFB0D2EAF6B880004E1F5 /* CharacterSelector.swift */,
 			);
 			path = Character;
 			sourceTree = "<group>";
@@ -1214,6 +1219,7 @@
 				E94219182E8AA58400F24974 /* CostumeSearchView.swift */,
 				E942191A2E8AA59600F24974 /* CostumeDetailView.swift */,
 				E942191D2E8AA5E900F24974 /* DetailCostumesSection.swift */,
+				8C3DFB0F2EAF84B30004E1F5 /* CostumeSelector.swift */,
 			);
 			path = Costume;
 			sourceTree = "<group>";
@@ -1735,6 +1741,7 @@
 				8C320FAF2E8BF2AB002D183A /* InfoBases.swift in Sources */,
 				E94219262E8AA6AD00F24974 /* EventInfo.swift in Sources */,
 				E94219132E8AA53D00F24974 /* ComicInfo.swift in Sources */,
+				8C3DFB0E2EAF6B8D0004E1F5 /* CharacterSelector.swift in Sources */,
 				E94219392E8AA7B300F24974 /* GachaDetailView.swift in Sources */,
 				E94219112E8AA51600F24974 /* SongInfo.swift in Sources */,
 				8CF827A92E8ACD380045CA97 /* LoginCampaignInfo.swift in Sources */,
@@ -1744,6 +1751,7 @@
 				8CD28FF02E9F6C6D00831458 /* ChartSimulator.swift in Sources */,
 				E94219192E8AA58800F24974 /* CostumeSearchView.swift in Sources */,
 				E94218F02E8AA2FF00F24974 /* CharacterDetailView.swift in Sources */,
+				8C3DFB102EAF84BB0004E1F5 /* CostumeSelector.swift in Sources */,
 				8C889D9C2EA1258D00FBF01D /* CommunityView.swift in Sources */,
 				E94218F72E8AA39900F24974 /* CardCoverImage.swift in Sources */,
 				E942191E2E8AA5EB00F24974 /* DetailCostumesSection.swift in Sources */,

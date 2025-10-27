@@ -16,12 +16,17 @@ import DoriKit
 import SwiftUI
 
 struct Live2DViewerView: View {
-    @State var itemType: [LocalizedStringKey] = ["Tools.live2d-viewer.type.card", "Tools.live2d-viewer.type.costume", "Tools.live2d-viewer.type.seasonal-costume"]
-    @State var selectedItemTypeIndex = 0
-    @State var id: Int = 1
-    @State var costume: Costume?
-    @State var informationIsLoading = true
-    @State var seasonalCostumes: [PreviewCostume]?
+    private let itemType: [LocalizedStringKey] = [
+        "Tools.live2d-viewer.type.card",
+        "Tools.live2d-viewer.type.costume",
+        "Tools.live2d-viewer.type.seasonal-costume"
+    ]
+    @State private var selectedItemTypeIndex = 0
+    @State private var selectedCard: PreviewCard?
+    @State private var selectedCharacter: PreviewCharacter?
+    @State private var costume: PreviewCostume?
+    @State private var informationIsLoading = false
+    @State private var seasonalCostumes: [SeasonCostume]?
     var body: some View {
         ScrollView {
             HStack {
@@ -42,12 +47,34 @@ struct Live2DViewerView: View {
                                 .labelsHidden()
                             })
                             Divider()
-                            ListItemView(title: {
-                                Text("Tools.live2d-viewer.id")
-                                    .bold()
-                            }, value: {
-                                TextField("Tools.live2d-viewer.id", value: $id, format: .number)
-                            })
+                            if selectedItemTypeIndex == 0 {
+                                ListItemView {
+                                    Text("Tools.live2d-viewer.card")
+                                        .bold()
+                                } value: {
+                                    ItemSelectorButton(selection: $selectedCard)
+                                        .onChange(of: selectedCard) {
+                                            updateDestination()
+                                        }
+                                }
+                            } else if selectedItemTypeIndex == 1 {
+                                ListItemView {
+                                    Text("Tools.live2d-viewer.costume")
+                                        .bold()
+                                } value: {
+                                    ItemSelectorButton(selection: $costume)
+                                }
+                            } else if selectedItemTypeIndex == 2 {
+                                ListItemView {
+                                    Text("Tools.live2d-viewer.character")
+                                        .bold()
+                                } value: {
+                                    CharacterSelectorButton(selection: $selectedCharacter)
+                                        .onChange(of: selectedCharacter) {
+                                            updateDestination()
+                                        }
+                                }
+                            }
                         }
                     }
                     DetailSectionsSpacer()
@@ -62,17 +89,22 @@ struct Live2DViewerView: View {
                     } else {
                         if let costume, [0, 1].contains(selectedItemTypeIndex) {
                             NavigationLink(destination: {
-                                Live2DDetailView(costume: .init(costume))
+                                Live2DDetailView(costume: costume)
                             }, label: {
                                 CostumeInfo(costume)
                             })
                             .buttonStyle(.plain)
-                        } else if let seasonalCostumes, !seasonalCostumes.isEmpty {
-                            ForEach(seasonalCostumes.indices, id: \.self) { index in
+                        } else if let seasonalCostumes {
+                            ForEach(seasonalCostumes, id: \.self) { costume in
                                 NavigationLink(destination: {
-                                    Live2DDetailView(costume: seasonalCostumes[index])
+                                    Live2DDetailView(seasonalCostume: costume)
                                 }, label: {
-                                    CostumeInfo(seasonalCostumes[index])
+                                    CustomGroupBox {
+                                        ExtendedConstraints {
+                                            Text("第\(costume.seasonType.components(separatedBy: "_").last ?? "")年 \(costume.seasonCostumeType.localizedString)")
+                                        }
+                                        .padding()
+                                    }
                                 })
                                 .buttonStyle(.plain)
                             }
@@ -89,46 +121,44 @@ struct Live2DViewerView: View {
                         }
                     }
                 }
+                .padding()
                 .frame(maxWidth: 600)
                 Spacer(minLength: 0)
             }
         }
+        .withSystemBackground()
         .navigationTitle("Tools.live2d-viewer")
-        .onAppear {
-            updateDestination()
-        }
-        .onChange(of: id) {
+        .onChange(of: selectedItemTypeIndex) {
             updateDestination()
         }
     }
     func updateDestination() {
-        informationIsLoading = true
-        costume = nil
-        if selectedItemTypeIndex == 0 {
-            Task {
-                let card = await Card(id: id)
-                if let card {
-                    costume = await Costume(id: card.costumeID)
+        Task {
+            informationIsLoading = true
+            if selectedItemTypeIndex != 1 {
+                costume = nil
+            }
+            if selectedItemTypeIndex == 0 {
+                if let card = selectedCard,
+                   let fullCard = await Card(preview: card),
+                   let costume = await Costume(id: fullCard.costumeID) {
+                    self.costume = .init(costume)
                 }
                 informationIsLoading = false
+            } else if selectedItemTypeIndex == 2 {
+                if let character = selectedCharacter {
+                    let character = await Character(preview: character)
+                    seasonalCostumes = character?.seasonCostumeList?.flatMap { $0 }
+                }
             }
-        } else if selectedItemTypeIndex == 1 {
-            Task {
-                costume = await Costume(id: id)
-                informationIsLoading = false
-            }
-        } else if selectedItemTypeIndex == 2 {
-            Task {
-                let character = await ExtendedCharacter(id: id)
-                seasonalCostumes = character?.costumes
-                informationIsLoading = false
-            }
+            informationIsLoading = false
         }
     }
 }
 
 struct Live2DDetailView: View {
-    var costume: PreviewCostume
+    var costume: PreviewCostume?
+    var seasonalCostume: SeasonCostume?
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @State var isInspectorPresented = false
     @State var isSwayEnabled = true
@@ -146,8 +176,16 @@ struct Live2DDetailView: View {
         HStack {
             Spacer(minLength: 0)
             VStack {
-                Live2DView(costume: costume) {
-                    ProgressView()
+                Group {
+                    if let costume {
+                        Live2DView(costume: costume) {
+                            ProgressView()
+                        }
+                    } else if let seasonalCostume {
+                        Live2DView(costume: seasonalCostume) {
+                            ProgressView()
+                        }
+                    }
                 }
                 .scaledToFit()
                 .live2dSwayDisabled(!isSwayEnabled)
@@ -170,7 +208,7 @@ struct Live2DDetailView: View {
             .animation(.spring(duration: 0.3, bounce: 0.3), value: isInspectorVisible)
             Spacer(minLength: 0)
         }
-        .navigationTitle(costume.description.forPreferredLocale() ?? "")
+        .navigationTitle(costume?.description.forPreferredLocale() ?? seasonalCostume?.seasonCostumeType.localizedString ?? "")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(horizontalSizeClass == .compact && isInspectorVisible ? .hidden : .visible, for: .navigationBar)

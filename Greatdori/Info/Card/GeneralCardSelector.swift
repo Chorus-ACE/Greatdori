@@ -15,7 +15,7 @@
 import DoriKit
 import SwiftUI
 
-struct CardSelector: View {
+struct MultiCardSelector: View {
     @Binding var selection: [PreviewCard]
     let gridLayoutItemWidth: CGFloat = 200
     let galleryLayoutItemMinimumWidth: CGFloat = 400
@@ -39,5 +39,13 @@ struct CardSelector: View {
         .resultCountDescription { count in
             "Card.count.\(count)"
         }
+    }
+}
+
+struct CardSelector: View {
+    @Binding var selection: PreviewCard?
+    var body: some View {
+        MultiCardSelector(selection: .init { [selection].compactMap { $0 } } set: { selection = $0.first })
+            .selectorDisablesMultipleSelection()
     }
 }
