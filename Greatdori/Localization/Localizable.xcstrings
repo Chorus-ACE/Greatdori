@@ -1749,7 +1749,6 @@
       }
     },
     "Costumes" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

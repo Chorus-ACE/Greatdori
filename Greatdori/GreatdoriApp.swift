@@ -54,7 +54,7 @@ struct GreatdoriApp: App {
                 }
             }
             .onOpenURL { url in
-                handleURL(url)
+                _handleURL(url)
             }
         }
         .commands {
@@ -152,7 +152,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func application(_ application: NSApplication, open urls: [URL]) {
         if let url = urls.first {
-            handleURL(url)
+            _handleURL(url)
         }
     }
     
@@ -196,7 +196,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey : Any] = [:]
     ) -> Bool {
-        handleURL(url)
+        _handleURL(url)
         return true
     }
     
@@ -209,34 +209,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 #endif
-
-private func handleURL(_ url: URL) {
-    guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return }
-    switch components.host {
-    case "flag":
-        if let items = components.queryItems {
-            for item in items {
-                if let value = item.value {
-                    AppFlag.set((Int(value) ?? (value == "true" ? 1 : 0)) != 0, forKey: item.name)
-                }
-            }
-        }
-    case "info":
-        let paths = components.path.split(separator: "/")
-        if paths.count >= 2 {
-            switch paths[0] {
-            case "cards":
-                if let id = Int(paths[1]) {
-                    rootShowView {
-                        CardDetailView(id: id)
-                    }
-                }
-            default: break
-            }
-        }
-    default: break
-    }
-}
 
 @MainActor let _showRootViewSubject = PassthroughSubject<AnyView, Never>()
 func rootShowView(@ViewBuilder content: () -> some View) {
@@ -253,14 +225,23 @@ extension View {
 private struct _ExternalViewHandlerModifier: ViewModifier {
     @State private var presentingView: AnyView?
     @State private var isViewPresented = false
+    @State private var isVisible = false
     func body(content: Content) -> some View {
         content
             .navigationDestination(isPresented: $isViewPresented) {
                 presentingView
             }
+            .onAppear {
+                isVisible = true
+            }
+            .onDisappear {
+                isVisible = false
+            }
             .onReceive(_showRootViewSubject) { view in
-                presentingView = view
-                isViewPresented = true
+                if isVisible {
+                    presentingView = view
+                    isViewPresented = true
+                }
             }
     }
 }

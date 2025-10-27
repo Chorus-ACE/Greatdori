@@ -62,6 +62,7 @@
 		8C3D4E7C2EA7AABE0034E831 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 8C3D4E7B2EA7AABE0034E831 /* SwiftyJSON */; };
 		8C3DFB0E2EAF6B8D0004E1F5 /* CharacterSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB0D2EAF6B880004E1F5 /* CharacterSelector.swift */; };
 		8C3DFB102EAF84BB0004E1F5 /* CostumeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB0F2EAF84B30004E1F5 /* CostumeSelector.swift */; };
+		8C3DFB202EAFA1670004E1F5 /* URLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB1F2EAFA1610004E1F5 /* URLHandler.swift */; };
 		8C3FA2422E4B5699001526F2 /* MiracleTicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA2412E4B5690001526F2 /* MiracleTicketView.swift */; };
 		8C3FA2442E4B5D1E001526F2 /* InfoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA2432E4B5D19001526F2 /* InfoTextView.swift */; };
 		8C3FA25A2E4B9EC6001526F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C3FA2562E4B9EC6001526F2 /* Assets.xcassets */; };
@@ -493,6 +494,7 @@
 		8C32BA352E8E90D3002D183A /* ReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflectionView.swift; sourceTree = "<group>"; };
 		8C3DFB0D2EAF6B880004E1F5 /* CharacterSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSelector.swift; sourceTree = "<group>"; };
 		8C3DFB0F2EAF84B30004E1F5 /* CostumeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostumeSelector.swift; sourceTree = "<group>"; };
+		8C3DFB1F2EAFA1610004E1F5 /* URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLHandler.swift; sourceTree = "<group>"; };
 		8C3FA2412E4B5690001526F2 /* MiracleTicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiracleTicketView.swift; sourceTree = "<group>"; };
 		8C3FA2432E4B5D19001526F2 /* InfoTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoTextView.swift; sourceTree = "<group>"; };
 		8C3FA2492E4B9EBF001526F2 /* GreatLyrics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreatLyrics.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1268,6 +1270,7 @@
 				E97888C52E8A79E500ABD33E /* QuickLook.swift */,
 				8CBF73122E9029FE00D88F96 /* CardCollectionCoding.swift */,
 				E9AF51242EAC633D00BB808F /* TypeNames.swift */,
+				8C3DFB1F2EAFA1610004E1F5 /* URLHandler.swift */,
 			);
 			path = Methods;
 			sourceTree = "<group>";
@@ -1771,6 +1774,7 @@
 				E9B17BBB2EA5DC430049C92C /* SettingsAboutView.swift in Sources */,
 				E90769CD2E546D5500C9871C /* HomeView.swift in Sources */,
 				E90769CE2E546D5500C9871C /* NewsView.swift in Sources */,
+				8C3DFB202EAFA1670004E1F5 /* URLHandler.swift in Sources */,
 				8CC046DC2E6C8F63009FDC13 /* AppFlags.swift in Sources */,
 				8C2B64022E940B2800D003D1 /* InteractiveStoryView.swift in Sources */,
 				E94443CC2E8E6EDE00593F07 /* SettingsPermissionsView.swift in Sources */,
