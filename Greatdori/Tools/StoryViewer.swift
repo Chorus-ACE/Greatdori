@@ -22,10 +22,14 @@ struct StoryViewerView: View {
     @State var displayingStories: LocalizedData<[CustomStory]> = LocalizedData<[CustomStory]>(forEveryLocale: [])
     @State var informationIsAvailable = true
     @State var locale: DoriLocale = DoriLocale.primaryLocale
-    @State var sectionTitle: String = ""
+    @State var sectionTitle: String = "" // Deprecated?
+    
+    @State var allEventStories: [DoriAPI.Events.EventStory] = []
+    @State var allMainStories: [DoriAPI.Story] = []
+    
     
     @State var selectedEvent: PreviewEvent?
-    @State var allEventStories: [DoriAPI.Events.EventStory] = []
+    @State var selectedBand: Band? //TODO: Remove Band
     
     var body: some View {
         ScrollView {
@@ -63,7 +67,19 @@ struct StoryViewerView: View {
                             case .main:
                                 EmptyView()
                             case .band:
-                                EmptyView()
+                                ListItemView(title: {
+                                    Text("Tools.story-viewer.type")
+                                        .bold()
+                                }, value: {
+                                    Picker(selection: $storyType) {
+                                        ForEach(StoryType.allCases, id: \.self) { type in
+                                            Text(type.name).tag(type)
+                                        }
+                                    } label: {
+                                        EmptyView()
+                                    }
+                                    .labelsHidden()
+                                })
                             case .card:
                                 EmptyView()
                             case .actionSet:
@@ -179,8 +195,20 @@ struct StoryViewerView: View {
             }
             let eventStory = allEventStories.first(where: { $0.id == (selectedEvent?.id ?? -1) })
             displayingStories = eventStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
-//        case .main:
-//            <#code#>
+        case .main:
+            informationIsAvailable = true
+            if allMainStories.isEmpty {
+                DoriCache.withCache(id: "MainStories") {
+                    await DoriAPI.Misc.mainStories()
+                }.onUpdate {
+                    if let stories = $0 {
+                        self.allMainStories = stories
+                    } else {
+                        informationIsAvailable = false
+                    }
+                }
+            }
+            displayingStories = allMainStories.convertToLocalizedData()
 //        case .band:
 //            <#code#>
 //        case .card:
