@@ -89,7 +89,6 @@ struct StoryViewerView: View {
                                     Text("Tools.story-viewer.story")
                                         .bold()
                                 }, value: {
-                                    
                                     if #available(macOS 15.0, *) {
                                         Picker(selection: $selectedBandStory, content: {
                                             let availableBandStories: [DoriAPI.Misc.BandStory] = allBandStories.filter({ $0.bandID == selectedBand?.id })
@@ -150,8 +149,8 @@ struct StoryViewerView: View {
                                     StoryCardView(story: item, type: storyType, locale: locale, unsafeAssociatedID: String(selectedEvent?.id ?? -1), unsafeSecondaryAssociatedID: String(index))
                                 case .main:
                                     StoryCardView(story: item, type: storyType, locale: DoriAPI.preferredLocale, unsafeAssociatedID: String(index + 1))
-//                                case .band:
-//                                    <#code#>
+                                case .band:
+                                    StoryCardView(story: item, type: storyType, locale: locale, unsafeAssociatedID: String(selectedBand?.id ?? -1))
 //                                case .card:
 //                                    <#code#>
 //                                case .actionSet:
