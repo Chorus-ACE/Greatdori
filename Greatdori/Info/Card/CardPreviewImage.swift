@@ -38,7 +38,6 @@ struct CardPreviewImage: View {
     @State var cardNavigationDestinationID: Int = 0
     @State var isHovering: Bool = false
     
-    //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 323)
     init(_ card: PreviewCard, showTrainedVersion: Bool = false, sideLength: CGFloat = 72, showNavigationHints: Bool = false/*, cardNavigationDestinationID: Binding<Int?>*/) {
         self.inputtedPreviewCard = card
         self.cardID = card.id
@@ -55,7 +54,6 @@ struct CardPreviewImage: View {
         self.characterID = card.characterID
         //        self._cardNavigationDestinationID = cardNavigationDestinationID
     }
-    //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 323)
     init(_ card: Card, showTrainedVersion: Bool = false, sideLength: CGFloat = 72, showNavigationHints: Bool = false/*, cardNavigationDestinationID: Binding<Int?>*/) {
         self.cardID = card.id
         self.thumbNormalImageURL = card.thumbNormalImageURL
@@ -71,7 +69,8 @@ struct CardPreviewImage: View {
         self.characterID = card.characterID
         //        self._cardNavigationDestinationID = cardNavigationDestinationID
     }
-    //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 332)
+    
+    @Environment(\.disablePopover) private var disablePopover
     
     var body: some View {
         ZStack(alignment: .center) {
@@ -198,7 +197,7 @@ struct CardPreviewImage: View {
             }
             content
                 .onHover { isHovering in
-                    self.isHovering = isHovering
+                    self.isHovering = isHovering && !disablePopover
                 }
                 .popover(isPresented: $isHovering, arrowEdge: .bottom) {
                     sumimi

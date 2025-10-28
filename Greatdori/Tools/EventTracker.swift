@@ -402,7 +402,7 @@ struct EventTrackerView: View {
             }
         }
         .withSystemBackground()
-        .scrollDisablesMultilingualTextPopover()
+        .scrollDisablesPopover()
         .navigationTitle("Tools.event-trackter")
         .task {
             await getEvents()

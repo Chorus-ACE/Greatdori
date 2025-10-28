@@ -517,7 +517,7 @@ struct MultilingualText: View {
     //    let locale: Locale
     var showLocaleKey: Bool = false
     var allowPopover = true
-    @Environment(\._multilingualTextDisablePopover) var envDisablesPopover
+    @Environment(\.disablePopover) var envDisablesPopover
     @State var isHovering = false
     @State var allLocaleTexts: [String] = []
     @State var shownLocaleValueDict: [String: DoriAPI.Locale] = [:]
@@ -1007,6 +1007,7 @@ struct ListItemView<Content1: View, Content2: View>: View {
             if (displayMode == .compactOnly  || (displayMode == .basedOnUISizeClass && sizeClass == .regular) || (totalAvailableWidth - titleAvailableWidth - valueAvailableWidth) > 5) && displayMode != .expandedOnly { // HStack (SHORT)
                 HStack {
                     title
+                        .bold()
                         .fixedSize(horizontal: true, vertical: true)
                         .onFrameChange(perform: { geometry in
                             titleAvailableWidth = geometry.size.width
@@ -1025,6 +1026,7 @@ struct ListItemView<Content1: View, Content2: View>: View {
             } else { // VStack (LONG)
                 VStack(alignment: .leading) {
                     title
+                        .bold()
                         .fixedSize(horizontal: true, vertical: true)
                         .onFrameChange(perform: { geometry in
                             titleAvailableWidth = geometry.size.width

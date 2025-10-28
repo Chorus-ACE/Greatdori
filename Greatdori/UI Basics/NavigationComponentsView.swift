@@ -78,7 +78,7 @@ import SwiftUI
         symbol: "ticket",
         lightColor: .indigo,
         tabValue: .miracleTicket,
-        destination: {GachaSearchView()}
+        destination: {MiracleTicketView()}
     ),
     InfoDestinationItem(
         title: "App.info.comics",

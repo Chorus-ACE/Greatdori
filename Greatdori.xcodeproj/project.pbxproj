@@ -63,6 +63,7 @@
 		8C3DFB0E2EAF6B8D0004E1F5 /* CharacterSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB0D2EAF6B880004E1F5 /* CharacterSelector.swift */; };
 		8C3DFB102EAF84BB0004E1F5 /* CostumeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB0F2EAF84B30004E1F5 /* CostumeSelector.swift */; };
 		8C3DFB202EAFA1670004E1F5 /* URLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB1F2EAFA1610004E1F5 /* URLHandler.swift */; };
+		8C3DFB492EB0A0960004E1F5 /* MiracleTicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB482EB0A0910004E1F5 /* MiracleTicketView.swift */; };
 		8C3FA2422E4B5699001526F2 /* MiracleTicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA2412E4B5690001526F2 /* MiracleTicketView.swift */; };
 		8C3FA2442E4B5D1E001526F2 /* InfoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA2432E4B5D19001526F2 /* InfoTextView.swift */; };
 		8C3FA25A2E4B9EC6001526F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C3FA2562E4B9EC6001526F2 /* Assets.xcassets */; };
@@ -495,6 +496,7 @@
 		8C3DFB0D2EAF6B880004E1F5 /* CharacterSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSelector.swift; sourceTree = "<group>"; };
 		8C3DFB0F2EAF84B30004E1F5 /* CostumeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostumeSelector.swift; sourceTree = "<group>"; };
 		8C3DFB1F2EAFA1610004E1F5 /* URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLHandler.swift; sourceTree = "<group>"; };
+		8C3DFB482EB0A0910004E1F5 /* MiracleTicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiracleTicketView.swift; sourceTree = "<group>"; };
 		8C3FA2412E4B5690001526F2 /* MiracleTicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiracleTicketView.swift; sourceTree = "<group>"; };
 		8C3FA2432E4B5D19001526F2 /* InfoTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoTextView.swift; sourceTree = "<group>"; };
 		8C3FA2492E4B9EBF001526F2 /* GreatLyrics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreatLyrics.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -896,6 +898,14 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		8C3DFB472EB0A07E0004E1F5 /* MiracleTicket */ = {
+			isa = PBXGroup;
+			children = (
+				8C3DFB482EB0A0910004E1F5 /* MiracleTicketView.swift */,
+			);
+			path = MiracleTicket;
+			sourceTree = "<group>";
+		};
 		8C3FA2592E4B9EC6001526F2 /* GreatLyrics */ = {
 			isa = PBXGroup;
 			children = (
@@ -1284,6 +1294,7 @@
 				E942192D2E8AA71B00F24974 /* Event */,
 				E942193A2E8AA7D700F24974 /* Gacha */,
 				E942190F2E8AA4F900F24974 /* Song */,
+				8C3DFB472EB0A07E0004E1F5 /* MiracleTicket */,
 				E94219082E8AA49B00F24974 /* Comic */,
 				8CF827A72E8ACD180045CA97 /* LoginCampaign */,
 				E942193B2E8AA7E600F24974 /* Other */,
@@ -1757,6 +1768,7 @@
 				8C3DFB102EAF84BB0004E1F5 /* CostumeSelector.swift in Sources */,
 				8C889D9C2EA1258D00FBF01D /* CommunityView.swift in Sources */,
 				E94218F72E8AA39900F24974 /* CardCoverImage.swift in Sources */,
+				8C3DFB492EB0A0960004E1F5 /* MiracleTicketView.swift in Sources */,
 				E942191E2E8AA5EB00F24974 /* DetailCostumesSection.swift in Sources */,
 				8C08B8BD2E73DC8F00447B05 /* CalendarEvents.swift in Sources */,
 				E94219202E8AA60700F24974 /* DetailsCardsSection.swift in Sources */,

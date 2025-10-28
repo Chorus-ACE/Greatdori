@@ -83,7 +83,7 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
                         Spacer(minLength: 0)
                     }
                 }
-                .scrollDisablesMultilingualTextPopover()
+                .scrollDisablesPopover()
             } else {
                 if infoIsAvailable {
                     ExtendedConstraints {
