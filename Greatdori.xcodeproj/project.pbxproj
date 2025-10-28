@@ -2268,7 +2268,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = Privacy.usage.calendar;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "[FIXME: Text Style] Greatdori! 需要权限以添加图片";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Privacy.photo-library.add-only.description";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -2335,7 +2335,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = Privacy.usage.calendar;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "[FIXME: Text Style] Greatdori! 需要权限以添加图片";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Privacy.photo-library.add-only.description";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -2468,7 +2468,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = Privacy.usage.calendar;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "[FIXME: Text Style] Greatdori! 需要权限以添加图片";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Privacy.photo-library.add-only.description";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -2630,7 +2630,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = Privacy.usage.calendar;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "[FIXME: Text Style] Greatdori! 需要权限以添加图片";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Privacy.photo-library.add-only.description";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

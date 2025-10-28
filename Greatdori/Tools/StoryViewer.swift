@@ -26,10 +26,12 @@ struct StoryViewerView: View {
     
     @State var allEventStories: [DoriAPI.Events.EventStory] = []
     @State var allMainStories: [DoriAPI.Story] = []
-    
+    @State var allBandStories: [DoriAPI.Misc.BandStory] = []
+    @State var allMainBands: [Band] = DoriCache.preCache.mainBands
     
     @State var selectedEvent: PreviewEvent?
-    @State var selectedBand: Band? //TODO: Remove Band
+    @State var selectedBandStory: DoriAPI.Misc.BandStory?
+    @State var selectedBand: Band? = DoriCache.preCache.mainBands.first
     
     var body: some View {
         ScrollView {
@@ -68,18 +70,53 @@ struct StoryViewerView: View {
                                 EmptyView()
                             case .band:
                                 ListItemView(title: {
-                                    Text("Tools.story-viewer.type")
+                                    Text("Tools.story-viewer.band")
                                         .bold()
                                 }, value: {
-                                    Picker(selection: $storyType) {
-                                        ForEach(StoryType.allCases, id: \.self) { type in
-                                            Text(type.name).tag(type)
+                                    Picker(selection: $selectedBand, content: {
+                                        ForEach(allMainBands, id: \.self) { item in
+                                            Text(item.bandName.forLocale(locale) ?? "")
+                                                .tag(item)
                                         }
-                                    } label: {
+                                    }, label: {
                                         EmptyView()
-                                    }
+                                    })
                                     .labelsHidden()
                                 })
+                                Divider()
+                                
+                                ListItemView(title: {
+                                    Text("Tools.story-viewer.story")
+                                        .bold()
+                                }, value: {
+                                    
+                                    if #available(macOS 15.0, *) {
+                                        Picker(selection: $selectedBandStory, content: {
+                                            let availableBandStories: [DoriAPI.Misc.BandStory] = allBandStories.filter({ $0.bandID == selectedBand?.id })
+                                            ForEach(availableBandStories, id: \.self) { item in
+                                                Text(item.subTitle.forLocale(locale) ?? "")
+                                                    .tag(item)
+                                            }
+                                        }, label: {
+                                            EmptyView()
+                                        }, currentValueLabel: {
+                                            Text(selectedBandStory?.subTitle.forLocale(locale) ?? String(localized: "Tools.story-viewer.story.select"))
+                                        })
+                                        .labelsHidden()
+                                    } else {
+                                        Picker(selection: $selectedBandStory, content: {
+                                            let availableBandStories: [DoriAPI.Misc.BandStory] = allBandStories.filter({ $0.bandID == selectedBand?.id })
+                                            ForEach(availableBandStories, id: \.self) { item in
+                                                Text(item.subTitle.forLocale(locale) ?? "")
+                                                    .tag(item)
+                                            }
+                                        }, label: {
+                                            EmptyView()
+                                        })
+                                        .labelsHidden()
+                                    }
+                                })
+                                Divider()
                             case .card:
                                 EmptyView()
                             case .actionSet:
@@ -171,10 +208,13 @@ struct StoryViewerView: View {
                 await getStories()
             }
         }
-        .onChange(of: locale, selectedEvent, storyType) {
+        .onChange(of: locale, selectedEvent, storyType, selectedBand, selectedBandStory) {
             Task {
                 await getStories()
             }
+        }
+        .onChange(of: selectedBand) {
+            selectedBandStory = nil
         }
     }
     
@@ -209,8 +249,20 @@ struct StoryViewerView: View {
                 }
             }
             displayingStories = allMainStories.convertToLocalizedData()
-//        case .band:
-//            <#code#>
+        case .band:
+            informationIsAvailable = true
+            if allBandStories.isEmpty {
+                DoriCache.withCache(id: "BandStories") {
+                    await DoriAPI.Misc.bandStories()
+                }.onUpdate {
+                    if let bands = $0 {
+                        self.allBandStories = bands
+                    } else {
+                        informationIsAvailable = false
+                    }
+                }
+            }
+            displayingStories = selectedBandStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
 //        case .card:
 //            <#code#>
 //        case .actionSet:
@@ -226,6 +278,8 @@ struct StoryViewerView: View {
         switch storyType {
         case .event:
             return selectedEvent != nil
+        case .band:
+            return selectedBandStory != nil
         default:
             return true
         }

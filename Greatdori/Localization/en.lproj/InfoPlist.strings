@@ -7,3 +7,4 @@
 */
 
 "NSCalendarsUsageDescription" = "Allow calendar access to allow Greatdori! manage birthdays. No events other than character birthday events will be accessed.";
+"Privacy.photo-library.add-only.description" = "Greatdori! needs permission to add photos to your Photos library.";
