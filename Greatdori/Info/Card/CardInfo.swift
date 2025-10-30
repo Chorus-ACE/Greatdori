@@ -28,7 +28,7 @@ struct CardInfo: View {
     private var previewCard: PreviewCard
     private var displayType: CardImageDisplayType
     @Environment(\.horizontalSizeClass) var sizeClass
-    @State var cardCharacterName: DoriAPI.LocalizedData<String>?
+    @State var cardCharacterName: _DoriAPI.LocalizedData<String>?
     @State var isNormalCardAvailable = true
     
     init(_ card: PreviewCard, layoutType: Int = 1, displayType: CardImageDisplayType = .both) {

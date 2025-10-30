@@ -28,7 +28,7 @@ public struct BuiltinCardCollection: Codable {
 }
 @_eagerMove
 public struct BuiltinCard: Codable {
-    public var localizedName: DoriAPI.LocalizedData<String>
+    public var localizedName: _DoriAPI.LocalizedData<String>
     public var fileName: String
     
     #if !os(macOS)

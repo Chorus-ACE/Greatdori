@@ -17,7 +17,7 @@ import SwiftUI
 import MarkdownUI
 
 struct CommunityView: View {
-    @State var posts: DoriAPI.Posts.PagedPosts?
+    @State var posts: _DoriAPI.Posts.PagedPosts?
     @State var infoIsAvailable = true
     @State var pageOffset = 0
     @State var isLoadingMore = false
@@ -86,7 +86,7 @@ struct CommunityView: View {
     }
     
     func getPosts() async {
-        posts = await DoriAPI.Posts.communityAll(offset: pageOffset)
+        posts = await _DoriAPI.Posts.communityAll(offset: pageOffset)
     }
     func continueLoadPosts() {
         guard !isLoadingMore else { return }
@@ -94,7 +94,7 @@ struct CommunityView: View {
             pageOffset = posts.nextOffset
             Task {
                 isLoadingMore = true
-                if let newPosts = await DoriAPI.Posts.communityAll(offset: pageOffset) {
+                if let newPosts = await _DoriAPI.Posts.communityAll(offset: pageOffset) {
                     self.posts!.content += newPosts.content
                 }
                 isLoadingMore = false
@@ -104,7 +104,7 @@ struct CommunityView: View {
 }
 
 private struct PostSectionView: View {
-    var post: DoriAPI.Posts.Post
+    var post: _DoriAPI.Posts.Post
     @State var commentSourceTitle: String?
     @State var tagsText: String = ""
     var body: some View {
@@ -266,7 +266,7 @@ private struct PostSectionView: View {
     }
 }
 
-extension DoriAPI.Posts.Post {
+extension _DoriAPI.Posts.Post {
     func getPostTypeSymbol() -> String {
         if self.categoryID == "chart" {
             return "apple.classical.pages"

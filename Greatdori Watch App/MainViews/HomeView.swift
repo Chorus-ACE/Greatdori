@@ -98,7 +98,7 @@ struct HomeView: View {
             }
             Section {
                 if let latestEvents {
-                    ForEach(DoriAPI.Locale.allCases, id: \.rawValue) { locale in
+                    ForEach(_DoriAPI.Locale.allCases, id: \.rawValue) { locale in
                         NavigationLink(destination: { EventDetailView(id: latestEvents.forLocale(locale)!.id) }) {
                             if locale != .kr {
                                 EventCardView(latestEvents.forLocale(locale)!, inLocale: locale, showsCountdown: true)
@@ -144,7 +144,7 @@ struct HomeView: View {
         result.timeZone = .init(identifier: "Asia/Tokyo")
         return result
     }
-    func isTodayBirthday(of character: DoriAPI.Characters.BirthdayCharacter) -> Bool {
+    func isTodayBirthday(of character: _DoriAPI.Characters.BirthdayCharacter) -> Bool {
         let timeZone = TimeZone(identifier: "Asia/Tokyo")!
         let componments = character.birthday.components(in: timeZone)
         let nowComponments = Date.now.components

@@ -15,7 +15,7 @@
 import SwiftUI
 import DoriKit
 
-struct SearchView<T: DoriFrontend.Searchable>: View {
+struct SearchView<T: _DoriFrontend.Searchable>: View {
     var items: [T]
     @Binding var text: String
     var completion: ([T]) -> Void

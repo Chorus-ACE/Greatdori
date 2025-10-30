@@ -18,7 +18,7 @@ import Combine
 import SDWebImageSwiftUI
 
 let loadingAnimationDuration = 0.1
-let localeFromStringDict: [String: DoriAPI.Locale] = ["jp": .jp, "cn": .cn, "tw": .tw, "en": .en, "kr": .kr]
+let localeFromStringDict: [String: _DoriAPI.Locale] = ["jp": .jp, "cn": .cn, "tw": .tw, "en": .en, "kr": .kr]
 //let localeToStringDict: [DoriAPI.Locale: String] = [.jp: "JP", .en: "EN", .tw: "TW", .cn: "CN", .kr: "KR"]
 
 private let _homeNavigationSubject = PassthroughSubject<NavigationPage?, Never>()
@@ -123,7 +123,7 @@ struct HomeView: View {
 }
 
 struct HomeNewsView: View {
-    @State var news: [DoriFrontend.News.ListItem]?
+    @State var news: [_DoriFrontend.News.ListItem]?
     @State var allEvents: [PreviewEvent]?
     @State var allGacha: [PreviewGacha]?
     @State var allSongs: [PreviewSong]?
@@ -195,25 +195,25 @@ struct HomeNewsView: View {
         .foregroundStyle(.primary)
         .task {
             DoriCache.withCache(id: "Home_News", trait: .realTime) {
-                await DoriFrontend.News.list()
+                await _DoriFrontend.News.list()
             } .onUpdate {
                 news = $0
             }
             await withTaskGroup { group in
                 group.addTask {
-                    let events = await DoriAPI.Events.all()
+                    let events = await _DoriAPI.Events.all()
                     await MainActor.run {
                         allEvents = events
                     }
                 }
                 group.addTask {
-                    let gacha = await DoriAPI.Gachas.all()
+                    let gacha = await _DoriAPI.Gachas.all()
                     await MainActor.run {
                         allGacha = gacha
                     }
                 }
                 group.addTask {
-                    let songs = await DoriAPI.Songs.all()
+                    let songs = await _DoriAPI.Songs.all()
                     await MainActor.run {
                         allSongs = songs
                     }
@@ -229,8 +229,8 @@ struct HomeBirthdayView: View {
     @Environment(\.appearsActive) var appearsActive
     #endif
     @AppStorage("showBirthdayDate") var showBirthdayDate = showBirthdayDateDefaultValue
-    @State var birthdays: [DoriFrontend.Characters.BirthdayCharacter]?
-    @State var systemBirthdays: [DoriFrontend.Characters.BirthdayCharacter]?
+    @State var birthdays: [_DoriFrontend.Characters.BirthdayCharacter]?
+    @State var systemBirthdays: [_DoriFrontend.Characters.BirthdayCharacter]?
     var formatter = DateFormatter()
     var todaysDateFormatter = DateFormatter()
     var calendar = Calendar(identifier: .gregorian)
@@ -434,9 +434,9 @@ struct HomeBirthdayView: View {
     
     func updateBirthday() {
         Task {
-            birthdays = await DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone())
+            birthdays = await _DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone())
             if getBirthdayTimeZone() != TimeZone.autoupdatingCurrent {
-                systemBirthdays = await DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone(from: .adaptive))
+                systemBirthdays = await _DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone(from: .adaptive))
             } else {
                 systemBirthdays = nil
             }
@@ -445,12 +445,12 @@ struct HomeBirthdayView: View {
 }
 
 struct HomeEventsView: View {
-    @State var latestEvents: DoriAPI.LocalizedData<DoriFrontend.Events.PreviewEvent>?
+    @State var latestEvents: _DoriAPI.LocalizedData<_DoriFrontend.Events.PreviewEvent>?
     @State var imageOpacity: Double = 0
     @State var placeholderOpacity: Double = 1
-    var locale: DoriAPI.Locale = .jp
+    var locale: _DoriAPI.Locale = .jp
     var dateFormatter = DateFormatter()
-    init(locale: DoriAPI.Locale = .jp) {
+    init(locale: _DoriAPI.Locale = .jp) {
         self.locale = locale
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .short
@@ -498,7 +498,7 @@ struct HomeEventsView: View {
         .foregroundStyle(.primary)
         .task {
             DoriCache.withCache(id: "Home_LatestEvents", trait: .realTime) {
-                await DoriFrontend.Events.localizedLatestEvent()
+                await _DoriFrontend.Events.localizedLatestEvent()
             } .onUpdate {
                 latestEvents = $0
                 withAnimation(.easeInOut(duration: loadingAnimationDuration), {

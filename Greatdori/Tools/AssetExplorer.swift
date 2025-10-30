@@ -43,7 +43,7 @@ struct AssetExplorerView: View {
 
 private struct LocaleAssetView: View {
     var locale: DoriLocale
-    @State private var assetList: DoriAPI.Assets.AssetList?
+    @State private var assetList: _DoriAPI.Assets.AssetList?
     var body: some View {
         if let assetList {
             AssetListView(items: .init(assetList, path: .init(locale: locale)))
@@ -52,7 +52,7 @@ private struct LocaleAssetView: View {
                 .controlSize(.large)
                 .onAppear {
                     Task {
-                        assetList = await DoriAPI.Assets.info(in: locale)
+                        assetList = await _DoriAPI.Assets.info(in: locale)
                     }
                 }
         }
@@ -85,8 +85,8 @@ extension AssetItem {
     }
 }
 extension Array<AssetItem> {
-    init(_ info: DoriAPI.Assets.AssetList, path: DoriAPI.Assets.PathDescriptor) {
-        func resolveInfo(_ info: DoriAPI.Assets.AssetList, path: DoriAPI.Assets.PathDescriptor) -> [AssetItem] {
+    init(_ info: _DoriAPI.Assets.AssetList, path: _DoriAPI.Assets.PathDescriptor) {
+        func resolveInfo(_ info: _DoriAPI.Assets.AssetList, path: _DoriAPI.Assets.PathDescriptor) -> [AssetItem] {
             var result = [AssetItem]()
             let keys = info.keys.sorted()
             for key in keys {
@@ -112,7 +112,7 @@ extension Array<AssetItem> {
 
 private struct AssetListView: View {
     @State var items: [AssetItem]?
-    var currentPath: DoriAPI.Assets.PathDescriptor?
+    var currentPath: _DoriAPI.Assets.PathDescriptor?
     @State private var tintingItem: AssetItem?
     @State private var navigatingItem: AssetItem?
     @State private var previousTapTime = 0.0
@@ -237,7 +237,7 @@ private struct AssetListView: View {
                         .controlSize(.large)
                         .onAppear {
                             Task {
-                                if let contents = await DoriAPI.Assets.contentsOf(currentPath) {
+                                if let contents = await _DoriAPI.Assets.contentsOf(currentPath) {
                                     items = contents.map {
                                         .init(type: .file, name: $0) {}
                                     }
@@ -318,7 +318,7 @@ private struct AssetListView: View {
             }
         }
     }
-    private func downloadItem(_ item: AssetItem, withPath path: DoriAPI.Assets.PathDescriptor) {
+    private func downloadItem(_ item: AssetItem, withPath path: _DoriAPI.Assets.PathDescriptor) {
         contentLoadingItem = item
         #if os(macOS)
         let downloadURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!.appending(path: item.name)

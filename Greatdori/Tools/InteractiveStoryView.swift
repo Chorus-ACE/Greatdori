@@ -23,7 +23,7 @@ import SDWebImageSwiftUI
 
 @safe
 struct InteractiveStoryView: View {
-    var asset: DoriAPI.Misc.StoryAsset
+    var asset: _DoriAPI.Misc.StoryAsset
     var voiceBundleURL: URL
     var locale: DoriLocale
     @Environment(\.dismiss) var dismiss
@@ -40,10 +40,10 @@ struct InteractiveStoryView: View {
     @State var currentSnippetIndex = -1
     @State var currentTelop: String?
     
-    @State var allDiffLayouts = [DoriAPI.Misc.StoryAsset.LayoutData]()
+    @State var allDiffLayouts = [_DoriAPI.Misc.StoryAsset.LayoutData]()
     @State var showingLayoutIndexs = [Int]()
-    @State var currentTalk: DoriAPI.Misc.StoryAsset.TalkData?
-    @State var talkAudios = [DoriAPI.Misc.StoryAsset.TalkData.Voice: Data]()
+    @State var currentTalk: _DoriAPI.Misc.StoryAsset.TalkData?
+    @State var talkAudios = [_DoriAPI.Misc.StoryAsset.TalkData.Voice: Data]()
     
     @State var isDelaying = false
     @State var whiteCoverIsDisplaying = false
@@ -59,7 +59,7 @@ struct InteractiveStoryView: View {
     @State var talkShakeDuration = 0.0
     @State var screenShakeDuration = 0.0
     
-    init(asset: DoriAPI.Misc.StoryAsset, voiceBundleURL: URL, locale: DoriLocale) {
+    init(asset: _DoriAPI.Misc.StoryAsset, voiceBundleURL: URL, locale: DoriLocale) {
         self.asset = asset
         self.voiceBundleURL = voiceBundleURL
         self.locale = locale
@@ -702,7 +702,7 @@ struct InteractiveStoryView: View {
 
 @safe
 private struct InteractiveStoryLive2DView: View {
-    var data: DoriAPI.Misc.StoryAsset.LayoutData
+    var data: _DoriAPI.Misc.StoryAsset.LayoutData
     var voicePlayer: UnsafeMutablePointer<AVAudioPlayer>
     var currentSpeckerID: Int
     @Environment(\._layoutViewVisible) private var isVisible
@@ -748,7 +748,7 @@ private struct InteractiveStoryLive2DView: View {
 }
 
 private struct InteractiveStoryDialogBoxView: View {
-    var data: DoriAPI.Misc.StoryAsset.TalkData
+    var data: _DoriAPI.Misc.StoryAsset.TalkData
     var locale: DoriLocale
     var isDelaying: Bool
     var isAutoPlaying: Bool
@@ -956,10 +956,10 @@ private struct InteractiveStoryDialogBoxView: View {
 }
 
 private struct BacklogView: View {
-    var asset: DoriAPI.Misc.StoryAsset
-    var currentTalk: DoriAPI.Misc.StoryAsset.TalkData
+    var asset: _DoriAPI.Misc.StoryAsset
+    var currentTalk: _DoriAPI.Misc.StoryAsset.TalkData
     var locale: DoriLocale
-    var audios: [DoriAPI.Misc.StoryAsset.TalkData.Voice: Data]
+    var audios: [_DoriAPI.Misc.StoryAsset.TalkData.Voice: Data]
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     var body: some View {

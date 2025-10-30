@@ -100,7 +100,7 @@ struct CharacterSelector: View {
     
     func getCharacters() {
         DoriCache.withCache(id: "AllCharacters", trait: .realTime) {
-            await DoriAPI.Characters.all()
+            await _DoriAPI.Characters.all()
         } .onUpdate {
             if let characters = $0 {
                 allCharacters = characters

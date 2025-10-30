@@ -51,7 +51,7 @@ struct MiracleTicketView: View {
                                         Text("地区")
                                     } value: {
                                         Picker(selection: $locale) {
-                                            ForEach(DoriAPI.Locale.allCases, id: \.rawValue) { locale in
+                                            ForEach(_DoriAPI.Locale.allCases, id: \.rawValue) { locale in
                                                 Text(locale.rawValue.uppercased())
                                                     .tag(locale)
                                             }

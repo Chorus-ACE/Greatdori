@@ -168,7 +168,7 @@ extension Date {
 }
 
 // MARK: LocalizedData
-extension DoriAPI.LocalizedData<Set<ExtendedCard.Source>> {
+extension _DoriAPI.LocalizedData<Set<ExtendedCard.Source>> {
     public enum CardSource {
         case event, gacha, loginCampaign
     }

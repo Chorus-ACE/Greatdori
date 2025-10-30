@@ -53,7 +53,7 @@ struct DebugBirthdayView: View {
 }
 
 struct DebugBirthdayViewUnit: View {
-    @State var birthdays: [DoriFrontend.Characters.BirthdayCharacter]?
+    @State var birthdays: [_DoriFrontend.Characters.BirthdayCharacter]?
     var receivedToday: Date?
     var formatter = DateFormatter()
     init(receivedToday: Date? = Date.now) {
@@ -87,7 +87,7 @@ struct DebugBirthdayViewUnit: View {
             }
         }
         .task {
-            birthdays = await DoriFrontend.Characters.recentBirthdayCharacters(aroundDate: receivedToday ?? Date.now)
+            birthdays = await _DoriFrontend.Characters.recentBirthdayCharacters(aroundDate: receivedToday ?? Date.now)
         }
     }
 }
@@ -115,7 +115,7 @@ struct DebugOfflineAssetView: View {
                     Button(action: {
                         Task {
                             do {
-                                try await DoriOfflineAsset.shared.downloadResource(of: .main, in: DoriAPI.preferredLocale) { percentage, finished, total in
+                                try await DoriOfflineAsset.shared.downloadResource(of: .main, in: _DoriAPI.preferredLocale) { percentage, finished, total in
                                     print("\(percentage * 100)%, \(finished) / \(total)")
                                 }
                             } catch {
@@ -128,7 +128,7 @@ struct DebugOfflineAssetView: View {
                     Button(action: {
                         Task {
                             do {
-                                try await DoriOfflineAsset.shared.downloadResource(of: .basic, in: DoriAPI.preferredLocale) { percentage, finished, total in
+                                try await DoriOfflineAsset.shared.downloadResource(of: .basic, in: _DoriAPI.preferredLocale) { percentage, finished, total in
                                     print("\(percentage * 100)%, \(finished) / \(total)")
                                 }
                             } catch {
@@ -144,7 +144,7 @@ struct DebugOfflineAssetView: View {
                         Button(action: {
                             Task {
                                 do {
-                                    updateCheckerResult = try await DoriOfflineAsset.shared.isUpdateAvailable(in: DoriAPI.preferredLocale, of: .basic)
+                                    updateCheckerResult = try await DoriOfflineAsset.shared.isUpdateAvailable(in: _DoriAPI.preferredLocale, of: .basic)
                                 } catch {
                                     print(error.localizedDescription)
                                 }
@@ -155,7 +155,7 @@ struct DebugOfflineAssetView: View {
                         Button(action: {
                             Task {
                                 do {
-                                    try await DoriOfflineAsset.shared.updateResource(of: .basic, in: DoriAPI.preferredLocale) { percentage, finished, total in
+                                    try await DoriOfflineAsset.shared.updateResource(of: .basic, in: _DoriAPI.preferredLocale) { percentage, finished, total in
                                         print("\(percentage * 100)%, \(finished) / \(total)")
                                     }
                                 } catch {
@@ -231,7 +231,7 @@ struct DebugOfflineAssetView: View {
         .formStyle(.grouped)
         .task {
             await withOfflineAsset {
-                testCard = await DoriAPI.Cards.detail(of: 2125)
+                testCard = await _DoriAPI.Cards.detail(of: 2125)
             }
         }
         #else
@@ -241,8 +241,8 @@ struct DebugOfflineAssetView: View {
 }
 
 struct DebugFilterExperimentView: View {
-    @State var filter: DoriFrontend.Filter = .init()
-    @State var sorter: DoriFrontend.Sorter = DoriFrontend.Sorter(keyword: .id, direction: .descending)
+    @State var filter: _DoriFrontend.Filter = .init()
+    @State var sorter: _DoriFrontend.Sorter = _DoriFrontend.Sorter(keyword: .id, direction: .descending)
     @State var updating = false
     @State var focusingList: Int = -1
     
@@ -276,8 +276,8 @@ struct DebugFilterExperimentView: View {
     
     @State var showFilterSheet = false
     @State var showOptimizedFilter = false
-    @State var optimizedKeys: [Int: [DoriFrontend.Filter.Key]] = [:]
-    @State var optimizedSortingTypes: [Int: [DoriFrontend.Sorter.Keyword]] = [:] // WIP
+    @State var optimizedKeys: [Int: [_DoriFrontend.Filter.Key]] = [:]
+    @State var optimizedSortingTypes: [Int: [_DoriFrontend.Sorter.Keyword]] = [:] // WIP
     @State var sortingItemsHaveEndingDate: [Int: Bool] = [:] // WIP
 //    @State var allKeys = Set(DoriFrontend.Filter.Key.allCases)
 //    @State var result: Array<>? = []
@@ -339,7 +339,7 @@ struct DebugFilterExperimentView: View {
                             Text(verbatim: "Songs List Item: \(songListFiltered.count)/\(songList.count)")
                             ForEach(songListFiltered) { element in
                                 Text(verbatim: "#\(element.id) - \(element.musicTitle.jp ?? "nil")")
-                                ForEach(DoriAPI.Locale.allCases, id: \.self) { item in
+                                ForEach(_DoriAPI.Locale.allCases, id: \.self) { item in
                                     if let closedAt = element.closedAt.forLocale(item), closedAt < Calendar.current.date(from: DateComponents(year: 2090, month: 1, day: 1))! {
                                         Text(verbatim: "[\(item.rawValue.uppercased())] \(closedAt)")
                                             .foregroundStyle(.red)
@@ -369,10 +369,10 @@ struct DebugFilterExperimentView: View {
         .fontDesign(.monospaced)
         .multilineTextAlignment(.leading)
         .sheet(isPresented: $showFilterSheet, content: {
-            FilterView(filter: $filter, includingKeys: showOptimizedFilter ? Set(optimizedKeys[focusingList]!) : Set(DoriFrontend.Filter.Key.allCases))
+            FilterView(filter: $filter, includingKeys: showOptimizedFilter ? Set(optimizedKeys[focusingList]!) : Set(_DoriFrontend.Filter.Key.allCases))
         })
         .inspector(isPresented: .constant(true), content: {
-            FilterView(filter: $filter, includingKeys: showOptimizedFilter ? Set(optimizedKeys[focusingList]!) : Set(DoriFrontend.Filter.Key.allCases))
+            FilterView(filter: $filter, includingKeys: showOptimizedFilter ? Set(optimizedKeys[focusingList]!) : Set(_DoriFrontend.Filter.Key.allCases))
         })
         .onAppear {
 //            focusingList = 0
@@ -412,25 +412,25 @@ struct DebugFilterExperimentView: View {
             updating = true
             Task {
                 if focusingList == 0 {
-                    eventList = await DoriFrontend.Events.list() ?? []
+                    eventList = await _DoriFrontend.Events.list() ?? []
                     eventListFiltered = eventList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 1 {
-                    gachaList = await DoriFrontend.Gachas.list() ?? []
+                    gachaList = await _DoriFrontend.Gachas.list() ?? []
                     gachaListFiltered = gachaList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 2 {
-                    cardList = await DoriFrontend.Cards.list() ?? []
+                    cardList = await _DoriFrontend.Cards.list() ?? []
                     cardListFiltered = cardList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 3 {
-                    songList = await DoriFrontend.Songs.list() ?? []
+                    songList = await _DoriFrontend.Songs.list() ?? []
                     songListFiltered = songList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 4 {
-                    comicList = await DoriFrontend.Comics.list() ?? []
+                    comicList = await _DoriFrontend.Comics.list() ?? []
                     comicListFiltered = comicList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 5 {
-                    campaignList = await DoriFrontend.LoginCampaigns.list() ?? []
+                    campaignList = await _DoriFrontend.LoginCampaigns.list() ?? []
                     campaignListFiltered = campaignList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 6 {
-                    costumeList = await DoriFrontend.Costumes.list() ?? []
+                    costumeList = await _DoriFrontend.Costumes.list() ?? []
                     costumeListFiltered = costumeList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 }
                 updating = false
@@ -478,7 +478,7 @@ struct DebugFilterExperimentView: View {
         .toolbar {
             ToolbarItem {
                 if showOptimizedFilter {
-                    SorterPickerView(sorter: $sorter, allOptions: optimizedSortingTypes[focusingList] ?? DoriFrontend.Sorter.Keyword.allCases, sortingItemsHaveEndingDate: sortingItemsHaveEndingDate[focusingList] ?? false)
+                    SorterPickerView(sorter: $sorter, allOptions: optimizedSortingTypes[focusingList] ?? _DoriFrontend.Sorter.Keyword.allCases, sortingItemsHaveEndingDate: sortingItemsHaveEndingDate[focusingList] ?? false)
                 } else {
                     SorterPickerView(sorter: $sorter)
                 }

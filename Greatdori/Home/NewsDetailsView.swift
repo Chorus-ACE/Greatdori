@@ -20,9 +20,9 @@ import SwiftUI
 struct NewsDetailView: View {
     var id: Int
     var title: String
-    @State var information: DoriAPI.News.Item? = nil
+    @State var information: _DoriAPI.News.Item? = nil
     @State var informationIsLoading = true
-    init(previewNews: DoriAPI.News.PreviewItem) {
+    init(previewNews: _DoriAPI.News.PreviewItem) {
         self.id = previewNews.id
         self.title = previewNews.title
     }
@@ -74,7 +74,7 @@ struct NewsDetailView: View {
         informationIsLoading = true
         //        informationLoadPromise?.cancel()
         withDoriCache(id: "NewsDetail_\(id)") {
-            await DoriAPI.News.Item(id: id)
+            await _DoriAPI.News.Item(id: id)
         } .onUpdate {
             if let information = $0 {
                 self.information = information

@@ -22,15 +22,15 @@ struct CardCoverImage: View {
     private var normalBackgroundImageURL: URL
     private var trainedBackgroundImageURL: URL?
     private var cardType: CardType
-    private var attribute: DoriAPI.Attribute
+    private var attribute: _DoriAPI.Attribute
     private var rarity: Int
     private var bandIconImageURL: URL?
     private var showNavigationHints: Bool
     private var cardID: Int
-    private var cardTitle: DoriAPI.LocalizedData<String>
+    private var cardTitle: _DoriAPI.LocalizedData<String>
     private var characterID: Int
     private var displayType: CardImageDisplayType
-    @State var cardCharacterName: DoriAPI.LocalizedData<String>?
+    @State var cardCharacterName: _DoriAPI.LocalizedData<String>?
     @State var showCardDetailView: Bool = false
     //    @State var cardDestinationID: Int = 0
     

@@ -18,7 +18,7 @@ import SDWebImageSwiftUI
 
 struct SongDetailMatchView: View {
     var song: Song
-    var songMatches: [Int: DoriFrontend.Songs._SongMatchResult]?
+    var songMatches: [Int: _DoriFrontend.Songs._SongMatchResult]?
     @Environment(\.openURL) private var openURL
     var body: some View {
         if let songMatches,

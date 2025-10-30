@@ -20,8 +20,8 @@ struct CollectionEditorView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.dismiss) var dismiss
     @State var collection: CardCollectionManager.Collection
-    @State var filter = DoriFrontend.Filter()
-    @State var sorter = DoriFrontend.Sorter(keyword: .releaseDate(in: .jp), direction: .descending)
+    @State var filter = _DoriFrontend.Filter()
+    @State var sorter = _DoriFrontend.Sorter(keyword: .releaseDate(in: .jp), direction: .descending)
     @State var cards: [CardWithBand]?
     @State var searchedCards: [CardWithBand]?
     @State var infoIsAvailable = true
@@ -342,7 +342,7 @@ struct CollectionEditorView: View {
             await Card.allWithBand()
         } .onUpdate {
             if let fetchedCards = $0 {
-                cards = fetchedCards.sorted(withDoriSorter: DoriFrontend.Sorter(keyword: .id, direction: .ascending))
+                cards = fetchedCards.sorted(withDoriSorter: _DoriFrontend.Sorter(keyword: .id, direction: .ascending))
                 searchedCards = cards?.filter(withDoriFilter: filter).search(for: searchedText).sorted(withDoriSorter: sorter)
                 if onlyShowSelectedItems {
                     searchedCards = searchedCards?.filter { doriCard in
@@ -366,7 +366,7 @@ struct CollectionEditorView: View {
             for item in searchedCards {
                 if !CardCollectionManager.shared.userCollections.first(where: { $0.name == collection.name })!.cards.contains(where: { $0.id == item.card.id && !$0.isTrained }) {
                     Task {
-                        let reachablility = await DoriFrontend.URLValidator.reachability(of: item.card.coverNormalImageURL)
+                        let reachablility = await _DoriFrontend.URLValidator.reachability(of: item.card.coverNormalImageURL)
                         if reachablility {
                             CardCollectionManager.shared.userCollections[CardCollectionManager.shared.userCollections.firstIndex(where: { $0.name == collection.name })!].cards.append(CardCollectionManager.Card(id: item.card.id, isTrained: false, localizedName: item.card.prefix, file: .path(item.card.coverNormalImageURL.absoluteString)))
                             selectAllTotalSucceedItemsCount += 1

@@ -138,7 +138,7 @@ struct CharacterDetailView: View {
 #endif
         .task {
             if (allCharacters ?? []).isEmpty {
-                allCharacterIDs = (await Character.all() ?? []).sorted(withDoriSorter: DoriFrontend.Sorter(keyword: .id, direction: .ascending)).map {$0.id}
+                allCharacterIDs = (await Character.all() ?? []).sorted(withDoriSorter: _DoriFrontend.Sorter(keyword: .id, direction: .ascending)).map {$0.id}
             } else {
                 allCharacterIDs = (allCharacters ?? []).map { $0.id }
             }
@@ -171,7 +171,7 @@ struct CharacterDetailView: View {
         informationLoadPromise?.cancel()
         
         informationLoadPromise = DoriCache.withCache(id: "CharacterDetail_\(id)") {
-            await DoriFrontend.Characters.extendedInformation(of: id)
+            await _DoriFrontend.Characters.extendedInformation(of: id)
         }.onUpdate {
             if let information = $0 {
                 self.information = information
@@ -348,8 +348,8 @@ struct CharacterDetailOverviewView: View {
                                         .bold()
                                 }, value: {
                                     MultilingualText({
-                                        var localizedContent = DoriAPI.LocalizedData<String>()
-                                        for locale in DoriAPI.Locale.allCases {
+                                        var localizedContent = _DoriAPI.LocalizedData<String>()
+                                        for locale in _DoriAPI.Locale.allCases {
                                             localizedContent._set("\(profile.schoolYear.forLocale(locale) ?? "nil") - \(profile.schoolClass.forLocale(locale) ?? "nil")", forLocale: locale)
                                         }
                                         return localizedContent

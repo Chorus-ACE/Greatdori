@@ -25,13 +25,13 @@ let capsuleDefaultCornerRadius: CGFloat = isMACOS ? 6 : 10
 
 struct FilterView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
-    @Binding var filter: DoriFrontend.Filter
-    var includingKeys: Set<DoriFrontend.Filter.Key>
+    @Binding var filter: _DoriFrontend.Filter
+    var includingKeys: Set<_DoriFrontend.Filter.Key>
     
     @State var lastSelectAllActionIsDeselect: Bool = false
-    @State var theItemThatShowsSelectAllTips: DoriFrontend.Filter.Key? = nil
+    @State var theItemThatShowsSelectAllTips: _DoriFrontend.Filter.Key? = nil
     
-    let filterKeysOrder: [DoriFrontend.Filter.Key] = [.band, .attribute, .rarity, .character, .server, .timelineStatus, .songAvailability, .released, .cardType, .eventType, .gachaType, .songType, .loginCampaignType, .comicType, .skill, .level]
+    let filterKeysOrder: [_DoriFrontend.Filter.Key] = [.band, .attribute, .rarity, .character, .server, .timelineStatus, .songAvailability, .released, .cardType, .eventType, .gachaType, .songType, .loginCampaignType, .comicType, .skill, .level]
     
     var body: some View {
         Form {
@@ -66,13 +66,13 @@ struct FilterView: View {
 
 
 struct FilterItemView: View {
-    @Binding var filter: DoriFrontend.Filter
-    let allKeys: Set<DoriFrontend.Filter.Key>
-    let key: DoriFrontend.Filter.Key
+    @Binding var filter: _DoriFrontend.Filter
+    let allKeys: Set<_DoriFrontend.Filter.Key>
+    let key: _DoriFrontend.Filter.Key
     
     @State var isHovering = false
     @State var characterRequiresMatchAll = false
-    @State var skill: DoriFrontend.Filter.Skill? = nil
+    @State var skill: _DoriFrontend.Filter.Skill? = nil
     @State var levelSliderIsEnabled = false
     @State var level: Double = 5
     var body: some View {
@@ -153,9 +153,9 @@ struct FilterItemView: View {
                         // `.server` is not expected to use flags in Greatdori!.
                         //MARK: Image Selection
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: filterItemHeight))]/*, spacing: 3*/) {
-                            ForEach((key == .band && allKeys.contains(.bandMatchesOthers)) ? key.selector.items + [DoriFrontend.Filter.Key.bandMatchesOthers.selector.items.first!] : key.selector.items, id: \.self) { item in
+                            ForEach((key == .band && allKeys.contains(.bandMatchesOthers)) ? key.selector.items + [_DoriFrontend.Filter.Key.bandMatchesOthers.selector.items.first!] : key.selector.items, id: \.self) { item in
                                 Group {
-                                    if item != DoriFrontend.Filter.Key.bandMatchesOthers.selector.items.first! {
+                                    if item != _DoriFrontend.Filter.Key.bandMatchesOthers.selector.items.first! {
                                         Button(action: {
                                             withAnimation(.easeInOut(duration: 0.05)) {
                                                 if var filterSet = filter[key] as? Set<AnyHashable> {
@@ -177,7 +177,7 @@ struct FilterItemView: View {
                                                     .antialiased(true)
                                                     .resizable()
                                                     .frame(width: filterItemHeight, height: filterItemHeight)
-                                                    .scaleEffect([DoriFrontend.Filter.Key.attribute, DoriFrontend.Filter.Key.character].contains(key) ? 0.9 : 0.75)
+                                                    .scaleEffect([_DoriFrontend.Filter.Key.attribute, _DoriFrontend.Filter.Key.character].contains(key) ? 0.9 : 0.75)
                                             }
                                             .contentShape(Circle())
                                         })
@@ -201,7 +201,7 @@ struct FilterItemView: View {
                                                         .antialiased(true)
                                                         .resizable()
                                                         .frame(width: filterItemHeight, height: filterItemHeight)
-                                                        .scaleEffect([DoriFrontend.Filter.Key.attribute, DoriFrontend.Filter.Key.character].contains(key) ? 0.9 : 0.75)
+                                                        .scaleEffect([_DoriFrontend.Filter.Key.attribute, _DoriFrontend.Filter.Key.character].contains(key) ? 0.9 : 0.75)
                                                 } else {
                                                     Image(systemName: "person.fill")
                                                         .frame(width: filterItemHeight*0.95, height: filterItemHeight*0.95)
@@ -252,10 +252,10 @@ struct FilterItemView: View {
                                     Picker(selection: $skill, content: {
                                         // Optional "Any" to clear the filter
                                         Text("Filter.skill.any")
-                                            .tag(Optional<DoriFrontend.Filter.Skill>.none)
+                                            .tag(Optional<_DoriFrontend.Filter.Skill>.none)
                                         
                                         ForEach(key.selector.items, id: \.self) { item in
-                                            if let value = item.item.value as? DoriFrontend.Filter.Skill {
+                                            if let value = item.item.value as? _DoriFrontend.Filter.Skill {
                                                 // Use the skill's simpleDescription (localized) instead of selectorText
                                                 //                                    let label = value.simpleDescription.forPreferredLocale() ?? ""
                                                 //                                    let label = value.description.forPreferredLocale() ?? ""
@@ -283,10 +283,10 @@ struct FilterItemView: View {
                                 Picker(selection: $skill, content: {
                                     // Optional "Any" to clear the filter
                                     Text("Filter.skill.any")
-                                        .tag(Optional<DoriFrontend.Filter.Skill>.none)
+                                        .tag(Optional<_DoriFrontend.Filter.Skill>.none)
                                     
                                     ForEach(key.selector.items, id: \.self) { item in
-                                        if let value = item.item.value as? DoriFrontend.Filter.Skill {
+                                        if let value = item.item.value as? _DoriFrontend.Filter.Skill {
                                             // Use the skill's simpleDescription (localized) instead of selectorText
                                             //                                    let label = value.simpleDescription.forPreferredLocale() ?? ""
                                             //                                    let label = value.description.forPreferredLocale() ?? ""
@@ -304,10 +304,10 @@ struct FilterItemView: View {
                                 Picker(selection: $skill, content: {
                                     // Optional "Any" to clear the filter
                                     Text("Filter.skill.any")
-                                        .tag(Optional<DoriFrontend.Filter.Skill>.none)
+                                        .tag(Optional<_DoriFrontend.Filter.Skill>.none)
                                     
                                     ForEach(key.selector.items, id: \.self) { item in
-                                        if let value = item.item.value as? DoriFrontend.Filter.Skill {
+                                        if let value = item.item.value as? _DoriFrontend.Filter.Skill {
                                             // Use the skill's simpleDescription (localized) instead of selectorText
                                             //                                    let label = value.simpleDescription.forPreferredLocale() ?? ""
                                             //                                    let label = value.description.forPreferredLocale() ?? ""
@@ -510,14 +510,14 @@ where Data.Element: Hashable {
 }
 
 struct SorterPickerView: View {
-    @Binding var sorter: DoriFrontend.Sorter
-    var allOptions: [DoriFrontend.Sorter.Keyword] = DoriFrontend.Sorter.Keyword.allCases
+    @Binding var sorter: _DoriFrontend.Sorter
+    var allOptions: [_DoriFrontend.Sorter.Keyword] = _DoriFrontend.Sorter.Keyword.allCases
     var sortingItemsHaveEndingDate = false
     @State var isMenuPresented = false // iOS only
     var body: some View {
         Menu(content: {
             Section {
-                ForEach(DoriFrontend.Sorter.Keyword.allCases, id: \.self) { item in
+                ForEach(_DoriFrontend.Sorter.Keyword.allCases, id: \.self) { item in
                     if allOptions.contains(item) {
                         Button(action: {
                             if sorter.keyword == item && !isMACOS {

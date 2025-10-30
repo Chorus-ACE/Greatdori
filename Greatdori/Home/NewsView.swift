@@ -18,11 +18,11 @@ import SDWebImageSwiftUI
 
 //MARK: NewsView
 struct NewsView: View {
-    let filterLocalizedString: [DoriFrontend.News.ListFilter?: LocalizedStringResource] = [nil: "News.filter.selection.all", .bestdori: "News.filter.selection.bestdori", .article: "News.filter.selection.article", .patchNote: "News.filter.selection.patch-note", .update: "News.filter.selection.update", .locale(.jp): "News.filter.selection.jp", .locale(.en): "News.filter.selection.en", .locale(.tw): "News.filter.selection.tw", .locale(.cn): "News.filter.selection.cn", .locale(.kr): "News.filter.selection.kr"]
-    let filterOptions: [DoriFrontend.News.ListFilter?] = [nil, .bestdori, .article, .patchNote, .update, .locale(.jp), .locale(.en), .locale(.tw), .locale(.cn), .locale(.kr)]
+    let filterLocalizedString: [_DoriFrontend.News.ListFilter?: LocalizedStringResource] = [nil: "News.filter.selection.all", .bestdori: "News.filter.selection.bestdori", .article: "News.filter.selection.article", .patchNote: "News.filter.selection.patch-note", .update: "News.filter.selection.update", .locale(.jp): "News.filter.selection.jp", .locale(.en): "News.filter.selection.en", .locale(.tw): "News.filter.selection.tw", .locale(.cn): "News.filter.selection.cn", .locale(.kr): "News.filter.selection.kr"]
+    let filterOptions: [_DoriFrontend.News.ListFilter?] = [nil, .bestdori, .article, .patchNote, .update, .locale(.jp), .locale(.en), .locale(.tw), .locale(.cn), .locale(.kr)]
     @Environment(\.colorScheme) var colorScheme
-    @State var newsList: [DoriFrontend.News.ListItem]?
-    @State var filter: DoriFrontend.News.ListFilter? = nil
+    @State var newsList: [_DoriFrontend.News.ListItem]?
+    @State var filter: _DoriFrontend.News.ListFilter? = nil
     @State var allEvents: [PreviewEvent]?
     @State var allGacha: [PreviewGacha]?
     @State var allSongs: [PreviewSong]?
@@ -76,25 +76,25 @@ struct NewsView: View {
         })
         .task {
             DoriCache.withCache(id: "News_\(filter)", trait: .realTime) {
-                await DoriFrontend.News.list(filter: filter)
+                await _DoriFrontend.News.list(filter: filter)
             } .onUpdate {
                 newsList = $0
             }
             await withTaskGroup { group in
                 group.addTask {
-                    let events = await DoriAPI.Events.all()
+                    let events = await _DoriAPI.Events.all()
                     await MainActor.run {
                         allEvents = events
                     }
                 }
                 group.addTask {
-                    let gacha = await DoriAPI.Gachas.all()
+                    let gacha = await _DoriAPI.Gachas.all()
                     await MainActor.run {
                         allGacha = gacha
                     }
                 }
                 group.addTask {
-                    let songs = await DoriAPI.Songs.all()
+                    let songs = await _DoriAPI.Songs.all()
                     await MainActor.run {
                         allSongs = songs
                     }
@@ -105,7 +105,7 @@ struct NewsView: View {
             Task {
                 newsList = nil
                 DoriCache.withCache(id: "News_\(filter)", trait: .realTime) {
-                    await DoriFrontend.News.list(filter: filter)
+                    await _DoriFrontend.News.list(filter: filter)
                 } .onUpdate {
                     newsList = $0
                 }
@@ -185,7 +185,7 @@ struct NewsPreview: View {
     var allSongs: [PreviewSong]?
     @Environment(\.horizontalSizeClass) var sizeClass
     @State var imageURL: URL? = nil
-    var news: DoriFrontend.News.ListItem
+    var news: _DoriFrontend.News.ListItem
     var showLocale: Bool = true
     var showDetails: Bool = false
     var showImages: Bool = false
@@ -194,7 +194,7 @@ struct NewsPreview: View {
         allEvents: [PreviewEvent]?,
         allGacha: [PreviewGacha]?,
         allSongs: [PreviewSong]?,
-        news: DoriFrontend.News.ListItem,
+        news: _DoriFrontend.News.ListItem,
         showLocale: Bool = true,
         showDetails: Bool = false,
         showImages: Bool = false
@@ -342,9 +342,9 @@ struct NewsPreview: View {
     }
 }
 
-let newsItemTypeIcon: [DoriFrontend.News.ListItem.ItemType: String] = [.article: "text.page", .event: "star.hexagon", .gacha: "dice", .loginCampaign: "calendar", .song: "music.microphone"]
-let newsItemTypeColor: [DoriFrontend.News.ListItem.ItemType: Color] = [.article: .yellow, .event: .green, .gacha: .blue, .loginCampaign: .red, .song: .purple]
-let newsItemTypeLocalizedString: [DoriFrontend.News.ListItem.ItemType: LocalizedStringResource] = [.article: "News.type.article", .event: "News.type.event", .gacha: "News.type.gacha", .loginCampaign: "News.type.login-campaign", .song: "News.type.song"]
+let newsItemTypeIcon: [_DoriFrontend.News.ListItem.ItemType: String] = [.article: "text.page", .event: "star.hexagon", .gacha: "dice", .loginCampaign: "calendar", .song: "music.microphone"]
+let newsItemTypeColor: [_DoriFrontend.News.ListItem.ItemType: Color] = [.article: .yellow, .event: .green, .gacha: .blue, .loginCampaign: .red, .song: .purple]
+let newsItemTypeLocalizedString: [_DoriFrontend.News.ListItem.ItemType: LocalizedStringResource] = [.article: "News.type.article", .event: "News.type.event", .gacha: "News.type.gacha", .loginCampaign: "News.type.login-campaign", .song: "News.type.song"]
 //let newsTimeMarkTypeLocalizedString: [Dori]
 
 

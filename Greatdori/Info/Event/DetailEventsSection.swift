@@ -20,8 +20,8 @@ import SwiftUI
 // MARK: DetailsEventsSection
 struct DetailsEventsSection: View {
     var events: [PreviewEvent]?
-    var event: DoriAPI.LocalizedData<PreviewEvent>?
-    var sources: DoriAPI.LocalizedData<Set<ExtendedCard.Source>>?
+    var event: _DoriAPI.LocalizedData<PreviewEvent>?
+    var sources: _DoriAPI.LocalizedData<Set<ExtendedCard.Source>>?
     var applyLocaleFilter: Bool = false
     @State var locale: DoriLocale = DoriLocale.primaryLocale
     @State var eventsFromList: [PreviewEvent] = []
@@ -37,7 +37,7 @@ struct DetailsEventsSection: View {
         self.applyLocaleFilter = applyLocaleFilter
         self.sourcePreference = 0
     }
-    init(event: DoriAPI.LocalizedData<PreviewEvent>, sources: DoriAPI.LocalizedData<Set<ExtendedCard.Source>>) {
+    init(event: _DoriAPI.LocalizedData<PreviewEvent>, sources: _DoriAPI.LocalizedData<Set<ExtendedCard.Source>>) {
         self.events = nil
         self.event = event
         self.sources = sources
@@ -80,7 +80,7 @@ struct DetailsEventsSection: View {
         
         if sourcePreference == 0 {
             if let events {
-                eventsFromList = events.sorted(withDoriSorter: DoriFrontend.Sorter(keyword: .releaseDate(in: applyLocaleFilter ? locale : .jp)))
+                eventsFromList = events.sorted(withDoriSorter: _DoriFrontend.Sorter(keyword: .releaseDate(in: applyLocaleFilter ? locale : .jp)))
                 if applyLocaleFilter {
                     eventsFromList = eventsFromList.filter{$0.startAt.availableInLocale(locale)}
                 }

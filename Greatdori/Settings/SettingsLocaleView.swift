@@ -64,10 +64,10 @@ struct SettingsLocaleView: View {
                     if DoriLocale.secondaryLocale == DoriLocale(rawValue: newValue) {
                         DoriLocale.secondaryLocale = DoriLocale(rawValue: oldValue)!
                     }
-                    DoriAPI.preferredLocale = localeFromStringDict[primaryLocale] ?? .jp
+                    _DoriAPI.preferredLocale = localeFromStringDict[primaryLocale] ?? .jp
                     
-                    primaryLocale = DoriAPI.preferredLocale.rawValue
-                    secondaryLocale = DoriAPI.secondaryLocale.rawValue
+                    primaryLocale = _DoriAPI.preferredLocale.rawValue
+                    secondaryLocale = _DoriAPI.secondaryLocale.rawValue
                 })
                 Picker(selection: $secondaryLocale, content: {
                     Text("Home.servers.selection.jp")
@@ -87,15 +87,15 @@ struct SettingsLocaleView: View {
                     if DoriLocale.primaryLocale == DoriLocale(rawValue: newValue) {
                         DoriLocale.primaryLocale = DoriLocale(rawValue: oldValue)!
                     }
-                    DoriAPI.secondaryLocale = localeFromStringDict[secondaryLocale] ?? .en
+                    _DoriAPI.secondaryLocale = localeFromStringDict[secondaryLocale] ?? .en
                     
-                    primaryLocale = DoriAPI.preferredLocale.rawValue
-                    secondaryLocale = DoriAPI.secondaryLocale.rawValue
+                    primaryLocale = _DoriAPI.preferredLocale.rawValue
+                    secondaryLocale = _DoriAPI.secondaryLocale.rawValue
                 })
             }
             .onAppear {
-                primaryLocale = DoriAPI.preferredLocale.rawValue
-                secondaryLocale = DoriAPI.secondaryLocale.rawValue
+                primaryLocale = _DoriAPI.preferredLocale.rawValue
+                secondaryLocale = _DoriAPI.secondaryLocale.rawValue
             }
         }
     }

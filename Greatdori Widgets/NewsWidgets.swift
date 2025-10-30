@@ -63,12 +63,12 @@ private struct Provider: TimelineProvider {
         }
     }
     
-    func getNewsList(completion: sending @escaping ([DoriFrontend.News.ListItem]?) -> Void) {
+    func getNewsList(completion: sending @escaping ([_DoriFrontend.News.ListItem]?) -> Void) {
         Task {
             let cacheURL = URL(filePath: NSHomeDirectory() + "/Library/Caches/Greatdori_Widget_News.cache")
             
             for _ in 0..<5 {
-                if let news = await DoriFrontend.News.list() {
+                if let news = await _DoriFrontend.News.list() {
                     completion(news)
                     try? news.dataForCache.write(to: cacheURL)
                     return
@@ -87,7 +87,7 @@ private struct Provider: TimelineProvider {
 
 private struct NewsEntry: TimelineEntry {
     let date: Date
-    var news: [DoriFrontend.News.ListItem]?
+    var news: [_DoriFrontend.News.ListItem]?
 }
 
 private struct CardWidgetsEntryView : View {
@@ -175,12 +175,12 @@ private struct CardWidgetsEntryView : View {
 }
 
 struct NewsPreview: View {
-    var news: DoriFrontend.News.ListItem
+    var news: _DoriFrontend.News.ListItem
     var showLocale: Bool = true
     var titleFont: Font = .body
     var dateFont: Font = .footnote
     var dateFormatter = DateFormatter()
-    init(news: DoriFrontend.News.ListItem, showLocale: Bool = true, titleFont: Font = .body, dateFont: Font = .footnote) {
+    init(news: _DoriFrontend.News.ListItem, showLocale: Bool = true, titleFont: Font = .body, dateFont: Font = .footnote) {
         self.news = news
         self.showLocale = showLocale
         self.titleFont = titleFont
@@ -236,7 +236,7 @@ struct NewsPreview: View {
     }
 }
 
-let newsItemTypeIcon: [DoriFrontend.News.ListItem.ItemType: String] = [.article: "text.page", .event: "star.hexagon", .gacha: "dice", .loginCampaign: "calendar", .song: "music.microphone"]
-let newsItemTypeColor: [DoriFrontend.News.ListItem.ItemType: Color] = [.article: .gray, .event: .green, .gacha: .blue, .loginCampaign: .red, .song: .purple]
-let newsItemTypeLocalizedString: [DoriFrontend.News.ListItem.ItemType: LocalizedStringResource] = [.article: "News.type.article", .event: "News.type.event", .gacha: "News.type.gacha", .loginCampaign: "News.type.login-campaign", .song: "News.type.song"]
+let newsItemTypeIcon: [_DoriFrontend.News.ListItem.ItemType: String] = [.article: "text.page", .event: "star.hexagon", .gacha: "dice", .loginCampaign: "calendar", .song: "music.microphone"]
+let newsItemTypeColor: [_DoriFrontend.News.ListItem.ItemType: Color] = [.article: .gray, .event: .green, .gacha: .blue, .loginCampaign: .red, .song: .purple]
+let newsItemTypeLocalizedString: [_DoriFrontend.News.ListItem.ItemType: LocalizedStringResource] = [.article: "News.type.article", .event: "News.type.event", .gacha: "News.type.gacha", .loginCampaign: "News.type.login-campaign", .song: "News.type.song"]
 //let newsTimeMarkTypeLocalizedString: [Dori]

@@ -18,7 +18,7 @@ import EventKit
 import Foundation
 
 func updateBirthdayCalendar() async throws {
-    guard let characters = await DoriAPI.Characters.allBirthday() else { return }
+    guard let characters = await _DoriAPI.Characters.allBirthday() else { return }
     
     let store = EKEventStore()
     

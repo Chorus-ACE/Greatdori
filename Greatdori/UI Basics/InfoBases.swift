@@ -353,8 +353,8 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.colorScheme) private var colorScheme
     @Namespace private var navigationAnimationNamespace
-    @State private var filter: DoriFrontend.Filter
-    @State private var sorter = DoriFrontend.Sorter(keyword: .releaseDate(in: .jp), direction: .descending)
+    @State private var filter: _DoriFrontend.Filter
+    @State private var sorter = _DoriFrontend.Sorter(keyword: .releaseDate(in: .jp), direction: .descending)
     @State private var elements: [Element]?
     @State private var searchedElements: [Element]?
     @State private var infoIsAvailable = true
@@ -515,7 +515,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
             await updateList()
         }.onUpdate {
             if let cards = $0 {
-                self.elements = cards.sorted(withDoriSorter: DoriFrontend.Sorter(keyword: .id, direction: .ascending))
+                self.elements = cards.sorted(withDoriSorter: _DoriFrontend.Sorter(keyword: .id, direction: .ascending))
                 searchedElements = cards.filter(withDoriFilter: filter).search(for: searchedText).sorted(withDoriSorter: sorter)
             } else {
                 infoIsAvailable = false

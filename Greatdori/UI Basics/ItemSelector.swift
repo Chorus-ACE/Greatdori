@@ -114,8 +114,8 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\._itemSelectorMultiSelectionDisabled) private var isMultipleSelectionDisabled
-    @State private var filter: DoriFrontend.Filter
-    @State private var sorter = DoriFrontend.Sorter(keyword: .releaseDate(in: .jp), direction: .descending)
+    @State private var filter: _DoriFrontend.Filter
+    @State private var sorter = _DoriFrontend.Sorter(keyword: .releaseDate(in: .jp), direction: .descending)
     @State private var elements: [Element]?
     @State private var searchedElements: [Element]?
     @State private var infoIsAvailable = true
@@ -280,7 +280,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
             await updateList()
         }.onUpdate {
             if let cards = $0 {
-                self.elements = cards.sorted(withDoriSorter: DoriFrontend.Sorter(keyword: .id, direction: .ascending))
+                self.elements = cards.sorted(withDoriSorter: _DoriFrontend.Sorter(keyword: .id, direction: .ascending))
                 searchedElements = cards.filter(withDoriFilter: filter).search(for: searchedText).sorted(withDoriSorter: sorter)
             } else {
                 infoIsAvailable = false
