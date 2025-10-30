@@ -34,7 +34,7 @@ struct SongDetailGameplayView: View {
                                 }, value: {
                                     MultilingualText(band.bandName)
                                     //                            Text(DoriCache.preCache.mainBands.first{$0.id == bandID}?.bandName.forPreferredLocale(allowsFallback: true) ?? "Unknown")
-                                    if DoriCache.preCache.mainBands.contains(where: { $0.id == band.id }) || !DoriCache.preCacheAvailability {
+                                    if DoriCache.preCache.mainBands.contains(where: { $0.id == band.id }) || !DoriCache.PreCache.isAvailable {
                                         WebImage(url: band.iconImageURL)
                                             .resizable()
                                             .interpolation(.high)

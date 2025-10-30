@@ -115,7 +115,7 @@ import SwiftUI
         destination: {Live2DViewerView()}
     ),
     ToolDestinationItem(
-        title: "数据包浏览器",
+        title: "App.tools.asset-explorer",
         symbol: "folder",
         tabValue: .assetExplorer,
         destination: {AssetExplorerView()}

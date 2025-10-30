@@ -20,7 +20,7 @@ struct NavigationListView: View {
     @State var isSettingsPresented = false
     var body: some View {
         List(selection: $navigation) {
-            if !DoriCache.preCacheAvailability {
+            if !DoriCache.PreCache.isAvailable {
                 Section {
                     Label {
                         Text(verbatim: "Building without pre-cache, some features may unavailable. ")

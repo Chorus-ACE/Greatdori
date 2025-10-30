@@ -27,26 +27,33 @@ struct InteractiveStoryView: View {
     var voiceBundleURL: URL
     var locale: DoriLocale
     @Environment(\.dismiss) var dismiss
+    
     @State var backgroundImageURL: URL?
     @State var scenarioImageURL: URL?
+    
     @State var isScenarioImageFilter = false
+    
     @State var bgmPlayer = AVQueuePlayer()
     @State var bgmLooper: AVPlayerLooper!
     @State var sePlayer = AVPlayer()
     var voicePlayer: UnsafeMutablePointer<AVAudioPlayer>
     @State var currentSnippetIndex = -1
     @State var currentTelop: String?
+    
     @State var allDiffLayouts = [DoriAPI.Misc.StoryAsset.LayoutData]()
     @State var showingLayoutIndexs = [Int]()
     @State var currentTalk: DoriAPI.Misc.StoryAsset.TalkData?
     @State var talkAudios = [DoriAPI.Misc.StoryAsset.TalkData.Voice: Data]()
+    
     @State var isDelaying = false
-    @State var isShowingWhiteCover = false
-    @State var isShowingBlackCover = false
-    @State var isTalkTextAnimating = false
-    @State var isHidingUI = false
-    @State var isBacklogPresented = false
+    @State var whiteCoverIsDisplaying = false
+    @State var blackCoverIsShowing = false
+    
+    @State var lineIsAnimating = false
+    @State var uiIsHiding = false
+    @State var backlogIsPresenting = false
     @State var isAutoPlaying = false
+    
     @State var autoPlayTimer: Timer?
     @State var fastForwardTimer: Timer?
     @State var talkShakeDuration = 0.0
@@ -66,14 +73,15 @@ struct InteractiveStoryView: View {
     
     var body: some View {
         ZStack {
+            // Characters
             GeometryReader { geometry in
                 ZStack {
                     ForEach(Array(allDiffLayouts.enumerated()), id: \.element.costumeType) { index, layout in
                         HStack {
-                            Spacer()
+                            Spacer(minLength: 0)
                             VStack {
                                 Spacer(minLength: 0)
-                                unsafe LayoutView(data: layout, voicePlayer: voicePlayer, currentSpeckerID: currentTalk?.talkCharacters.first?.characterID ?? -1)
+                                unsafe InteractiveStoryLive2DView(data: layout, voicePlayer: voicePlayer, currentSpeckerID: currentTalk?.talkCharacters.first?.characterID ?? -1)
                                     .frame(width: geometry.size.height, height: geometry.size.height)
                                     .offset(x: {
                                         switch layout.sideTo {
@@ -107,7 +115,7 @@ struct InteractiveStoryView: View {
                                     .animation(.spring(duration: 0.4, bounce: 0.2), value: layout)
                                     .animation(.spring(duration: 0.4, bounce: 0.25), value: showingLayoutIndexs)
                             }
-                            Spacer()
+                            Spacer(minLength: 0)
                         }
                     }
                 }
@@ -115,20 +123,24 @@ struct InteractiveStoryView: View {
             #if os(iOS)
             .ignoresSafeArea()
             #endif
-            if let currentTalk, !isHidingUI {
+            
+            // Dialog Box
+            if let currentTalk, !uiIsHiding {
                 VStack {
                     Spacer()
-                    TalkView(
+                    InteractiveStoryDialogBoxView(
                         data: currentTalk,
                         locale: locale,
                         isDelaying: isDelaying,
                         isAutoPlaying: isAutoPlaying,
-                        isAnimating: $isTalkTextAnimating,
+                        isAnimating: $lineIsAnimating,
                         shakeDuration: $talkShakeDuration
                     )
                     .padding(isMACOS ? .all : .horizontal)
                 }
             }
+            
+            // Telop
             if let currentTelop {
                 ZStack {
                     Capsule()
@@ -145,15 +157,18 @@ struct InteractiveStoryView: View {
                 }
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)).combined(with: .opacity))
             }
-            #if os(iOS)
-            if !isHidingUI {
+            
+//            #if os(iOS)
+            if !uiIsHiding {
                 HStack {
                     Spacer()
                     VStack {
-                        if #available(iOS 26.0, *) {
+                        if #available(iOS 26.0, macOS 26.0, *) {
                             actionMenu
-                                .buttonStyle(.glass)
-                                .buttonBorderShape(.circle)
+                                .glassEffect(.regular)
+                                .buttonStyle(.plain)
+//                                .buttonBorderShape(.circle)
+//                                .border(.yellow)
                         } else {
                             actionMenu
                                 .buttonStyle(.bordered)
@@ -161,19 +176,25 @@ struct InteractiveStoryView: View {
                         }
                         Spacer()
                     }
+//                    .border(.blue)
                 }
                 .padding()
-                .ignoresSafeArea()
+                .border(.green)
+//                .ignoresSafeArea()
             }
-            #endif
-            Rectangle()
-                .fill(Color.white)
-                .opacity(isShowingWhiteCover ? 1 : 0)
-                .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
-            Rectangle()
-                .fill(Color.black)
-                .opacity(isShowingBlackCover ? 1 : 0)
-                .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
+//            #endif
+            
+            // Black & White Covers
+            Group {
+                Rectangle()
+                    .fill(Color.white)
+                    .opacity(whiteCoverIsDisplaying ? 1 : 0)
+                    .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
+                Rectangle()
+                    .fill(Color.black)
+                    .opacity(blackCoverIsShowing ? 1 : 0)
+                    .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
+            }
         }
         .background {
             WebImage(url: backgroundImageURL)
@@ -191,21 +212,20 @@ struct InteractiveStoryView: View {
             }
         }
         .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration))
-        #if os(iOS)
-        .toolbar(.hidden, for: .navigationBar)
-        .toolbar(.hidden, for: .tabBar)
-        #endif
-        .navigationBarBackButtonHidden()
-        #if os(macOS)
-        .toolbar {
-            ToolbarItem {
-                actionMenu
-            }
-        }
-        #endif
+//        #if os(macOS)
+//        .toolbar {
+//            ToolbarItem {
+//                actionMenu
+//            }
+//        }
+//        #else
+//        .toolbar(.hidden, for: .navigationBar)
+//        .toolbar(.hidden, for: .tabBar)
+//        .navigationBarBackButtonHidden()
+//        #endif
         .onTapGesture {
-            if isHidingUI {
-                isHidingUI = false
+            if uiIsHiding {
+                uiIsHiding = false
                 return
             }
             if isAutoPlaying {
@@ -213,8 +233,8 @@ struct InteractiveStoryView: View {
                 isAutoPlaying = false
                 return
             }
-            if isTalkTextAnimating {
-                isTalkTextAnimating = false
+            if lineIsAnimating {
+                lineIsAnimating = false
                 return
             }
             next()
@@ -222,8 +242,8 @@ struct InteractiveStoryView: View {
         .focusable()
         .focusEffectDisabled()
         .onKeyPress(keys: [.return, .space], phases: [.down]) { _ in
-            if isHidingUI {
-                isHidingUI = false
+            if uiIsHiding {
+                uiIsHiding = false
                 return .handled
             }
             if isAutoPlaying {
@@ -231,14 +251,14 @@ struct InteractiveStoryView: View {
                 isAutoPlaying = false
                 return .handled
             }
-            if isTalkTextAnimating {
-                isTalkTextAnimating = false
+            if lineIsAnimating {
+                lineIsAnimating = false
                 return .handled
             }
             next()
             return .handled
         }
-        .sheet(isPresented: $isBacklogPresented) {
+        .sheet(isPresented: $backlogIsPresenting) {
             if let talk = currentTalk {
                 NavigationStack {
                     BacklogView(asset: asset, currentTalk: talk, locale: locale, audios: talkAudios)
@@ -281,6 +301,30 @@ struct InteractiveStoryView: View {
             
             next()
         }
+        .onDisappear {
+            exitViewer(dismiss: false)
+        }
+        .introspect(.window) { window in
+            // 初始状态下设置
+            updateTitleBar(for: window)
+            
+            // 添加全屏监听
+            NotificationCenter.default.addObserver(
+                forName: NSWindow.didEnterFullScreenNotification,
+                object: window,
+                queue: .main
+            ) { _ in
+                updateTitleBar(for: window)
+            }
+            
+            NotificationCenter.default.addObserver(
+                forName: NSWindow.willExitFullScreenNotification,
+                object: window,
+                queue: .main
+            ) { _ in
+                updateTitleBar(for: window)
+            }
+        }
     }
     
     @ViewBuilder
@@ -297,7 +341,7 @@ struct InteractiveStoryView: View {
                 }
                 Button("全屏自动播放", systemImage: "pano.badge.play") {
                     isAutoPlaying = true
-                    isHidingUI = true
+                    uiIsHiding = true
                     next()
                 }
                 .disabled(talkAudios.isEmpty)
@@ -320,11 +364,11 @@ struct InteractiveStoryView: View {
                     }
                 })
                 Button("记录", systemImage: "text.document") {
-                    isBacklogPresented = true
+                    backlogIsPresenting = true
                 }
                 .disabled(currentTalk == nil)
                 Button("不显示", systemImage: "xmark") {
-                    isHidingUI = true
+                    uiIsHiding = true
                 }
                 Button("退出", systemImage: "escape", role: .destructive) {
                     exitViewer()
@@ -333,6 +377,7 @@ struct InteractiveStoryView: View {
             }
         } label: {
             Image(systemName: "ellipsis")
+                .font(.title)
             #if os(iOS)
                 .font(.system(size: 20))
                 .padding(12)
@@ -527,28 +572,28 @@ struct InteractiveStoryView: View {
                 break
             case .blackIn:
                 withAnimation(.linear(duration: effect.duration)) {
-                    isShowingBlackCover = false
+                    blackCoverIsShowing = false
                 }
                 next()
             case .blackOut:
                 withAnimation(.linear(duration: effect.duration)) {
-                    isShowingBlackCover = true
+                    blackCoverIsShowing = true
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + effect.duration) {
-                    isShowingWhiteCover = false
+                    whiteCoverIsDisplaying = false
                 }
                 next()
             case .whiteIn:
                 withAnimation(.linear(duration: effect.duration)) {
-                    isShowingWhiteCover = false
+                    whiteCoverIsDisplaying = false
                 }
                 next()
             case .whiteOut:
                 withAnimation(.linear(duration: effect.duration)) {
-                    isShowingWhiteCover = true
+                    whiteCoverIsDisplaying = true
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + effect.duration) {
-                    isShowingBlackCover = false
+                    blackCoverIsShowing = false
                 }
                 next()
             case .shakeScreen:
@@ -626,7 +671,7 @@ struct InteractiveStoryView: View {
         }
     }
     
-    func exitViewer() {
+    func exitViewer(dismiss doDismiss: Bool = true) {
         // clean up
         autoPlayTimer?.invalidate()
         fastForwardTimer?.invalidate()
@@ -634,7 +679,9 @@ struct InteractiveStoryView: View {
         sePlayer.pause()
         unsafe voicePlayer.pointee.stop()
         
-        dismiss()
+        if doDismiss {
+            dismiss()
+        }
         
         #if os(iOS)
         setDeviceOrientation(to: .portrait, allowing: .portrait)
@@ -645,10 +692,16 @@ struct InteractiveStoryView: View {
             unsafe voicePlayer.deallocate()
         }
     }
+    
+    func updateTitleBar(for window: NSWindow) {
+        let isFullscreen = window.styleMask.contains(.fullScreen)
+        window.titleVisibility = isFullscreen ? .hidden : .visible
+        window.titlebarAppearsTransparent = isFullscreen
+    }
 }
 
 @safe
-private struct LayoutView: View {
+private struct InteractiveStoryLive2DView: View {
     var data: DoriAPI.Misc.StoryAsset.LayoutData
     var voicePlayer: UnsafeMutablePointer<AVAudioPlayer>
     var currentSpeckerID: Int
@@ -694,11 +747,12 @@ private struct LayoutView: View {
     }
 }
 
-private struct TalkView: View {
+private struct InteractiveStoryDialogBoxView: View {
     var data: DoriAPI.Misc.StoryAsset.TalkData
     var locale: DoriLocale
     var isDelaying: Bool
     var isAutoPlaying: Bool
+    @AppStorage("interactiveStoryViewerShowsNextIndicator") var interactiveStoryViewerShowsNextIndicator = false
     @Binding var isAnimating: Bool
     @Binding var shakeDuration: Double
     @State private var currentBody = ""
@@ -769,7 +823,7 @@ private struct TalkView: View {
                     Spacer()
                     VStack(spacing: 0) {
                         Spacer()
-                        if !isDelaying {
+                        if !isDelaying && interactiveStoryViewerShowsNextIndicator {
                             TimelineView(.animation(minimumInterval: 1 / 120)) { context in
                                 Image("ContinuableMark")
                                     .resizable()
