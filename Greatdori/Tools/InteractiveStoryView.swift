@@ -163,24 +163,20 @@ struct InteractiveStoryView: View {
                 HStack {
                     Spacer()
                     VStack {
+                        // FIXME: [251031] Glass Style Where?
                         if #available(iOS 26.0, macOS 26.0, *) {
                             actionMenu
-                                .glassEffect(.regular)
-                                .buttonStyle(.plain)
-//                                .buttonBorderShape(.circle)
-//                                .border(.yellow)
+                                .buttonStyle(.glass)
                         } else {
-                            actionMenu
-                                .buttonStyle(.bordered)
-                                .buttonBorderShape(.circle)
+//                            actionMenu
+//                                .buttonStyle(.bordered)
+//                                .buttonBorderShape(.circle)
                         }
                         Spacer()
                     }
 //                    .border(.blue)
                 }
                 .padding()
-                .border(.green)
-//                .ignoresSafeArea()
             }
 //            #endif
             

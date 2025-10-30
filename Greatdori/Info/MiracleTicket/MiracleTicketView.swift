@@ -32,23 +32,41 @@ struct MiracleTicketView: View {
                             CustomGroupBox {
                                 VStack {
                                     ListItemView {
-                                        Text("自选券")
+                                        Text("Miracle-ticket.ticket")
                                     } value: {
-                                        Picker(selection: $selectedTicket) {
-                                            Text("(选择一项)").tag(Optional<ExtendedMiracleTicket>.none)
-                                            ForEach(tickets) { ticket in
-                                                if let name = ticket.ticket.name.forLocale(locale) {
-                                                    Text(name).tag(ticket)
+                                        if #available(macOS 15.0, *) {
+                                            Picker(selection: $selectedTicket, content: {
+                                                ForEach(tickets) { ticket in
+                                                    if let name = ticket.ticket.name.forLocale(locale) {
+                                                        Text(name).tag(ticket)
+                                                    }
                                                 }
-                                            }
-                                        } label: {
-                                            EmptyView()
+                                            }, label: {
+                                                EmptyView()
+                                            }, currentValueLabel: {
+                                                if let selectedTicket {
+                                                    Text(selectedTicket.ticket.name.forLocale(locale) ?? "")
+                                                } else {
+                                                    Text("Miracle-ticket.ticket.select")
+                                                }
+                                            })
+                                            .labelsHidden()
+                                        } else {
+                                            Picker(selection: $selectedTicket, content: {
+                                                ForEach(tickets) { ticket in
+                                                    if let name = ticket.ticket.name.forLocale(locale) {
+                                                        Text(name).tag(ticket)
+                                                    }
+                                                }
+                                            }, label: {
+                                                EmptyView()
+                                            })
+                                            .labelsHidden()
                                         }
-                                        .labelsHidden()
                                     }
                                     Divider()
                                     ListItemView {
-                                        Text("地区")
+                                        Text("Miracle-ticket.locale")
                                     } value: {
                                         Picker(selection: $locale) {
                                             ForEach(_DoriAPI.Locale.allCases, id: \.rawValue) { locale in
@@ -68,14 +86,14 @@ struct MiracleTicketView: View {
                                 CustomGroupBox {
                                     VStack {
                                         ListItemView {
-                                            Text("标题")
+                                            Text("Miracle-ticket.title")
                                         } value: {
                                             MultilingualText(selectedTicket.ticket.name)
                                         }
                                         if let date = selectedTicket.ticket.exchangeStartAt.forLocale(locale) {
                                             Divider()
                                             ListItemView {
-                                                Text("发布日期")
+                                                Text("Miracle-ticket.release-date")
                                             } value: {
                                                 Text(dateFormatter.string(from: date))
                                             }
@@ -83,7 +101,7 @@ struct MiracleTicketView: View {
                                         if let date = selectedTicket.ticket.exchangeEndAt.forLocale(locale) {
                                             Divider()
                                             ListItemView {
-                                                Text("结束日期")
+                                                Text("Miracle-ticket.close-date")
                                             } value: {
                                                 Text(dateFormatter.string(from: date))
                                             }
@@ -111,16 +129,18 @@ struct MiracleTicketView: View {
                                             }
                                             let trimmedCount = trimmedCount(of: cards)
                                             if trimmedCount > 0 {
-                                                Button("展开 (\(trimmedCount))", systemImage: "chevron.down") {
+                                                Button(action: {
                                                     withAnimation {
                                                         isExpanded = true
                                                     }
-                                                }
+                                                }, label: {
+                                                    Label("Miracle.expand.\(trimmedCount)", systemImage: "chevron.down")
+                                                })
                                             }
                                         } else {
                                             HStack {
                                                 Spacer()
-                                                Text("自选券不可用")
+                                                Text("Miracle-ticket.unavailable")
                                                     .bold()
                                                     .foregroundStyle(.secondary)
                                                 Spacer()
@@ -147,7 +167,7 @@ struct MiracleTicketView: View {
                     }
                 } else {
                     ExtendedConstraints {
-                        ContentUnavailableView("载入自选券时出错", systemImage: "ticket")
+                        ContentUnavailableView("Miracle-ticket.error", systemImage: "ticket")
                     }
                     .onTapGesture {
                         isTicketsAvailable = true
@@ -156,7 +176,7 @@ struct MiracleTicketView: View {
             }
         }
         .withSystemBackground()
-        .navigationTitle("自选券")
+        .navigationTitle("Miracle-ticket")
     }
     
     private var dateFormatter: DateFormatter {

@@ -821,6 +821,7 @@ private struct StoryDetailView: View {
         Group {
             if interactivePlayerIsInFullScreen {
                 StoryDetailInteractiveStoryEntryView(title: title, scenarioID: scenarioID, type: type, locale: locale, unsafeAssociatedID: unsafeAssociatedID, unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID, asset: $asset)
+                    .id("StoryDetailInteractiveStoryEntryView")
             } else {
                 ScrollView {
                     HStack {
@@ -829,7 +830,8 @@ private struct StoryDetailView: View {
                             if let transcript {
                                 Section {
                                     StoryDetailInteractiveStoryEntryView(title: title, scenarioID: scenarioID, type: type, locale: locale, unsafeAssociatedID: unsafeAssociatedID, unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID, asset: $asset)
-                                        .border(Color.red)
+                                        .id("StoryDetailInteractiveStoryEntryView")
+//                                        .border(Color.red)
                                         .aspectRatio(16/9, contentMode: .fill)
                                         .clipped()
                                 }

@@ -570,12 +570,24 @@ struct DebugPlaygroundView: View {
     @State var valueTwo: Double = 1
     @State var color: Color = Color.gray
     var body: some View {
-        VStack {
-            Slider(value: $valueOne, in: 0...10)
-            Slider(value: $valueTwo, in: 0...10)
-            RoundedRectangle(cornerRadius: 10)
-                .frame(width: 50, height: 50)
-                .foregroundStyle(color)
+        ZStack {
+            Color.green
+            if #available(iOS 26.0, macOS 26.0, *) {
+                Menu(content: {
+                    Section {
+                        Button(action: {
+                            print("1")
+                        }, label: {
+                            Label(String(1), systemImage: "triangle")
+                        })
+                    }
+                }, label: {
+                    Image(systemName: "ellipsis")
+                })
+                .menuIndicator(.hidden)
+                .menuStyle(.borderedButton)
+                .buttonStyle(.glassProminent)
+            }
         }
         .onChange(of: valueOne, valueTwo, initial: true) {
             color = Color.random()
