@@ -89,7 +89,7 @@ struct StoryViewerView: View {
                                     Text("Tools.story-viewer.story")
                                         .bold()
                                 }, value: {
-                                    if #available(macOS 15.0, *) {
+                                    if #available(iOS 18.0, macOS 15.0, *) {
                                         Picker(selection: $selectedBandStory, content: {
                                             let availableBandStories: [_DoriAPI.Misc.BandStory] = allBandStories.filter({ $0.bandID == selectedBand?.id })
                                             ForEach(availableBandStories, id: \.self) { item in

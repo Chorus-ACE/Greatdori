@@ -34,7 +34,7 @@ struct MiracleTicketView: View {
                                     ListItemView {
                                         Text("Miracle-ticket.ticket")
                                     } value: {
-                                        if #available(macOS 15.0, *) {
+                                        if #available(iOS 18.0, macOS 15.0, *) {
                                             Picker(selection: $selectedTicket, content: {
                                                 ForEach(tickets) { ticket in
                                                     if let name = ticket.ticket.name.forLocale(locale) {

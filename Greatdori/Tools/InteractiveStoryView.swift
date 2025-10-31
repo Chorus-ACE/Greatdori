@@ -300,6 +300,7 @@ struct InteractiveStoryView: View {
         .onDisappear {
             exitViewer(dismiss: false)
         }
+        #if os(macOS)
         .introspect(.window) { window in
             // 初始状态下设置
             updateTitleBar(for: window)
@@ -321,6 +322,7 @@ struct InteractiveStoryView: View {
                 updateTitleBar(for: window)
             }
         }
+        #endif
     }
     
     @ViewBuilder
