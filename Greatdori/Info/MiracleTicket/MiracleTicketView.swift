@@ -81,8 +81,7 @@ struct MiracleTicketView: View {
                                 }
                             }
                             if let selectedTicket {
-                                Spacer()
-                                    .frame(height: 15)
+                                DetailSectionsSpacer(height: 15)
                                 CustomGroupBox {
                                     VStack {
                                         ListItemView {
