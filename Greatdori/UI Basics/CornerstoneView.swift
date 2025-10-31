@@ -122,6 +122,7 @@ struct CustomGroupBox<Content: View>: View {
     var strokeLineWidth: CGFloat = 0
     var useExtenedConstraints: Bool = false
     @Environment(\._groupBoxStrokeLineWidth) var envStrokeLineWidth: CGFloat
+    @Environment(\._suppressCustomGroupBox) var suppressCustomGroupBox
     init(showGroupBox: Bool = true, cornerRadius: CGFloat = 15, useExtenedConstraints: Bool = false, strokeLineWidth: CGFloat = 0, @ViewBuilder content: @escaping () -> Content) {
         self.showGroupBox = showGroupBox
         self.cornerRadius = cornerRadius
@@ -132,47 +133,86 @@ struct CustomGroupBox<Content: View>: View {
     var body: some View {
         ExtendedConstraints(isActive: useExtenedConstraints) {
             content()
-                .padding(.all, showGroupBox ? nil : 0)
+                .padding(.all, showGroupBox && !suppressCustomGroupBox ? nil : 0)
         }
         .background {
-            if showGroupBox {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(.floatingCard))
-                        .shadow(color: .black.opacity(0.1), radius: 4, y: 4)
-                        .shadow(color: .black.opacity(0.1), radius: 16, y: 4)
-                        .overlay {
-                            LinearGradient(
-                                colors: [
-                                    adjustedColor(Color(.floatingCardTopBorder)),
-                                    Color(.floatingCard)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .mask {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(.clear)
-                                    .stroke(.black, style: .init(lineWidth: 1))
-                            }
-                        }
-                    let strokeLineWidth = strokeLineWidth > 0 ? strokeLineWidth : envStrokeLineWidth
-                    if strokeLineWidth > 0 {
+            if showGroupBox && !suppressCustomGroupBox {
+                GeometryReader { geometry in
+                    ZStack {
                         RoundedRectangle(cornerRadius: cornerRadius)
-                            .strokeBorder(.tint.opacity(0.9), lineWidth: strokeLineWidth)
+                            .fill(.black.opacity(0.1))
+                            .offset(y: 4)
+                            .blur(radius: 4)
+                            .mask {
+                                Rectangle()
+                                    .size(width: geometry.size.width + 24, height: geometry.size.height + 24)
+                                    .offset(x: -12, y: -12)
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: cornerRadius)
+                                            .blendMode(.destinationOut)
+                                    }
+                            }
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .fill(.black.opacity(0.1))
+                            .offset(y: 4)
+                            .blur(radius: 16)
+                            .mask {
+                                Rectangle()
+                                    .size(width: geometry.size.width + 96, height: geometry.size.height + 96)
+                                    .offset(x: -48, y: -48)
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: cornerRadius)
+                                            .blendMode(.destinationOut)
+                                    }
+                            }
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .fill(Color(.floatingCard))
                     }
                 }
             }
         }
-    }
-    
-    private func adjustedColor(_ color: Color) -> Color {
-        if #available(iOS 26.0, macOS 26.0, *) {
-            return color.exposureAdjust(2)
-        } else {
-            return color
+        .overlay {
+            if showGroupBox && !suppressCustomGroupBox {
+                LinearGradient(
+                    colors: [
+                        Color(.floatingCardTopBorder),
+                        Color(.floatingCard)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .mask {
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(.clear)
+                        .stroke(.black, style: .init(lineWidth: 1))
+                }
+                .allowsHitTesting(false)
+            }
         }
+        .overlay {
+            if showGroupBox && !suppressCustomGroupBox {
+                let strokeLineWidth = strokeLineWidth > 0 ? strokeLineWidth : envStrokeLineWidth
+                if strokeLineWidth > 0 {
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .strokeBorder(.tint.opacity(0.9), lineWidth: strokeLineWidth)
+                        .allowsHitTesting(false)
+                }
+            }
+        }
+        // We pass the group box status bidirectionally to allow
+        // other views that suppress the custom group box
+        // to provide their own representation
+        .preference(key: CustomGroupBoxActivePreference.self, value: showGroupBox)
     }
+}
+struct CustomGroupBoxActivePreference: PreferenceKey {
+    @safe nonisolated(unsafe) static var defaultValue: Bool = false
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue()
+    }
+}
+extension EnvironmentValues {
+    @Entry var _suppressCustomGroupBox: Bool = false
 }
 
 extension EnvironmentValues {

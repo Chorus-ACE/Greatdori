@@ -361,6 +361,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
     @State private var searchedText = ""
     @State private var showFilterSheet = false
     @State private var presentingElement: Element?
+    @State private var isCustomGroupBoxActive = false
     
     var body: some View {
         Group {
@@ -378,18 +379,47 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                                                     showFilterSheet = false
                                                     presentingElement = element
                                                 }, label: {
+                                                    // Why do we need these hacks?
+                                                    // In a recent change, we're adding shadows to the CustomGroupBox.
+                                                    // It works well in other places but here.
+                                                    //
+                                                    // What happened?
+                                                    // the `matchedTransitionSource(id:in:)` constraints a view's
+                                                    // viewport to its own frame, that is, our shadows are clipped
+                                                    // into the frame of the box itself.
+                                                    //
+                                                    // How do we solve it?
+                                                    // First we add a preference key for custom group boxes,
+                                                    // if there's any active `CustomGroupBox` in the view
+                                                    // from `makeSomeContent(_:_:)`, we can receive the info
+                                                    // by the `onPreferenceChange` call below.
+                                                    // We suppress the group box in content by setting
+                                                    // the env value `_suppressCustomGroupBox` to `true`,
+                                                    // then add a custom group box
+                                                    // after the `matchedTransitionSource(id:in:)` call
+                                                    // if needed to solve this problem.
+                                                    // That's why codes here seem wired.
                                                     makeSomeContent(currentLayout, element)
                                                         .highlightKeyword($searchedText)
+                                                        .environment(\._suppressCustomGroupBox, true)
+                                                        .onPreferenceChange(CustomGroupBoxActivePreference.self) { isActive in
+                                                            isCustomGroupBoxActive = isActive
+                                                        }
+                                                        .wrapIf(true) { content in
+                                                            if #available(iOS 18.0, macOS 15.0, *) {
+                                                                content
+                                                                    .matchedTransitionSource(id: element.hashValue, in: navigationAnimationNamespace)
+                                                            } else {
+                                                                content
+                                                            }
+                                                        }
+                                                        .wrapIf(isCustomGroupBoxActive) { content in
+                                                            CustomGroupBox {
+                                                                content
+                                                            }
+                                                        }
                                                 })
                                                 .buttonStyle(.plain)
-                                                .wrapIf(true) { content in
-                                                    if #available(iOS 18.0, macOS 15.0, *) {
-                                                        content
-                                                            .matchedTransitionSource(id: element.hashValue, in: navigationAnimationNamespace)
-                                                    } else {
-                                                        content
-                                                    }
-                                                }
                                             }
                                         )
                                     ) { element in
@@ -400,16 +430,25 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                                             }, label: {
                                                 makeSomeContent(currentLayout, element)
                                                     .highlightKeyword($searchedText)
+                                                    .environment(\._suppressCustomGroupBox, true)
+                                                    .onPreferenceChange(CustomGroupBoxActivePreference.self) { isActive in
+                                                        isCustomGroupBoxActive = isActive
+                                                    }
+                                                    .wrapIf(true) { content in
+                                                        if #available(iOS 18.0, macOS 15.0, *) {
+                                                            content
+                                                                .matchedTransitionSource(id: element.hashValue, in: navigationAnimationNamespace)
+                                                        } else {
+                                                            content
+                                                        }
+                                                    }
+                                                    .wrapIf(isCustomGroupBoxActive) { content in
+                                                        CustomGroupBox {
+                                                            content
+                                                        }
+                                                    }
                                             })
                                             .buttonStyle(.plain)
-                                            .wrapIf(true) { content in
-                                                if #available(iOS 18.0, macOS 15.0, *) {
-                                                    content
-                                                        .matchedTransitionSource(id: element.hashValue, in: navigationAnimationNamespace)
-                                                } else {
-                                                    content
-                                                }
-                                            }
                                         )
                                     }
                                     .padding(.horizontal)

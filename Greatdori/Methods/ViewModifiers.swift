@@ -24,6 +24,24 @@ import UniformTypeIdentifiers
 import Vision
 
 extension View {
+    @ViewBuilder
+    func withSystemBackground() -> some View {
+        self.modifier(SystemBackgroundModifier())
+    }
+}
+private struct SystemBackgroundModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+    func body(content: Content) -> some View {
+    #if os(iOS)
+        content
+            .background(Color(.systemGroupedBackground))
+    #else
+        content
+    #endif
+    }
+}
+
+extension View {
     func imageContextMenu<V: View>(
         _ info: [_ImageContextMenuModifier<V>.ImageInfo],
         otherContentAt placement: _ImageContextMenuModifier<V>.ContentPlacement = .start,

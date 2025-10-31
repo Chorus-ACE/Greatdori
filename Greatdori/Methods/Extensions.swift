@@ -278,18 +278,6 @@ public extension View {
         return result
     }
     
-    
-    // MARK: withSystemBackground
-    @ViewBuilder
-    func withSystemBackground() -> some View {
-#if os(iOS)
-        self
-            .background(Color(.systemGroupedBackground))
-#else
-        self
-#endif
-    }
-    
     // MARK: wrapIf
     @ViewBuilder
     func wrapIf(_ condition: Bool, @ViewBuilder in container: (Self) -> some View) -> some View {
