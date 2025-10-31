@@ -59,7 +59,7 @@ struct EventDetailView: View {
 struct EventDetailOverviewView: View {
     let information: ExtendedEvent
     @State var eventCharacterPercentageDict: [Int: [_DoriAPI.Events.EventCharacter]] = [:]
-    @State var eventCharacterNameDict: [Int: _DoriAPI.LocalizedData<String>] = [:]
+    @State var eventCharacterNameDict: [Int: LocalizedData<String>] = [:]
     @State var cardsArray: [PreviewCard] = []
     @State var cardsArraySeperated: [[PreviewCard?]] = []
     @State var cardsPercentage: Int = -100
@@ -398,7 +398,7 @@ struct EventDetailOverviewView: View {
             for char in eventCharacters {
                 eventCharacterPercentageDict.updateValue(((eventCharacterPercentageDict[char.percent] ?? []) + [char]), forKey: char.percent)
                 Task {
-                    if let allCharacters = await _DoriAPI.Characters.all() {
+                    if let allCharacters = await Character.all() {
                         if let character = allCharacters.first(where: { $0.id == char.characterID }) {
                             eventCharacterNameDict.updateValue(character.characterName, forKey: char.characterID)
                         }

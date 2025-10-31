@@ -18,7 +18,7 @@ import Combine
 import SDWebImageSwiftUI
 
 let loadingAnimationDuration = 0.1
-let localeFromStringDict: [String: _DoriAPI.Locale] = ["jp": .jp, "cn": .cn, "tw": .tw, "en": .en, "kr": .kr]
+let localeFromStringDict: [String: DoriLocale] = ["jp": .jp, "cn": .cn, "tw": .tw, "en": .en, "kr": .kr]
 //let localeToStringDict: [DoriAPI.Locale: String] = [.jp: "JP", .en: "EN", .tw: "TW", .cn: "CN", .kr: "KR"]
 
 private let _homeNavigationSubject = PassthroughSubject<NavigationPage?, Never>()
@@ -201,19 +201,19 @@ struct HomeNewsView: View {
             }
             await withTaskGroup { group in
                 group.addTask {
-                    let events = await _DoriAPI.Events.all()
+                    let events = await Event.all()
                     await MainActor.run {
                         allEvents = events
                     }
                 }
                 group.addTask {
-                    let gacha = await _DoriAPI.Gachas.all()
+                    let gacha = await Gacha.all()
                     await MainActor.run {
                         allGacha = gacha
                     }
                 }
                 group.addTask {
-                    let songs = await _DoriAPI.Songs.all()
+                    let songs = await Song.all()
                     await MainActor.run {
                         allSongs = songs
                     }
@@ -445,12 +445,12 @@ struct HomeBirthdayView: View {
 }
 
 struct HomeEventsView: View {
-    @State var latestEvents: _DoriAPI.LocalizedData<_DoriFrontend.Events.PreviewEvent>?
+    @State var latestEvents: LocalizedData<_DoriFrontend.Events.PreviewEvent>?
     @State var imageOpacity: Double = 0
     @State var placeholderOpacity: Double = 1
-    var locale: _DoriAPI.Locale = .jp
+    var locale: DoriLocale = .jp
     var dateFormatter = DateFormatter()
-    init(locale: _DoriAPI.Locale = .jp) {
+    init(locale: DoriLocale = .jp) {
         self.locale = locale
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .short

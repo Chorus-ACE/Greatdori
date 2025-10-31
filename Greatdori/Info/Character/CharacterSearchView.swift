@@ -207,7 +207,7 @@ struct CharacterSearchView: View {
         }
         
         DoriCache.withCache(id: "AllCharacters", trait: .realTime) {
-            await _DoriAPI.Characters.all()
+            await Character.all()
         } .onUpdate {
             if let characters = $0 {
                 allCharacters = characters

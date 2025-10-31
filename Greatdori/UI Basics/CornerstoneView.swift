@@ -512,7 +512,7 @@ struct LayoutPicker<T: Hashable>: View {
 
 // MARK: MultilingualText
 struct MultilingualText: View {
-    let source: _DoriAPI.LocalizedData<String>
+    let source: LocalizedData<String>
     var showSecondaryText: Bool = true
     //    let locale: Locale
     var showLocaleKey: Bool = false
@@ -520,20 +520,20 @@ struct MultilingualText: View {
     @Environment(\.disablePopover) var envDisablesPopover
     @State var isHovering = false
     @State var allLocaleTexts: [String] = []
-    @State var shownLocaleValueDict: [String: _DoriAPI.Locale] = [:]
+    @State var shownLocaleValueDict: [String: DoriLocale] = [:]
     @State var primaryDisplayString = ""
     @State var showCopyMessage = false
-    @State var lastCopiedLocaleValue: _DoriAPI.Locale? = nil
+    @State var lastCopiedLocaleValue: DoriLocale? = nil
     
-    init(_ source: _DoriAPI.LocalizedData<String>, showSecondaryText: Bool = true, showLocaleKey: Bool = false, allowPopover: Bool = true) {
+    init(_ source: LocalizedData<String>, showSecondaryText: Bool = true, showLocaleKey: Bool = false, allowPopover: Bool = true) {
         self.source = source
         self.showSecondaryText = showSecondaryText
         self.showLocaleKey = showLocaleKey
         self.allowPopover = allowPopover
         
         var __allLocaleTexts: [String] = []
-        var __shownLocaleValueDict: [String: _DoriAPI.Locale] = [:]
-        for lang in _DoriAPI.Locale.allCases {
+        var __shownLocaleValueDict: [String: DoriLocale] = [:]
+        for lang in DoriLocale.allCases {
             if let pendingString = source.forLocale(lang) {
                 if !__allLocaleTexts.contains(pendingString) {
                     __allLocaleTexts.append("\(pendingString)\(showLocaleKey ? " (\(lang.rawValue.uppercased()))" : "")")
@@ -609,7 +609,7 @@ struct MultilingualText: View {
         }
     }
     struct MultilingualTextInternalLabel: View {
-        let source: _DoriAPI.LocalizedData<String>
+        let source: LocalizedData<String>
         //    let locale: Locale
         let showSecondaryText: Bool
         let showLocaleKey: Bool
@@ -618,56 +618,56 @@ struct MultilingualText: View {
         var body: some View {
             VStack(alignment: .trailing) {
                 if let sourceInPrimaryLocale = source.forPreferredLocale(allowsFallback: false) {
-                    Text("\(sourceInPrimaryLocale)\(showLocaleKey ? " (\(_DoriAPI.preferredLocale.rawValue.uppercased()))" : "")")
-                        .typesettingLanguage(.explicit((_DoriAPI.preferredLocale.nsLocale().language)))
+                    Text("\(sourceInPrimaryLocale)\(showLocaleKey ? " (\(DoriLocale.primaryLocale.rawValue.uppercased()))" : "")")
+                        .typesettingLanguage(.explicit((DoriLocale.primaryLocale.nsLocale().language)))
                         .onAppear {
                             primaryDisplayString = sourceInPrimaryLocale
                         }
                 } else if let sourceInSecondaryLocale = source.forSecondaryLocale(allowsFallback: false) {
-                    Text("\(sourceInSecondaryLocale)\(showLocaleKey ? " (\(_DoriAPI.secondaryLocale.rawValue.uppercased()))" : "")")
-                        .typesettingLanguage(.explicit((_DoriAPI.secondaryLocale.nsLocale().language)))
+                    Text("\(sourceInSecondaryLocale)\(showLocaleKey ? " (\(DoriLocale.secondaryLocale.rawValue.uppercased()))" : "")")
+                        .typesettingLanguage(.explicit((DoriLocale.secondaryLocale.nsLocale().language)))
                         .onAppear {
                             primaryDisplayString = sourceInSecondaryLocale
                         }
                 } else if let sourceInJP = source.jp {
                     Text("\(sourceInJP)\(showLocaleKey ? " (JP)" : "")")
-                        .typesettingLanguage(.explicit((_DoriAPI.Locale.jp.nsLocale().language)))
+                        .typesettingLanguage(.explicit((DoriLocale.jp.nsLocale().language)))
                         .onAppear {
                             primaryDisplayString = sourceInJP
                         }
                 } else if let sourceInWhateverLocale = source.en {
                     Text("\(sourceInWhateverLocale)\(showLocaleKey ? " (EN)" : "")")
-                        .typesettingLanguage(.explicit((_DoriAPI.Locale.en.nsLocale().language)))
+                        .typesettingLanguage(.explicit((DoriLocale.en.nsLocale().language)))
                         .onAppear {
                             primaryDisplayString = sourceInWhateverLocale
                         }
                 } else if let sourceInWhateverLocale = source.tw {
                     Text("\(sourceInWhateverLocale)\(showLocaleKey ? " (TW)" : "")")
-                        .typesettingLanguage(.explicit((_DoriAPI.Locale.tw.nsLocale().language)))
+                        .typesettingLanguage(.explicit((DoriLocale.tw.nsLocale().language)))
                         .onAppear {
                             primaryDisplayString = sourceInWhateverLocale
                         }
                 } else if let sourceInWhateverLocale = source.cn {
                     Text("\(sourceInWhateverLocale)\(showLocaleKey ? " (CN)" : "")")
-                        .typesettingLanguage(.explicit((_DoriAPI.Locale.cn.nsLocale().language)))
+                        .typesettingLanguage(.explicit((DoriLocale.cn.nsLocale().language)))
                         .onAppear {
                             primaryDisplayString = sourceInWhateverLocale
                         }
                 } else if let sourceInWhateverLocale = source.kr {
                     Text("\(sourceInWhateverLocale)\(showLocaleKey ? " (KR)" : "")")
-                        .typesettingLanguage(.explicit((_DoriAPI.Locale.kr.nsLocale().language)))
+                        .typesettingLanguage(.explicit((DoriLocale.kr.nsLocale().language)))
                         .onAppear {
                             primaryDisplayString = sourceInWhateverLocale
                         }
                 }
                 if showSecondaryText {
                     if let secondarySourceInSecondaryLang = source.forSecondaryLocale(allowsFallback: false), secondarySourceInSecondaryLang != primaryDisplayString {
-                        Text("\(secondarySourceInSecondaryLang)\(showLocaleKey ? " (\(_DoriAPI.secondaryLocale.rawValue.uppercased()))" : "")")
-                            .typesettingLanguage(.explicit((_DoriAPI.secondaryLocale.nsLocale().language)))
+                        Text("\(secondarySourceInSecondaryLang)\(showLocaleKey ? " (\(DoriLocale.secondaryLocale.rawValue.uppercased()))" : "")")
+                            .typesettingLanguage(.explicit((DoriLocale.secondaryLocale.nsLocale().language)))
                             .foregroundStyle(.secondary)
                     } else if let secondarySourceInJP = source.jp, secondarySourceInJP != primaryDisplayString {
                         Text("\(secondarySourceInJP)\(showLocaleKey ? " (JP)" : "")")
-                            .typesettingLanguage(.explicit((_DoriAPI.Locale.jp.nsLocale().language)))
+                            .typesettingLanguage(.explicit((DoriLocale.jp.nsLocale().language)))
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -687,14 +687,14 @@ struct MultilingualText: View {
 
 // MARK: MultilingualTextForCountdown
 struct MultilingualTextForCountdown: View {
-    let startDate: _DoriAPI.LocalizedData<Date>
-    let endDate: _DoriAPI.LocalizedData<Date>
-    let aggregateEndDate: _DoriAPI.LocalizedData<Date>?
-    let distributionStartDate: _DoriAPI.LocalizedData<Date>?
+    let startDate: LocalizedData<Date>
+    let endDate: LocalizedData<Date>
+    let aggregateEndDate: LocalizedData<Date>?
+    let distributionStartDate: LocalizedData<Date>?
     
     @State var isHovering = false
-    @State var allAvailableLocales: [_DoriAPI.Locale] = []
-    @State var primaryDisplayLocale: _DoriAPI.Locale?
+    @State var allAvailableLocales: [DoriLocale] = []
+    @State var primaryDisplayLocale: DoriLocale?
     @State var showCopyMessage = false
     
     init(_ source: Event) {
@@ -761,7 +761,7 @@ struct MultilingualTextForCountdown: View {
         }
         .onAppear {
             allAvailableLocales = []
-            for lang in _DoriAPI.Locale.allCases {
+            for lang in DoriLocale.allCases {
                 if startDate.availableInLocale(lang) {
                     allAvailableLocales.append(lang)
                 }
@@ -769,24 +769,24 @@ struct MultilingualTextForCountdown: View {
         }
     }
     struct MultilingualTextForCountdownInternalLabel: View {
-        let startDate: _DoriAPI.LocalizedData<Date>
-        let endDate: _DoriAPI.LocalizedData<Date>
-        let aggregateEndDate: _DoriAPI.LocalizedData<Date>?
-        let distributionStartDate: _DoriAPI.LocalizedData<Date>?
-        let allAvailableLocales: [_DoriAPI.Locale]
+        let startDate: LocalizedData<Date>
+        let endDate: LocalizedData<Date>
+        let aggregateEndDate: LocalizedData<Date>?
+        let distributionStartDate: LocalizedData<Date>?
+        let allAvailableLocales: [DoriLocale]
         let allowTextSelection: Bool = true
-        @State var primaryDisplayingLocale: _DoriAPI.Locale? = nil
+        @State var primaryDisplayingLocale: DoriLocale? = nil
         var body: some View {
             VStack(alignment: .trailing) {
-                if allAvailableLocales.contains(_DoriAPI.preferredLocale) {
-                    MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: _DoriAPI.preferredLocale)
+                if allAvailableLocales.contains(DoriLocale.primaryLocale) {
+                    MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: DoriLocale.primaryLocale)
                         .onAppear {
-                            primaryDisplayingLocale = _DoriAPI.preferredLocale
+                            primaryDisplayingLocale = DoriLocale.primaryLocale
                         }
-                } else if allAvailableLocales.contains(_DoriAPI.secondaryLocale) {
-                    MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: _DoriAPI.secondaryLocale)
+                } else if allAvailableLocales.contains(DoriLocale.secondaryLocale) {
+                    MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: DoriLocale.primaryLocale)
                         .onAppear {
-                            primaryDisplayingLocale = _DoriAPI.secondaryLocale
+                            primaryDisplayingLocale = DoriLocale.secondaryLocale
                         }
                 } else if allAvailableLocales.contains(.jp) {
                     MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: .jp)
@@ -801,8 +801,8 @@ struct MultilingualTextForCountdown: View {
                         }
                 }
                 
-                if allAvailableLocales.contains(_DoriAPI.secondaryLocale), _DoriAPI.secondaryLocale != primaryDisplayingLocale {
-                    MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: _DoriAPI.secondaryLocale)
+                if allAvailableLocales.contains(DoriLocale.secondaryLocale), DoriLocale.secondaryLocale != primaryDisplayingLocale {
+                    MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: DoriLocale.secondaryLocale)
                         .foregroundStyle(.secondary)
                 } else if allAvailableLocales.contains(.jp), .jp != primaryDisplayingLocale {
                     MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: .jp)
@@ -823,11 +823,11 @@ struct MultilingualTextForCountdown: View {
     }
     struct MultilingualTextForCountdownInternalNumbersView: View {
 //        let event: DoriFrontend.Event.Event
-        let startDate: _DoriAPI.LocalizedData<Date>
-        let endDate: _DoriAPI.LocalizedData<Date>
-        let aggregateEndDate: _DoriAPI.LocalizedData<Date>?
-        let distributionStartDate: _DoriAPI.LocalizedData<Date>?
-        let locale: _DoriAPI.Locale
+        let startDate: LocalizedData<Date>
+        let endDate: LocalizedData<Date>
+        let aggregateEndDate: LocalizedData<Date>?
+        let distributionStartDate: LocalizedData<Date>?
+        let locale: DoriLocale
         var body: some View {
             if let startDate = startDate.forLocale(locale),
                let endDate = endDate.forLocale(locale) {
@@ -852,8 +852,8 @@ struct MultilingualTextForCountdownAlt: View {
     let date: LocalizedData<Date>
     
     @State var isHovering = false
-    @State var allAvailableLocales: [_DoriAPI.Locale] = []
-    @State var primaryDisplayLocale: _DoriAPI.Locale?
+    @State var allAvailableLocales: [DoriLocale] = []
+    @State var primaryDisplayLocale: DoriLocale?
     @State var showCopyMessage = false
     
     var body: some View {
@@ -908,7 +908,7 @@ struct MultilingualTextForCountdownAlt: View {
         }
         .onAppear {
             allAvailableLocales = []
-            for lang in _DoriAPI.Locale.allCases {
+            for lang in DoriLocale.allCases {
                 if date.availableInLocale(lang) {
                     allAvailableLocales.append(lang)
                 }
@@ -917,20 +917,20 @@ struct MultilingualTextForCountdownAlt: View {
     }
     struct MultilingualTextForCountdownAltInternalLabel: View {
         let date: LocalizedData<Date>
-        let allAvailableLocales: [_DoriAPI.Locale]
+        let allAvailableLocales: [DoriLocale]
         let allowTextSelection: Bool = true
-        @State var primaryDisplayingLocale: _DoriAPI.Locale? = nil
+        @State var primaryDisplayingLocale: DoriLocale? = nil
         var body: some View {
             VStack(alignment: .trailing) {
-                if allAvailableLocales.contains(_DoriAPI.preferredLocale) {
-                    MultilingualTextForCountdownAltInternalNumbersView(date: date, locale: _DoriAPI.preferredLocale)
+                if allAvailableLocales.contains(DoriLocale.primaryLocale) {
+                    MultilingualTextForCountdownAltInternalNumbersView(date: date, locale: DoriLocale.primaryLocale)
                         .onAppear {
-                            primaryDisplayingLocale = _DoriAPI.preferredLocale
+                            primaryDisplayingLocale = DoriLocale.primaryLocale
                         }
-                } else if allAvailableLocales.contains(_DoriAPI.secondaryLocale) {
-                    MultilingualTextForCountdownAltInternalNumbersView(date: date, locale: _DoriAPI.secondaryLocale)
+                } else if allAvailableLocales.contains(DoriLocale.secondaryLocale) {
+                    MultilingualTextForCountdownAltInternalNumbersView(date: date, locale: DoriLocale.secondaryLocale)
                         .onAppear {
-                            primaryDisplayingLocale = _DoriAPI.secondaryLocale
+                            primaryDisplayingLocale = DoriLocale.secondaryLocale
                         }
                 } else if allAvailableLocales.contains(.jp) {
                     MultilingualTextForCountdownAltInternalNumbersView(date: date, locale: .jp)
@@ -945,8 +945,8 @@ struct MultilingualTextForCountdownAlt: View {
                         }
                 }
                 
-                if allAvailableLocales.contains(_DoriAPI.secondaryLocale), _DoriAPI.secondaryLocale != primaryDisplayingLocale {
-                    MultilingualTextForCountdownAltInternalNumbersView(date: date, locale: _DoriAPI.secondaryLocale)
+                if allAvailableLocales.contains(DoriLocale.secondaryLocale), DoriLocale.secondaryLocale != primaryDisplayingLocale {
+                    MultilingualTextForCountdownAltInternalNumbersView(date: date, locale: DoriLocale.secondaryLocale)
                         .foregroundStyle(.secondary)
                 } else if allAvailableLocales.contains(.jp), .jp != primaryDisplayingLocale {
                     MultilingualTextForCountdownAltInternalNumbersView(date: date, locale: .jp)
@@ -968,7 +968,7 @@ struct MultilingualTextForCountdownAlt: View {
     struct MultilingualTextForCountdownAltInternalNumbersView: View {
         //        let event: DoriFrontend.Event.Event
         let date: LocalizedData<Date>
-        let locale: _DoriAPI.Locale
+        let locale: DoriLocale
         var body: some View {
             if let localizedDate = date.forLocale(locale) {
                 if localizedDate > .now {

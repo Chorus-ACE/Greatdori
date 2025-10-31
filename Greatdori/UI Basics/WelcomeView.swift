@@ -66,7 +66,7 @@ struct WelcomeView: View {
                     Text("Welcome.primaryLocale")
                 })
                 .onChange(of: primaryLocale, {
-                    _DoriAPI.preferredLocale = localeFromStringDict[primaryLocale] ?? .jp
+                    DoriLocale.primaryLocale = localeFromStringDict[primaryLocale] ?? .jp
                 })
             }
             HStack {
@@ -94,7 +94,7 @@ struct WelcomeView: View {
                     Text("Welcome.secondaryLocale")
                 })
                 .onChange(of: secondaryLocale, {
-                    _DoriAPI.secondaryLocale = localeFromStringDict[secondaryLocale] ?? .en
+                    DoriLocale.secondaryLocale = localeFromStringDict[secondaryLocale] ?? .en
                 })
             }
             Rectangle()
@@ -128,8 +128,8 @@ struct WelcomeView: View {
         }
         .padding()
         .onAppear {
-            primaryLocale = _DoriAPI.preferredLocale.rawValue
-            secondaryLocale = _DoriAPI.secondaryLocale.rawValue
+            primaryLocale = DoriLocale.primaryLocale.rawValue
+            secondaryLocale = DoriLocale.secondaryLocale.rawValue
         }
         .toolbar {
             ToolbarItem(placement: .confirmationAction, content: {

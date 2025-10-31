@@ -17,7 +17,7 @@ import SwiftUI
 import MarkdownUI
 
 struct CommunityView: View {
-    @State var posts: _DoriAPI.Posts.PagedPosts?
+    @State var posts: PagedPosts?
     @State var infoIsAvailable = true
     @State var pageOffset = 0
     @State var isLoadingMore = false
@@ -104,7 +104,7 @@ struct CommunityView: View {
 }
 
 private struct PostSectionView: View {
-    var post: _DoriAPI.Posts.Post
+    var post: Post
     @State var commentSourceTitle: String?
     @State var tagsText: String = ""
     var body: some View {

@@ -20,15 +20,15 @@ import SwiftUI
 // MARK: EventInfoForHome
 struct EventInfoForHome: View {
     private var eventImageURL: URL
-    private var title: _DoriAPI.LocalizedData<String>
-    private var startAt: _DoriAPI.LocalizedData<Date>
-    private var endAt: _DoriAPI.LocalizedData<Date>
-    private var locale: _DoriAPI.Locale?
+    private var title: LocalizedData<String>
+    private var startAt: LocalizedData<Date>
+    private var endAt: LocalizedData<Date>
+    private var locale: DoriLocale?
     private var showsCountdown: Bool
     
     //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 24)
-    init(_ event: PreviewEvent, inLocale locale: _DoriAPI.Locale?, showsCountdown: Bool = false) {
-        self.eventImageURL = event.bannerImageURL(in: locale ?? _DoriAPI.preferredLocale)!
+    init(_ event: PreviewEvent, inLocale locale: DoriLocale?, showsCountdown: Bool = false) {
+        self.eventImageURL = event.bannerImageURL(in: locale ?? DoriLocale.primaryLocale)!
         self.title = event.eventName
         self.startAt = event.startAt
         self.endAt = event.endAt
@@ -36,8 +36,8 @@ struct EventInfoForHome: View {
         self.showsCountdown = showsCountdown
     }
     //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 24)
-    init(_ event: Event, inLocale locale: _DoriAPI.Locale?, showsCountdown: Bool = false) {
-        self.eventImageURL = event.bannerImageURL(in: locale ?? _DoriAPI.preferredLocale)!
+    init(_ event: Event, inLocale locale: DoriLocale?, showsCountdown: Bool = false) {
+        self.eventImageURL = event.bannerImageURL(in: locale ?? DoriLocale.primaryLocale)!
         self.title = event.eventName
         self.startAt = event.startAt
         self.endAt = event.endAt

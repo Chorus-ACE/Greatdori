@@ -115,7 +115,7 @@ struct DebugOfflineAssetView: View {
                     Button(action: {
                         Task {
                             do {
-                                try await DoriOfflineAsset.shared.downloadResource(of: .main, in: _DoriAPI.preferredLocale) { percentage, finished, total in
+                                try await DoriOfflineAsset.shared.downloadResource(of: .main, in: DoriLocale.primaryLocale) { percentage, finished, total in
                                     print("\(percentage * 100)%, \(finished) / \(total)")
                                 }
                             } catch {
@@ -128,7 +128,7 @@ struct DebugOfflineAssetView: View {
                     Button(action: {
                         Task {
                             do {
-                                try await DoriOfflineAsset.shared.downloadResource(of: .basic, in: _DoriAPI.preferredLocale) { percentage, finished, total in
+                                try await DoriOfflineAsset.shared.downloadResource(of: .basic, in: DoriLocale.primaryLocale) { percentage, finished, total in
                                     print("\(percentage * 100)%, \(finished) / \(total)")
                                 }
                             } catch {
@@ -144,7 +144,7 @@ struct DebugOfflineAssetView: View {
                         Button(action: {
                             Task {
                                 do {
-                                    updateCheckerResult = try await DoriOfflineAsset.shared.isUpdateAvailable(in: _DoriAPI.preferredLocale, of: .basic)
+                                    updateCheckerResult = try await DoriOfflineAsset.shared.isUpdateAvailable(in: DoriLocale.primaryLocale, of: .basic)
                                 } catch {
                                     print(error.localizedDescription)
                                 }
@@ -155,7 +155,7 @@ struct DebugOfflineAssetView: View {
                         Button(action: {
                             Task {
                                 do {
-                                    try await DoriOfflineAsset.shared.updateResource(of: .basic, in: _DoriAPI.preferredLocale) { percentage, finished, total in
+                                    try await DoriOfflineAsset.shared.updateResource(of: .basic, in: DoriLocale.primaryLocale) { percentage, finished, total in
                                         print("\(percentage * 100)%, \(finished) / \(total)")
                                     }
                                 } catch {
@@ -231,7 +231,7 @@ struct DebugOfflineAssetView: View {
         .formStyle(.grouped)
         .task {
             await withOfflineAsset {
-                testCard = await _DoriAPI.Cards.detail(of: 2125)
+                testCard = await Card(id: 2125)
             }
         }
         #else
@@ -339,7 +339,7 @@ struct DebugFilterExperimentView: View {
                             Text(verbatim: "Songs List Item: \(songListFiltered.count)/\(songList.count)")
                             ForEach(songListFiltered) { element in
                                 Text(verbatim: "#\(element.id) - \(element.musicTitle.jp ?? "nil")")
-                                ForEach(_DoriAPI.Locale.allCases, id: \.self) { item in
+                                ForEach(DoriLocale.allCases, id: \.self) { item in
                                     if let closedAt = element.closedAt.forLocale(item), closedAt < Calendar.current.date(from: DateComponents(year: 2090, month: 1, day: 1))! {
                                         Text(verbatim: "[\(item.rawValue.uppercased())] \(closedAt)")
                                             .foregroundStyle(.red)

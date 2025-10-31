@@ -20,7 +20,7 @@ import SwiftUI
 // MARK: DetailsGachasSection
 struct DetailsGachasSection: View {
     var gachas: [PreviewGacha]?
-    var sources: _DoriAPI.LocalizedData<Set<ExtendedCard.Source>>?
+    var sources: LocalizedData<Set<ExtendedCard.Source>>?
     var applyLocaleFilter: Bool = false
     @State var locale: DoriLocale = DoriLocale.primaryLocale
     @State var gachasFromList: [PreviewGacha] = []
@@ -35,7 +35,7 @@ struct DetailsGachasSection: View {
         self.applyLocaleFilter = applyLocaleFilter
         self.sourcePreference = 0
     }
-    init(sources: _DoriAPI.LocalizedData<Set<ExtendedCard.Source>>) {
+    init(sources: LocalizedData<Set<ExtendedCard.Source>>) {
         self.gachas = nil
         self.sources = sources
         self.applyLocaleFilter = true

@@ -22,16 +22,16 @@ struct CardPreviewImage: View {
     private var cardID: Int
     private var thumbNormalImageURL: URL
     private var thumbTrainedImageURL: URL?
-    private var cardType: _DoriAPI.Cards.CardType
-    private var attribute: _DoriAPI.Attribute
+    private var cardType: CardType
+    private var attribute: Attribute
     private var rarity: Int
     private var bandIconImageURL: URL?
     private var showTrainedVersion: Bool = false
     private var sideLength: CGFloat = 72
     private var showNavigationHints: Bool
-    private var cardTitle: _DoriAPI.LocalizedData<String>
+    private var cardTitle: LocalizedData<String>
     private var characterID: Int
-    @State var cardCharacterName: _DoriAPI.LocalizedData<String>?
+    @State var cardCharacterName: LocalizedData<String>?
     //    @State var isCardInfoAvailable = false
     //    @State var cardNavigationDestinationID: Int?
     @State var showCardDetailView = false

@@ -82,19 +82,19 @@ struct NewsView: View {
             }
             await withTaskGroup { group in
                 group.addTask {
-                    let events = await _DoriAPI.Events.all()
+                    let events = await Event.all()
                     await MainActor.run {
                         allEvents = events
                     }
                 }
                 group.addTask {
-                    let gacha = await _DoriAPI.Gachas.all()
+                    let gacha = await Gacha.all()
                     await MainActor.run {
                         allGacha = gacha
                     }
                 }
                 group.addTask {
-                    let songs = await _DoriAPI.Songs.all()
+                    let songs = await Song.all()
                     await MainActor.run {
                         allSongs = songs
                     }
@@ -104,7 +104,7 @@ struct NewsView: View {
         .onChange(of: filter) {
             Task {
                 newsList = nil
-                DoriCache.withCache(id: "News_\(filter)", trait: .realTime) {
+                withDoriCache(id: "News_\(filter)", trait: .realTime) {
                     await _DoriFrontend.News.list(filter: filter)
                 } .onUpdate {
                     newsList = $0

@@ -339,7 +339,7 @@ struct EventTrackerView: View {
                                                     ForEach(Array(topData.prefix(10).enumerated()), id: \.element.uid) { index, data in
                                                         HStack {
                                                             if 1...3 ~= index + 1 {
-                                                                Image("tier_\(_DoriAPI.preferredLocale.rawValue)_\(index + 1)")
+                                                                Image("tier_\(DoriLocale.primaryLocale.rawValue)_\(index + 1)")
                                                                     .resizable()
                                                                     .scaledToFit()
                                                                     .frame(width: 40)

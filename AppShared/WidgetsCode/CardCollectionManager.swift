@@ -129,7 +129,7 @@ final class CardCollectionManager: @unchecked Sendable, ObservableObject {
     struct Card: Identifiable, Codable, Hashable {
         var id: Int
         var isTrained: Bool
-        var localizedName: _DoriAPI.LocalizedData<String>?
+        var localizedName: LocalizedData<String>?
         var file: File
         
         enum File: Codable, Hashable {
