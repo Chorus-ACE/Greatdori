@@ -153,6 +153,35 @@ struct CustomGroupBox<Content: View>: View {
         }
     }
 }
+
+struct CustomGroupBoxFloating<Content: View>: View {
+    let content: () -> Content
+    var body: some View {
+        self.content()
+            .padding()
+            .background {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color(.floatingCard))
+                    .shadow(color: .black.opacity(0.1), radius: 4, y: 4)
+                    .shadow(color: .black.opacity(0.1), radius: 16, y: 4)
+                    .overlay {
+                        LinearGradient(
+                            colors: [
+                                Color(.floatingCardTopBorder),
+                                Color(.floatingCard)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .mask {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(.clear)
+                                .stroke(.black, style: .init(lineWidth: 1))
+                        }
+                    }
+            }
+    }
+}
 extension EnvironmentValues {
     @Entry fileprivate var _groupBoxStrokeLineWidth: CGFloat = 0
 }

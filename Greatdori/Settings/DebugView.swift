@@ -572,7 +572,8 @@ struct DebugPlaygroundView: View {
     var body: some View {
         ZStack {
             Color.green
-            if #available(iOS 26.0, macOS 26.0, *) {
+            if #available(macOS 26.0, *) {
+                #if os(macOS)
                 Menu(content: {
                     Section {
                         Button(action: {
@@ -587,6 +588,7 @@ struct DebugPlaygroundView: View {
                 .menuIndicator(.hidden)
                 .menuStyle(.borderedButton)
                 .buttonStyle(.glassProminent)
+                #endif
             }
         }
         .onChange(of: valueOne, valueTwo, initial: true) {

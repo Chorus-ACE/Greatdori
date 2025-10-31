@@ -689,11 +689,13 @@ struct InteractiveStoryView: View {
         }
     }
     
+    #if os(macOS)
     func updateTitleBar(for window: NSWindow) {
         let isFullscreen = window.styleMask.contains(.fullScreen)
         window.titleVisibility = isFullscreen ? .hidden : .visible
         window.titlebarAppearsTransparent = isFullscreen
     }
+    #endif
 }
 
 @safe
