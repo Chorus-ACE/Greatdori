@@ -177,7 +177,7 @@ private struct PostSectionView: View {
                 }
             }
         }
-        .frame(maxWidth: 600)
+        .frame(maxWidth: infoContentMaxWidth)
         .textSelection(.enabled)
         .onAppear {
             if commentSourceTitle == nil {

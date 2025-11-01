@@ -143,11 +143,11 @@ struct SongDetailOverviewView: View {
                         //                }
                         //            }
                         //        }
-                        //        .frame(maxWidth: 600)
+                        //        .frame(maxWidth: infoContentMaxWidth)
                     }
                 }
             }
         }
-        .frame(maxWidth: 600)
+        .frame(maxWidth: infoContentMaxWidth)
     }
 }

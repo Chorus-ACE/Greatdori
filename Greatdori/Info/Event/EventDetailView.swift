@@ -340,7 +340,7 @@ struct EventDetailOverviewView: View {
                                     Text("Event.card")
                                         .bold()
                                 }, value: {
-                                    WrappingHStack(hSpacing: 0, contentWidth: cardThumbnailSideLength) {
+                                    WrappingHStack(columnSpacing: 3, contentWidth: cardThumbnailSideLength) {
                                         ForEach(cardsArray) { card in
                                             NavigationLink(destination: {
                                                 CardDetailView(id: card.id)
@@ -389,7 +389,7 @@ struct EventDetailOverviewView: View {
                 }
             }
         }
-        .frame(maxWidth: 600)
+        .frame(maxWidth: infoContentMaxWidth)
         .onAppear {
             eventCharacterPercentageDict = [:]
             rewardsArray = []

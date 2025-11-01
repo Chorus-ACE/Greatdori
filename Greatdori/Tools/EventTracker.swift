@@ -119,7 +119,7 @@ struct EventTrackerView: View {
                             }
                         }
                     }
-                    .frame(maxWidth: 600)
+                    .frame(maxWidth: infoContentMaxWidth)
 
                     DetailSectionsSpacer(height: 15)
                     
@@ -182,7 +182,7 @@ struct EventTrackerView: View {
                                             }
                                         }
                                     }
-                                    .frame(maxWidth: 600)
+                                    .frame(maxWidth: infoContentMaxWidth)
                                     if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
                                         CustomGroupBox(cornerRadius: 20) {
                                             LazyVStack {
@@ -258,7 +258,7 @@ struct EventTrackerView: View {
                                                 }
                                             }
                                         }
-                                        .frame(maxWidth: 600)
+                                        .frame(maxWidth: infoContentMaxWidth)
                                     }
                                 case .top(let topData):
                                     CustomGroupBox(cornerRadius: 20) {
@@ -294,7 +294,7 @@ struct EventTrackerView: View {
                                             }
                                         }
                                     }
-                                    .frame(maxWidth: 600)
+                                    .frame(maxWidth: infoContentMaxWidth)
                                     if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
                                         CustomGroupBox(cornerRadius: 20) {
                                             LazyVStack {
@@ -332,7 +332,7 @@ struct EventTrackerView: View {
                                                 }
                                             }
                                         }
-                                        .frame(maxWidth: 600)
+                                        .frame(maxWidth: infoContentMaxWidth)
                                         CustomGroupBox(cornerRadius: 20) {
                                             HStack {
                                                 VStack(alignment: .leading) {
@@ -368,7 +368,7 @@ struct EventTrackerView: View {
                                                 Spacer()
                                             }
                                         }
-                                        .frame(maxWidth: 600)
+                                        .frame(maxWidth: infoContentMaxWidth)
                                     }
                                 }
                             } else {
@@ -384,7 +384,7 @@ struct EventTrackerView: View {
                                         Spacer()
                                     }
                                 }
-                                .frame(maxWidth: 600)
+                                .frame(maxWidth: infoContentMaxWidth)
                             }
                         }, header: {
                             HStack {
@@ -393,7 +393,7 @@ struct EventTrackerView: View {
                                     .bold()
                                 Spacer()
                             }
-                            .frame(maxWidth: 615)
+                            .frame(maxWidth: infoContentMaxWidth)
                         })
                     }
                 }

@@ -25,7 +25,7 @@ struct LoginCampaignSearchView: View {
                 LazyVStack {
                     content
                 }
-                .frame(maxWidth: 600)
+                .frame(maxWidth: infoContentMaxWidth)
             } else {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: gridLayoutItemWidth, maximum: gridLayoutItemWidth))]) {
                     content

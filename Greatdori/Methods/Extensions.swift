@@ -14,15 +14,16 @@
 
 // (In Alphabetical Order)
 
-import Vision
-import System
+
+import BackgroundAssets
+import CoreImage.CIFilterBuiltins
 import DoriKit
 import Network
-import SwiftUI
-import BackgroundAssets
 import SDWebImageSwiftUI
+import SwiftUI
+import System
 import UniformTypeIdentifiers
-import CoreImage.CIFilterBuiltins
+import Vision
 
 // MARK: Array
 extension Array {
@@ -30,6 +31,14 @@ extension Array {
         stride(from: 0, to: count, by: size).map {
             Array(self[$0..<Swift.min($0 + size, count)])
         }
+    }
+}
+
+// MARK: Bool
+extension Bool {
+    @_transparent
+    func reversed() -> Bool {
+        !self
     }
 }
 
@@ -223,6 +232,27 @@ extension LocalizedStringResource: Hashable {
 // MARK: Optional
 extension Optional {
     var id: Self { self }
+}
+
+// MARK: Picker
+extension Picker {
+    public init(selection: Binding<SelectionValue>, @ViewBuilder content: () -> Content, @ViewBuilder label: () -> Label, @ViewBuilder optionalCurrentValueLabel: () -> some View) {
+        if #available(iOS 18.0, macOS 15.0, *) {
+            self.init(selection: selection, content: {
+                content()
+            }, label: {
+                label()
+            }, currentValueLabel: {
+                optionalCurrentValueLabel()
+            })
+        } else {
+            self.init(selection: selection, content: {
+                content()
+            }, label: {
+                label()
+            })
+        }
+    }
 }
 
 // MARK: View

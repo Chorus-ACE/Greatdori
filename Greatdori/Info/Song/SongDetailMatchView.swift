@@ -82,7 +82,7 @@ struct SongDetailMatchView: View {
                     .frame(maxWidth: 615)
                 }
             }
-            .frame(maxWidth: 600)
+            .frame(maxWidth: infoContentMaxWidth)
         }
     }
 }

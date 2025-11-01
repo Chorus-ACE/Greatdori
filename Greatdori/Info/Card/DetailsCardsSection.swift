@@ -23,7 +23,7 @@ struct DetailsCardsSection: View {
     var cards: [PreviewCard]
     var body: some View {
         DetailSectionBase(elements: cards.sorted {
-            compare($0.releasedAt.forLocale(.jp)?.corrected(), $1.releasedAt.forLocale(.jp)?.corrected())
+            compare($0.releasedAt.forLocale(.jp)?.corrected(), $1.releasedAt.forLocale(.jp)?.corrected(), direction: .descending)
         }) { item in
             NavigationLink(destination: {
                 CardDetailView(id: item.id)

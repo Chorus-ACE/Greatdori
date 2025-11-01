@@ -26,7 +26,7 @@ struct MultiCardSelector: View {
                 LazyVStack {
                     content
                 }
-                .frame(maxWidth: 600)
+                .frame(maxWidth: infoContentMaxWidth)
             } else {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: layout == 2 ? gridLayoutItemWidth : galleryLayoutItemMinimumWidth, maximum: layout == 2 ? gridLayoutItemWidth : galleryLayoutItemMaximumWidth))]) {
                     content

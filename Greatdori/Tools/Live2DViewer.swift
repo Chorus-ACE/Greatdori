@@ -122,7 +122,7 @@ struct Live2DViewerView: View {
                     }
                 }
                 .padding()
-                .frame(maxWidth: 600)
+                .frame(maxWidth: infoContentMaxWidth)
                 Spacer(minLength: 0)
             }
         }

@@ -25,7 +25,7 @@ struct CostumeSearchView: View {
                 LazyVStack {
                     content
                 }
-                .frame(maxWidth: 600)
+                .frame(maxWidth: infoContentMaxWidth)
             } else {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: gridLayoutItemWidth, maximum: gridLayoutItemWidth))]) {
                     content
@@ -90,7 +90,7 @@ struct CostumeSearchView: View {
                                                     })
                                                 }
                                             }
-                                            .frame(maxWidth: 600)
+                                            .frame(maxWidth: infoContentMaxWidth)
                                         } else {
                                             LazyVGrid(columns: [GridItem(.adaptive(minimum: gridLayoutItemWidth, maximum: gridLayoutItemWidth))]) {
                                                 ForEach(resultCostumes, id: \.self) { costume in

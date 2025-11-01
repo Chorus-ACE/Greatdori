@@ -115,7 +115,7 @@ struct SongDetailGameplayView: View {
                         }
                     }
                 }
-                .frame(maxWidth: 600)
+                .frame(maxWidth: infoContentMaxWidth)
             }, header: {
                 HStack {
                     Text("Song.gameplay")

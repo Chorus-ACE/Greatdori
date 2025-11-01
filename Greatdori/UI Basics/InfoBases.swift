@@ -612,7 +612,7 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
                         DetailUnavailableView(title: unavailablePrompt, symbol: unavailableSystemImage)
                     }
                 }
-                .frame(maxWidth: 600)
+                .frame(maxWidth: infoContentMaxWidth)
             } header: {
                 HStack {
                     Text(Element.pluralName)
@@ -679,7 +679,7 @@ struct DetailInfoBase<Head: View>: View {
                 }
             }
         }
-        .frame(maxWidth: 600)
+        .frame(maxWidth: infoContentMaxWidth)
     }
 }
 

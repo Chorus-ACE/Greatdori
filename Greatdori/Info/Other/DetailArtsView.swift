@@ -186,7 +186,7 @@ struct DetailArtsSection: View {
                         DetailUnavailableView(title: "Details.arts.unavailable", symbol: "photo.on.rectangle.angled")
                     }
                 }
-                .frame(maxWidth: 600)
+                .frame(maxWidth: infoContentMaxWidth)
             }, header: {
                 HStack {
                     Text("Details.arts")

@@ -25,7 +25,7 @@ struct DetailsCostumesSection: View {
                 CostumeDetailView(id: item.id)
             }, label: {
                 CostumeInfo(item)
-                    .frame(maxWidth: 600)
+                    .frame(maxWidth: infoContentMaxWidth)
             })
         }
         .contentUnavailablePrompt("Details.costumes.unavailable")

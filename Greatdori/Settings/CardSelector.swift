@@ -65,7 +65,7 @@ struct CollectionEditorView: View {
                                                     .highlightKeyword($searchedText)
                                             }
                                         }
-                                        .frame(maxWidth: 600)
+                                        .frame(maxWidth: infoContentMaxWidth)
                                     }
                                     .padding(.horizontal)
                                     Spacer(minLength: 0)

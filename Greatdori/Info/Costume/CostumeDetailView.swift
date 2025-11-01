@@ -141,6 +141,6 @@ struct CostumeDetailOverviewView: View {
                 }
             }
         }
-        .frame(maxWidth: 600)
+        .frame(maxWidth: infoContentMaxWidth)
     }
 }

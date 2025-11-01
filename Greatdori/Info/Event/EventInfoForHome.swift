@@ -48,24 +48,29 @@ struct EventInfoForHome: View {
     
     var body: some View {
         VStack {
-            WebImage(url: eventImageURL) { image in
-                image
-                    .resizable()
-                    .antialiased(true)
-                    .aspectRatio(3.0, contentMode: .fit)
-            } placeholder: {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(getPlaceholderColor())
-                    .aspectRatio(3.0, contentMode: .fit)
+            HStack {
+                Spacer(minLength: 0)
+                WebImage(url: eventImageURL) { image in
+                    image
+                        .resizable()
+                        .antialiased(true)
+                        .aspectRatio(3.0, contentMode: .fit)
+                } placeholder: {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(getPlaceholderColor())
+                        .aspectRatio(3.0, contentMode: .fit)
+                }
+                .interpolation(.high)
+                .upscale { image in
+                    image
+                        .resizable()
+                        .antialiased(true)
+                        .aspectRatio(3.0, contentMode: .fit)
+                }
+                .frame(maxWidth: 500)
+                .cornerRadius(10)
+                Spacer(minLength: 0)
             }
-            .interpolation(.high)
-            .upscale { image in
-                image
-                    .resizable()
-                    .antialiased(true)
-                    .aspectRatio(3.0, contentMode: .fit)
-            }
-            .cornerRadius(10)
             
             if showsCountdown { // Accually Title & Countdown
                 Text(locale != nil ? (title.forLocale(locale!) ?? title.jp ?? "") : (title.forPreferredLocale() ?? ""))

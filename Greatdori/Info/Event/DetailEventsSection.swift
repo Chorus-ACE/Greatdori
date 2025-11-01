@@ -52,14 +52,14 @@ struct DetailsEventsSection: View {
                     EventDetailView(id: item.id)
                 }, label: {
                     EventInfo(item, showDetails: true)
-                        .frame(maxWidth: 600)
+                        .frame(maxWidth: infoContentMaxWidth)
                 })
             } else {
                 NavigationLink(destination: {
                     EventDetailView(id: item.id)
                 }, label: {
                     EventInfo(item, subtitle: (pointsDict[item] == nil ? "Details.source.release-during-event" :"Details.events.source.rewarded-at-points.\(pointsDict[item]!)"), showDetails: true)
-                        .frame(maxWidth: 600)
+                        .frame(maxWidth: infoContentMaxWidth)
                 })
             }
         }

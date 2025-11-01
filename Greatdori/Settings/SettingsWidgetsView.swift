@@ -458,7 +458,7 @@ struct SettingsWidgetsCollectionDetailsView: View {
                                 }
                             }
                         }
-                        .frame(maxWidth: 600)
+                        .frame(maxWidth: infoContentMaxWidth)
                         
                         DetailSectionsSpacer()
                         if !collection.isBuiltIn && !isMACOS {
@@ -495,7 +495,7 @@ struct SettingsWidgetsCollectionDetailsView: View {
                             }
                         }
                     }
-                    .frame(maxWidth: 600)
+                    .frame(maxWidth: infoContentMaxWidth)
                     .padding()
                     Spacer(minLength: 0)
                 }

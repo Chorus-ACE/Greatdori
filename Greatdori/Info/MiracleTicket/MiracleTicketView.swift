@@ -34,35 +34,22 @@ struct MiracleTicketView: View {
                                     ListItemView {
                                         Text("Miracle-ticket.ticket")
                                     } value: {
-                                        if #available(iOS 18.0, macOS 15.0, *) {
-                                            Picker(selection: $selectedTicket, content: {
-                                                ForEach(tickets) { ticket in
-                                                    if let name = ticket.ticket.name.forLocale(locale) {
-                                                        Text(name).tag(ticket)
-                                                    }
+                                        Picker(selection: $selectedTicket, content: {
+                                            ForEach(tickets) { ticket in
+                                                if let name = ticket.ticket.name.forLocale(locale) {
+                                                    Text(name).tag(ticket)
                                                 }
-                                            }, label: {
-                                                EmptyView()
-                                            }, currentValueLabel: {
-                                                if let selectedTicket {
-                                                    Text(selectedTicket.ticket.name.forLocale(locale) ?? "")
-                                                } else {
-                                                    Text("Miracle-ticket.ticket.select")
-                                                }
-                                            })
-                                            .labelsHidden()
-                                        } else {
-                                            Picker(selection: $selectedTicket, content: {
-                                                ForEach(tickets) { ticket in
-                                                    if let name = ticket.ticket.name.forLocale(locale) {
-                                                        Text(name).tag(ticket)
-                                                    }
-                                                }
-                                            }, label: {
-                                                EmptyView()
-                                            })
-                                            .labelsHidden()
-                                        }
+                                            }
+                                        }, label: {
+                                            EmptyView()
+                                        }, optionalCurrentValueLabel: {
+                                            if let selectedTicket {
+                                                Text(selectedTicket.ticket.name.forLocale(locale) ?? "")
+                                            } else {
+                                                Text("Miracle-ticket.ticket.select")
+                                            }
+                                        })
+                                        .labelsHidden()
                                     }
                                     Divider()
                                     ListItemView {
@@ -150,7 +137,7 @@ struct MiracleTicketView: View {
                             }
                         }
                         .padding()
-                        .frame(maxWidth: 600)
+                        .frame(maxWidth: infoContentMaxWidth)
                         Spacer(minLength: 0)
                     }
                 }

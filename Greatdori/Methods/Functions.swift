@@ -38,18 +38,23 @@ func bindingCast<T, U>(_ binding: Binding<T>, to type: U.Type) -> Binding<U>? {
 }
 
 // MARK: compare
-func compare<T: Comparable>(_ lhs: T?, _ rhs: T?, ascending: Bool = true) -> Bool {
+func compare<T: Comparable>(_ lhs: T?, _ rhs: T?, direction: SortDirection, putNilAtFirst: Bool = false) -> Bool {
     if lhs == nil {
-        return false
+        return putNilAtFirst
     } else if rhs == nil {
-        return true
+        return !putNilAtFirst
     } else {
-        if ascending {
-            return lhs! > rhs!
-        } else {
+        if direction == .ascending {
             return lhs! < rhs!
+        } else {
+            return lhs! > rhs!
         }
     }
+}
+
+enum SortDirection: CaseIterable {
+    case ascending
+    case descending
 }
 
 /* NO USAGE
@@ -79,6 +84,15 @@ func formattedSongLength(_ time: Double) -> String {
     return String(format: "%d:%04.1f", minutes, seconds) // 1:42.6
 }
 
+// MARK: getAttributedString
+func getAttributedString(_ source: String, fontSize: Font.TextStyle = .body, fontWeight: Font.Weight = .regular, foregroundColor: Color = .primary) -> AttributedString {
+    var attrString = AttributedString()
+    attrString = AttributedString(source)
+    attrString.font = .system(fontSize, weight: fontWeight)
+    attrString.foregroundColor = foregroundColor
+    return attrString
+}
+
 // MARK: getBirthdayTimeZone
 func getBirthdayTimeZone(from input: BirthdayTimeZone? = nil) -> TimeZone {
     switch (input != nil ? input! : BirthdayTimeZone(rawValue: UserDefaults.standard.string(forKey: "BirthdayTimeZone") ?? "JST"))! {
@@ -93,23 +107,6 @@ func getBirthdayTimeZone(from input: BirthdayTimeZone? = nil) -> TimeZone {
     case .PT:
         return TimeZone(identifier: "America/Los_Angeles")!
     }
-}
-
-// MARK: getCharactersRelatingBand [?]
-//func getCharactersRelatingBand(_ characterID: Int) -> Int {
-//    return DoriCache.preCache.categorizedCharacters.first { (_, characters) in
-//        characters.contains(where: { $0.id == characterID })
-//    }?.key?.id ?? 0
-//}
-
-
-// MARK: getAttributedString
-func getAttributedString(_ source: String, fontSize: Font.TextStyle = .body, fontWeight: Font.Weight = .regular, foregroundColor: Color = .primary) -> AttributedString {
-    var attrString = AttributedString()
-    attrString = AttributedString(source)
-    attrString.font = .system(fontSize, weight: fontWeight)
-    attrString.foregroundColor = foregroundColor
-    return attrString
 }
 
 // MARK: getImageSubject
@@ -156,8 +153,13 @@ func getImageSubject(_ data: Data) async -> Data? {
     return nil
 }
 
+// MARK: getLocalizedColon
+func getLocalizedColon(forLocale locale: DoriLocale) -> String {
+    return locale == .en ? ": " : "："
+}
 
 // MARK: getPlaceholderColor
+@inline(__always)
 func getPlaceholderColor() -> Color {
 #if os(iOS)
     return Color(UIColor.placeholderText)

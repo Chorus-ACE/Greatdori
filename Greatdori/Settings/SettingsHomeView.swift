@@ -83,30 +83,28 @@ struct SettingsHomeView: View {
         let showCurrentDayPickerDescription: [Int: LocalizedStringKey] = [3: "Home.home.show-current-date.selection.always.description", 2: "Home.home.show-current-date.selection.during-birthday.description", 1: "Home.home.show-current-date.selection.automatic.description", 0: "Home.home.show-current-date.selection.never.description"]
         
         var body: some View {
-            if #available(iOS 18.0, macOS 15.0, *) {
-                Picker(selection: $showBirthdayDate, content: {
-                    ForEach([3, 2, 1, 0], id: \.self) { index in
-                        VStack(alignment: .leading) {
-                            Text(showCurrentDayPickerLabel[index]!)
-                            Text(showCurrentDayPickerDescription[index]!)
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
-                        .tag(index)
+            Picker(selection: $showBirthdayDate, content: {
+                ForEach([3, 2, 1, 0], id: \.self) { index in
+                    VStack(alignment: .leading) {
+                        Text(showCurrentDayPickerLabel[index]!)
+                        Text(showCurrentDayPickerDescription[index]!)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
-                }, label: {
-                    Text("Home.home.show-current-date")
-                }, currentValueLabel: {
-                    Text(showCurrentDayPickerLabel[showBirthdayDate]!)
-                        .multilineTextAlignment(.trailing)
-                })
-                .wrapIf(!isMACOS, in: { content in
+                    .tag(index)
+                }
+            }, label: {
+                Text("Home.home.show-current-date")
+            }, optionalCurrentValueLabel: {
+                Text(showCurrentDayPickerLabel[showBirthdayDate]!)
+                    .multilineTextAlignment(.trailing)
+            })
+            .wrapIf(!isMACOS, in: { content in
 #if os(iOS)
-                    content
-                        .pickerStyle(.navigationLink)
+                content
+                    .pickerStyle(.navigationLink)
 #endif
-                })
-            }
+            })
         }
     }
 }

@@ -28,6 +28,7 @@ let bannerSpacing: CGFloat = isMACOS ? 10 : 15
 let imageButtonSize: CGFloat = isMACOS ? 30 : 35
 let cardThumbnailSideLength: CGFloat = isMACOS ? 64 : 72
 let filterItemHeight: CGFloat = isMACOS ? 25 : 35
+let infoContentMaxWidth: CGFloat = 600
 
 // MARK: Banner
 struct Banner<Content: View>: View {
@@ -1231,21 +1232,21 @@ struct ListItemWithWrappingView<Content1: View, Content2: View, Content3: View, 
 
 struct WrappingHStack<Content: View>: View {
     var alignment: HorizontalAlignment
-    var vSpacing: CGFloat?
-    var hSpacing: CGFloat?
+    var rowSpacing: CGFloat?
+    var columnSpacing: CGFloat?
     var contentWidth: CGFloat
     var makeContent: () -> Content
     
     init(
         alignment: HorizontalAlignment = .center,
-        vSpacing: CGFloat? = nil,
-        hSpacing: CGFloat? = nil,
+        rowSpacing: CGFloat? = nil,
+        columnSpacing: CGFloat? = nil,
         contentWidth: CGFloat,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.alignment = alignment
-        self.vSpacing = vSpacing
-        self.hSpacing = hSpacing
+        self.rowSpacing = rowSpacing
+        self.columnSpacing = columnSpacing
         self.contentWidth = contentWidth
         self.makeContent = content
     }
@@ -1254,9 +1255,9 @@ struct WrappingHStack<Content: View>: View {
     
     var body: some View {
         LazyVGrid(
-            columns: [.init(.adaptive(minimum: contentWidth), spacing: hSpacing)],
+            columns: [.init(.adaptive(minimum: contentWidth), spacing: columnSpacing)],
             alignment: alignment,
-            spacing: vSpacing
+            spacing: rowSpacing
         ) {
             makeContent()
                 .environment(\.layoutDirection, layoutDirection == .leftToRight ? .leftToRight : .rightToLeft)

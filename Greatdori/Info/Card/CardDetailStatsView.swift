@@ -215,7 +215,7 @@ struct CardDetailStatsView: View {
                         }
                     }
                 }
-                .frame(maxWidth: 600)
+                .frame(maxWidth: infoContentMaxWidth)
                 .onAppear {
                     level = Float(card.stat.maximumLevel ?? 60)
                     episodes = Float(card.episodes.count)
