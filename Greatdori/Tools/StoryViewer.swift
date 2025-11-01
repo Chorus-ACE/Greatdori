@@ -89,7 +89,7 @@ struct StoryViewerView: View {
                                     Text("Tools.story-viewer.story")
                                         .bold()
                                 }, value: {
-                                    let availableBandStories: [_DoriAPI.Misc.BandStory] = allBandStories.filter({ $0.bandID == selectedBand?.id }).sorted { compare($0.replaceBandStory6AsNil()?.publishedAt.forLocale(locale), $1.replaceBandStory6AsNil()?.publishedAt.forLocale(locale), direction: .ascending, putNilAtFirst: true) }
+                                    let availableBandStories: [_DoriAPI.Misc.BandStory] = allBandStories.filter({ $0.bandID == selectedBand?.id }).sorted { $0.chapterNumber < $1.chapterNumber }
                                     Picker(selection: $selectedBandStory, content: {
                                         ForEach(availableBandStories, id: \.self) { item in
                                             Text(verbatim: "\(item.mainTitle.forLocale(locale) ?? "")\(getLocalizedColon(forLocale: locale))\(item.subTitle.forLocale(locale) ?? "")")
@@ -273,17 +273,6 @@ struct StoryViewerView: View {
         default:
             return true
         }
-    }
-}
-
-extension _DoriAPI.Misc.BandStory {
-    // Poppin'Party's Story 0 is released after Story 1.
-    // This is impossible to be handled only by sorting `releaseAt`.
-    // This extension is just super, super weird but works.
-    // --@ThreeManager785
-    @inline(__always)
-    func replaceBandStory6AsNil() -> Self? {
-        return self.id == 6 ? nil : self
     }
 }
 
