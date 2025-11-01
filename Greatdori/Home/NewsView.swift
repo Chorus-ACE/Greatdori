@@ -34,37 +34,48 @@ struct NewsView: View {
     var body: some View {
         Group {
             if let newsList {
-                List {
-                    ForEach(newsList, id: \.self) { newsItem in
-                        NavigationLink(destination: {
-                            switch newsItem.type {
-                            case .article:
-                                NewsDetailView(id: newsItem.relatedID, title: newsItem.title)
-                            case .event:
-                                EventDetailView(id: newsItem.relatedID)
-                            case .gacha:
-                                GachaDetailView(id: newsItem.relatedID)
-                            case .loginCampaign:
-                                LoginCampaignDetailView(id: newsItem.relatedID)
-                            case .song:
-                                SongDetailView(id: newsItem.relatedID)
-                            @unknown default:
-                                EmptyView()
+                ScrollView {
+                    HStack {
+                        Spacer(minLength: 0)
+                        LazyVStack {
+                            ForEach(newsList, id: \.self) { newsItem in
+                                NavigationLink(destination: {
+                                    switch newsItem.type {
+                                    case .article:
+                                        NewsDetailView(id: newsItem.relatedID, title: newsItem.title)
+                                    case .event:
+                                        EventDetailView(id: newsItem.relatedID)
+                                    case .gacha:
+                                        GachaDetailView(id: newsItem.relatedID)
+                                    case .loginCampaign:
+                                        LoginCampaignDetailView(id: newsItem.relatedID)
+                                    case .song:
+                                        SongDetailView(id: newsItem.relatedID)
+                                    @unknown default:
+                                        EmptyView()
+                                    }
+                                }, label: {
+                                    CustomGroupBox {
+                                        NewsPreview(allEvents: allEvents, allGacha: allGacha, allSongs: allSongs, news: newsItem, showLocale: {
+                                            if case .locale = filter { false } else { true }
+                                        }(), showDetails: true, showImages: true)
+                                    }
+                                })
+                                .buttonStyle(.plain)
                             }
-                        }, label: {
-                            NewsPreview(allEvents: allEvents, allGacha: allGacha, allSongs: allSongs, news: newsItem, showLocale: {
-                                if case .locale = filter { false } else { true }
-                            }(), showDetails: true, showImages: true)
-                        })
-                        //                        .navigationBarBackButtonHidden()
-                        //                        .navigationLinkIndicatorVisibility(.hidden)
+                        }
+                        .padding()
+                        .frame(maxWidth: 600)
+                        Spacer(minLength: 0)
                     }
                 }
-                
             } else {
-                ProgressView()
+                ExtendedConstraints {
+                    ProgressView()
+                }
             }
         }
+        .withSystemBackground()
         .navigationTitle("Home.news")
         .wrapIf(filter != nil && !isMACOS, in: { content in
             if #available(iOS 26.0, *) {

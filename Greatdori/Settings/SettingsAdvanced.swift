@@ -23,98 +23,112 @@ struct SettingsAdvancedView: View {
     @State var isInLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
     @State var thermalState = ProcessInfo.processInfo.thermalState
     var body: some View {
+        Group {
 #if os(iOS)
             List {
-                SettingsAdvancedBannersSection(isInLowPowerMode: $isInLowPowerMode, thermalState: $thermalState)
-                SettingsAdvancedImageSection(disablePowerConsumingFeatures: isInLowPowerMode || thermalState == .critical)
-            }
-            .navigationTitle("Settings.advanced")
-            .onReceive(ProcessInfo.processInfo.publisher(for: \.isLowPowerModeEnabled)) { lowPowerMode in
-                isInLowPowerMode = lowPowerMode
-            }
-            .onReceive(ProcessInfo.processInfo.publisher(for: \.thermalState)) { state in
-                thermalState = state
+                settingsAdvancedSections()
             }
 #else
             Group {
-                SettingsAdvancedBannersSection(isInLowPowerMode: $isInLowPowerMode, thermalState: $thermalState)
-                SettingsAdvancedImageSection(disablePowerConsumingFeatures: isInLowPowerMode || thermalState == .critical)
-            }
-            .navigationTitle("Settings.advanced")
-            .onReceive(ProcessInfo.processInfo.publisher(for: \.isLowPowerModeEnabled)) { lowPowerMode in
-                isInLowPowerMode = lowPowerMode
-            }
-            .onReceive(ProcessInfo.processInfo.publisher(for: \.thermalState)) { state in
-                thermalState = state
+                settingsAdvancedSections()
             }
 #endif
-    }
-    struct SettingsAdvancedBannersSection: View {
-        @Binding var isInLowPowerMode: Bool
-        @Binding var thermalState: ProcessInfo.ThermalState
-        var body: some View {
-            if isInLowPowerMode || thermalState == .critical {
-                Section(content: {
-                    if isInLowPowerMode {
-                        Label("Settings.advanced.banners.low-power", systemImage: "battery.25percent")
-                            .bold()
-                            .foregroundStyle(.yellow)
-                    }
-                    if thermalState == .critical {
-                        Label("Settings.advanced.banners.power-saving.high-temperature", systemImage: "thermometer.sun")
-                            .bold()
-                            .foregroundStyle(.yellow)
-                    }
-                }, footer: {
-                    Text("Settings.advanced.banners.disabling-features.description")
-                })
-            } else {
-                EmptyView()
-            }
+        }
+        .navigationTitle("Settings.advanced")
+        .onReceive(ProcessInfo.processInfo.publisher(for: \.isLowPowerModeEnabled)) { lowPowerMode in
+            isInLowPowerMode = lowPowerMode
+        }
+        .onReceive(ProcessInfo.processInfo.publisher(for: \.thermalState)) { state in
+            thermalState = state
         }
     }
     
-    struct SettingsAdvancedImageSection: View {
-        @AppStorage("Adv_UseImageUpscaler") var useImageUpscaler = false
-        @AppStorage("Adv_PreferSystemVisionModel") var preferSystemVisionModel = false
-        var disablePowerConsumingFeatures: Bool
-        var body: some View {
-            Section {
-                Toggle(isOn: $preferSystemVisionModel) {
-                    VStack(alignment: .leading) {
-                        Text("Settings.advanced.image.subject-prefer-system-model")
-                        Text("Settings.advanced.image.subject-prefer-system-model.description")
-                            .foregroundStyle(.secondary)
-                            .font(.footnote)
-                    }
+    @ViewBuilder
+    func settingsAdvancedSections() -> some View {
+        SettingsAdvancedBannersSection(isInLowPowerMode: $isInLowPowerMode, thermalState: $thermalState)
+        SettingsAdvancedImageSection(disablePowerConsumingFeatures: isInLowPowerMode || thermalState == .critical)
+        SettingsAdvancedUISection()
+    }
+}
+
+struct SettingsAdvancedBannersSection: View {
+    @Binding var isInLowPowerMode: Bool
+    @Binding var thermalState: ProcessInfo.ThermalState
+    var body: some View {
+        if isInLowPowerMode || thermalState == .critical {
+            Section(content: {
+                if isInLowPowerMode {
+                    Label("Settings.advanced.banners.low-power", systemImage: "battery.25percent")
+                        .bold()
+                        .foregroundStyle(.yellow)
                 }
-                if #available(iOS 26.0, macOS 26.0, *) {
-                    if !disablePowerConsumingFeatures {
-                        Toggle(isOn: $useImageUpscaler) {
-                            VStack(alignment: .leading) {
-                                Text("Settings.advanced.image.use-super-resolution")
-                                Text("Settings.advanced.image.use-super-resolution.description")
-                                    .foregroundStyle(.secondary)
-                                    .font(.footnote)
-                            }
-                        }
-                    } else {
-                        Toggle(isOn: .constant(false)) {
-                            VStack(alignment: .leading) {
-                                Text("Settings.advanced.image.use-super-resolution")
-                                Text("Settings.advanced.image.use-super-resolution.description")
-                                
-                                    .font(.footnote)
-                            }.foregroundStyle(.secondary)
-                        }
-                        .disabled(true)
-                    }
+                if thermalState == .critical {
+                    Label("Settings.advanced.banners.power-saving.high-temperature", systemImage: "thermometer.sun")
+                        .bold()
+                        .foregroundStyle(.yellow)
                 }
-            } header: {
-                Text("Settings.advanced.image")
-            }
-            
+            }, footer: {
+                Text("Settings.advanced.banners.disabling-features.description")
+            })
+        } else {
+            EmptyView()
         }
+    }
+}
+
+struct SettingsAdvancedImageSection: View {
+    @AppStorage("Adv_UseImageUpscaler") var useImageUpscaler = false
+    @AppStorage("Adv_PreferSystemVisionModel") var preferSystemVisionModel = false
+    var disablePowerConsumingFeatures: Bool
+    var body: some View {
+        Section {
+            Toggle(isOn: $preferSystemVisionModel) {
+                VStack(alignment: .leading) {
+                    Text("Settings.advanced.image.subject-prefer-system-model")
+                    Text("Settings.advanced.image.subject-prefer-system-model.description")
+                        .foregroundStyle(.secondary)
+                        .font(.footnote)
+                }
+            }
+            if #available(iOS 26.0, macOS 26.0, *) {
+                if !disablePowerConsumingFeatures {
+                    Toggle(isOn: $useImageUpscaler) {
+                        VStack(alignment: .leading) {
+                            Text("Settings.advanced.image.use-super-resolution")
+                            Text("Settings.advanced.image.use-super-resolution.description")
+                                .foregroundStyle(.secondary)
+                                .font(.footnote)
+                        }
+                    }
+                } else {
+                    Toggle(isOn: .constant(false)) {
+                        VStack(alignment: .leading) {
+                            Text("Settings.advanced.image.use-super-resolution")
+                            Text("Settings.advanced.image.use-super-resolution.description")
+                            
+                                .font(.footnote)
+                        }.foregroundStyle(.secondary)
+                    }
+                    .disabled(true)
+                }
+            }
+        } header: {
+            Text("Settings.advanced.image")
+        }
+        
+    }
+}
+
+struct SettingsAdvancedUISection: View {
+    @AppStorage("customGroupBoxVersion") var customGroupBoxVersion = 2
+    var body: some View {
+        Section(content: {
+            Toggle(isOn: .init { customGroupBoxVersion != 2 } set: { customGroupBoxVersion = $0 ? 1 : 2 }, label: {
+                Text("Settings.advanced.ui.legacy-custom-group-box")
+            })
+        }, header: {
+            Text("Settings.advanced.ui")
+        })
     }
 }
 

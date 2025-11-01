@@ -122,6 +122,7 @@ struct CustomGroupBox<Content: View>: View {
     var showGroupBox: Bool = true
     var strokeLineWidth: CGFloat = 0
     var useExtenedConstraints: Bool = false
+    @AppStorage("customGroupBoxVersion") var customGroupBoxVersion = 2
     @Environment(\._groupBoxStrokeLineWidth) var envStrokeLineWidth: CGFloat
     @Environment(\._suppressCustomGroupBox) var suppressCustomGroupBox
     init(showGroupBox: Bool = true, cornerRadius: CGFloat = 15, useExtenedConstraints: Bool = false, strokeLineWidth: CGFloat = 0, @ViewBuilder content: @escaping () -> Content) {
@@ -138,42 +139,58 @@ struct CustomGroupBox<Content: View>: View {
         }
         .background {
             if showGroupBox && !suppressCustomGroupBox {
-                GeometryReader { geometry in
+                if customGroupBoxVersion == 2 {
+                    GeometryReader { geometry in
+                        ZStack {
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .fill(.black.opacity(0.1))
+                                .offset(y: 4)
+                                .blur(radius: 4)
+                                .mask {
+                                    Rectangle()
+                                        .size(width: geometry.size.width + 24, height: geometry.size.height + 24)
+                                        .offset(x: -12, y: -12)
+                                        .overlay {
+                                            RoundedRectangle(cornerRadius: cornerRadius)
+                                                .blendMode(.destinationOut)
+                                        }
+                                }
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .fill(.black.opacity(0.1))
+                                .offset(y: 4)
+                                .blur(radius: 16)
+                                .mask {
+                                    Rectangle()
+                                        .size(width: geometry.size.width + 96, height: geometry.size.height + 96)
+                                        .offset(x: -48, y: -48)
+                                        .overlay {
+                                            RoundedRectangle(cornerRadius: cornerRadius)
+                                                .blendMode(.destinationOut)
+                                        }
+                                }
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .fill(Color(.floatingCard))
+                        }
+                    }
+                } else {
                     ZStack {
                         RoundedRectangle(cornerRadius: cornerRadius)
-                            .fill(.black.opacity(0.1))
-                            .offset(y: 4)
-                            .blur(radius: 4)
-                            .mask {
-                                Rectangle()
-                                    .size(width: geometry.size.width + 24, height: geometry.size.height + 24)
-                                    .offset(x: -12, y: -12)
-                                    .overlay {
-                                        RoundedRectangle(cornerRadius: cornerRadius)
-                                            .blendMode(.destinationOut)
-                                    }
-                            }
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .fill(.black.opacity(0.1))
-                            .offset(y: 4)
-                            .blur(radius: 16)
-                            .mask {
-                                Rectangle()
-                                    .size(width: geometry.size.width + 96, height: geometry.size.height + 96)
-                                    .offset(x: -48, y: -48)
-                                    .overlay {
-                                        RoundedRectangle(cornerRadius: cornerRadius)
-                                            .blendMode(.destinationOut)
-                                    }
-                            }
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .fill(Color(.floatingCard))
+#if !os(macOS)
+                            .foregroundStyle(Color(.secondarySystemGroupedBackground))
+#else
+                            .foregroundStyle(Color(NSColor.quaternarySystemFill))
+#endif
+                        let strokeLineWidth = strokeLineWidth > 0 ? strokeLineWidth : envStrokeLineWidth
+                        if strokeLineWidth > 0 {
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .strokeBorder(.tint.opacity(0.9), lineWidth: strokeLineWidth)
+                        }
                     }
                 }
             }
         }
         .overlay {
-            if showGroupBox && !suppressCustomGroupBox {
+            if showGroupBox && !suppressCustomGroupBox && customGroupBoxVersion == 2 {
                 LinearGradient(
                     colors: [
                         Color(.floatingCardTopBorder),

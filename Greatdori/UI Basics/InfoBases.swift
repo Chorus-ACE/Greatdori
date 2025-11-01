@@ -379,16 +379,15 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                                                     showFilterSheet = false
                                                     presentingElement = element
                                                 }, label: {
-                                                    // Why do we need these hacks?
-                                                    // In a recent change, we're adding shadows to the CustomGroupBox.
-                                                    // It works well in other places but here.
+                                                    // # Why?
+                                                    // After updating CustomGroupBox to 2, some issue occured here.
                                                     //
-                                                    // What happened?
+                                                    // # What happened?
                                                     // the `matchedTransitionSource(id:in:)` constraints a view's
                                                     // viewport to its own frame, that is, our shadows are clipped
                                                     // into the frame of the box itself.
                                                     //
-                                                    // How do we solve it?
+                                                    // # How do we solve it?
                                                     // First we add a preference key for custom group boxes,
                                                     // if there's any active `CustomGroupBox` in the view
                                                     // from `makeSomeContent(_:_:)`, we can receive the info

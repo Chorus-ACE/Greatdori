@@ -192,6 +192,21 @@ func getTertiaryLabelColor() -> Color {
 #endif
 }
 
+// MARK: getStorageDictionary
+func getStorageDictionary() -> [String: Any]? {
+    let prefPath = NSHomeDirectory() + "/Library/Preferences/\(Bundle.main.infoDictionary?["CFBundleIdentifier"] as! String).plist"
+    if let plistData = FileManager.default.contents(atPath: prefPath) {
+        do {
+            if var plistObject = try PropertyListSerialization.propertyList(from: plistData, options: [], format: nil) as? [String: Any] {
+                return plistObject
+            }
+        } catch {
+            print(error)
+        }
+    }
+    return nil
+}
+
 // MARK: highlightOccurrences
 /// Highlights all occurrences of a keyword within a string in blue.
 /// - Parameters:
