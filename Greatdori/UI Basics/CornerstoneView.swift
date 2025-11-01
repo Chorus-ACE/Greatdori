@@ -20,6 +20,7 @@
 
 import DoriKit
 import SwiftUI
+import CoreMotion
 
 // MARK: Constants
 let bannerWidth: CGFloat = isMACOS ? 370 : 420
@@ -123,6 +124,11 @@ struct CustomGroupBox<Content: View>: View {
     var useExtenedConstraints: Bool = false
     @Environment(\._groupBoxStrokeLineWidth) var envStrokeLineWidth: CGFloat
     @Environment(\._suppressCustomGroupBox) var suppressCustomGroupBox
+    #if os(iOS)
+    private let motionManager = CMMotionManager()
+    @State private var motionTimeoutTimer: Timer?
+    @State private var lightStartPoint: UnitPoint = .topLeading
+    #endif
     init(showGroupBox: Bool = true, cornerRadius: CGFloat = 15, useExtenedConstraints: Bool = false, strokeLineWidth: CGFloat = 0, @ViewBuilder content: @escaping () -> Content) {
         self.showGroupBox = showGroupBox
         self.cornerRadius = cornerRadius
@@ -168,6 +174,31 @@ struct CustomGroupBox<Content: View>: View {
                         RoundedRectangle(cornerRadius: cornerRadius)
                             .fill(Color(.floatingCard))
                     }
+                    #if os(iOS)
+                    .onAppear {
+                        if motionManager.isGyroAvailable {
+                            motionManager.gyroUpdateInterval = 0.1
+                            motionManager.startGyroUpdates(to: .main) { data, _ in
+                                if let data {
+                                    lightStartPoint.x = max(min(lightStartPoint.x - data.rotationRate.y / 25, 1), 0)
+                                    if abs(data.rotationRate.y) < 1 && motionTimeoutTimer == nil {
+                                        motionTimeoutTimer = .scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
+                                            lightStartPoint = .topLeading
+                                        }
+                                    } else {
+                                        motionTimeoutTimer?.invalidate()
+                                        motionTimeoutTimer = nil
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .onDisappear {
+                        if motionManager.isGyroAvailable {
+                            motionManager.stopGyroUpdates()
+                        }
+                    }
+                    #endif
                 }
             }
         }
@@ -178,8 +209,8 @@ struct CustomGroupBox<Content: View>: View {
                         Color(.floatingCardTopBorder),
                         Color(.floatingCard)
                     ],
-                    startPoint: .top,
-                    endPoint: .bottom
+                    startPoint: lightStartPoint,
+                    endPoint: .init(x: 1 - lightStartPoint.x, y: 1 - lightStartPoint.y)
                 )
                 .mask {
                     RoundedRectangle(cornerRadius: cornerRadius)
