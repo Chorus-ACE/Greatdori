@@ -124,10 +124,10 @@ struct CustomGroupBox<Content: View>: View {
     var useExtenedConstraints: Bool = false
     @Environment(\._groupBoxStrokeLineWidth) var envStrokeLineWidth: CGFloat
     @Environment(\._suppressCustomGroupBox) var suppressCustomGroupBox
+    @State private var lightStartPoint: UnitPoint = .topLeading
     #if os(iOS)
     private let motionManager = CMMotionManager()
     @State private var motionTimeoutTimer: Timer?
-    @State private var lightStartPoint: UnitPoint = .topLeading
     #endif
     init(showGroupBox: Bool = true, cornerRadius: CGFloat = 15, useExtenedConstraints: Bool = false, strokeLineWidth: CGFloat = 0, @ViewBuilder content: @escaping () -> Content) {
         self.showGroupBox = showGroupBox
