@@ -38,6 +38,7 @@ struct SettingsView: View {
                 SettingsHomeView()
                 SettingsPermissionsView()
                 SettingsWidgetsView()
+                SettingsFontsView()
                 SettingsOfflineDataView()
                 SettingsAboutView()
                 if AppFlag.DEBUG {
@@ -68,6 +69,8 @@ struct SettingsView: View {
                     .tag(2)
                 Label("Settings.widgets", systemImage: "widget.small")
                     .tag(3)
+                Label("Settings.fonts", systemImage: "textformat")
+                    .tag(10)
                 Label("Settings.advanced", systemImage: "hammer")
                     .tag(20)
                 Label("Settings.about", systemImage: "info.circle")
@@ -101,6 +104,8 @@ struct SettingsView: View {
                         SettingsWidgetsView()
                     }
                     .formStyle(.grouped)
+                case 10:
+                    SettingsFontsView()
                 case 20:
                     Form {
                         SettingsAdvancedView()

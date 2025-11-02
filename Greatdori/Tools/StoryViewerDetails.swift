@@ -35,18 +35,17 @@ struct StoryDetailView: View {
     
     var body: some View {
         Group {
-            ScrollView {
-                HStack {
-                    Spacer(minLength: 0)
-                    VStack {
-                        if let transcript {
+            if let transcript {
+                ScrollView {
+                    HStack {
+                        Spacer(minLength: 0)
+                        VStack {
                             Section {
                                 StoryDetailInteractiveStoryEntryView(title: title, scenarioID: scenarioID, type: type, locale: locale, unsafeAssociatedID: unsafeAssociatedID, unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID, asset: $asset)
                                     .aspectRatio(interactivePlayerIsInFullScreen ? screenWidth/screenHeight : 16/9, contentMode: .fill)
                                     .clipped()
                             }
-                            .frame(maxWidth: interactivePlayerIsInFullScreen ? nil : 600)
-                            
+                            .frame(maxWidth: interactivePlayerIsInFullScreen ? nil : infoContentMaxWidth)
                             if !interactivePlayerIsInFullScreen {
                                 DetailSectionsSpacer(height: 15)
                                 
@@ -119,22 +118,23 @@ struct StoryDetailView: View {
                                         }
                                     }
                                 }
-                            }
-                        } else {
-                            ExtendedConstraints {
-                                ProgressView()
+                                .frame(maxWidth: infoContentMaxWidth)
                             }
                         }
+                        .padding(.all, interactivePlayerIsInFullScreen ? 0 : nil)
+                        Spacer(minLength: 0)
                     }
-                    .padding(.all, interactivePlayerIsInFullScreen ? 0 : nil)
-                    Spacer(minLength: 0)
                 }
-            }
-            //                .ignoresSafeArea(interactivePlayerIsInFullScreen ? .all : []) t
-            .scrollDisabled(interactivePlayerIsInFullScreen)
-            .onFrameChange { geometry in
-                screenWidth = geometry.size.width
-                screenHeight = geometry.size.height
+                //                .ignoresSafeArea(interactivePlayerIsInFullScreen ? .all : []) t
+                .scrollDisabled(interactivePlayerIsInFullScreen)
+                .onFrameChange { geometry in
+                    screenWidth = geometry.size.width
+                    screenHeight = geometry.size.height
+                }
+            } else {
+                ExtendedConstraints {
+                    ProgressView()
+                }
             }
         }
         .navigationTitle(title)

@@ -77,6 +77,9 @@ func copyStringToClipboard(_ content: String) {
 #endif
 }
 
+// MARK: doNothing
+func doNothing() {}
+
 // MARK: formattedSongLength
 func formattedSongLength(_ time: Double) -> String {
     let minutes = Int(time / 60)
