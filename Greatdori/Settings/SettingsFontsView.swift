@@ -239,12 +239,27 @@ struct SettingsFontsDetail: View {
     var fontName: String
     @State var fontInfo: FontInfo? = nil
     @State var fontSupportingLanguagesText: String = ""
+    @State var showCountsInsteadOfAllItemsForLanguages = false
     var body: some View {
         Form {
             Text(fontName)
                 .font(.title)
                 .font(.custom(fontName, size: 18))
             Text("\(fontInfo)")
+            if let copyright = fontInfo?.copyright {
+                ListItemView(title: {
+                    Text("Settings.fonts.copyright")
+                }, value: {
+                    Text(copyright)
+                })
+            }
+            if let designer = fontInfo?.designer {
+                ListItemView(title: {
+                    Text("Settings.fonts.designer")
+                }, value: {
+                    Text(designer)
+                })
+            }
             if !fontSupportingLanguagesText.isEmpty {
                 ListItemView(title: {
                     Text("Settings.fonts.languages")
