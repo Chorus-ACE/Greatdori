@@ -1072,7 +1072,7 @@ struct ListItem<Content1: View, Content2: View>: View {
     var allowValueLeading: Bool = false
     var displayMode: ListItemType = .automatic
     var allowTextSelection: Bool = true
-    var boldTitle: Bool = false
+    var boldTitle: Bool = true
     @State private var totalAvailableWidth: CGFloat = 0
     @State private var titleAvailableWidth: CGFloat = 0
     @State private var valueAvailableWidth: CGFloat = 0
@@ -1083,6 +1083,7 @@ struct ListItem<Content1: View, Content2: View>: View {
         self.allowValueLeading = allowValueLeading
         self.displayMode = displayMode
         self.allowTextSelection = allowTextSelection
+        self.boldTitle = boldTitle
     }
     
     var body: some View {
