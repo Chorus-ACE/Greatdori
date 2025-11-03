@@ -147,7 +147,7 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
     private func getInformation(id: Int) async {
         infoIsAvailable = true
         informationLoadPromise?.cancel()
-        informationLoadPromise = withDoriCache(id: "\(PreviewInformation.singularName)Detail_\(id)", trait: .realTime) {
+        informationLoadPromise = withDoriCache(id: "\(PreviewInformation.singularName.key)Detail_\(id)", trait: .realTime) {
             await updateInformation(id)
         } .onUpdate {
             if let information = $0 {
@@ -549,7 +549,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
     
     func getList() async {
         infoIsAvailable = true
-        withDoriCache(id: "\(Element.pluralName)List_\(filter.identity)", trait: .realTime) {
+        withDoriCache(id: "\(Element.pluralName.key)List_\(filter.identity)", trait: .realTime) {
             await updateList()
         }.onUpdate {
             if let cards = $0 {

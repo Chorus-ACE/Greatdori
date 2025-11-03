@@ -80,7 +80,7 @@ struct SettingsView: View {
                         .tag(23)
                 }
             })
-//            .toolbar(removing: .sidebarToggle)
+            .toolbar(removing: .sidebarToggle)
         }, detail: {
             NavigationStack {
                 switch selectionItem {

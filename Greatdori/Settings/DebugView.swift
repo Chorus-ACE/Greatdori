@@ -19,6 +19,7 @@
 import SwiftUI
 import DoriKit
 import SDWebImageSwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 let correctDebugPassword = "Stolz-250912!Yuki"
 
@@ -566,33 +567,25 @@ struct DebugRulerOverlay: View {
 }
 
 struct DebugPlaygroundView: View {
-    @State var valueOne: Double = 0
-    @State var valueTwo: Double = 1
-    @State var color: Color = Color.gray
+    @AppStorage("DebugStoryBuilderCodeString") var codeString = ""
     var body: some View {
-        ZStack {
-            Color.green
-            if #available(macOS 26.0, *) {
-                #if os(macOS)
-                Menu(content: {
-                    Section {
-                        Button(action: {
-                            print("1")
-                        }, label: {
-                            Label(String(1), systemImage: "triangle")
-                        })
-                    }
-                }, label: {
-                    Image(systemName: "ellipsis")
-                })
-                .menuIndicator(.hidden)
-                .menuStyle(.borderedButton)
-                .buttonStyle(.glassProminent)
-                #endif
+        VStack {
+            TextEditor(text: $codeString)
+                .autocorrectionDisabled()
+                .font(.init(.system(size: 12, design: .monospaced)))
+            #if os(macOS)
+                .introspect(.textEditor, on: .macOS(.v14...)) { textView in
+                    textView.isAutomaticQuoteSubstitutionEnabled = false
+                }
+            #endif
+            Button(String("Build")) {
+                let builder = DoriStoryBuilder()
+                let startTime = CFAbsoluteTimeGetCurrent()
+                let diags = builder.buildSourceCode(codeString)
+                let endTime = CFAbsoluteTimeGetCurrent()
+                print(diags.map { "\($0)" }.joined(separator: "\n"))
+                print("Build Time: \(unsafe String(format: "%.4f", endTime - startTime))")
             }
-        }
-        .onChange(of: valueOne, valueTwo, initial: true) {
-            color = Color.random()
         }
     }
 }
