@@ -40,20 +40,40 @@ struct SettingsFontsViewMain: View {
     @State var newFontSheetIsDisplaying = false
     @State var newFontOnlineURL = ""
     @State var newFontLocalURL: URL?
+    @State var newFontSystemName = ""
     @State var newFontAddFailureAlertIsDisplaying = false
     @State var newFontAddFailureReason = ""
     @State var newFontIsAdding = false
-    @State var newFontIsOnline = true
+    @State var newFontSourceType = 0
     @State var newFontFileImporterIsDisplaying = false
     
     @State var fontInspectorSheetIsDisplaying = false
     @State var fontInspectorTarget = ""
     
+    let deafultSystemFonts = ["SF Pro", "Pingfang SC", "Pingfang TC", "Hiragino Sans", "Apple SD Gothic Neo"]
+    
     var body: some View {
         Form {
-//            Section("Settings.font.built-in") {
-//                
-//            }
+            Section("Settings.font.built-in") {
+                ForEach(deafultSystemFonts, id: \.self) { item in
+                    Button(action: {
+                        fontInspectorTarget = item
+                        fontInspectorSheetIsDisplaying = true
+                    }, label: {
+                        HStack {
+                            Text(fontManager.getUserFriendlyFontDisplayName(forFontName: item) ?? item)
+                                .font(.custom(item, size: 18))
+                                .fontWeight(.regular)
+                            Spacer()
+                            Image(systemName: "info.circle")
+                                .foregroundStyle(.secondary)
+                        }
+                        .contentShape(Rectangle())
+                    })
+                    .buttonStyle(.plain)
+                }
+            }
+            
             Section("Settings.fonts.installed") {
                 if !fontManager.loadedFonts.isEmpty {
                     ForEach(fontManager.loadedFonts, id: \.self) { item in
@@ -116,15 +136,17 @@ struct SettingsFontsViewMain: View {
                             Text("Settings.fonts.new.type")
                                 .bold()
                             Spacer()
-                            Picker("", selection: $newFontIsOnline, content: {
+                            Picker("", selection: $newFontSourceType, content: {
                                 Text("Settings.fonts.new.type.online")
-                                    .tag(true)
-                                Text("Settings.fonts.new.typye.local")
-                                    .tag(false)
+                                    .tag(0)
+                                Text("Settings.fonts.new.type.local")
+                                    .tag(1)
+                                Text("Settings.fonts.new.type.system")
+                                    .tag(1)
                             })
                             .labelsHidden()
                         }
-                        if newFontIsOnline {
+                        if newFontSourceType == 0 {
                             HStack {
                                 Text("Settings.fonts.new.url")
                                     .bold()
@@ -134,7 +156,7 @@ struct SettingsFontsViewMain: View {
                                     .multilineTextAlignment(.trailing)
                                     .labelsHidden()
                             }
-                        } else {
+                        } else if newFontSourceType == 1 {
                             HStack {
                                 Text("Settings.fonts.new.file")
                                     .bold()
@@ -148,6 +170,13 @@ struct SettingsFontsViewMain: View {
                                         Text("Settings.fonts.new.select-file")
                                     }
                                 })
+                            }
+                        } else if newFontSourceType == 2 {
+                            HStack {
+                                Text("Settings.fonts.new.name")
+                                    .bold()
+                                Spacer()
+                                TextField("Settings.fonts.new.name", text: $newFontSystemName)
                             }
                         }
                     }, footer: {
@@ -163,21 +192,25 @@ struct SettingsFontsViewMain: View {
                         ToolbarItem(placement: .confirmationAction) {
                             Button(action: {
                                 newFontIsAdding = true
-                                let url = newFontIsOnline ? URL(string: newFontOnlineURL)! : newFontLocalURL!
-                                Task {
-                                    do {
-                                        if newFontIsOnline {
-                                            try await fontManager.addFont(fromRemote: url)
-                                        } else {
-                                            try fontManager.addFont(fromLocal: url)
+                                if newFontSourceType != 2 {
+                                    let url = newFontSourceType == 0 ? URL(string: newFontOnlineURL)! : newFontLocalURL!
+                                    Task {
+                                        do {
+                                            if newFontSourceType == 0 {
+                                                try await fontManager.addFont(fromRemote: url)
+                                            } else {
+                                                try fontManager.addFont(fromLocal: url)
+                                            }
+                                            newFontIsAdding = false
+                                            newFontSheetIsDisplaying = false
+                                        } catch {
+                                            newFontIsAdding = false
+                                            newFontAddFailureReason = error.localizedDescription
+                                            newFontAddFailureAlertIsDisplaying = true
                                         }
-                                        newFontIsAdding = false
-                                        newFontSheetIsDisplaying = false
-                                    } catch {
-                                        newFontIsAdding = false
-                                        newFontAddFailureReason = error.localizedDescription
-                                        newFontAddFailureAlertIsDisplaying = true
                                     }
+                                } else {
+                                    // TODO: Append font to storage after validating by .disabled
                                 }
                             }, label: {
                                 Label("Settings.fonts.new.install", systemImage: "checkmark")
@@ -187,8 +220,10 @@ struct SettingsFontsViewMain: View {
                                         $0.labelStyle(.iconOnly)
                                     })
                             })
-                            .disabled(newFontIsOnline && URL(string: newFontOnlineURL) == nil)
-                            .disabled(!newFontIsOnline && newFontLocalURL == nil)
+                            .disabled(newFontSourceType == 0 && URL(string: newFontOnlineURL) == nil)
+                            .disabled(newFontSourceType == 1 && newFontLocalURL == nil)
+                            .disabled(newFontSourceType == 2 && newFontSystemName.isEmpty)
+                            // FIXME: Check if font is valid.
                         }
                     }
                     ToolbarItem(placement: .cancellationAction) {
@@ -246,7 +281,6 @@ struct SettingsFontsDetail: View {
     @State var showCountsInsteadOfAllItemsForLanguages = true
     @State var sampleLanguageIsMissing = false
     @State var sampleTextFontWeight: Font.Weight = .regular
-    
     let sampleText: [DoriLocale: String] = [.jp: "あなたの輝きが道を照らす", .en: "Your Spark Will Light the Way", .tw: "你的光芒照耀漫漫長路", .cn: "你的光芒会照亮前行之路", .kr: "당신의 반짝임이 길을 밝힌다"]
     var body: some View {
         NavigationStack {
@@ -258,8 +292,12 @@ struct SettingsFontsDetail: View {
                                 if let fontFamily = fontInfo?.family {
                                     Text(fontFamily)
                                         .font(.custom(fontName, size: 18))
-                                    Text(fontManager.getFontCahce(forFontName: fontName)?.fileName ?? "")
-                                        .font(.custom(fontName, size: 10))
+                                    if let fileName = fontManager.getFontCahce(forFontName: fontName)?.fileName {
+                                        Text(fileName)
+                                            .font(.custom(fontName, size: 10))
+                                    } else {
+                                        Text("Settings.fonts.info.title.system-font")
+                                    }
                                 } else {
                                     Text(fontName)
                                         .font(.custom(fontName, size: 18))
@@ -293,7 +331,7 @@ struct SettingsFontsDetail: View {
                             })
                         }
                         if !fontSupportingLanguagesText.isEmpty {
-                            ListItem(allowValueLeading: true, displayMode: (showCountsInsteadOfAllItemsForLanguages && (fontInfo?.supportedLanguages?.count ?? 0) > 5) ? .automatic : .expandedOnly, title: {
+                            ListItem(allowValueLeading: true, displayMode: (showCountsInsteadOfAllItemsForLanguages || (fontInfo?.supportedLanguages?.count ?? 0) < 5) ? .automatic : .expandedOnly, title: {
                                 Text("Settings.fonts.info.languages")
                             }, value: {
                                 Group {
@@ -312,7 +350,16 @@ struct SettingsFontsDetail: View {
                             ListItem(allowValueLeading: true, title: {
                                 Text("Settings.fonts.info.variable-font")
                             }, value: {
-                                Text("Settings.fonts.info.variable-font.true")
+                                Text("Settings.fonts.info.true")
+                            })
+                        }
+                        
+                        // Consider removal. Value not reliable.
+                        if fontManager.isSystemFont(CTFontCreateWithName(fontName as CFString, 14, nil)) {
+                            ListItem(allowValueLeading: true, title: {
+                                Text("Settings.fonts.info.system-font")
+                            }, value: {
+                                Text("Settings.fonts.info.true")
                             })
                         }
                         
@@ -579,7 +626,7 @@ final class FontManager: ObservableObject {
         do {
             let files = try fileManager.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: [.fileSizeKey])
             if let fontFile = files.first(where: { url in
-                url.deletingPathExtension().lastPathComponent == fontName
+                url.lastPathComponent == fontName
             }) {
                 let attributes = try fileManager.attributesOfItem(atPath: fontFile.path)
                 return attributes[.size] as? Int64
@@ -593,6 +640,14 @@ final class FontManager: ObservableObject {
     func getFontCahce(forFontName fontName: String) -> CachedFont? {
         return loadedFonts.first { $0.fontName == fontName }
     }
+    
+    func isSystemFont(_ font: CTFont) -> Bool {
+        guard let url = CTFontCopyAttribute(font, kCTFontURLAttribute) as? URL else {
+            return false
+        }
+        let path = url.path
+        return path.hasPrefix("/System/Library/Fonts/") || path.hasPrefix("/Library/Fonts/")
+    }
 }
 
 
@@ -600,7 +655,6 @@ struct FontInfo: Identifiable {
     let id = UUID()
     let name: String
     let family: String?
-//    let style: String?
     let fullName: String?
     let displayName: String?
     let weight: Double?
@@ -614,22 +668,19 @@ struct FontInfo: Identifiable {
 }
 
 func localizedLanguageName(for identifier: String, displayLocale: Locale = .current) -> String {
-    // 拆分语言和地区
     let locale = Locale(identifier: identifier)
     let languageCode = locale.languageCode
     let regionCode = locale.regionCode
     
-    // 获取语言名
+
     let languageName = languageCode.flatMap {
         displayLocale.localizedString(forLanguageCode: $0)
     }
     
-    // 获取地区名
     let regionName = regionCode.flatMap {
         displayLocale.localizedString(forRegionCode: $0)
     }
     
-    // 拼接输出
     switch (languageName, regionName) {
     case let (lang?, region?):
         return "\(lang) (\(region))"
