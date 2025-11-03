@@ -28,7 +28,7 @@ struct SongDetailGameplayView: View {
                         if let band = information.band {
                             //MARK: Band
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Song.gameplay.band")
                                         .bold()
                                 }, value: {
@@ -49,7 +49,7 @@ struct SongDetailGameplayView: View {
                         
                         // MARK: Length
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Song.gameplay.difficulty")
                                     .bold()
                             }, value: {
@@ -60,7 +60,7 @@ struct SongDetailGameplayView: View {
                         
                         // MARK: Length
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Song.gameplay.length")
                                     .bold()
                             }, value: {
@@ -71,7 +71,7 @@ struct SongDetailGameplayView: View {
                         
                         // MARK: Countdown
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Song.gameplay.countdown")
                                     .bold()
                             }, value: {
@@ -82,7 +82,7 @@ struct SongDetailGameplayView: View {
                         
                         // MARK: Release Date
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Song.gameplay.release-date")
                                     .bold()
                             }, value: {
@@ -94,7 +94,7 @@ struct SongDetailGameplayView: View {
                         if !information.song.closedAt.map({$0?.corrected()}).isEmpty {
                             // MARK: Close Date
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Song.gameplay.close-date")
                                         .bold()
                                 }, value: {
@@ -106,7 +106,7 @@ struct SongDetailGameplayView: View {
                         
                         // MARK: Release Date
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Song.gameplay.how-to-get")
                                     .bold()
                             }, value: {

@@ -396,13 +396,14 @@ struct DetailsIDSwitcher<Content: View>: View {
 
 // MARK: DimissButton
 struct DismissButton<L: View>: View {
-    var action: () -> Void
-    var label: () -> L
+    var role: ButtonRole? = nil
     var doDismiss: Bool = true
+    var action: (() -> Void)?
+    var label: () -> L
     @Environment(\.dismiss) var dismiss
     var body: some View {
-        Button(action: {
-            action()
+        Button(role: role, action: {
+            (action ?? doNothing)()
             if doDismiss {
                 dismiss()
             }
@@ -1063,19 +1064,20 @@ struct MultilingualTextForCountdownAlt: View {
 }
 
 
-// MARK: ListItemView
-struct ListItemView<Content1: View, Content2: View>: View {
+// MARK: ListItem
+struct ListItem<Content1: View, Content2: View>: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     let title: Content1
     let value: Content2
     var allowValueLeading: Bool = false
     var displayMode: ListItemType = .automatic
     var allowTextSelection: Bool = true
+    var boldTitle: Bool = false
     @State private var totalAvailableWidth: CGFloat = 0
     @State private var titleAvailableWidth: CGFloat = 0
     @State private var valueAvailableWidth: CGFloat = 0
     
-    init(@ViewBuilder title: () -> Content1, @ViewBuilder value: () -> Content2, allowValueLeading: Bool = false, displayMode: ListItemType = .automatic, allowTextSelection: Bool = true) {
+    init(allowValueLeading: Bool = false, displayMode: ListItemType = .automatic, allowTextSelection: Bool = true, boldTitle: Bool = true, @ViewBuilder title: () -> Content1, @ViewBuilder value: () -> Content2) {
         self.title = title()
         self.value = value()
         self.allowValueLeading = allowValueLeading
@@ -1088,7 +1090,7 @@ struct ListItemView<Content1: View, Content2: View>: View {
             if (displayMode == .compactOnly  || (displayMode == .basedOnUISizeClass && sizeClass == .regular) || (totalAvailableWidth - titleAvailableWidth - valueAvailableWidth) > 5) && displayMode != .expandedOnly { // HStack (SHORT)
                 HStack {
                     title
-                        .bold()
+                        .bold(boldTitle)
                         .fixedSize(horizontal: true, vertical: true)
                         .onFrameChange(perform: { geometry in
                             titleAvailableWidth = geometry.size.width
@@ -1107,7 +1109,7 @@ struct ListItemView<Content1: View, Content2: View>: View {
             } else { // VStack (LONG)
                 VStack(alignment: .leading) {
                     title
-                        .bold()
+                        .bold(boldTitle)
                         .fixedSize(horizontal: true, vertical: true)
                         .onFrameChange(perform: { geometry in
                             titleAvailableWidth = geometry.size.width
@@ -1126,6 +1128,7 @@ struct ListItemView<Content1: View, Content2: View>: View {
                             .onFrameChange(perform: { geometry in
                                 valueAvailableWidth = geometry.size.width
                             })
+                            .multilineTextAlignment(allowValueLeading ? .leading : .trailing)
                         if allowValueLeading {
                             Spacer()
                         }
@@ -1164,7 +1167,7 @@ struct ListItemWithWrappingView<Content1: View, Content2: View, Content3: View, 
         self.columnNumbers = columnNumbers
     }
     var body: some View {
-        ListItemView(title: {
+        ListItem(title: {
             title
                 .onFrameChange(perform: { geometry in
                     titleWidth = geometry.size.width

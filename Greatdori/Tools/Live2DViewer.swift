@@ -34,7 +34,7 @@ struct Live2DViewerView: View {
                 VStack {
                     CustomGroupBox {
                         VStack {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Tools.live2d-viewer.type")
                                     .bold()
                             }, value: {
@@ -48,7 +48,7 @@ struct Live2DViewerView: View {
                             })
                             Divider()
                             if selectedItemTypeIndex == 0 {
-                                ListItemView {
+                                ListItem {
                                     Text("Tools.live2d-viewer.card")
                                         .bold()
                                 } value: {
@@ -58,14 +58,14 @@ struct Live2DViewerView: View {
                                         }
                                 }
                             } else if selectedItemTypeIndex == 1 {
-                                ListItemView {
+                                ListItem {
                                     Text("Tools.live2d-viewer.costume")
                                         .bold()
                                 } value: {
                                     ItemSelectorButton(selection: $costume)
                                 }
                             } else if selectedItemTypeIndex == 2 {
-                                ListItemView {
+                                ListItem {
                                     Text("Tools.live2d-viewer.character")
                                         .bold()
                                 } value: {

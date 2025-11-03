@@ -78,6 +78,7 @@ func copyStringToClipboard(_ content: String) {
 }
 
 // MARK: doNothing
+// Super super weird. I know it's replacable, though. --@ThreeManager785
 func doNothing() {}
 
 // MARK: formattedSongLength

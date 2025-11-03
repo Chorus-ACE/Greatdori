@@ -36,7 +36,7 @@ struct EventTrackerView: View {
                     CustomGroupBox(cornerRadius: 20) {
                         LazyVStack {
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Tools.event-tracker.event")
                                         .bold()
                                 }, value: {
@@ -52,7 +52,7 @@ struct EventTrackerView: View {
                                 Divider()
                             }
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Tools.event-tracker.latest-event")
                                         .bold()
                                 }, value: {
@@ -72,7 +72,7 @@ struct EventTrackerView: View {
                                 Divider()
                             }
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Tools.event-tracker.locale")
                                         .bold()
                                 }, value: {
@@ -97,7 +97,7 @@ struct EventTrackerView: View {
                                 Divider()
                             }
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Tools.event-tracker.tier")
                                         .bold()
                                 }, value: {
@@ -132,7 +132,7 @@ struct EventTrackerView: View {
                                         LazyVStack {
                                             if let startDate = selectedEvent.startAt.forLocale(locale),
                                                let endDate = selectedEvent.endAt.forLocale(locale) {
-                                                ListItemView {
+                                                ListItem {
                                                     Text("Tools.event-tracker.status")
                                                         .bold()
                                                 } value: {
@@ -151,7 +151,7 @@ struct EventTrackerView: View {
                                             }
                                             if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
                                                 if let latestCutoff = trackerData.cutoffs.last?.ep {
-                                                    ListItemView {
+                                                    ListItem {
                                                         Text("Tools.event-tracker.latest-cutoff")
                                                             .bold()
                                                     } value: {
@@ -160,7 +160,7 @@ struct EventTrackerView: View {
                                                     Divider()
                                                 }
                                                 if let latestPrediction = trackerData.predictions.last?.ep {
-                                                    ListItemView {
+                                                    ListItem {
                                                         Text("Tools.event-tracker.latest-prediction")
                                                             .bold()
                                                     } value: {
@@ -169,7 +169,7 @@ struct EventTrackerView: View {
                                                     Divider()
                                                 }
                                                 if let latestUpdateTime = trackerData.cutoffs.last?.time {
-                                                    ListItemView {
+                                                    ListItem {
                                                         Text("Tools.event-tracker.last-updated")
                                                             .bold()
                                                     } value: {
@@ -265,7 +265,7 @@ struct EventTrackerView: View {
                                         LazyVStack {
                                             if let startDate = selectedEvent.startAt.forLocale(locale),
                                                let endDate = selectedEvent.endAt.forLocale(locale) {
-                                                ListItemView {
+                                                ListItem {
                                                     Text("Tools.event-tracker.status")
                                                         .bold(isMACOS)
                                                 } value: {
@@ -284,7 +284,7 @@ struct EventTrackerView: View {
                                             }
                                             if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
                                                 if let latestUpdateTime = topData.last?.points.last?.time {
-                                                    ListItemView {
+                                                    ListItem {
                                                         Text("Tools.event-tracker.last-updated")
                                                             .bold()
                                                     } value: {

@@ -730,7 +730,7 @@ extension DetailInfoItem {
 extension DetailInfoItem {
     @ViewBuilder
     func _makeView() -> some View {
-        ListItemView {
+        ListItem {
             Text(titleKey)
                 .bold()
         } value: {

@@ -76,7 +76,7 @@ struct SongDetailOverviewView: View {
                     LazyVStack {
                         // MARK: Title
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Song.title")
                                     .bold()
                             }, value: {
@@ -87,7 +87,7 @@ struct SongDetailOverviewView: View {
                         
                         // MARK: Type
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Song.type")
                                     .bold()
                             }, value: {
@@ -98,7 +98,7 @@ struct SongDetailOverviewView: View {
                         
                         // MARK: Lyrics
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Song.lyrics")
                                     .bold()
                             }, value: {
@@ -109,7 +109,7 @@ struct SongDetailOverviewView: View {
                         
                         // MARK: Composer
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Song.composer")
                                     .bold()
                             }, value: {
@@ -120,7 +120,7 @@ struct SongDetailOverviewView: View {
                         
                         // MARK: Arrangement
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Song.arrangement")
                                     .bold()
                             }, value: {
@@ -131,7 +131,7 @@ struct SongDetailOverviewView: View {
                         
                         // MARK: ID
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("ID")
                                     .bold()
                             }, value: {

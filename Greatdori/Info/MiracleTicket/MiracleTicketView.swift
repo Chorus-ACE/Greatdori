@@ -31,7 +31,7 @@ struct MiracleTicketView: View {
                         VStack {
                             CustomGroupBox {
                                 VStack {
-                                    ListItemView {
+                                    ListItem {
                                         Text("Miracle-ticket.ticket")
                                     } value: {
                                         Picker(selection: $selectedTicket, content: {
@@ -52,7 +52,7 @@ struct MiracleTicketView: View {
                                         .labelsHidden()
                                     }
                                     Divider()
-                                    ListItemView {
+                                    ListItem {
                                         Text("Miracle-ticket.locale")
                                     } value: {
                                         Picker(selection: $locale) {
@@ -71,14 +71,14 @@ struct MiracleTicketView: View {
                                 DetailSectionsSpacer(height: 15)
                                 CustomGroupBox {
                                     VStack {
-                                        ListItemView {
+                                        ListItem {
                                             Text("Miracle-ticket.title")
                                         } value: {
                                             MultilingualText(selectedTicket.ticket.name)
                                         }
                                         if let date = selectedTicket.ticket.exchangeStartAt.forLocale(locale) {
                                             Divider()
-                                            ListItemView {
+                                            ListItem {
                                                 Text("Miracle-ticket.release-date")
                                             } value: {
                                                 Text(dateFormatter.string(from: date))
@@ -86,14 +86,14 @@ struct MiracleTicketView: View {
                                         }
                                         if let date = selectedTicket.ticket.exchangeEndAt.forLocale(locale) {
                                             Divider()
-                                            ListItemView {
+                                            ListItem {
                                                 Text("Miracle-ticket.close-date")
                                             } value: {
                                                 Text(dateFormatter.string(from: date))
                                             }
                                         }
                                         Divider()
-                                        ListItemView {
+                                        ListItem {
                                             Text(verbatim: "ID")
                                         } value: {
                                             Text(String(selectedTicket.ticket.id))

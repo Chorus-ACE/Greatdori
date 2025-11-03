@@ -84,7 +84,7 @@ struct GachaDetailOverviewView: View {
                     LazyVStack {
                         // MARK: Title
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Gacha.title")
                                     .bold()
                             }, value: {
@@ -95,7 +95,7 @@ struct GachaDetailOverviewView: View {
                         
                         // MARK: Type
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Gacha.type")
                                     .bold()
                             }, value: {
@@ -106,7 +106,7 @@ struct GachaDetailOverviewView: View {
                         
                         // MARK: Countdown
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Gacha.countdown")
                                     .bold()
                             }, value: {
@@ -117,7 +117,7 @@ struct GachaDetailOverviewView: View {
                         
                         // MARK: Release Date
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Gacha.release-date")
                                     .bold()
                             }, value: {
@@ -128,7 +128,7 @@ struct GachaDetailOverviewView: View {
                         
                         // MARK: Close Date
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Gacha.close-date")
                                     .bold()
                             }, value: {
@@ -156,19 +156,19 @@ struct GachaDetailOverviewView: View {
                         
                         // MARK: Description
                         Group {
-                            ListItemView(title: {
+                            ListItem(displayMode: .basedOnUISizeClass, title: {
                                 Text("Gacha.descripition")
                                     .bold()
                             }, value: {
                                 MultilingualText(information.gacha.description)
-                            }, displayMode: .basedOnUISizeClass)
+                            })
                             Divider()
                         }
                         
                         
                         // MARK: ID
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("ID")
                                     .bold()
                             }, value: {

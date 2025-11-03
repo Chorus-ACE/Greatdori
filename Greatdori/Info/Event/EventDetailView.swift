@@ -110,7 +110,7 @@ struct EventDetailOverviewView: View {
                         VStack {
                             //MARK: Title
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Event.title")
                                         .bold()
                                 }, value: {
@@ -121,7 +121,7 @@ struct EventDetailOverviewView: View {
                             
                             //MARK: Type
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Event.type")
                                         .bold()
                                 }, value: {
@@ -132,7 +132,7 @@ struct EventDetailOverviewView: View {
                             
                             //MARK: Countdown
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Event.countdown")
                                         .bold()
                                 }, value: {
@@ -143,7 +143,7 @@ struct EventDetailOverviewView: View {
                             
                             //MARK: Start Date
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Event.start-date")
                                         .bold()
                                 }, value: {
@@ -154,7 +154,7 @@ struct EventDetailOverviewView: View {
                             
                             //MARK: End Date
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Event.end-date")
                                         .bold()
                                 }, value: {
@@ -165,7 +165,7 @@ struct EventDetailOverviewView: View {
                             
                             //MARK: Attribute
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Event.attribute")
                                         .bold()
                                 }, value: {
@@ -249,7 +249,7 @@ struct EventDetailOverviewView: View {
                                     }, contentArray: valueArray, columnNumbers: 5, elementWidth: imageButtonSize)
                                 } else {
                                     // Fallback to legacy render mode
-                                    ListItemView(title: {
+                                    ListItem(title: {
                                         Text("Event.character")
                                             .bold()
                                             .fixedSize(horizontal: true, vertical: true)
@@ -306,7 +306,7 @@ struct EventDetailOverviewView: View {
                             
                             //MARK: Parameter
                             if let paramters = information.event.eventCharacterParameterBonus, paramters.total > 0 {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Event.parameter")
                                         .bold()
                                 }, value: {
@@ -336,7 +336,7 @@ struct EventDetailOverviewView: View {
                             
                             //MARK: Card
                             if !cardsArray.isEmpty {
-                                ListItemView(title: {
+                                ListItem(displayMode: .compactOnly, title: {
                                     Text("Event.card")
                                         .bold()
                                 }, value: {
@@ -350,13 +350,13 @@ struct EventDetailOverviewView: View {
                                             .buttonStyle(.plain)
                                         }
                                     }
-                                }, displayMode: .compactOnly)
+                                })
                                 Divider()
                             }
                             
                             //MARK: Rewards
                             if !rewardsArray.isEmpty {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Event.rewards")
                                         .bold()
                                 }, value: {
@@ -377,7 +377,7 @@ struct EventDetailOverviewView: View {
                             
                             //MARK: ID
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("ID")
                                         .bold()
                                 }, value: {

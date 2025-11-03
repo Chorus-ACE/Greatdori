@@ -57,7 +57,7 @@ struct CostumeDetailOverviewView: View {
                     LazyVStack {
                         // MARK: Description
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Costume.title")
                                     .bold()
                             }, value: {
@@ -68,7 +68,7 @@ struct CostumeDetailOverviewView: View {
                         
                         // MARK: Character
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Costume.character")
                                     .bold()
                             }, value: {
@@ -89,7 +89,7 @@ struct CostumeDetailOverviewView: View {
                         
                         // MARK: Band
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Costume.band")
                                     .bold()
                             }, value: {
@@ -105,7 +105,7 @@ struct CostumeDetailOverviewView: View {
                         
                         // MARK: Release Date
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Costume.release-date")
                                     .bold()
                             }, value: {
@@ -117,19 +117,19 @@ struct CostumeDetailOverviewView: View {
                         if !information.costume.howToGet.isValueEmpty {
                             // MARK: How to Get
                             Group {
-                                ListItemView(title: {
+                                ListItem(displayMode: .basedOnUISizeClass, title: {
                                     Text("Costume.how-to-get")
                                         .bold()
                                 }, value: {
                                     MultilingualText(information.costume.howToGet)
-                                }, displayMode: .basedOnUISizeClass)
+                                })
                                 Divider()
                             }
                         }
                         
                         // MARK: ID
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("ID")
                                     .bold()
                             }, value: {

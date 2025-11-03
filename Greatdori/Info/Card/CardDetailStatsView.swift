@@ -39,7 +39,7 @@ struct CardDetailStatsView: View {
                             CustomGroupBox(cornerRadius: 20) {
                                 VStack {
                                     Group {
-                                        ListItemView(title: {
+                                        ListItem(title: {
                                             Text("Card.stats.level")
                                                 .bold()
                                         }, value: {
@@ -57,7 +57,7 @@ struct CardDetailStatsView: View {
                                     }
                                     
                                     Group {
-                                        ListItemView(title: {
+                                        ListItem(title: {
                                             Text("Card.stats.master-rank")
                                                 .bold()
                                         }, value: {
@@ -72,7 +72,7 @@ struct CardDetailStatsView: View {
                                     
                                     if !card.episodes.isEmpty {
                                         Group {
-                                            ListItemView(title: {
+                                            ListItem(title: {
                                                 Text("Card.stats.episode")
                                                     .bold()
                                             }, value: {
@@ -85,7 +85,7 @@ struct CardDetailStatsView: View {
                                     }
                                     
                                     Group {
-                                        ListItemView(title: {
+                                        ListItem(title: {
                                             Text("Card.stats.trained")
                                                 .bold()
                                         }, value: {
@@ -104,7 +104,7 @@ struct CardDetailStatsView: View {
                                 Group {
                                     if tab != 2 {
                                         Group {
-                                            ListItemView(title: {
+                                            ListItem(title: {
                                                 Text("Card.stats.level")
                                                     .bold()
                                             }, value: {
@@ -117,7 +117,7 @@ struct CardDetailStatsView: View {
                                     }
                                     
                                     Group {
-                                        ListItemView(title: {
+                                        ListItem(title: {
                                             Text("Card.stats.performance")
                                                 .bold()
                                         }, value: {
@@ -127,7 +127,7 @@ struct CardDetailStatsView: View {
                                     }
                                     
                                     Group {
-                                        ListItemView(title: {
+                                        ListItem(title: {
                                             Text("Card.stats.technique")
                                                 .bold()
                                         }, value: {
@@ -137,7 +137,7 @@ struct CardDetailStatsView: View {
                                     }
                                     
                                     Group {
-                                        ListItemView(title: {
+                                        ListItem(title: {
                                             Text("Card.stats.visual")
                                                 .bold()
                                         }, value: {
@@ -147,7 +147,7 @@ struct CardDetailStatsView: View {
                                     }
                                     
                                     Group {
-                                        ListItemView(title: {
+                                        ListItem(title: {
                                             Text("Card.stats.total")
                                                 .bold()
                                         }, value: {
@@ -163,7 +163,7 @@ struct CardDetailStatsView: View {
                         CustomGroupBox(cornerRadius: 20) {
                             VStack {
                                 Group {
-                                    ListItemView(title: {
+                                    ListItem(title: {
                                         Text("Card.stats.name")
                                             .bold()
                                     }, value: {
@@ -177,7 +177,7 @@ struct CardDetailStatsView: View {
                                     Divider()
                                     
                                     Group {
-                                        ListItemView(title: {
+                                        ListItem(title: {
                                             Text("Card.stats.effect")
                                                 .bold()
                                         }, value: {
@@ -189,7 +189,7 @@ struct CardDetailStatsView: View {
                                     }
                                     //
                                     Group {
-                                        ListItemView(title: {
+                                        ListItem(title: {
                                             Text("Card.stats.full-effect")
                                                 .bold()
                                         }, value: {
@@ -201,7 +201,7 @@ struct CardDetailStatsView: View {
                                     }
                                     
                                     Group {
-                                        ListItemView(title: {
+                                        ListItem(title: {
                                             Text("Card.stats.duration")
                                                 .bold()
                                         }, value: {

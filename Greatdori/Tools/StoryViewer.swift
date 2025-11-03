@@ -42,7 +42,7 @@ struct StoryViewerView: View {
                     CustomGroupBox(cornerRadius: 20) {
                         VStack {
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Tools.story-viewer.type")
                                         .bold()
                                 }, value: {
@@ -60,7 +60,7 @@ struct StoryViewerView: View {
                             
                             switch storyType {
                             case .event:
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Tools.story-viewer.type.event")
                                         .bold()
                                 }, value: {
@@ -70,7 +70,7 @@ struct StoryViewerView: View {
                             case .main:
                                 EmptyView()
                             case .band:
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Tools.story-viewer.band")
                                         .bold()
                                 }, value: {
@@ -86,7 +86,7 @@ struct StoryViewerView: View {
                                 })
                                 Divider()
                                 
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Tools.story-viewer.story")
                                         .bold()
                                 }, value: {
@@ -109,7 +109,7 @@ struct StoryViewerView: View {
                                 })
                                 Divider()
                             case .card:
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Tools.story-viewer.type.card")
                                         .bold()
                                 }, value: {
@@ -122,7 +122,7 @@ struct StoryViewerView: View {
                                 EmptyView()
                             }
                             
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Tools.story-viewer.locale")
                                     .bold()
                             }, value: {

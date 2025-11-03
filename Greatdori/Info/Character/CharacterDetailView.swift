@@ -212,7 +212,7 @@ struct CharacterDetailOverviewView: View {
                     Group {
                         //MARK: Name
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("Character.name")
                                     .bold()
                             }, value: {
@@ -224,7 +224,7 @@ struct CharacterDetailOverviewView: View {
                         if !(information.character.nickname.jp ?? "").isEmpty {
                             //MARK: Nickname
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.nickname")
                                         .bold()
                                 }, value: {
@@ -237,7 +237,7 @@ struct CharacterDetailOverviewView: View {
                         if let profile = information.character.profile {
                             //MARK: Character Voice
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.character-voice")
                                         .bold()
                                 }, value: {
@@ -250,7 +250,7 @@ struct CharacterDetailOverviewView: View {
                         if let color = information.character.color {
                             //MARK: Color
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.color")
                                         .bold()
                                 }, value: {
@@ -268,7 +268,7 @@ struct CharacterDetailOverviewView: View {
                         if let bandID = information.character.bandID {
                             //MARK: Band
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.band")
                                         .bold()
                                 }, value: {
@@ -288,7 +288,7 @@ struct CharacterDetailOverviewView: View {
                         if let profile = information.character.profile {
                             //MARK: Role
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.role")
                                         .bold()
                                 }, value: {
@@ -299,7 +299,7 @@ struct CharacterDetailOverviewView: View {
                             
                             //MARK: Role
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.birthday")
                                         .bold()
                                 }, value: {
@@ -310,7 +310,7 @@ struct CharacterDetailOverviewView: View {
                             
                             //MARK: Constellation
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.constellation")
                                         .bold()
                                 }, value: {
@@ -321,7 +321,7 @@ struct CharacterDetailOverviewView: View {
                             
                             //MARK: Height
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.height")
                                         .bold()
                                 }, value: {
@@ -332,7 +332,7 @@ struct CharacterDetailOverviewView: View {
                             
                             //MARK: School
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.school")
                                         .bold()
                                 }, value: {
@@ -343,7 +343,7 @@ struct CharacterDetailOverviewView: View {
                             
                             //MARK: Favorite Food
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.year-class")
                                         .bold()
                                 }, value: {
@@ -360,7 +360,7 @@ struct CharacterDetailOverviewView: View {
                             
                             //MARK: Favorite Food
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.favorite-food")
                                         .bold()
                                 }, value: {
@@ -371,7 +371,7 @@ struct CharacterDetailOverviewView: View {
                             
                             //MARK: Disliked Food
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.disliked-food")
                                         .bold()
                                 }, value: {
@@ -382,7 +382,7 @@ struct CharacterDetailOverviewView: View {
                             
                             //MARK: Hobby
                             Group {
-                                ListItemView(title: {
+                                ListItem(title: {
                                     Text("Character.hobby")
                                         .bold()
                                 }, value: {
@@ -393,12 +393,12 @@ struct CharacterDetailOverviewView: View {
                             
                             //MARK: Introduction
                             Group {
-                                ListItemView(title: {
+                                ListItem(displayMode: .basedOnUISizeClass, title: {
                                     Text("Character.introduction")
                                         .bold()
                                 }, value: {
                                     MultilingualText(profile.selfIntroduction, showSecondaryText: false, allowPopover: false)
-                                }, displayMode: .basedOnUISizeClass)
+                                })
                                 Divider()
                             }
                         }
@@ -406,7 +406,7 @@ struct CharacterDetailOverviewView: View {
                         
                         //MARK: ID
                         Group {
-                            ListItemView(title: {
+                            ListItem(title: {
                                 Text("ID")
                                     .bold()
                             }, value: {

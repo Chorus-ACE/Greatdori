@@ -39,7 +39,7 @@ struct ChartSimulatorView: View {
                 VStack {
                     CustomGroupBox(cornerRadius: 20) {
                         VStack {
-                            ListItemView {
+                            ListItem {
                                 Text("歌曲")
                                     .bold()
                             } value: {
@@ -61,7 +61,7 @@ struct ChartSimulatorView: View {
                                 }
                             }
                             if let selectedSong {
-                                ListItemView {
+                                ListItem {
                                     Text("难度")
                                         .bold()
                                 } value: {
@@ -77,7 +77,7 @@ struct ChartSimulatorView: View {
                                     }
                                 }
                             }
-                            ListItemView {
+                            ListItem {
                                 Text("显示模拟器") // FIXME: Text style
                                     .bold()
                             } value: {
