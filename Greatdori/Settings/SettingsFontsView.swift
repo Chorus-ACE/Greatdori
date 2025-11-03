@@ -368,6 +368,7 @@ struct SettingsFontsDetail: View {
                         }
                     }, header: {
                         Text("Settings.fonts.info.preview")
+                    }, footer: {
                         if sampleLanguageIsMissing {
                             Text("Settings.fonts.info.preview.missing-language")
                         }
@@ -380,6 +381,7 @@ struct SettingsFontsDetail: View {
                                 inspectorIsDisplaying = false
                             }, label: {
                                 Label("Settings.fonts.info.remove", systemImage: "trash")
+                                    .foregroundStyle(.red)
                             })
                         }
                     }
