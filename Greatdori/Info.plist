@@ -30,11 +30,9 @@
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Story-jp.otf</string>
-		<string>Story-zh-Hant.otf</string>
-		<string>Story-zh-Hans.ttf</string>
-		<string>Story-en.otf</string>
-		<string>Story-kr.ttf</string>
+		<string>NotoSansJP.ttf</string>
+		<string>NotoSansSC.ttf</string>
+		<string>NotoSansTC.ttf</string>
 	</array>
 </dict>
 </plist>

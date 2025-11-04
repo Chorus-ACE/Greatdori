@@ -229,13 +229,15 @@
 		E949D28B2E93805E00E50D3F /* CollectionCode_ZH-HANS.md in Resources */ = {isa = PBXBuildFile; fileRef = E9490BB52E937BBB00E50D3F /* CollectionCode_ZH-HANS.md */; };
 		E949D28E2E93D9F800E50D3F /* Live2DViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E949D28D2E93D9F100E50D3F /* Live2DViewer.swift */; };
 		E960D3382EB64CE600EA6A5E /* StoryViewerDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = E960D3372EB64CDC00EA6A5E /* StoryViewerDetails.swift */; };
-		E960D33A2EB7411700EA6A5E /* FontManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E960D3392EB7411000EA6A5E /* FontManagement.swift */; };
 		E97888C62E8A79EA00ABD33E /* QuickLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97888C52E8A79E500ABD33E /* QuickLook.swift */; };
 		E97C5B882E8E9A50004858A3 /* SettingsWidgetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97C5B872E8E9A4A004858A3 /* SettingsWidgetsView.swift */; };
 		E98B8B532E7E922A00B4C8A8 /* NavigationComponentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */; };
 		E9A126FC2E8CB62000BBD39E /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A126FB2E8CB61900BBD39E /* EventTracker.swift */; };
 		E9AE639E2EB745B100490B75 /* SettingsFontsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE639D2EB745B100490B75 /* SettingsFontsView.swift */; };
 		E9AE9E082E909EDF00AAB049 /* CardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE9E072E909ED100AAB049 /* CardSelector.swift */; };
+		E9AEC8A32EBA13A200490B75 /* NotoSansJP.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9AEC8A22EBA13A200490B75 /* NotoSansJP.ttf */; };
+		E9AEC8A52EBA13A900490B75 /* NotoSansSC.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9AEC8A42EBA13A900490B75 /* NotoSansSC.ttf */; };
+		E9AEC8A72EBA13C700490B75 /* NotoSansTC.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9AEC8A62EBA13C700490B75 /* NotoSansTC.ttf */; };
 		E9AF51252EAC634100BB808F /* TypeNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AF51242EAC633D00BB808F /* TypeNames.swift */; };
 		E9B17BBB2EA5DC430049C92C /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */; };
 		E9CD3A482E58975D00BF5EA9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A472E58975900BF5EA9 /* Extensions.swift */; };
@@ -660,13 +662,15 @@
 		E949A5622EAA0228007441A6 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
 		E949D28D2E93D9F100E50D3F /* Live2DViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Live2DViewer.swift; sourceTree = "<group>"; };
 		E960D3372EB64CDC00EA6A5E /* StoryViewerDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewerDetails.swift; sourceTree = "<group>"; };
-		E960D3392EB7411000EA6A5E /* FontManagement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManagement.swift; sourceTree = "<group>"; };
 		E97888C52E8A79E500ABD33E /* QuickLook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLook.swift; sourceTree = "<group>"; };
 		E97C5B872E8E9A4A004858A3 /* SettingsWidgetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWidgetsView.swift; sourceTree = "<group>"; };
 		E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationComponentsView.swift; sourceTree = "<group>"; };
 		E9A126FB2E8CB61900BBD39E /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
 		E9AE639D2EB745B100490B75 /* SettingsFontsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFontsView.swift; sourceTree = "<group>"; };
 		E9AE9E072E909ED100AAB049 /* CardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSelector.swift; sourceTree = "<group>"; };
+		E9AEC8A22EBA13A200490B75 /* NotoSansJP.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NotoSansJP.ttf; sourceTree = "<group>"; };
+		E9AEC8A42EBA13A900490B75 /* NotoSansSC.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NotoSansSC.ttf; sourceTree = "<group>"; };
+		E9AEC8A62EBA13C700490B75 /* NotoSansTC.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NotoSansTC.ttf; sourceTree = "<group>"; };
 		E9AF51242EAC633D00BB808F /* TypeNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeNames.swift; sourceTree = "<group>"; };
 		E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
 		E9CD3A472E58975900BF5EA9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -1109,6 +1113,7 @@
 			children = (
 				8CD290132E9FCBB700831458 /* ChartSimAssets.xcassets */,
 				8C889DE32EA22C9700FBF01D /* StoryViewerAssets.xcassets */,
+				E9AEC8A82EBA13CB00490B75 /* Fonts */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -1293,11 +1298,20 @@
 				8C2BB9B32E92AF3700D003D1 /* StoryViewer.swift */,
 				E960D3372EB64CDC00EA6A5E /* StoryViewerDetails.swift */,
 				8C2B64012E940B2100D003D1 /* InteractiveStoryView.swift */,
-				E960D3392EB7411000EA6A5E /* FontManagement.swift */,
 				E949D28D2E93D9F100E50D3F /* Live2DViewer.swift */,
 				8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */,
 			);
 			path = Tools;
+			sourceTree = "<group>";
+		};
+		E9AEC8A82EBA13CB00490B75 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				E9AEC8A22EBA13A200490B75 /* NotoSansJP.ttf */,
+				E9AEC8A42EBA13A900490B75 /* NotoSansSC.ttf */,
+				E9AEC8A62EBA13C700490B75 /* NotoSansTC.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		E9BD6C4F2E547A7200D56E55 /* Settings */ = {
@@ -1603,7 +1617,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9AEC8A52EBA13A900490B75 /* NotoSansSC.ttf in Resources */,
+				E9AEC8A72EBA13C700490B75 /* NotoSansTC.ttf in Resources */,
 				8CD290142E9FCBB700831458 /* ChartSimAssets.xcassets in Resources */,
+				E9AEC8A32EBA13A200490B75 /* NotoSansJP.ttf in Resources */,
 				E949D28B2E93805E00E50D3F /* CollectionCode_ZH-HANS.md in Resources */,
 				E9E3C05A2E35D0150059BCE8 /* Localizable.xcstrings in Resources */,
 				8C2B642B2E9581EC00D003D1 /* CollectionCode_EN.md in Resources */,
@@ -1744,7 +1761,6 @@
 				E94219022E8AA43300F24974 /* CardDetailStatsView.swift in Sources */,
 				E94219242E8AA67E00F24974 /* DetailArtsView.swift in Sources */,
 				8CD28FF02E9F6C6D00831458 /* ChartSimulator.swift in Sources */,
-				E960D33A2EB7411700EA6A5E /* FontManagement.swift in Sources */,
 				E94219192E8AA58800F24974 /* CostumeSearchView.swift in Sources */,
 				E94218F02E8AA2FF00F24974 /* CharacterDetailView.swift in Sources */,
 				8C3DFB102EAF84BB0004E1F5 /* CostumeSelector.swift in Sources */,
