@@ -18,6 +18,8 @@ import DoriKit
 import SwiftUI
 import UniformTypeIdentifiers
 
+let fontManagerSampleText: [DoriLocale: String] = [.jp: "あなたの輝きが道を照らす", .en: "Your Spark Will Light the Way", .tw: "你的光芒照耀漫漫長路", .cn: "你的光芒会照亮前行之路", .kr: "당신의 반짝임이 길을 밝힌다"]
+
 struct SettingsFontsView: View {
     var body: some View {
         if isMACOS {
@@ -37,16 +39,14 @@ struct SettingsFontsView: View {
 struct SettingsFontsMain: View {
     @StateObject private var fontManager = FontManager.shared
     @State var newFontSheetIsDisplaying = false
-    
     @State var fontInspectorSheetIsDisplaying = false
     @State var fontInspectorTarget = ""
-    
-    
-//    let deafultSystemFonts = [".AppleSystemUIFont", "SF Pro Rounded", "New York", "SF Mono"]
     @State var addedSystemFonts: [String] = []
+    @State var storyViewerFonts: [DoriLocale: String] = [:]
+    @State var storyViewerUpdateIndex: Int = 0
     var body: some View {
         Form {
-            Section("Settings.font.system") {
+            Section("Settings.fonts.system") {
                 ForEach(FontManager.builtInFonts, id: \.self) { item in
                     SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item)
                 }
@@ -55,6 +55,7 @@ struct SettingsFontsMain: View {
                         .swipeActions {
                             Button(role: .destructive, action: {
                                 addedSystemFonts.removeAll(where: { $0 == item })
+                                fontManager.removeFontFromPreferences(item)
                             }, label: {
                                 Label("Settings.fonts.remove", systemImage: "trash")
                             })
@@ -80,20 +81,29 @@ struct SettingsFontsMain: View {
                 }
             }
             
-            if !isMACOS {
-                Section {
-                    Button(action: {
-                        newFontSheetIsDisplaying = true
+            Section("Settings.fonts.story-viewer") {
+                ForEach(DoriLocale.allCases, id: \.self) { locale in
+                    NavigationLink(destination: {
+                        SettingsFontsPicker(externalUpdateIndex: $storyViewerUpdateIndex, locale: locale)
                     }, label: {
-                        Label("Settings.fonts.new", systemImage: "plus")
+                        HStack {
+                            Text("\(locale.rawValue.uppercased())")
+                            Spacer()
+                            Text(fontManager.getUserFriendlyFontDisplayName(forFontName: storyViewerFonts[locale] ?? "") ?? (storyViewerFonts[locale] ?? ""))
+                                .foregroundStyle(.secondary)
+                        }
                     })
+                }
+            }
+            .onChange(of: storyViewerUpdateIndex, initial: true) {
+                for locale in DoriLocale.allCases {
+                    storyViewerFonts.updateValue(UserDefaults.standard.string(forKey: "StoryViewerFont\(locale.rawValue.uppercased())") ?? ".AppleSystemUIFont", forKey: locale)
                 }
             }
         }
         .navigationTitle("Settings.fonts")
         .formStyle(.grouped)
         .toolbar {
-            if isMACOS {
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
                         newFontSheetIsDisplaying = true
@@ -101,7 +111,6 @@ struct SettingsFontsMain: View {
                         Label("Settings.fonts.new", systemImage: "plus")
                     })
                 }
-            }
         }
         .sheet(isPresented: $newFontSheetIsDisplaying) {
             SettingsFontsAdd()
@@ -181,6 +190,11 @@ struct SettingsFontsAdd: View {
                                 .lineLimit(1)
                                 .multilineTextAlignment(.trailing)
                                 .labelsHidden()
+                                .wrapIf(!isMACOS, in: { content in
+                                    #if os(iOS)
+                                        content.textInputAutocapitalization(.never)
+                                    #endif
+                                })
                         }
                     } else if newFontSourceType == 1 {
                         HStack {
@@ -203,6 +217,15 @@ struct SettingsFontsAdd: View {
                                 .bold()
                             Spacer()
                             TextField("", text: $newFontSystemName, prompt: Text(verbatim: "SF Pro"))
+                                .lineLimit(1)
+                                .multilineTextAlignment(.trailing)
+                                .labelsHidden()
+                                .autocorrectionDisabled()
+                                .wrapIf(!isMACOS, in: { content in
+#if os(iOS)
+                                    content.textInputAutocapitalization(.never)
+#endif
+                                })
                         }
                     }
                 }, footer: {
@@ -322,8 +345,7 @@ struct SettingsFontsDetail: View {
     @State var fontSupportingLanguagesText: String = ""
     @State var showCountsInsteadOfAllItemsForLanguages = true
     @State var sampleLanguageIsMissing = false
-    @State var sampleTextFontWeight: Font.Weight = .regular
-    let sampleText: [DoriLocale: String] = [.jp: "あなたの輝きが道を照らす", .en: "Your Spark Will Light the Way", .tw: "你的光芒照耀漫漫長路", .cn: "你的光芒会照亮前行之路", .kr: "당신의 반짝임이 길을 밝힌다"]
+    @State var fontManagerSampleTextFontWeight: Font.Weight = .regular
     var body: some View {
         NavigationStack {
             if !fontName.isEmpty {
@@ -433,7 +455,7 @@ struct SettingsFontsDetail: View {
                             ListItem(allowValueLeading: true, boldTitle: false, title: {
                                 Text("Settings.fonts.info.preview.weight")
                             }, value: {
-                                Picker(selection: $sampleTextFontWeight, content: {
+                                Picker(selection: $fontManagerSampleTextFontWeight, content: {
                                     Text("Settings.fonts.info.preview.weight.light")
                                         .tag(Font.Weight.light)
                                     Text("Settings.fonts.info.preview.weight.regular")
@@ -448,10 +470,10 @@ struct SettingsFontsDetail: View {
                         }
                         
                         ForEach(DoriLocale.allCases, id: \.self) { locale in
-                            if fontManager.fontInfo(fontName: fontName)?.supportedLanguages?.contains(locale.nsLocale().identifier) ?? true || fontManager.fontInfo(fontName: fontName)?.supportedLanguages?.isEmpty ?? true {
-                                Text(sampleText[locale]!)
+                            if fontManager.fontSupportsLocale(fontName, locale: locale) {
+                                Text(fontManagerSampleText[locale]!)
                                     .font(.custom(fontName, size: 18))
-                                    .fontWeight(sampleTextFontWeight)
+                                    .fontWeight(fontManagerSampleTextFontWeight)
                                     .typesettingLanguage(locale.nsLocale().language)
                             }
                         }
@@ -474,6 +496,7 @@ struct SettingsFontsDetail: View {
                                     var addedSystemFonts = UserDefaults.standard.stringArray(forKey: "addedSystemFonts") ?? []
                                     addedSystemFonts.removeAll(where: { $0 == fontName })
                                     UserDefaults.standard.set(addedSystemFonts, forKey: "addedSystemFonts")
+                                    fontManager.removeFontFromPreferences(fontName)
                                 }
                                 inspectorIsDisplaying = false
                             }, label: {
@@ -505,6 +528,7 @@ struct SettingsFontsDetail: View {
                                 } else {
                                     var addedSystemFonts = UserDefaults.standard.stringArray(forKey: "addedSystemFonts") ?? []
                                     addedSystemFonts.removeAll(where: { $0 == fontName })
+                                    fontManager.removeFontFromPreferences(fontName)
                                     UserDefaults.standard.set(addedSystemFonts, forKey: "addedSystemFonts")
                                 }
                                 inspectorIsDisplaying = false
@@ -541,11 +565,97 @@ struct SettingsFontsDetail: View {
     }
 }
 
+struct SettingsFontsPicker: View {
+    @StateObject private var fontManager = FontManager.shared
+    @Binding var externalUpdateIndex: Int
+    @State var addedSystemFonts: [String] = []
+    @State var updateIndex = 0
+    @State var selectedFont = ""
+    var locale: DoriLocale
+    var body: some View {
+        ScrollView {
+            VStack {
+                Section {
+                    HStack {
+                        Text("Settings.fonts.system")
+                            .bold()
+                        Spacer()
+                    }
+                    ForEach(FontManager.builtInFonts + addedSystemFonts, id: \.self) { item in
+                        SettingsFontsPickerItem(selectedFont: $selectedFont, updateIndex: $updateIndex, locale: locale, fontName: item)
+                    }
+                }
+                
+                DetailSectionsSpacer()
+                
+                if !fontManager.loadedFonts.isEmpty {
+                    Section {
+                        HStack {
+                            Text("Settings.fonts.installed")
+                                .bold()
+                            Spacer()
+                        }
+                        ForEach(fontManager.loadedFonts, id: \.self) { item in
+                            SettingsFontsPickerItem(selectedFont: $selectedFont, updateIndex: $updateIndex, locale: locale, fontName: item.fontName)
+                        }
+                    }
+                }
+            }
+            .padding()
+        }
+        .navigationTitle("\(locale.rawValue.uppercased())")
+        .formStyle(.grouped)
+        .onAppear {
+            addedSystemFonts = UserDefaults.standard.stringArray(forKey: "addedSystemFonts") ?? []
+        }
+        .onChange(of: updateIndex, initial: true) {
+            selectedFont = UserDefaults.standard.string(forKey: "StoryViewerFont\(locale.rawValue.uppercased())") ?? ".AppleSystemUIFont"
+        }
+        .onDisappear {
+            externalUpdateIndex += 1
+        }
+    }
+    
+    struct SettingsFontsPickerItem: View {
+        @StateObject var fontManager = FontManager.shared
+        @Binding var selectedFont: String
+        @Binding var updateIndex: Int
+        var locale: DoriLocale
+        var fontName: String
+        var body: some View {
+            if fontManager.fontSupportsLocale(fontName, locale: locale) {
+                Button(action: {
+                    UserDefaults.standard.set(fontName, forKey: "StoryViewerFont\(locale.rawValue.uppercased())")
+                    updateIndex += 1
+                }, label: {
+                    CustomGroupBox(customGroupBoxVersion: 1) {
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text(fontManager.getUserFriendlyFontDisplayName(forFontName: fontName) ?? fontName)
+                                Spacer()
+                                CompactToggle(isLit: selectedFont == fontName)
+                            }
+                            ScrollView(.horizontal) {
+                                Text(fontManagerSampleText[locale]!)
+                                    .font(.custom(fontName, size: 30))
+                                    .typesettingLanguage(locale.nsLocale().language)
+                                    .fontWeight(.regular)
+                            }
+                        }
+                    }
+                    .contentShape(Rectangle())
+                })
+                .buttonStyle(.plain)
+            }
+        }
+    }
+}
+
 @MainActor
 final class FontManager: ObservableObject {
     static let shared = FontManager()
     static let allAcceptableSuffix: Set<String> = ["ttf", "otf", "ttc", "otc"]
-    static let builtInFonts = [".AppleSystemUIFont", "SF Pro Rounded", "SF Mono", "New York"]
+    static let builtInFonts = [".AppleSystemUIFont"]
     
     
     @Published var loadedFonts: [CachedFont] = []
@@ -605,6 +715,16 @@ final class FontManager: ObservableObject {
             }
         }
         loadedFonts.removeAll { $0.fontName == fontName }
+        
+        removeFontFromPreferences(fontName)
+    }
+    
+    func removeFontFromPreferences(_ fontName: String) {
+        for locale in DoriLocale.allCases {
+            if (UserDefaults.standard.string(forKey: "StoryViewerFont\(locale.rawValue.uppercased())") ?? ".AppleSystemUIFont") == fontName {
+                UserDefaults.standard.set(".AppleSystemUIFont", forKey: "StoryViewerFont\(locale.rawValue.uppercased())")
+            }
+        }
     }
     
     private func registerFont(at url: URL) throws {
@@ -714,11 +834,12 @@ final class FontManager: ObservableObject {
         return descriptors.sorted()
     }
     
-    func allSystemFonts() -> [String] {
-        return FontManager.shared.allAvailableFontNames().filter { FontManager.shared.isSystemFont(CTFontCreateWithName($0 as CFString, 14, nil)) }
+    func fontSupportsLocale(_ fontName: String, locale: DoriLocale) -> Bool {
+        let ctFont = CTFontCreateWithName(fontName as CFString, 12, nil)
+        let supportedLanguages = CTFontCopySupportedLanguages(ctFont) as? [String]
+        return (supportedLanguages?.contains(locale.nsLocale().identifier) ?? true) || (supportedLanguages?.isEmpty ?? true) || fontName == ".AppleSystemUIFont"
     }
 }
-
 
 struct FontInfo: Identifiable {
     let id = UUID()

@@ -33,11 +33,13 @@ let infoContentMaxWidth: CGFloat = 600
 // MARK: Banner
 struct Banner<Content: View>: View {
     var isPresented: Binding<Bool>
+    var cornerRadius: CGFloat
     var color: Color
     var dismissable: Bool
     let content: () -> Content
-    init(color: Color = .yellow, isPresented: Binding<Bool> = .constant(true), dismissable: Bool = false, @ViewBuilder content: @escaping () -> Content) {
+    init(color: Color = .yellow, cornerRaidus: CGFloat = 20, isPresented: Binding<Bool> = .constant(true), dismissable: Bool = false, @ViewBuilder content: @escaping () -> Content) {
         self.color = color
+        self.cornerRadius = cornerRaidus
         self.isPresented = isPresented
         self.dismissable = dismissable
         self.content = content
@@ -60,10 +62,10 @@ struct Banner<Content: View>: View {
                 .padding()
                 .background {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 15)
+                        RoundedRectangle(cornerRadius: cornerRadius)
                             .foregroundStyle(color)
                             .opacity(0.3)
-                        RoundedRectangle(cornerRadius: 15)
+                        RoundedRectangle(cornerRadius: cornerRadius)
                             .strokeBorder(color.opacity(0.9), lineWidth: 2)
                     }
                 }
@@ -123,7 +125,7 @@ struct CustomGroupBox<Content: View>: View {
     var showGroupBox: Bool
     var strokeLineWidth: CGFloat
     var useExtenedConstraints: Bool
-    @AppStorage("customGroupBoxVersion") var customGroupBoxVersion = 2
+    var customGroupBoxVersion: Int
     @Environment(\._groupBoxStrokeLineWidth) var envStrokeLineWidth: CGFloat
     @Environment(\._suppressCustomGroupBox) var suppressCustomGroupBox
     
@@ -132,12 +134,14 @@ struct CustomGroupBox<Content: View>: View {
         cornerRadius: CGFloat = isMACOS ? 15 : 20,
         useExtenedConstraints: Bool = false,
         strokeLineWidth: CGFloat = 0,
+        customGroupBoxVersion: Int? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.showGroupBox = showGroupBox
         self.cornerRadius = cornerRadius
         self.strokeLineWidth = strokeLineWidth
         self.useExtenedConstraints = useExtenedConstraints
+        self.customGroupBoxVersion = customGroupBoxVersion ?? (UserDefaults.standard.value(forKey: "customGroupBoxVersion") as? Int) ?? 2
         self.content = content
     }
     
