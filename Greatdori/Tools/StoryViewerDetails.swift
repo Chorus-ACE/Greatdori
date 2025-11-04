@@ -18,13 +18,12 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct StoryDetailView: View {
-    
     var title: String
     var scenarioID: String
     var voiceAssetBundleName: String?
     var type: StoryType
     var locale: _DoriAPI.Locale
-    var unsafeAssociatedID: String // WTF
+    var unsafeAssociatedID: String // WTF --@WindowsMEMZ
     var unsafeSecondaryAssociatedID: String?
     @State var asset: _DoriAPI.Misc.StoryAsset?
     @State var transcript: [_DoriAPI.Misc.StoryAsset.Transcript]?

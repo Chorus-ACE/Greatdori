@@ -665,6 +665,7 @@
 		E9A126FB2E8CB61900BBD39E /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
 		E9AE639D2EB745B100490B75 /* SettingsFontsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFontsView.swift; sourceTree = "<group>"; };
 		E9AE9E072E909ED100AAB049 /* CardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSelector.swift; sourceTree = "<group>"; };
+		E9AEC8C72EBA2EFC00490B75 /* FontSuggestions_ZH-HANS.md */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FontSuggestions_ZH-HANS.md"; sourceTree = "<group>"; };
 		E9AF51242EAC633D00BB808F /* TypeNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeNames.swift; sourceTree = "<group>"; };
 		E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
 		E9CD3A472E58975900BF5EA9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -1313,6 +1314,7 @@
 				E90769D12E546D5B00C9871C /* DebugView.swift */,
 				8CC046DB2E6C8F5D009FDC13 /* AppFlags.swift */,
 				E9490BB52E937BBB00E50D3F /* CollectionCode_ZH-HANS.md */,
+				E9AEC8C72EBA2EFC00490B75 /* FontSuggestions_ZH-HANS.md */,
 				8C2B642A2E9581EC00D003D1 /* CollectionCode_EN.md */,
 			);
 			path = Settings;

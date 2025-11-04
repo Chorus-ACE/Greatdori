@@ -65,10 +65,6 @@ struct InteractiveStoryView: View {
         self.locale = locale
         unsafe voicePlayer = .allocate(capacity: 1)
         unsafe voicePlayer.initialize(to: .init())
-        
-        #if os(iOS)
-        setDeviceOrientation(to: .landscapeLeft, allowing: .landscape)
-        #endif
     }
     
     var body: some View {
@@ -159,6 +155,8 @@ struct InteractiveStoryView: View {
             }
             
 //            #if os(iOS)
+            // FIXME: Consider removal.
+            /*
             if !uiIsHiding {
                 HStack {
                     Spacer()
@@ -178,6 +176,7 @@ struct InteractiveStoryView: View {
                 }
                 .padding()
             }
+            */
 //            #endif
             
             // Black & White Covers
@@ -207,7 +206,7 @@ struct InteractiveStoryView: View {
                     .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
             }
         }
-        .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration))
+        .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration)) //FIXME: Consider Edits
 //        #if os(macOS)
 //        .toolbar {
 //            ToolbarItem {
