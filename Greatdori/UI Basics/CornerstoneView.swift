@@ -119,20 +119,28 @@ struct CompactToggle: View {
 // MARK: CustomGroupBox
 struct CustomGroupBox<Content: View>: View {
     let content: () -> Content
-    var cornerRadius: CGFloat = 15
-    var showGroupBox: Bool = true
-    var strokeLineWidth: CGFloat = 0
-    var useExtenedConstraints: Bool = false
+    var cornerRadius: CGFloat
+    var showGroupBox: Bool
+    var strokeLineWidth: CGFloat
+    var useExtenedConstraints: Bool
     @AppStorage("customGroupBoxVersion") var customGroupBoxVersion = 2
     @Environment(\._groupBoxStrokeLineWidth) var envStrokeLineWidth: CGFloat
     @Environment(\._suppressCustomGroupBox) var suppressCustomGroupBox
-    init(showGroupBox: Bool = true, cornerRadius: CGFloat = 15, useExtenedConstraints: Bool = false, strokeLineWidth: CGFloat = 0, @ViewBuilder content: @escaping () -> Content) {
+    
+    init(
+        showGroupBox: Bool = true,
+        cornerRadius: CGFloat = isMACOS ? 15 : 20,
+        useExtenedConstraints: Bool = false,
+        strokeLineWidth: CGFloat = 0,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.showGroupBox = showGroupBox
         self.cornerRadius = cornerRadius
         self.strokeLineWidth = strokeLineWidth
         self.useExtenedConstraints = useExtenedConstraints
         self.content = content
     }
+    
     var body: some View {
         ExtendedConstraints(isActive: useExtenedConstraints) {
             content()
@@ -145,12 +153,12 @@ struct CustomGroupBox<Content: View>: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: cornerRadius)
                                 .fill(.black.opacity(0.1))
-                                .offset(y: 4)
-                                .blur(radius: 4)
+                                .offset(y: 3)
+                                .blur(radius: 3)
                                 .mask {
                                     Rectangle()
-                                        .size(width: geometry.size.width + 24, height: geometry.size.height + 24)
-                                        .offset(x: -12, y: -12)
+                                        .size(width: geometry.size.width + 18, height: geometry.size.height + 18)
+                                        .offset(x: -9, y: -9)
                                         .overlay {
                                             RoundedRectangle(cornerRadius: cornerRadius)
                                                 .blendMode(.destinationOut)
@@ -159,11 +167,11 @@ struct CustomGroupBox<Content: View>: View {
                             RoundedRectangle(cornerRadius: cornerRadius)
                                 .fill(.black.opacity(0.1))
                                 .offset(y: 4)
-                                .blur(radius: 16)
+                                .blur(radius: 10)
                                 .mask {
                                     Rectangle()
-                                        .size(width: geometry.size.width + 96, height: geometry.size.height + 96)
-                                        .offset(x: -48, y: -48)
+                                        .size(width: geometry.size.width + 60, height: geometry.size.height + 60)
+                                        .offset(x: -30, y: -30)
                                         .overlay {
                                             RoundedRectangle(cornerRadius: cornerRadius)
                                                 .blendMode(.destinationOut)
@@ -218,6 +226,7 @@ struct CustomGroupBox<Content: View>: View {
                 }
             }
         }
+        .animation(.spring(duration: 0.3, bounce: 0.2), value: customGroupBoxVersion)
         // We pass the group box status bidirectionally to allow
         // other views that suppress the custom group box
         // to provide their own representation

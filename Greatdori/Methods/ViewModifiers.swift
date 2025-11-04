@@ -362,28 +362,34 @@ private struct _ImageUpscaleView<V: View, Result: View>: View {
                             || ProcessInfo.processInfo.thermalState.rawValue > 2 {
                             return
                         }
-#if !os(macOS)
+                        #if !os(macOS)
                         guard let data = data ?? image.pngData() else { return }
-#else
+                        #else
                         guard let data = data ?? image.tiffRepresentation else { return }
-#endif
+                        #endif
                         DispatchQueue.main.async {
-#if os(iOS)
+                            #if os(iOS)
                             sourceImage = .init(uiImage: image)
-#else
+                            #else
                             sourceImage = .init(nsImage: image)
-#endif
+                            #endif
                         }
                         Task.detached {
                             do {
-                                let assetPack = try await AssetPackManager.shared.assetPack(withID: "Upscaler-Model")
-                                try await AssetPackManager.shared.ensureLocalAvailability(of: assetPack)
-                                let packageURL = try AssetPackManager.shared.url(for: "Upscaler.mlpackage")
                                 let _model: MLModel
                                 if let compiledModel = UserDefaults.standard.string(forKey: "UpscalerCompiledModel"),
                                    FileManager.default.fileExists(atPath: NSHomeDirectory() + "/tmp/\(compiledModel)") {
                                     _model = try .init(contentsOf: .init(filePath: NSHomeDirectory() + "/tmp/\(compiledModel)"))
                                 } else {
+                                    let packageURL: URL
+                                    if let url = UserDefaults.standard.url(forKey: "UpscalerPackage"),
+                                       FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) {
+                                        packageURL = url
+                                    } else {
+                                        let assetPack = try await AssetPackManager.shared.assetPack(withID: "Upscaler-Model")
+                                        try await AssetPackManager.shared.ensureLocalAvailability(of: assetPack)
+                                        packageURL = try AssetPackManager.shared.url(for: "Upscaler.mlpackage")
+                                    }
                                     let newURL = try await MLModel.compileModel(at: packageURL)
                                     UserDefaults.standard.set(newURL.lastPathComponent, forKey: "UpscalerCompiledModel")
                                     _model = try .init(contentsOf: newURL)
@@ -398,11 +404,11 @@ private struct _ImageUpscaleView<V: View, Result: View>: View {
                                     let context = CIContext()
                                     guard let sourceImage = CIImage(data: data) else { return }
                                     guard let cgImage = context.createCGImage(image, from: image.extent) else { return }
-#if os(iOS)
+                                    #if os(iOS)
                                     upscaledImage = .init(uiImage: .init(cgImage: cgImage))
-#else
+                                    #else
                                     upscaledImage = .init(nsImage: .init(cgImage: cgImage, size: image.extent.size))
-#endif
+                                    #endif
                                 }
                             } catch {
                                 print(error)
