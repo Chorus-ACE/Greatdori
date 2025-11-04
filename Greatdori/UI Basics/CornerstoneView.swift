@@ -1106,6 +1106,7 @@ struct ListItem<Content1: View, Content2: View>: View {
                         .onFrameChange(perform: { geometry in
                             valueAvailableWidth = geometry.size.width
                         })
+                        .multilineTextAlignment(.trailing)
                 }
             } else { // VStack (LONG)
                 VStack(alignment: .leading) {

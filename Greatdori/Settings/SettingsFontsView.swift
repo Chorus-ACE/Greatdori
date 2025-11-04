@@ -21,11 +21,11 @@ import UniformTypeIdentifiers
 struct SettingsFontsView: View {
     var body: some View {
         if isMACOS {
-            SettingsFontsViewMain()
+            SettingsFontsMain()
         } else {
             Section("Settings.fonts") {
                 NavigationLink(destination: {
-                    SettingsFontsViewMain()
+                    SettingsFontsMain()
                 }, label: {
                     Text("Settings.fonts")
                 })
@@ -34,69 +34,43 @@ struct SettingsFontsView: View {
     }
 }
 
-struct SettingsFontsViewMain: View {
+struct SettingsFontsMain: View {
     @StateObject private var fontManager = FontManager.shared
-    
     @State var newFontSheetIsDisplaying = false
-    @State var newFontOnlineURL = ""
-    @State var newFontLocalURL: URL?
-    @State var newFontSystemName = ""
-    @State var newFontAddFailureAlertIsDisplaying = false
-    @State var newFontAddFailureReason = ""
-    @State var newFontIsAdding = false
-    @State var newFontSourceType = 0
-    @State var newFontFileImporterIsDisplaying = false
     
     @State var fontInspectorSheetIsDisplaying = false
     @State var fontInspectorTarget = ""
     
-    let deafultSystemFonts = ["SF Pro", "Pingfang SC", "Pingfang TC", "Hiragino Sans", "Apple SD Gothic Neo"]
     
+//    let deafultSystemFonts = [".AppleSystemUIFont", "SF Pro Rounded", "New York", "SF Mono"]
+    @State var addedSystemFonts: [String] = []
     var body: some View {
         Form {
-            Section("Settings.font.built-in") {
-                ForEach(deafultSystemFonts, id: \.self) { item in
-                    Button(action: {
-                        fontInspectorTarget = item
-                        fontInspectorSheetIsDisplaying = true
-                    }, label: {
-                        HStack {
-                            Text(fontManager.getUserFriendlyFontDisplayName(forFontName: item) ?? item)
-                                .font(.custom(item, size: 18))
-                                .fontWeight(.regular)
-                            Spacer()
-                            Image(systemName: "info.circle")
-                                .foregroundStyle(.secondary)
+            Section("Settings.font.system") {
+                ForEach(FontManager.builtInFonts, id: \.self) { item in
+                    SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item)
+                }
+                ForEach(addedSystemFonts, id: \.self) { item in
+                    SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item)
+                        .swipeActions {
+                            Button(role: .destructive, action: {
+                                addedSystemFonts.removeAll(where: { $0 == item })
+                            }, label: {
+                                Label("Settings.fonts.remove", systemImage: "trash")
+                            })
                         }
-                        .contentShape(Rectangle())
-                    })
-                    .buttonStyle(.plain)
                 }
             }
             
             Section("Settings.fonts.installed") {
                 if !fontManager.loadedFonts.isEmpty {
                     ForEach(fontManager.loadedFonts, id: \.self) { item in
-                        Button(action: {
-                            fontInspectorTarget = item.fontName
-                            fontInspectorSheetIsDisplaying = true
-                        }, label: {
-                            HStack {
-                                Text(fontManager.getUserFriendlyFontDisplayName(forFontName: item.fontName) ?? item.fontName)
-                                    .font(.custom(item.fontName, size: 18))
-                                    .fontWeight(.regular)
-                                Spacer()
-                                Image(systemName: "info.circle")
-                                    .foregroundStyle(.secondary)
-                            }
-                            .contentShape(Rectangle())
-                        })
-                        .buttonStyle(.plain)
+                        SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item.fontName)
                         .swipeActions {
                             Button(role: .destructive, action: {
                                 fontManager.removeFont(fontName: item.fontName)
                             }, label: {
-                                Label("Settings.fonts.installed.remove", systemImage: "trash")
+                                Label("Settings.fonts.remove", systemImage: "trash")
                             })
                         }
                     }
@@ -104,9 +78,11 @@ struct SettingsFontsViewMain: View {
                     Text("Settings.fonts.installed.none")
                         .foregroundStyle(.secondary)
                 }
-                if !isMACOS {
+            }
+            
+            if !isMACOS {
+                Section {
                     Button(action: {
-                        newFontOnlineURL = ""
                         newFontSheetIsDisplaying = true
                     }, label: {
                         Label("Settings.fonts.new", systemImage: "plus")
@@ -120,7 +96,6 @@ struct SettingsFontsViewMain: View {
             if isMACOS {
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
-                        newFontOnlineURL = ""
                         newFontSheetIsDisplaying = true
                     }, label: {
                         Label("Settings.fonts.new", systemImage: "plus")
@@ -129,148 +104,215 @@ struct SettingsFontsViewMain: View {
             }
         }
         .sheet(isPresented: $newFontSheetIsDisplaying) {
-            NavigationStack {
-                Form {
-                    Section(content: {
+            SettingsFontsAdd()
+        }
+        .sheet(isPresented: $fontInspectorSheetIsDisplaying) {
+            SettingsFontsDetail(fontName: $fontInspectorTarget, inspectorIsDisplaying: $fontInspectorSheetIsDisplaying)
+        }
+        .onChange(of: fontInspectorSheetIsDisplaying, newFontSheetIsDisplaying, initial: true) {
+            addedSystemFonts = UserDefaults.standard.stringArray(forKey: "addedSystemFonts") ?? []
+        }
+        .onChange(of: addedSystemFonts) {
+            UserDefaults.standard.set(addedSystemFonts, forKey: "addedSystemFonts")
+        }
+    }
+    
+    struct SettingsFontsPreview: View {
+        var fontManager = FontManager.shared
+        @Binding var fontInspectorTarget: String
+        @Binding var fontInspectorSheetIsDisplaying: Bool
+        var fontName: String
+        var body: some View {
+            Button(action: {
+                fontInspectorTarget = fontName
+                fontInspectorSheetIsDisplaying = true
+            }, label: {
+                HStack {
+                    Text(fontManager.getUserFriendlyFontDisplayName(forFontName: fontName) ?? fontName)
+                        .font(.custom(fontName, size: 18))
+                        .fontWeight(.regular)
+                    Spacer()
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(.secondary)
+                }
+                .contentShape(Rectangle())
+            })
+            .buttonStyle(.plain)
+        }
+    }
+}
+
+struct SettingsFontsAdd: View {
+    @StateObject private var fontManager = FontManager.shared
+    @Environment(\.dismiss) var dismiss
+    @State var newFontOnlineURL = ""
+    @State var newFontLocalURL: URL?
+    @State var newFontSystemName = ""
+    @State var newFontAddFailureAlertIsDisplaying = false
+    @State var newFontAddFailureReason = ""
+    @State var newFontIsAdding = false
+    @State var newFontSourceType = 0
+    @State var newFontFileImporterIsDisplaying = false
+    @State var addedSystemFonts: [String] = []
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section(content: {
+                    HStack {
+                        Text("Settings.fonts.new.type")
+                            .bold()
+                        Spacer()
+                        Picker("", selection: $newFontSourceType, content: {
+                            Text("Settings.fonts.new.type.online")
+                                .tag(0)
+                            Text("Settings.fonts.new.type.local")
+                                .tag(1)
+                            Text("Settings.fonts.new.type.system")
+                                .tag(2)
+                        })
+                        .labelsHidden()
+                    }
+                    if newFontSourceType == 0 {
                         HStack {
-                            Text("Settings.fonts.new.type")
+                            Text("Settings.fonts.new.url")
                                 .bold()
                             Spacer()
-                            Picker("", selection: $newFontSourceType, content: {
-                                Text("Settings.fonts.new.type.online")
-                                    .tag(0)
-                                Text("Settings.fonts.new.type.local")
-                                    .tag(1)
-                                Text("Settings.fonts.new.type.system")
-                                    .tag(1)
-                            })
-                            .labelsHidden()
+                            TextField("", text: $newFontOnlineURL, prompt: Text(verbatim: "example.com/font.ttf"))
+                                .lineLimit(1)
+                                .multilineTextAlignment(.trailing)
+                                .labelsHidden()
                         }
-                        if newFontSourceType == 0 {
-                            HStack {
-                                Text("Settings.fonts.new.url")
-                                    .bold()
-                                Spacer()
-                                TextField("", text: $newFontOnlineURL, prompt: Text(verbatim: "example.com/font.ttf"))
-                                    .lineLimit(1)
-                                    .multilineTextAlignment(.trailing)
-                                    .labelsHidden()
-                            }
-                        } else if newFontSourceType == 1 {
-                            HStack {
-                                Text("Settings.fonts.new.file")
-                                    .bold()
-                                Spacer()
-                                Button(action: {
-                                    newFontFileImporterIsDisplaying = true
-                                }, label: {
-                                    if let lastPathComponent = newFontLocalURL?.lastPathComponent {
-                                        Text(lastPathComponent)
-                                    } else {
-                                        Text("Settings.fonts.new.select-file")
-                                    }
-                                })
-                            }
-                        } else if newFontSourceType == 2 {
-                            HStack {
-                                Text("Settings.fonts.new.name")
-                                    .bold()
-                                Spacer()
-                                TextField("Settings.fonts.new.name", text: $newFontSystemName)
-                            }
-                        }
-                    }, footer: {
-                        Text("Settings.fonts.new.footer")
-                    })
-                }
-                .wrapIf(!isMACOS, in: { content in
-                    content.navigationTitle("Settings.fonts.new")
-                })
-                .formStyle(.grouped)
-                .toolbar {
-                    if isMACOS || !newFontIsAdding {
-                        ToolbarItem(placement: .confirmationAction) {
+                    } else if newFontSourceType == 1 {
+                        HStack {
+                            Text("Settings.fonts.new.file")
+                                .bold()
+                            Spacer()
                             Button(action: {
-                                newFontIsAdding = true
-                                if newFontSourceType != 2 {
-                                    let url = newFontSourceType == 0 ? URL(string: newFontOnlineURL)! : newFontLocalURL!
-                                    Task {
-                                        do {
-                                            if newFontSourceType == 0 {
-                                                try await fontManager.addFont(fromRemote: url)
-                                            } else {
-                                                try fontManager.addFont(fromLocal: url)
-                                            }
-                                            newFontIsAdding = false
-                                            newFontSheetIsDisplaying = false
-                                        } catch {
-                                            newFontIsAdding = false
-                                            newFontAddFailureReason = error.localizedDescription
-                                            newFontAddFailureAlertIsDisplaying = true
-                                        }
-                                    }
-                                } else {
-                                    // TODO: Append font to storage after validating by .disabled
-                                }
+                                newFontFileImporterIsDisplaying = true
                             }, label: {
-                                Label("Settings.fonts.new.install", systemImage: "checkmark")
-                                    .wrapIf(isMACOS, in: {
-                                        $0.labelStyle(.titleOnly)
-                                    }, else: {
-                                        $0.labelStyle(.iconOnly)
-                                    })
+                                if let lastPathComponent = newFontLocalURL?.lastPathComponent {
+                                    Text(lastPathComponent)
+                                } else {
+                                    Text("Settings.fonts.new.select-file")
+                                }
                             })
-                            .disabled(newFontSourceType == 0 && URL(string: newFontOnlineURL) == nil)
-                            .disabled(newFontSourceType == 1 && newFontLocalURL == nil)
-                            .disabled(newFontSourceType == 2 && newFontSystemName.isEmpty)
-                            // FIXME: Check if font is valid.
+                        }
+                    } else if newFontSourceType == 2 {
+                        HStack {
+                            Text("Settings.fonts.new.name")
+                                .bold()
+                            Spacer()
+                            TextField("", text: $newFontSystemName, prompt: Text(verbatim: "SF Pro"))
                         }
                     }
-                    ToolbarItem(placement: .cancellationAction) {
+                }, footer: {
+                    Text("Settings.fonts.new.footer")
+                })
+                
+                if newFontSourceType == 2 && fontManager.allAvailableFontNames().contains(newFontSystemName) {
+                    Section(content: {
+                        Text(newFontSystemName)
+                            .font(.custom(newFontSystemName, size: 18))
+                    }, footer: {
+                        if !newSystemFontCanBeAdded(newFontSystemName) {
+                            Text("Settings.fonts.new.preview.footer.added")
+                        }
+                    })
+                }
+            }
+            .wrapIf(!isMACOS, in: { content in
+                content.navigationTitle("Settings.fonts.new")
+            })
+            .formStyle(.grouped)
+            .toolbar {
+                if isMACOS || !newFontIsAdding {
+                    ToolbarItem(placement: .confirmationAction) {
                         Button(action: {
-                            newFontSheetIsDisplaying = false
+                            newFontIsAdding = true
+                            if newFontSourceType != 2 {
+                                let url = newFontSourceType == 0 ? URL(string: newFontOnlineURL)! : newFontLocalURL!
+                                Task {
+                                    do {
+                                        if newFontSourceType == 0 {
+                                            try await fontManager.addFont(fromRemote: url)
+                                        } else {
+                                            try fontManager.addFont(fromLocal: url)
+                                        }
+                                        newFontIsAdding = false
+                                        dismiss()
+                                    } catch {
+                                        newFontIsAdding = false
+                                        newFontAddFailureReason = error.localizedDescription
+                                        newFontAddFailureAlertIsDisplaying = true
+                                    }
+                                }
+                            } else {
+                                addedSystemFonts.append(newFontSystemName)
+                                dismiss()
+                            }
                         }, label: {
-                            Label("Settings.fonts.new.cancel", systemImage: "xmark")
+                            Label(newFontSourceType == 2 ? "Settings.fonts.new.add" : "Settings.fonts.new.install", systemImage: "checkmark")
                                 .wrapIf(isMACOS, in: {
                                     $0.labelStyle(.titleOnly)
                                 }, else: {
                                     $0.labelStyle(.iconOnly)
                                 })
                         })
+                        .disabled(newFontSourceType == 0 && URL(string: newFontOnlineURL) == nil)
+                        .disabled(newFontSourceType == 1 && newFontLocalURL == nil)
+                        .disabled(newFontSourceType == 2 && !(newSystemFontCanBeAdded(newFontSystemName)))
                     }
-                    ToolbarItem(placement: .destructiveAction) {
-                        if newFontIsAdding {
-                            if isMACOS {
-                                HStack {
-                                    ProgressView()
-                                        .scaleEffect(0.5)
-                                    Text("Settings.fonts.new.installing")
-                                }
-                            } else {
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(action: {
+                        dismiss()
+                    }, label: {
+                        Label("Settings.fonts.new.cancel", systemImage: "xmark")
+                            .wrapIf(isMACOS, in: {
+                                $0.labelStyle(.titleOnly)
+                            }, else: {
+                                $0.labelStyle(.iconOnly)
+                            })
+                    })
+                }
+                ToolbarItem(placement: .destructiveAction) {
+                    if newFontIsAdding {
+                        if isMACOS {
+                            HStack {
                                 ProgressView()
+                                    .scaleEffect(0.5)
+                                Text("Settings.fonts.new.installing")
                             }
+                        } else {
+                            ProgressView()
                         }
                     }
                 }
-                .alert("Settings.fonts.new.error", isPresented: $newFontAddFailureAlertIsDisplaying, actions: {}, message: {
-                    Text(newFontAddFailureReason)
-                })
-                .fileImporter(isPresented: $newFontFileImporterIsDisplaying, allowedContentTypes: [.font], allowsMultipleSelection: false) { result in
-                    switch result {
-                    case .success(let urls):
-                        newFontLocalURL = urls.first!
-                    case .failure( _):
-                        doNothing()
-                    }
+            }
+            .alert("Settings.fonts.new.error", isPresented: $newFontAddFailureAlertIsDisplaying, actions: {}, message: {
+                Text(newFontAddFailureReason)
+            })
+            .fileImporter(isPresented: $newFontFileImporterIsDisplaying, allowedContentTypes: [.font], allowsMultipleSelection: false) { result in
+                switch result {
+                case .success(let urls):
+                    newFontLocalURL = urls.first!
+                case .failure( _):
+                    doNothing()
                 }
             }
-        }
-        .sheet(isPresented: $fontInspectorSheetIsDisplaying) {
-            SettingsFontsDetail(fontName: $fontInspectorTarget, inspectorIsDisplaying: $fontInspectorSheetIsDisplaying)
+            .onAppear {
+                addedSystemFonts = UserDefaults.standard.stringArray(forKey: "addedSystemFonts") ?? []
+            }
+            .onChange(of: addedSystemFonts) {
+                UserDefaults.standard.set(addedSystemFonts, forKey: "addedSystemFonts")
+            }
         }
     }
+    
+    func newSystemFontCanBeAdded(_ newFontSystemName: String) -> Bool {
+        return fontManager.allAvailableFontNames().contains(newFontSystemName) && !addedSystemFonts.contains(newFontSystemName) && !newFontSystemName.isEmpty && !fontManager.loadedFonts.contains(where: { $0.fontName == newFontSystemName }) && !FontManager.builtInFonts.contains(newFontSystemName)
+    }
 }
-
 
 struct SettingsFontsDetail: View {
     @StateObject private var fontManager = FontManager.shared
@@ -297,6 +339,7 @@ struct SettingsFontsDetail: View {
                                             .font(.custom(fontName, size: 10))
                                     } else {
                                         Text("Settings.fonts.info.title.system-font")
+                                            .font(.custom(fontName, size: 10))
                                     }
                                 } else {
                                     Text(fontName)
@@ -354,7 +397,6 @@ struct SettingsFontsDetail: View {
                             })
                         }
                         
-                        // Consider removal. Value not reliable.
                         if fontManager.isSystemFont(CTFontCreateWithName(fontName as CFString, 14, nil)) {
                             ListItem(allowValueLeading: true, title: {
                                 Text("Settings.fonts.info.system-font")
@@ -406,7 +448,7 @@ struct SettingsFontsDetail: View {
                         }
                         
                         ForEach(DoriLocale.allCases, id: \.self) { locale in
-                            if fontManager.fontInfo(fontName: fontName)?.supportedLanguages?.contains(locale.nsLocale().identifier) ?? true {
+                            if fontManager.fontInfo(fontName: fontName)?.supportedLanguages?.contains(locale.nsLocale().identifier) ?? true || fontManager.fontInfo(fontName: fontName)?.supportedLanguages?.isEmpty ?? true {
                                 Text(sampleText[locale]!)
                                     .font(.custom(fontName, size: 18))
                                     .fontWeight(sampleTextFontWeight)
@@ -416,15 +458,23 @@ struct SettingsFontsDetail: View {
                     }, header: {
                         Text("Settings.fonts.info.preview")
                     }, footer: {
-                        if sampleLanguageIsMissing {
+                        if fontManager.fontInfo(fontName: fontName)?.supportedLanguages?.isEmpty ?? true {
+                            Text("Settings.fonts.info.preview.no-supported-language")
+                        } else if sampleLanguageIsMissing {
                             Text("Settings.fonts.info.preview.missing-language")
                         }
                     })
                     
                     Section {
-                        if !isMACOS {
+                        if !isMACOS && !FontManager.builtInFonts.contains(fontName) {
                             Button(role: .destructive, action: {
-                                fontManager.removeFont(fontName: fontName)
+                                if fontManager.getFontCahce(forFontName: fontName)?.fileName != nil { // Is not system font
+                                    fontManager.removeFont(fontName: fontName)
+                                } else {
+                                    var addedSystemFonts = UserDefaults.standard.stringArray(forKey: "addedSystemFonts") ?? []
+                                    addedSystemFonts.removeAll(where: { $0 == fontName })
+                                    UserDefaults.standard.set(addedSystemFonts, forKey: "addedSystemFonts")
+                                }
                                 inspectorIsDisplaying = false
                             }, label: {
                                 Label("Settings.fonts.info.remove", systemImage: "trash")
@@ -447,10 +497,16 @@ struct SettingsFontsDetail: View {
                                 })
                         })
                     }
-                    if isMACOS {
+                    if isMACOS && !FontManager.builtInFonts.contains(fontName) {
                         ToolbarItem(placement: .destructiveAction) {
                             Button(role: .destructive, action: {
-                                fontManager.removeFont(fontName: fontName)
+                                if fontManager.getFontCahce(forFontName: fontName)?.fileName != nil { // Is not system font
+                                    fontManager.removeFont(fontName: fontName)
+                                } else {
+                                    var addedSystemFonts = UserDefaults.standard.stringArray(forKey: "addedSystemFonts") ?? []
+                                    addedSystemFonts.removeAll(where: { $0 == fontName })
+                                    UserDefaults.standard.set(addedSystemFonts, forKey: "addedSystemFonts")
+                                }
                                 inspectorIsDisplaying = false
                             }, label: {
                                 Label("Settings.fonts.info.remove", systemImage: "trash")
@@ -488,7 +544,9 @@ struct SettingsFontsDetail: View {
 @MainActor
 final class FontManager: ObservableObject {
     static let shared = FontManager()
-    let allAcceptableSuffix: Set<String> = ["ttf", "otf", "ttc", "otc"]
+    static let allAcceptableSuffix: Set<String> = ["ttf", "otf", "ttc", "otc"]
+    static let builtInFonts = [".AppleSystemUIFont", "SF Pro Rounded", "SF Mono", "New York"]
+    
     
     @Published var loadedFonts: [CachedFont] = []
     private let cacheDirectory: URL
@@ -539,7 +597,7 @@ final class FontManager: ObservableObject {
         let fileURLs = (try? FileManager.default.contentsOfDirectory(
             at: cacheDirectory, includingPropertiesForKeys: nil)) ?? []
         
-        for fileURL in fileURLs where allAcceptableSuffix.contains(fileURL.pathExtension.lowercased()) {
+        for fileURL in fileURLs where FontManager.allAcceptableSuffix.contains(fileURL.pathExtension.lowercased()) {
             if let name = detectFontName(from: fileURL),
                name == fontName {
                 CTFontManagerUnregisterFontsForURL(fileURL as CFURL, .process, nil)
@@ -570,7 +628,7 @@ final class FontManager: ObservableObject {
     
     private func preloadCachedFonts() {
         let fontFiles = (try? FileManager.default.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: nil)) ?? []
-        for url in fontFiles where allAcceptableSuffix.contains(url.pathExtension.lowercased()) {
+        for url in fontFiles where FontManager.allAcceptableSuffix.contains(url.pathExtension.lowercased()) {
             try? registerFont(at: url)
             if let name = detectFontName(from: url),
                !loadedFonts.contains(where: { $0.fontName == name }) {
@@ -646,7 +704,18 @@ final class FontManager: ObservableObject {
             return false
         }
         let path = url.path
-        return path.hasPrefix("/System/Library/Fonts/") || path.hasPrefix("/Library/Fonts/")
+        return path.hasPrefix("/System/Library/Fonts/") || path.hasPrefix("/Library/Fonts/") || path.hasPrefix("/System/Library/PrivateFrameworks/FontServices.framework/Resources/Reserved/") || path.hasPrefix("/System/Library/AssetsV2/com_apple_MobileAsset_Font8/")
+    }
+    
+    func allAvailableFontNames() -> [String] {
+        guard let descriptors = CTFontManagerCopyAvailableFontFamilyNames() as? [String] else {
+            return []
+        }
+        return descriptors.sorted()
+    }
+    
+    func allSystemFonts() -> [String] {
+        return FontManager.shared.allAvailableFontNames().filter { FontManager.shared.isSystemFont(CTFontCreateWithName($0 as CFString, 14, nil)) }
     }
 }
 
@@ -670,26 +739,33 @@ struct FontInfo: Identifiable {
 func localizedLanguageName(for identifier: String, displayLocale: Locale = .current) -> String {
     let locale = Locale(identifier: identifier)
     let languageCode = locale.languageCode
+    let scriptCode = locale.scriptCode
     let regionCode = locale.regionCode
     
-
     let languageName = languageCode.flatMap {
         displayLocale.localizedString(forLanguageCode: $0)
     }
-    
+    let scriptName = scriptCode.flatMap {
+        displayLocale.localizedString(forScriptCode: $0)
+    }
     let regionName = regionCode.flatMap {
         displayLocale.localizedString(forRegionCode: $0)
     }
     
-    switch (languageName, regionName) {
-    case let (lang?, region?):
+    switch (languageName, scriptName, regionName) {
+    case let (lang?, script?, region?):
+        return "\(lang) (\(script), \(region))"
+    case let (lang?, script?, nil):
+        return "\(lang) (\(script))"
+    case let (lang?, nil, region?):
         return "\(lang) (\(region))"
-    case let (lang?, nil):
+    case let (lang?, nil, nil):
         return lang
     default:
         return identifier
     }
 }
+
 
 extension Font.Weight {
     static var allCases: [Font.Weight] { [.thin, .ultraLight, .light, .regular, .medium, .semibold, .bold, .heavy, .black] }
