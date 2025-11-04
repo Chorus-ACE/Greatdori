@@ -361,7 +361,7 @@ struct SettingsFontsDetail: View {
                                         Text(fileName)
                                             .font(.custom(fontName, size: 10))
                                     } else {
-                                        Text(fontName.hasPrefix("Noto Sans") || fontName.hasPrefix("NotoSans") ? "Settings.fonts.info.title.built-in-font" : "Settings.fonts.info.title.system-font")
+                                        Text("Settings.fonts.info.title.system-font")
                                             .font(.custom(fontName, size: 10))
                                     }
                                 } else {
@@ -507,6 +507,7 @@ struct SettingsFontsDetail: View {
                         }
                     }
                     
+                    /*
                     if fontName.hasPrefix("Noto Sans") || fontName.hasPrefix("NotoSans") {
                         Section {
                             ListItem(allowValueLeading: true, title: {
@@ -519,6 +520,7 @@ struct SettingsFontsDetail: View {
                             })
                         }
                     }
+                     */
                 }
                 .formStyle(.grouped)
                 .toolbar {
@@ -669,7 +671,7 @@ struct SettingsFontsPicker: View {
 final class FontManager: ObservableObject {
     static let shared = FontManager()
     static let allAcceptableSuffix: Set<String> = ["ttf", "otf", "ttc", "otc"]
-    static let builtInFonts = [".AppleSystemUIFont", "Noto Sans JP", "Noto Sans SC", "Noto Sans TC"]
+    static let builtInFonts = [".AppleSystemUIFont"]
     
     
     @Published var loadedFonts: [CachedFont] = []

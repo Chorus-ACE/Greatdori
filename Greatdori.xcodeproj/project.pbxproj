@@ -235,9 +235,6 @@
 		E9A126FC2E8CB62000BBD39E /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A126FB2E8CB61900BBD39E /* EventTracker.swift */; };
 		E9AE639E2EB745B100490B75 /* SettingsFontsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE639D2EB745B100490B75 /* SettingsFontsView.swift */; };
 		E9AE9E082E909EDF00AAB049 /* CardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE9E072E909ED100AAB049 /* CardSelector.swift */; };
-		E9AEC8A32EBA13A200490B75 /* NotoSansJP.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9AEC8A22EBA13A200490B75 /* NotoSansJP.ttf */; };
-		E9AEC8A52EBA13A900490B75 /* NotoSansSC.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9AEC8A42EBA13A900490B75 /* NotoSansSC.ttf */; };
-		E9AEC8A72EBA13C700490B75 /* NotoSansTC.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9AEC8A62EBA13C700490B75 /* NotoSansTC.ttf */; };
 		E9AF51252EAC634100BB808F /* TypeNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AF51242EAC633D00BB808F /* TypeNames.swift */; };
 		E9B17BBB2EA5DC430049C92C /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */; };
 		E9CD3A482E58975D00BF5EA9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A472E58975900BF5EA9 /* Extensions.swift */; };
@@ -668,9 +665,6 @@
 		E9A126FB2E8CB61900BBD39E /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
 		E9AE639D2EB745B100490B75 /* SettingsFontsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFontsView.swift; sourceTree = "<group>"; };
 		E9AE9E072E909ED100AAB049 /* CardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSelector.swift; sourceTree = "<group>"; };
-		E9AEC8A22EBA13A200490B75 /* NotoSansJP.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NotoSansJP.ttf; sourceTree = "<group>"; };
-		E9AEC8A42EBA13A900490B75 /* NotoSansSC.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NotoSansSC.ttf; sourceTree = "<group>"; };
-		E9AEC8A62EBA13C700490B75 /* NotoSansTC.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NotoSansTC.ttf; sourceTree = "<group>"; };
 		E9AF51242EAC633D00BB808F /* TypeNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeNames.swift; sourceTree = "<group>"; };
 		E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
 		E9CD3A472E58975900BF5EA9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -1113,7 +1107,6 @@
 			children = (
 				8CD290132E9FCBB700831458 /* ChartSimAssets.xcassets */,
 				8C889DE32EA22C9700FBF01D /* StoryViewerAssets.xcassets */,
-				E9AEC8A82EBA13CB00490B75 /* Fonts */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -1302,16 +1295,6 @@
 				8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */,
 			);
 			path = Tools;
-			sourceTree = "<group>";
-		};
-		E9AEC8A82EBA13CB00490B75 /* Fonts */ = {
-			isa = PBXGroup;
-			children = (
-				E9AEC8A22EBA13A200490B75 /* NotoSansJP.ttf */,
-				E9AEC8A42EBA13A900490B75 /* NotoSansSC.ttf */,
-				E9AEC8A62EBA13C700490B75 /* NotoSansTC.ttf */,
-			);
-			path = Fonts;
 			sourceTree = "<group>";
 		};
 		E9BD6C4F2E547A7200D56E55 /* Settings */ = {
@@ -1617,10 +1600,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9AEC8A52EBA13A900490B75 /* NotoSansSC.ttf in Resources */,
-				E9AEC8A72EBA13C700490B75 /* NotoSansTC.ttf in Resources */,
 				8CD290142E9FCBB700831458 /* ChartSimAssets.xcassets in Resources */,
-				E9AEC8A32EBA13A200490B75 /* NotoSansJP.ttf in Resources */,
 				E949D28B2E93805E00E50D3F /* CollectionCode_ZH-HANS.md in Resources */,
 				E9E3C05A2E35D0150059BCE8 /* Localizable.xcstrings in Resources */,
 				8C2B642B2E9581EC00D003D1 /* CollectionCode_EN.md in Resources */,
