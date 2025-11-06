@@ -164,7 +164,7 @@ struct StoryViewerView: View {
                                 CustomGroupBox {
                                     HStack {
                                         Spacer()
-                                        if informationIsAvailable || (displayingStories.forLocale(locale)?.isEmpty ?? true) {
+                                        if informationIsAvailable && !(displayingStories.forLocale(locale)?.isEmpty ?? true) {
                                             ProgressView()
                                         } else {
                                             Text("Tools.story-viewer.unavailable")

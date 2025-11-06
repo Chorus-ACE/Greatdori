@@ -1137,13 +1137,7 @@ private struct StrokeTextModifier: ViewModifier {
 }
 
 func fontName(in locale: DoriLocale) -> String {
-    switch locale {
-    case .jp: "RodinPro-DB"
-    case .en: "NewRodinPro-DB"
-    case .tw: "SourceHanSansTC-Bold"
-    case .cn: "Tensentype-JiaLiDaYuanGB18030"
-    case .kr: "JejuGothic"
-    }
+    return UserDefaults.standard.string(forKey: "StoryViewerFont\(locale.rawValue.uppercased())") ?? storyViewerDefaultFont[locale] ?? ".AppleSystemUIFont"
 }
 
 extension EnvironmentValues {

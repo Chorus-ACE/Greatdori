@@ -95,6 +95,7 @@ struct StoryDetailView: View {
                                                             Text(talk.text)
                                                                 .font(.body)
                                                                 .multilineTextAlignment(.leading)
+                                                                .lineLimit(nil)
                                                         }
                                                         Spacer()
                                                     }
@@ -117,7 +118,7 @@ struct StoryDetailView: View {
                                         }
                                     }
                                 }
-                                .frame(maxWidth: infoContentMaxWidth)
+//                                .frame(maxWidth: infoContentMaxWidth)
                             }
                         }
                         .padding(.all, interactivePlayerIsInFullScreen ? 0 : nil)
