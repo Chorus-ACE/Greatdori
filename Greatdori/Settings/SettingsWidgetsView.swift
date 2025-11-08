@@ -285,9 +285,15 @@ struct SettingsWidgetsCollectionView: View {
             }
         })
         .sheet(isPresented: $showAboutCollectionCodeSheet, content: {
-            ScrollView {
-                Markdown(aboutCollectionCode)
-                    .padding(.horizontal)
+            if let content = readMarkdownFile("CollectionCode") {
+                ScrollView {
+                    Markdown(content)
+                        .padding(.horizontal)
+                }
+            } else {
+                Text("Settings.content-unavailable")
+                    .bold()
+                    .foregroundStyle(.secondary)
             }
         })
         .alert("Settings.widgets.collections.user.add.alert.title", isPresented: $newCollectionSheetIsDisplaying, actions: {

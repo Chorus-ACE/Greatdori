@@ -124,15 +124,19 @@ struct InteractiveStoryView: View {
             if let currentTalk, !uiIsHiding {
                 VStack {
                     Spacer()
-                    InteractiveStoryDialogBoxView(
-                        data: currentTalk,
-                        locale: locale,
-                        isDelaying: isDelaying,
-                        isAutoPlaying: isAutoPlaying,
-                        isAnimating: $lineIsAnimating,
-                        shakeDuration: $talkShakeDuration
-                    )
-                    .padding(isMACOS ? .all : .horizontal)
+                    HStack {
+                        Spacer()
+                        InteractiveStoryDialogBoxView(
+                            data: currentTalk,
+                            locale: locale,
+                            isDelaying: isDelaying,
+                            isAutoPlaying: isAutoPlaying,
+                            isAnimating: $lineIsAnimating,
+                            shakeDuration: $talkShakeDuration
+                        )
+                        .padding(isMACOS ? .all : .horizontal)
+                        Spacer()
+                    }
                 }
             }
             
@@ -207,17 +211,6 @@ struct InteractiveStoryView: View {
             }
         }
         .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration)) //FIXME: Consider Edits
-//        #if os(macOS)
-//        .toolbar {
-//            ToolbarItem {
-//                actionMenu
-//            }
-//        }
-//        #else
-//        .toolbar(.hidden, for: .navigationBar)
-//        .toolbar(.hidden, for: .tabBar)
-//        .navigationBarBackButtonHidden()
-//        #endif
         .onTapGesture {
             if uiIsHiding {
                 uiIsHiding = false
@@ -299,29 +292,7 @@ struct InteractiveStoryView: View {
         .onDisappear {
             exitViewer(dismiss: false)
         }
-        #if os(macOS)
-        .introspect(.window) { window in
-            // 初始状态下设置
-            updateTitleBar(for: window)
-            
-            // 添加全屏监听
-            NotificationCenter.default.addObserver(
-                forName: NSWindow.didEnterFullScreenNotification,
-                object: window,
-                queue: .main
-            ) { _ in
-                updateTitleBar(for: window)
-            }
-            
-            NotificationCenter.default.addObserver(
-                forName: NSWindow.willExitFullScreenNotification,
-                object: window,
-                queue: .main
-            ) { _ in
-                updateTitleBar(for: window)
-            }
-        }
-        #endif
+        .frame(minWidth: 300, minHeight: 75)
     }
     
     @ViewBuilder
@@ -746,214 +717,6 @@ private struct InteractiveStoryLive2DView: View {
     }
 }
 
-private struct InteractiveStoryDialogBoxView: View {
-    var data: _DoriAPI.Misc.StoryAsset.TalkData
-    var locale: DoriLocale
-    var isDelaying: Bool
-    var isAutoPlaying: Bool
-    @AppStorage("interactiveStoryViewerShowsNextIndicator") var interactiveStoryViewerShowsNextIndicator = false
-    @Binding var isAnimating: Bool
-    @Binding var shakeDuration: Double
-    @State private var currentBody = ""
-    @State private var bodyAnimationTimer: Timer?
-    @State private var shakeTimer: Timer?
-    @State private var shakingOffset = CGSize(width: 0, height: 0)
-    @State private var autoPlayLabelBlinkTimer: Timer?
-    @State private var isShowingAutoPlayLabel = false
-    var body: some View {
-        ZStack(alignment: .topLeading) {
-            backgroundLayer
-            textLayer
-            labelLayer
-        }
-        .offset(shakingOffset)
-        .onAppear {
-            animateText()
-        }
-        .onChange(of: data.body) {
-            animateText()
-        }
-        .onChange(of: isAutoPlaying) {
-            if isAutoPlaying {
-                autoPlayLabelBlinkTimer = .scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                    DispatchQueue.main.async {
-                        isShowingAutoPlayLabel.toggle()
-                    }
-                }
-            } else {
-                autoPlayLabelBlinkTimer?.invalidate()
-                isShowingAutoPlayLabel = false
-            }
-        }
-        .onChange(of: isAnimating) {
-            if !isAnimating {
-                bodyAnimationTimer?.invalidate()
-                currentBody = data.body
-            }
-        }
-        .onChange(of: shakeDuration) {
-            if shakeDuration > 0 {
-                let startTime = CFAbsoluteTimeGetCurrent()
-                shakeTimer = .scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
-                    DispatchQueue.main.async {
-                        if _fastPath(CFAbsoluteTimeGetCurrent() - startTime < shakeDuration) {
-                            shakingOffset = .init(width: .random(in: -5...5), height: .random(in: -5...5))
-                        } else {
-                            shakeTimer?.invalidate()
-                            shakingOffset = .init(width: 0, height: 0)
-                            shakeDuration = 0
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private var backgroundLayer: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .fill(Color.white.opacity(0.8))
-            .overlay {
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Color.gray.opacity(0.8))
-            }
-            .overlay {
-                HStack {
-                    Spacer()
-                    VStack(spacing: 0) {
-                        Spacer()
-                        if !isDelaying && interactiveStoryViewerShowsNextIndicator {
-                            TimelineView(.animation(minimumInterval: 1 / 120)) { context in
-                                Image("ContinuableMark")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 25)
-                                    .visualEffect { content, geometry in
-                                        content
-                                            .colorEffect(ShaderLibrary.continuableMark(.float2(geometry.size)))
-                                    }
-                                    .offset(y: sin(context.date.timeIntervalSince1970 * 5) * 7)
-                                    .scaleEffect(x: 1, y: 0.95 + (1.05 - 0.95) * sin(-context.date.timeIntervalSince1970 * 5), anchor: .bottom)
-                            }
-                            .zIndex(1)
-                            Circle()
-                                .fill(Color.gray.opacity(0.8))
-                                .blur(radius: 5)
-                                .transformEffect(.init(scaleX: 1, y: 0.5))
-                                .frame(width: 25, height: 25)
-                                .offset(x: -3)
-                        }
-                    }
-                    .transition(.opacity)
-                    .animation(.spring(duration: 0.2, bounce: 0.15), value: isDelaying)
-                }
-                .padding(.trailing)
-            }
-            .containerRelativeFrame(.vertical) { length, _ in
-                min(length / 2 - 80, 130)
-            }
-    }
-    @ViewBuilder
-    private var textLayer: some View {
-        Text({
-            var result = AttributedString()
-            for character in currentBody {
-                var str = AttributedString(String(character))
-                if locale == .cn && "[，。！？；：（）【】「」『』、“”‘’——…]".contains(character) {
-                    // The font for cn has too wide punctuations,
-                    // we have to fix it here.
-                    // System font seems higher than cn font,
-                    // we use a smaller size for it to prevent
-                    // the line height being changed during animation
-                    #if os(macOS)
-                    str.font = .system(size: 19, weight: .medium)
-                    #else
-                    str.font = .system(size: 15, weight: .medium)
-                    #endif
-                }
-                result.append(str)
-            }
-            return result
-        }())
-        #if os(macOS)
-        .font(.custom(fontName(in: locale), size: 20))
-        #else
-        .font(.custom(fontName(in: locale), size: 16))
-        #endif
-        .wrapIf(locale == .en || locale == .tw) { content in
-            content
-                .lineSpacing(locale == .en ? 10 : -5)
-        }
-        .typesettingLanguage(locale.nsLocale().language)
-        .textSelection(.enabled)
-        .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
-        .padding(.horizontal, 20)
-        .padding(.top, 12)
-    }
-    @ViewBuilder
-    private var labelLayer: some View {
-        ZStack(alignment: .leading) {
-            Capsule()
-                .fill(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
-                .overlay {
-                    HStack {
-                        Spacer()
-                        Image("NameSideStar")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 31)
-                    }
-                    .clipShape(Capsule())
-                }
-                .overlay {
-                    Capsule()
-                        .strokeBorder(Color.white, lineWidth: 2)
-                }
-                .frame(width: 200, height: 32)
-            Text(data.windowDisplayName)
-            #if os(macOS)
-                .font(.custom(fontName(in: locale), size: 21))
-            #else
-                .font(.custom(fontName(in: locale), size: 17))
-            #endif
-                .foregroundStyle(.white)
-                .padding()
-        }
-        .offset(y: -38)
-        HStack {
-            Spacer()
-            if isShowingAutoPlayLabel {
-                HStack(spacing: 2) {
-                    Image(systemName: "arrowtriangle.forward.fill")
-                        .scaleEffect(x: 0.7, y: 1, anchor: .trailing)
-                    Text(verbatim: "AUTO")
-                }
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .modifier(StrokeTextModifier(width: Double(1.5), color: .white))
-                .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
-            }
-        }
-        .padding(.horizontal, 30)
-        .offset(y: -5)
-    }
-    
-    func animateText() {
-        isAnimating = true
-        currentBody = ""
-        var iterator = data.body.makeIterator()
-        bodyAnimationTimer?.invalidate()
-        bodyAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
-            DispatchQueue.main.async {
-                if let character = iterator.next() {
-                    currentBody += String(character)
-                } else {
-                    isAnimating = false
-                }
-            }
-        }
-    }
-}
-
 private struct BacklogView: View {
     var asset: _DoriAPI.Misc.StoryAsset
     var currentTalk: _DoriAPI.Misc.StoryAsset.TalkData
@@ -1055,7 +818,7 @@ private struct BacklogView: View {
     }
 }
 
-private struct ShakeScreenModifier: ViewModifier {
+struct ShakeScreenModifier: ViewModifier {
     @Binding var shakeDuration: Double
     @State private var shakeTimer: Timer?
     @State private var shakingOffset = CGSize(width: 0, height: 0)
@@ -1107,7 +870,7 @@ private struct ShakeScreenModifier: ViewModifier {
     }
 }
 
-private struct StrokeTextModifier: ViewModifier {
+struct StrokeTextModifier: ViewModifier {
     var width: CGFloat
     var color: Color
     func body(content: Content) -> some View {

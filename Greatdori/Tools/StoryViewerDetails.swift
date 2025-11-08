@@ -41,7 +41,7 @@ struct StoryDetailView: View {
                         VStack {
                             Section {
                                 StoryDetailInteractiveStoryEntryView(title: title, scenarioID: scenarioID, type: type, locale: locale, unsafeAssociatedID: unsafeAssociatedID, unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID, asset: $asset)
-                                    .aspectRatio(interactivePlayerIsInFullScreen ? screenWidth/screenHeight : 16/9, contentMode: .fill)
+                                    .aspectRatio(interactivePlayerIsInFullScreen ? screenWidth/screenHeight : 16/10, contentMode: .fill)
                                     .clipped()
                             }
                             .frame(maxWidth: interactivePlayerIsInFullScreen ? nil : infoContentMaxWidth)
@@ -118,7 +118,7 @@ struct StoryDetailView: View {
                                         }
                                     }
                                 }
-//                                .frame(maxWidth: infoContentMaxWidth)
+                                .frame(maxWidth: infoContentMaxWidth)
                             }
                         }
                         .padding(.all, interactivePlayerIsInFullScreen ? 0 : nil)

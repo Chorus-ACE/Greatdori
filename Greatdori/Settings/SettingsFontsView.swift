@@ -15,6 +15,7 @@
 import Combine
 import CoreText
 import DoriKit
+import MarkdownUI
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -45,6 +46,8 @@ struct SettingsFontsMain: View {
     @State var addedSystemFonts: [String] = []
     @State var storyViewerFonts: [DoriLocale: String] = [:]
     @State var storyViewerUpdateIndex: Int = 0
+    @State var showAboutSheet = false
+    @State var aboutContent = ""
     var body: some View {
         Form {
             Section("Settings.fonts.system") {
@@ -101,9 +104,29 @@ struct SettingsFontsMain: View {
                     storyViewerFonts.updateValue(UserDefaults.standard.string(forKey: "StoryViewerFont\(locale.rawValue.uppercased())") ?? storyViewerDefaultFont[locale] ?? ".AppleSystemUIFont", forKey: locale)
                 }
             }
+            
+            Section {
+                Button(action: {
+                    showAboutSheet = true
+                }, label: {
+                    Text("Settings.fonts.learn-more")
+                })
+            }
         }
         .navigationTitle("Settings.fonts")
         .formStyle(.grouped)
+        .sheet(isPresented: $showAboutSheet, content: {
+            if let content = readMarkdownFile("FontSuggestions") {
+                ScrollView {
+                    Markdown(content)
+                        .padding(.horizontal)
+                }
+            } else {
+                Text("Settings.content-unavailable")
+                    .bold()
+                    .foregroundStyle(.secondary)
+            }
+        })
         .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
