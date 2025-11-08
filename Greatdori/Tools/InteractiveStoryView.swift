@@ -266,6 +266,9 @@ struct InteractiveStoryView: View {
             bgmLooper = .init(player: bgmPlayer, templateItem: bgmItem)
             bgmPlayer.play()
             
+            // FIXME: Debug Only
+//            bgmPlayer.volume = 0
+            
             for layout in asset.layoutData {
                 if !layout.costumeType.isEmpty && !allDiffLayouts.contains(where: {
                     $0.characterID == layout.characterID

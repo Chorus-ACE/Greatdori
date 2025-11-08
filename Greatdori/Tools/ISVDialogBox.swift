@@ -34,6 +34,7 @@ struct InteractiveStoryDialogBoxView: View {
     
     @State var boxWidth: CGFloat = 0
     @State var boxHeight: CGFloat = 0
+    @State var nameTagBarHeight: CGFloat = 0
     var body: some View {
         ZStack(alignment: .topLeading) {
             // MARK: Background
@@ -74,10 +75,10 @@ struct InteractiveStoryDialogBoxView: View {
                     .lineSpacing(locale == .en ? 10 : -5)
             }
             .typesettingLanguage(locale.nsLocale().language)
-//            .textSelection(.enabled)
+            //            .textSelection(.enabled)
             .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
-            .padding(.horizontal, 20)
-            .padding(.top, 12)
+            .padding(.horizontal, boxWidth/40)
+            .padding(.top, boxHeight/10)
             
             // MARK: Label
             ZStack(alignment: .leading) {
@@ -89,21 +90,23 @@ struct InteractiveStoryDialogBoxView: View {
                             Image("NameSideStar")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 31)
+                                .frame(height: nameTagBarHeight)
                         }
                         .clipShape(Capsule())
                     }
                     .overlay {
                         Capsule()
-                            .strokeBorder(Color.white, lineWidth: 2)
+                            .strokeBorder(Color.white, lineWidth: boxWidth/500)
                     }
-                    .frame(width: 200, height: 32)
+                    .aspectRatio(6.5, contentMode: .fit)
+                    .frame(height: nameTagBarHeight)
                 Text(data.windowDisplayName)
-                    .font(.custom(fontName(in: locale), size: fontSize/2))
+                    .font(.custom(fontName(in: locale), size: fontSize))
                     .foregroundStyle(.white)
-                    .padding()
+                    .padding(.vertical)
+                    .padding(.leading, nameTagBarHeight*6.5/15)
             }
-            .offset(y: -38)
+            .offset(y: -boxWidth*0.0207-18.615)
             HStack {
                 Spacer()
                 if isShowingAutoPlayLabel {
@@ -112,12 +115,12 @@ struct InteractiveStoryDialogBoxView: View {
                             .scaleEffect(x: 0.7, y: 1, anchor: .trailing)
                         Text(verbatim: "AUTO")
                     }
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: fontSize, weight: .bold, design: .rounded))
                     .modifier(StrokeTextModifier(width: Double(1.5), color: .white))
                     .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
                 }
             }
-            .padding(.horizontal, 30)
+            .padding(.horizontal, boxWidth/20)
             .offset(y: -5)
             
         }
@@ -127,6 +130,7 @@ struct InteractiveStoryDialogBoxView: View {
             
             cornerRadius = boxWidth/40
             fontSize = boxWidth/40
+            nameTagBarHeight = boxHeight/4
         })
         .offset(shakingOffset)
         .onAppear {
