@@ -38,7 +38,7 @@ cd ../.. || \
 echo "Greatdori: something went wrong at step $step. Learn more at README.md."
 ```
 
-If necessary, use `utils/update-checkout` to update all relying repositories later. Use `utils/generate-workspace` to generate workspace later.
+If necessary, use `utils/update-checkout` to update all relying repositories later. Use `utils/generate-workspace` to generate workspace.
 
 If something's wrong, please look at the step-by-step instructions below and find the corresponding step. Try to run the step again, and if issue still occurs, please report to us.
 
