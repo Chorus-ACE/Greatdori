@@ -24,7 +24,7 @@ brew install cmake
 
 ### Workspace
 
-The initiailzation script below will create a folder `Greatdori` and download all the files needed to build.
+The initiailzation script below will create a folder `Greatdori` and download all the files needed.
 
 ```sh
 step=1 && mkdir Greatdori && \
