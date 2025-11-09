@@ -22,14 +22,34 @@ CMake is also required for building from Xcode Project, you can install it by Ho
 brew install cmake
 ```
 
-First, create a directory for the Greatdori! project:
+### Workspace
+
+The initiailzation script below will create a folder `Greatdori` and download all the files needed to build.
+
+```sh
+step=1 && mkdir Greatdori && \
+cd "Greatdori" && \
+step=2 && git clone https://github.com/Greatdori/Greatdori.git && \
+cd "Greatdori" && \
+step=3 && utils/update-checkout --clone && \
+step=4 && utils/generate-workspace && \
+echo "Greatdori: succeed." && \
+cd ../.. || \
+echo "Greatdori: something went wrong at step $step. Please try to run this step again. If this issue continues to happen, please report to us."
+```
+
+After initialization, use `utils/update-checkout` to update all relying repositories, and use `utils/generate-workspace` to generate workspace.
+
+#### Break Down 
+
+1. First, create a directory for the Greatdori! project:
 
 ```sh
 mkdir Greatdori
 cd Greatdori
 ```
 
-Then clone this project by Git:
+2. Then clone this project by Git:
 
 ```sh
 git clone https://github.com/Greatdori/Greatdori.git
@@ -44,7 +64,7 @@ $ pwd
 /path/to/Greatdori/Greatdori
 ```
 
-Use the `utils/update-checkout` script to checkout all repositories
+3. Use the `utils/update-checkout` script to checkout all repositories
 that Greatdori! needs. Add `--clone` option for the first time
 to clone all repositories:
 
@@ -52,7 +72,7 @@ to clone all repositories:
 utils/update-checkout --clone
 ```
 
-After cloning all repositories needed, use `utils/generate-workspace`
+4. After cloning all repositories needed, use `utils/generate-workspace`
 to generate a `xcworkspace` for building project:
 
 ```sh
