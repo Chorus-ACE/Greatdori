@@ -22,7 +22,7 @@ CMake is also required for building from Xcode Project, you can install it by Ho
 brew install cmake
 ```
 
-### Short Ver
+### Workspace
 
 Initialize: 
 ```sh
@@ -38,7 +38,7 @@ echo "Greatdori: something went wrong."
 
 After initialization, use `utils/update-checkout` to update all relying repositories, and use `utils/generate-workspace` to generate workspace.
 
-### Break Down 
+#### Break Down 
 
 First, create a directory for the Greatdori! project:
 
