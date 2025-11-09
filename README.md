@@ -14,20 +14,31 @@ built with [DoriKit](https://github.com/Greatdori/DoriKit)
 | Greatdori Watch App | ![Greatdori Watch App Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori-watch.yml)|
 
 ## Building
+
 Xcode 26.0 and Swift 6.2+ is required for building this project.
 
-**Short Ver:**
-
-```sh
-brew install cmake && mkdir Greatdori && cd "Greatdori" && git clone https://github.com/Greatdori/Greatdori.git && cd "Greatdori" && utils/update-checkout --clone && utils/generate-workspace && echo "Greatdori: Succeed." || echo "Greatdori: something went wrong."
-```
-
-CMake is required for building from Xcode Project,
-you can install it by Homebrew if you don't have one:
-
+CMake is also required for building from Xcode Project, you can install it by Homebrew if you don't have one:
 ```sh
 brew install cmake
 ```
+
+### Short Ver
+
+Initialize: 
+```sh
+mkdir Greatdori && \
+cd "Greatdori" && \
+git clone https://github.com/Greatdori/Greatdori.git && \
+cd "Greatdori" && \
+utils/update-checkout --clone && \
+utils/generate-workspace && \
+echo "Greatdori: succeed." || \
+echo "Greatdori: something went wrong."
+```
+
+After initialization, use `utils/update-checkout` to update all relying repositories, and use `utils/generate-workspace` to generate workspace.
+
+### Break Down 
 
 First, create a directory for the Greatdori! project:
 
