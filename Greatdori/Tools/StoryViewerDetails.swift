@@ -125,7 +125,7 @@ struct StoryDetailView: View {
                         Spacer(minLength: 0)
                     }
                 }
-                //                .ignoresSafeArea(interactivePlayerIsInFullScreen ? .all : []) t
+                .ignoresSafeArea(interactivePlayerIsInFullScreen && !isMACOS ? .all : [])
                 .scrollDisabled(interactivePlayerIsInFullScreen)
                 .onFrameChange { geometry in
                     screenWidth = geometry.size.width
@@ -138,6 +138,7 @@ struct StoryDetailView: View {
             }
         }
         .navigationTitle(title)
+        .withSystemBackground()
         .task {
             await loadTranscript()
         }

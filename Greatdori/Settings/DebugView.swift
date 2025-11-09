@@ -579,12 +579,13 @@ struct DebugPlaygroundView: View {
                 }
             #endif
             Button(String("Build")) {
-                let builder = DoriStoryBuilder()
-                let startTime = CFAbsoluteTimeGetCurrent()
-                let diags = builder.buildSourceCode(codeString)
-                let endTime = CFAbsoluteTimeGetCurrent()
-                print(diags.map { "\($0)" }.joined(separator: "\n"))
-                print("Build Time: \(unsafe String(format: "%.4f", endTime - startTime))")
+                 // MARK: [251109] Failed to build at :585 `Value of type 'DoriStoryBuilder' has no member 'buildSourceCode'`.
+//                let builder = DoriStoryBuilder()
+//                let startTime = CFAbsoluteTimeGetCurrent()
+//                let diags = builder.buildSourceCode(codeString)
+//                let endTime = CFAbsoluteTimeGetCurrent()
+//                print(diags.map { "\($0)" }.joined(separator: "\n"))
+//                print("Build Time: \(unsafe String(format: "%.4f", endTime - startTime))")
             }
         }
     }
