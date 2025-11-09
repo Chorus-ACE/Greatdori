@@ -16,6 +16,12 @@ built with [DoriKit](https://github.com/Greatdori/DoriKit)
 ## Building
 Xcode 26.0 and Swift 6.2+ is required for building this project.
 
+**Short Ver:**
+
+```sh
+brew install cmake && mkdir Greatdori && cd "Greatdori" && git clone https://github.com/Greatdori/Greatdori.git && cd "Greatdori" && utils/update-checkout --clone && utils/generate-workspace && echo "Greatdori: Succeed." || echo "Greatdori: something went wrong."
+```
+
 CMake is required for building from Xcode Project,
 you can install it by Homebrew if you don't have one:
 
