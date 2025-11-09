@@ -35,7 +35,7 @@ step=3 && utils/update-checkout --clone && \
 step=4 && utils/generate-workspace && \
 echo "Greatdori: succeed." && \
 cd ../.. || \
-echo "Greatdori: something went wrong at step $step. Learn more at README.md"
+echo "Greatdori: something went wrong at step $step. Learn more at README.md."
 ```
 
 After initialization, use `utils/update-checkout` to update all relying repositories, and use `utils/generate-workspace` to generate workspace.
