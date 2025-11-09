@@ -568,6 +568,7 @@ struct DebugRulerOverlay: View {
 
 struct DebugPlaygroundView: View {
     @AppStorage("DebugStoryBuilderCodeString") var codeString = ""
+    @State var isBuilding = false
     var body: some View {
         VStack {
             TextEditor(text: $codeString)
@@ -578,14 +579,27 @@ struct DebugPlaygroundView: View {
                     textView.isAutomaticQuoteSubstitutionEnabled = false
                 }
             #endif
-            Button(String("Build")) {
-                 // MARK: [251109] Failed to build at :585 `Value of type 'DoriStoryBuilder' has no member 'buildSourceCode'`.
-//                let builder = DoriStoryBuilder()
-//                let startTime = CFAbsoluteTimeGetCurrent()
-//                let diags = builder.buildSourceCode(codeString)
-//                let endTime = CFAbsoluteTimeGetCurrent()
-//                print(diags.map { "\($0)" }.joined(separator: "\n"))
-//                print("Build Time: \(unsafe String(format: "%.4f", endTime - startTime))")
+            HStack {
+                Button(String("Build")) {
+                    isBuilding = true
+                    DispatchQueue(label: "com.memz233.Greatdori.Zeile-Debug-Build", qos: .userInitiated).async {
+                        let builder = DoriStoryBuilder()
+                        let startTime = CFAbsoluteTimeGetCurrent()
+                        var diags: [Diagnostic] = []
+                        if let irData = builder.buildIR(from: codeString, diags: &diags) {
+                            let downloadURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!.appending(path: "StoryIR.zir")
+                            try? irData.write(to: downloadURL)
+                        }
+                        let endTime = CFAbsoluteTimeGetCurrent()
+                        print(diags.map { "\($0)" }.joined(separator: "\n"))
+                        print("Build Time: \(unsafe String(format: "%.4f", endTime - startTime))")
+                        isBuilding = false
+                    }
+                }
+                .disabled(isBuilding)
+                ProgressView()
+                    .controlSize(.small)
+                    .opacity(isBuilding ? 1 : 0)
             }
         }
     }
