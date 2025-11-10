@@ -328,7 +328,7 @@ struct ItemSelectorButton<Element: Sendable & Hashable & DoriCacheable & DoriFil
                 Text("Selector.prompt.\(Element.singularName)")
             }
         })
-        .padding(.vertical, isMACOS ? 0 : nil)
+        .padding(.vertical, isMACOS ? 0 : 3)
         .onChange(of: selection, {
             if closeWindowOnSelectionChange {
                 selectorWindowIsPresented = false

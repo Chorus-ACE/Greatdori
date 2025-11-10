@@ -97,6 +97,12 @@ import SwiftUI
         destination: {EventTrackerView()}
     ),
     ToolDestinationItem(
+        title: "App.tools.station",
+        symbol: "flag.filled.and.flag.crossed",
+        tabValue: .station,
+        destination: {StationView()}
+    ),
+    ToolDestinationItem(
         title: "App.tools.chart-simulator",
         symbol: "apple.classical.pages",
         tabValue: .chartSimulator,

@@ -137,6 +137,7 @@ struct InteractiveStoryView: View {
                         .padding(isMACOS ? .all : .horizontal)
                         Spacer()
                     }
+                    .padding(.bottom)
                 }
             }
             

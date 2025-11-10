@@ -26,7 +26,7 @@ import AppKit
 #endif
 
 
-//MARK: System Orientation
+// MARK: System Orientation
 #if os(macOS)
 let isMACOS = true
 #else
@@ -34,7 +34,7 @@ let isMACOS = false
 #endif
 
 
-//MARK: GreatdoriApp (@main)
+// MARK: GreatdoriApp (@main)
 @main
 struct GreatdoriApp: App {
     #if os(macOS)

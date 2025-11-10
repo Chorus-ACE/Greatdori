@@ -41,10 +41,13 @@ struct StoryDetailView: View {
                         VStack {
                             Section {
                                 StoryDetailInteractiveStoryEntryView(title: title, scenarioID: scenarioID, type: type, locale: locale, unsafeAssociatedID: unsafeAssociatedID, unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID, asset: $asset)
+//                                    .border(.secondary, width: interactivePlayerIsInFullScreen ? 0 : 1)
                                     .aspectRatio(interactivePlayerIsInFullScreen ? screenWidth/screenHeight : 16/10, contentMode: .fill)
                                     .clipped()
+//                                    .cornerRadius(interactivePlayerIsInFullScreen ? 0 : 10)
                             }
                             .frame(maxWidth: interactivePlayerIsInFullScreen ? nil : infoContentMaxWidth)
+//                            .frame(width: interactivePlayerIsInFullScreen ? UIScreen.main.bounds.height : nil)
                             if !interactivePlayerIsInFullScreen {
                                 DetailSectionsSpacer(height: 15)
                                 
@@ -125,11 +128,12 @@ struct StoryDetailView: View {
                         Spacer(minLength: 0)
                     }
                 }
-                .ignoresSafeArea(interactivePlayerIsInFullScreen && !isMACOS ? .all : [])
+                .ignoresSafeArea(interactivePlayerIsInFullScreen && !isMACOS ? .all : [], edges: .all)
                 .scrollDisabled(interactivePlayerIsInFullScreen)
                 .onFrameChange { geometry in
                     screenWidth = geometry.size.width
                     screenHeight = geometry.size.height
+                    print("\(screenWidth), \(screenHeight)")
                 }
             } else {
                 ExtendedConstraints {
@@ -138,6 +142,12 @@ struct StoryDetailView: View {
             }
         }
         .navigationTitle(title)
+#if os(iOS)
+        .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .navigationBar)
+        .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .tabBar)
+#endif
+        .navigationBarBackButtonHidden(interactivePlayerIsInFullScreen && !isMACOS)
+        
         .withSystemBackground()
         .task {
             await loadTranscript()
@@ -150,6 +160,15 @@ struct StoryDetailView: View {
                     Image(systemName: "triangle")
                 })
             }
+        }
+        .onChange(of: interactivePlayerIsInFullScreen) {
+            #if os(iOS)
+            if interactivePlayerIsInFullScreen {
+                setDeviceOrientation(to: .landscape, allowing: [.landscapeLeft, .landscapeRight])
+            } else {
+                setDeviceOrientation(to: .portrait, allowing: .portrait)
+            }
+            #endif
         }
     }
     
