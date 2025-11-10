@@ -161,6 +161,7 @@
 		8CBC1BD92E333461004023F7 /* FoldableList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBC1BD82E33345C004023F7 /* FoldableList.swift */; };
 		8CBC1BDD2E336556004023F7 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBC1BDC2E33654D004023F7 /* SearchView.swift */; };
 		8CBC1BE12E340AD8004023F7 /* CostumeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBC1BE02E340AD4004023F7 /* CostumeListView.swift */; };
+		8CBC97552EC193DC007A1E33 /* CodeEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBC97542EC193D5007A1E33 /* CodeEditor.swift */; };
 		8CBF73132E902A0600D88F96 /* CardCollectionCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBF73122E9029FE00D88F96 /* CardCollectionCoding.swift */; };
 		8CC046DC2E6C8F63009FDC13 /* AppFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC046DB2E6C8F5D009FDC13 /* AppFlags.swift */; };
 		8CD13F752E2FDC4A00673E15 /* NavigationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD13F742E2FDC4700673E15 /* NavigationListView.swift */; };
@@ -594,6 +595,7 @@
 		8CBC1BD82E33345C004023F7 /* FoldableList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldableList.swift; sourceTree = "<group>"; };
 		8CBC1BDC2E33654D004023F7 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		8CBC1BE02E340AD4004023F7 /* CostumeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostumeListView.swift; sourceTree = "<group>"; };
+		8CBC97542EC193D5007A1E33 /* CodeEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeEditor.swift; sourceTree = "<group>"; };
 		8CBF73122E9029FE00D88F96 /* CardCollectionCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionCoding.swift; sourceTree = "<group>"; };
 		8CC046DB2E6C8F5D009FDC13 /* AppFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlags.swift; sourceTree = "<group>"; };
 		8CD13F742E2FDC4700673E15 /* NavigationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationListView.swift; sourceTree = "<group>"; };
@@ -836,6 +838,7 @@
 				8C889D9A2EA1257700FBF01D /* Community */,
 				E98BE10F2E7E8C5E00B4C8A8 /* Info */,
 				E9A126FD2E8CB62700BBD39E /* Tools */,
+				8CBC97532EC193C8007A1E33 /* Zeile */,
 				E9BD6C4F2E547A7200D56E55 /* Settings */,
 			);
 			path = Greatdori;
@@ -1097,6 +1100,14 @@
 				8CB4D4E12E449D150085D57A /* Assets.xcassets */,
 			);
 			path = "Greatdori Watch Widgets";
+			sourceTree = "<group>";
+		};
+		8CBC97532EC193C8007A1E33 /* Zeile */ = {
+			isa = PBXGroup;
+			children = (
+				8CBC97542EC193D5007A1E33 /* CodeEditor.swift */,
+			);
+			path = Zeile;
 			sourceTree = "<group>";
 		};
 		8CD13FE32E300ACE00673E15 /* utils */ = {
@@ -1768,6 +1779,7 @@
 				E949A5612EAA00CB007441A6 /* WelcomeView.swift in Sources */,
 				E94218F22E8AA32000F24974 /* CharacterSearchView.swift in Sources */,
 				E942190E2E8AA4D700F24974 /* SongDetailGameplayView.swift in Sources */,
+				8CBC97552EC193DC007A1E33 /* CodeEditor.swift in Sources */,
 				E960D3382EB64CE600EA6A5E /* StoryViewerDetails.swift in Sources */,
 				E955A0F92EBF08D800795C9D /* ISVDialogBox.swift in Sources */,
 				E955A0F72EBDF9CA00795C9D /* FontSuggestions_EN.md in Sources */,
