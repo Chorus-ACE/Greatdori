@@ -69,7 +69,7 @@ struct Live2DViewerView: View {
                                     Text("Tools.live2d-viewer.character")
                                         .bold()
                                 } value: {
-                                    CharacterSelectorButton(selection: $selectedCharacter)
+                                    ItemSelectorButton(selection: $selectedCharacter)
                                         .onChange(of: selectedCharacter) {
                                             updateDestination()
                                         }
