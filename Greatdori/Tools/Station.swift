@@ -48,12 +48,12 @@ struct StationView: View {
                     }
                 } else {
                     ExtendedConstraints {
-                        ContentUnavailableView("Tools.station.empty", systemImage: "", description: Text("Tools.station.empty.description"))
+                        ContentUnavailableView("Tools.station.empty", systemImage: "flag.filled.and.flag.crossed", description: Text("Tools.station.empty.description"))
                     }
                 }
             } else {
                 ExtendedConstraints {
-                    ContentUnavailableView("Tools.station.unavailable", systemImage: "", description: Text("Tools.station.unavailable.description.\(fetchError ?? -1)"))
+                    ContentUnavailableView("Tools.station.unavailable", systemImage: "flag.filled.and.flag.crossed", description: Text("Tools.station.unavailable.description.\(fetchError ?? -1)"))
                 }
                 .onTapGesture {
                     Task {

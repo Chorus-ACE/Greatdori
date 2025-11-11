@@ -26,7 +26,7 @@ let showBirthdayDateDefaultValue = 1
 struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.horizontalSizeClass) var sizeClass
-    @State var selectionItem: Int = 0
+    @State var selectionItem: String = "locale"
     var usedAsSheet: Bool = false
     
     let SettingsTabs: [(LocalizedStringResource, )] = []
@@ -39,6 +39,7 @@ struct SettingsView: View {
                 SettingsPermissionsView()
                 SettingsWidgetsView()
                 SettingsFontsView()
+                SettingsAccountsView()
                 SettingsOfflineDataView()
                 SettingsAboutView()
                 if AppFlag.DEBUG {
@@ -62,58 +63,62 @@ struct SettingsView: View {
         NavigationSplitView(sidebar: {
             List(selection: $selectionItem, content: {
                 Label("Settings.locale", systemImage: "globe")
-                    .tag(0)
+                    .tag("locale")
                 Label("Settings.home-edit", systemImage: "rectangle.3.group")
-                    .tag(1)
+                    .tag("home")
                 Label("Settings.permissions", systemImage: "bell.badge")
-                    .tag(2)
+                    .tag("permission")
                 Label("Settings.widgets", systemImage: "widget.small")
-                    .tag(3)
+                    .tag("widget")
+                Label("Settings.accounts", systemImage: "person.crop.circle")
+                    .tag("account")
                 Label("Settings.fonts", systemImage: "textformat")
-                    .tag(10)
+                    .tag("font")
                 Label("Settings.advanced", systemImage: "hammer")
-                    .tag(20)
+                    .tag("advanced")
                 Label("Settings.about", systemImage: "info.circle")
-                    .tag(21)
+                    .tag("about")
                 if AppFlag.DEBUG {
                     Label("Settings.debug", systemImage: "ant")
-                        .tag(23)
+                        .tag("debug")
                 }
             })
 //            .toolbar(removing: .sidebarToggle)
         }, detail: {
             NavigationStack {
                 switch selectionItem {
-                case 0:
+                case "locale":
                     Form {
                         SettingsLocaleView()
                     }
                     .formStyle(.grouped)
-                case 1:
+                case "home":
                     Form {
                         SettingsHomeView()
                     }
                     .formStyle(.grouped)
-                case 2:
+                case "permission":
                     Form {
                         SettingsPermissionsView()
                     }
                     .formStyle(.grouped)
-                case 3:
+                case "widget":
                     Form {
                         SettingsWidgetsView()
                     }
                     .formStyle(.grouped)
-                case 10:
+                case "font":
                     SettingsFontsView()
-                case 20:
+                case "account":
+                    SettingsAccountsView()
+                case "advanced":
                     Form {
                         SettingsAdvancedView()
                     }
                     .formStyle(.grouped)
-                case 21:
+                case "about":
                     SettingsAboutView()
-                case 23:
+                case "debug":
                     Form {
                         SettingsDebugView()
                     }
