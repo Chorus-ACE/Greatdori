@@ -15,6 +15,7 @@
 import Combine
 import SwiftUI
 import DoriKit
+import SDWebImageSwiftUI
 import Carbon.HIToolbox.Events
 
 #if os(macOS)
@@ -165,14 +166,42 @@ struct CodeEditor: NSViewRepresentable {
         var lastPos: Int = -1
         
         override func keyDown(with event: NSEvent) {
+            let nominalModifier = event.modifierFlags.isDisjoint(
+                with: [.shift, .function, .control, .option, .command]
+            )
+            
             switch event.keyCode {
             case UInt16(kVK_ANSI_Period):
                 super.keyDown(with: event)
                 showAutoCompletion()
-//            case UInt16(kVK_Delete):
-//                super.keyDown(with: event)
-//                showingAutoCompletionPanel?.close()
-//                showingAutoCompletionPanel = nil
+            case UInt16(kVK_ANSI_Quote) where event.modifierFlags.contains(.shift):
+                super.keyDown(with: event)
+                let location = self.selectedRange().location - 2
+                guard location > 0 else { return }
+                let text = self.string
+                var currentIndex = text.index(text.startIndex, offsetBy: location)
+                var hasAnotherQuote = false
+                while currentIndex > text.startIndex && currentIndex < text.endIndex {
+                    let char = text[currentIndex]
+                    if char == "\"" {
+                        hasAnotherQuote = true
+                        break
+                    } else if char == "\n" {
+                        break
+                    }
+                    text.formIndex(before: &currentIndex)
+                }
+                if !hasAnotherQuote {
+                    self.replaceCharacters(
+                        in: .init(location: location + 2, length: 0),
+                        with: "\""
+                    )
+                    self.setSelectedRange(
+                        .init(location: location + 2, length: 0)
+                    )
+                    self.delegate?.textDidChange?(.init(name: NSTextView.didChangeNotification))
+                    showAutoCompletion()
+                }
             case UInt16(kVK_Escape):
                 if showingAutoCompletionPanel == nil {
                     showAutoCompletion()
@@ -196,27 +225,40 @@ struct CodeEditor: NSViewRepresentable {
                 if showingAutoCompletionPanel != nil {
                     CodeCompletionView.getCurrentSubject.send({ item in
                         let currentLoc = self.selectedRange().location
-                        let newLoc = currentLoc + item.replacingLength
                         self.string = item.replacedCode
-                        self.setSelectedRange(.init(location: newLoc, length: 0))
                         self.delegate?.textDidChange?(.init(name: NSTextView.didChangeNotification))
+                        self.setSelectedRange(.init(location: currentLoc, length: 0))
+                        if !self.selectPlaceholder() {
+                            let newLoc = currentLoc + item.replacingLength
+                            self.setSelectedRange(.init(location: newLoc, length: 0))
+                        }
                     })
                 } else {
-                    let selectedRange = self.selectedRange()
-                    let selectedText = self.string[Range(selectedRange, in: self.string)!]
-                    if selectedText.hasPrefix("<#")
-                        && selectedText.hasSuffix("#>") {
-                        let newText = selectedText.dropFirst(2).dropLast(2)
-                        self.replaceCharacters(
-                            in: selectedRange,
-                            with: String(newText)
-                        )
-                        self.delegate?.textDidChange?(.init(name: NSTextView.didChangeNotification))
+                    if event.keyCode == UInt16(kVK_Return) {
+                        let selectedRange = self.selectedRange()
+                        let selectedText = self.string[Range(selectedRange, in: self.string)!]
+                        if selectedText.hasPrefix("<#")
+                            && selectedText.hasSuffix("#>") {
+                            let newText = selectedText.dropFirst(2).dropLast(2)
+                            self.replaceCharacters(
+                                in: selectedRange,
+                                with: String(newText)
+                            )
+                            self.delegate?.textDidChange?(.init(name: NSTextView.didChangeNotification))
+                        } else {
+                            super.keyDown(with: event)
+                        }
                     } else {
-                        super.keyDown(with: event)
+                        if !selectPlaceholder() {
+                            if selectPlaceholder(previous: true) {
+                                while selectPlaceholder(previous: true) {}
+                            } else {
+                                super.keyDown(with: event)
+                            }
+                        }
                     }
                 }
-            case let c where [
+            case let c where nominalModifier && [
                 kVK_ANSI_A,
                 kVK_ANSI_B,
                 kVK_ANSI_C,
@@ -243,6 +285,17 @@ struct CodeEditor: NSViewRepresentable {
                 kVK_ANSI_X,
                 kVK_ANSI_Y,
                 kVK_ANSI_Z,
+                kVK_ANSI_0,
+                kVK_ANSI_1,
+                kVK_ANSI_2,
+                kVK_ANSI_3,
+                kVK_ANSI_4,
+                kVK_ANSI_5,
+                kVK_ANSI_6,
+                kVK_ANSI_7,
+                kVK_ANSI_8,
+                kVK_ANSI_9,
+                kVK_ANSI_Slash
             ].map { UInt16($0) }.contains(c):
                 super.keyDown(with: event)
                 showAutoCompletion()
@@ -310,8 +363,12 @@ struct CodeEditor: NSViewRepresentable {
                 }()
                 
                 var size = CGSize(width: 300, height: 150)
+                let hasPreviewContent = items.contains { $0.previewContent != nil }
                 for item in items {
                     var newSize = item.displayName.size()
+                    if hasPreviewContent {
+                        newSize.width += 200
+                    }
                     newSize.width += 60
                     if newSize.width > size.width {
                         size.width = newSize.width
@@ -319,7 +376,11 @@ struct CodeEditor: NSViewRepresentable {
                 }
                 
                 let contentView = NSHostingView(
-                    rootView: CodeCompletionView(items: items, size: size)
+                    rootView: CodeCompletionView(
+                        items: items,
+                        size: size,
+                        hasPreviewContent: hasPreviewContent
+                    )
                 )
                 
                 autocompletePanel.contentView = contentView
@@ -331,11 +392,91 @@ struct CodeEditor: NSViewRepresentable {
                     panelFrame.origin.y -= panelFrame.height
                     panelFrame.origin = window.convertToScreen(panelFrame).origin
                     
+                    if let screen = window.screen {
+                        let visibleFrame = screen.visibleFrame
+                        
+                        if panelFrame.maxX > visibleFrame.maxX {
+                            panelFrame.origin.x = visibleFrame.maxX - panelFrame.width
+                        }
+                        if panelFrame.minX < visibleFrame.minX {
+                            panelFrame.origin.x = visibleFrame.minX
+                        }
+                        if panelFrame.maxY > visibleFrame.maxY {
+                            panelFrame.origin.y = visibleFrame.maxY - panelFrame.height
+                        }
+                        if panelFrame.minY < visibleFrame.minY {
+                            panelFrame.origin.y = visibleFrame.minY
+                        }
+                    }
+                    
                     autocompletePanel.setFrame(panelFrame, display: true)
                     autocompletePanel.orderFront(nil)
                     showingAutoCompletionPanel = autocompletePanel
                 }
             }
+        }
+        
+        @discardableResult
+        func selectPlaceholder(previous: Bool = false) -> Bool {
+            let _range = self.selectedRange()
+            var currentLoc = _range.location
+            if previous {
+                currentLoc -= 1
+                if currentLoc < 0 { return false }
+            } else {
+                currentLoc += _range.length
+            }
+            let currentString = self.string
+            let selectedIndex = currentString.index(
+                currentString.startIndex,
+                offsetBy: currentLoc
+            )
+            var placeholderStartIndex: String.Index?
+            var placeholderEndIndex: String.Index?
+            var checkingIndex = selectedIndex
+            while checkingIndex > currentString.startIndex && checkingIndex < currentString.endIndex {
+                let char = currentString[checkingIndex]
+                if char == "<" {
+                    let nextIndex = currentString.index(after: checkingIndex)
+                    guard nextIndex < currentString.endIndex else { break }
+                    let nextChar = currentString[nextIndex]
+                    if nextChar == "#" {
+                        placeholderStartIndex = checkingIndex
+                        break
+                    }
+                } else if char == "\n" {
+                    break
+                }
+                if previous {
+                    currentString.formIndex(before: &checkingIndex)
+                } else {
+                    currentString.formIndex(after: &checkingIndex)
+                }
+            }
+            guard let placeholderStartIndex else { return false }
+            checkingIndex = placeholderStartIndex
+            while checkingIndex < currentString.endIndex {
+                let char = currentString[checkingIndex]
+                if char == ">" {
+                    guard checkingIndex > currentString.startIndex else { break }
+                    let previousIndex = currentString.index(before: checkingIndex)
+                    let previousChar = currentString[previousIndex]
+                    if previousChar == "#" {
+                        placeholderEndIndex = checkingIndex
+                        break
+                    }
+                } else if char == "\n" {
+                    break
+                }
+                currentString.formIndex(after: &checkingIndex)
+            }
+            if let endIndex = placeholderEndIndex {
+                self.setSelectedRange(
+                    .init(placeholderStartIndex...endIndex, in: currentString)
+                )
+                return true
+            }
+            return false
         }
     }
     
@@ -441,92 +582,130 @@ private struct CodeCompletionView: View {
     
     var items: [CodeCompletionItem]
     var size: CGSize
+    var hasPreviewContent: Bool
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedItemIndex = 0
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                VStack(spacing: 0) {
-                    if !items.isEmpty {
-                        ForEach(Array(items.enumerated()), id: \.element.self) { index, result in
-                            HStack(spacing: 5) {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill({
+        HStack(spacing: 0) {
+            VStack(spacing: 0) {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        if !items.isEmpty {
+                            ForEach(Array(items.enumerated()), id: \.element.self) { index, result in
+                                HStack(spacing: 5) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill({
+                                                switch result.itemType {
+                                                case .variable:
+                                                    Color.orange
+                                                case .function:
+                                                    Color.green
+                                                case .staticMethod:
+                                                    Color.cyan
+                                                case .instanceMethod:
+                                                    Color.blue
+                                                case .structure:
+                                                    Color.purple
+                                                case .enumeration:
+                                                    Color.orange
+                                                case .keyword:
+                                                    Color.gray
+                                                @unknown default: Color.red
+                                                }
+                                            }())
+                                            .frame(width: 15, height: 15)
+                                        Group {
                                             switch result.itemType {
-                                            case .variable:
-                                                Color.orange
                                             case .function:
-                                                Color.green
+                                                Image(systemName: "f.cursive")
                                             case .staticMethod:
-                                                Color.cyan
+                                                Text(verbatim: "M")
                                             case .instanceMethod:
-                                                Color.blue
-                                            case .structure:
-                                                Color.purple
-                                            case .enumeration:
-                                                Color.orange
+                                                Text(verbatim: "I")
                                             case .keyword:
-                                                Color.gray
-                                            @unknown default: Color.red
+                                                Image(systemName: "circle.fill")
+                                                    .font(.system(size: 3))
+                                            default:
+                                                Text(result.itemType.rawValue.first!.uppercased())
                                             }
-                                        }())
-                                        .frame(width: 15, height: 15)
-                                    Group {
-                                        switch result.itemType {
-                                        case .function:
-                                            Image(systemName: "f.cursive")
-                                        case .staticMethod:
-                                            Text(verbatim: "M")
-                                        case .instanceMethod:
-                                            Text(verbatim: "I")
-                                        case .keyword:
-                                            Image(systemName: "circle")
-                                        default:
-                                            Text(result.itemType.rawValue.first!.uppercased())
                                         }
+                                        .font(.system(size: 11, weight: .medium))
+                                        .foregroundStyle(.white)
                                     }
-                                    .font(.system(size: 11, weight: .medium))
-                                    .foregroundStyle(.white)
+                                    Text(AttributedString(result.displayName))
+                                    Spacer()
                                 }
-                                Text(AttributedString(result.displayName))
-                                Spacer()
-                            }
-                            .padding(3)
-                            .padding(.horizontal, 2)
-                            .background {
-                                if index == selectedItemIndex {
-                                    RoundedRectangle(cornerRadius: 5)
-                                        .fill(
-                                            colorScheme == .light
-                                            ? Color.white.opacity(0.6)
-                                            : .gray.opacity(0.4)
-                                        )
+                                .padding(3)
+                                .padding(.horizontal, 2)
+                                .background {
+                                    if index == selectedItemIndex {
+                                        RoundedRectangle(cornerRadius: 5)
+                                            .fill(
+                                                colorScheme == .light
+                                                ? Color.white.opacity(0.6)
+                                                : .gray.opacity(0.4)
+                                            )
+                                    }
                                 }
-                            }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                selectedItemIndex = index
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    selectedItemIndex = index
+                                }
                             }
                         }
                     }
+                    .padding(5)
                 }
-                .padding(5)
-            }
-            if !items.isEmpty {
-                let item = items[selectedItemIndex]
-                Divider()
-                VStack {
-                    HStack {
-                        Text(AttributedString(item.declaration))
-                            .font(.system(size: 12, weight: .medium, design: .monospaced))
-                        Spacer(minLength: 0)
+                if !items.isEmpty {
+                    let item = items[selectedItemIndex]
+                    if !item.declaration.string.isEmpty {
+                        Divider()
+                        VStack {
+                            HStack {
+                                Text(AttributedString(item.declaration))
+                                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                                Spacer(minLength: 0)
+                            }
+                        }
+                        .padding(5)
                     }
                 }
-                .padding(5)
+            }
+            .frame(width: hasPreviewContent ? size.width - 200 : size.width, height: size.height)
+            if let preview = items[selectedItemIndex].previewContent {
+                Divider()
+                HStack {
+                    Spacer(minLength: 0)
+                    switch preview {
+                    case .image(let url):
+                        WebImage(url: url) { image in
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        } placeholder: {
+                            ProgressView()
+                        }
+                    case .live2d(let url):
+                        Live2DView(resourceURL: url) {
+                            ProgressView()
+                        }
+                        ._live2dZoomFactor(2)
+                        ._live2dCoordinateMatrix("""
+                        [ s, 0, 0, 0,
+                          0,-s, 0, 0,
+                          0, 0, 1, 0,
+                          -1, 1, 0, 1 ]
+                        """)
+                        .frame(width: 200, height: 200)
+                    @unknown default:
+                        EmptyView()
+                    }
+                    Spacer(minLength: 0)
+                }
+                .frame(width: 200, height: size.height)
             }
         }
-        .frame(width: size.width, height: size.height)
         .background {
             RoundedRectangle(cornerRadius: 8)
                 .fill(Material.regular)
