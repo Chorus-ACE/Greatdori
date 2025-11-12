@@ -1,0 +1,50 @@
+{
+  "fill" : {
+    "solid" : "display-p3:1.00000,1.00000,1.00000,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "fill" : {
+            "solid" : "srgb:0.29380,0.40785,0.96863,1.00000"
+          },
+          "image-name" : "未标题-2 2.png",
+          "name" : "RoundedBorder",
+          "position" : {
+            "scale" : 1.09,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "blend-mode-specializations" : [
+            {
+              "appearance" : "tinted",
+              "value" : "normal"
+            }
+          ],
+          "fill" : {
+            "solid" : "display-p3:0.28594,0.40133,0.96863,1.00000"
+          },
+          "glass" : true,
+          "image-name" : "AppIconStar.png",
+          "name" : "AppIconStar"
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : "shared"
+  }
+}
