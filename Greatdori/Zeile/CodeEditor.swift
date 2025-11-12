@@ -22,6 +22,7 @@ import Carbon.HIToolbox.Events
 struct CodeEditor: NSViewRepresentable {
     @Binding var text: String
     let textView = CodeTextView()
+    
     func makeNSView(context: Context) -> NSScrollView {
         textView.string = text
         updateAttributes()
@@ -84,6 +85,17 @@ struct CodeEditor: NSViewRepresentable {
             range: .init(location: 0, length: textView.textStorage!.length)
         )
     }
+    func updateDiags(_ sender: Coordinator) {
+        let code = textView.string
+        sender.diagUpdateTask?.cancel()
+        sender.diagUpdateTask = Task.detached {
+            let diags = DoriStoryBuilder().generateDiagnostics(for: code)
+            await MainActor.run {
+                textView.diagnostics = diags
+                textView.needsDisplay = true
+            }
+        }
+    }
     
     class Coordinator: NSObject, NSTextViewDelegate {
         var parent: CodeEditor
@@ -92,12 +104,15 @@ struct CodeEditor: NSViewRepresentable {
             self.parent = parent
         }
         
+        var diagUpdateTask: Task<Void, Never>?
+        
         // Prevent cycle selection change
         private var isSettingSelectionRange = false
         
         func textDidChange(_ notification: Notification) {
             parent.text = parent.textView.string
             parent.updateAttributes()
+            parent.updateDiags(self)
         }
         
         func textViewDidChangeSelection(_ notification: Notification) {
@@ -164,6 +179,8 @@ struct CodeEditor: NSViewRepresentable {
     class CodeTextView: NSTextView {
         var showingAutoCompletionPanel: NSPanel?
         var lastPos: Int = -1
+        var diagnostics: [Diagnostic] = []
+        fileprivate var inlineDiagViews: [NSHostingView<InlineDiagnosticView>] = []
         
         override func keyDown(with event: NSEvent) {
             let nominalModifier = event.modifierFlags.isDisjoint(
@@ -304,6 +321,56 @@ struct CodeEditor: NSViewRepresentable {
                 // Update auto completion content
                 if showingAutoCompletionPanel != nil {
                     showAutoCompletion()
+                }
+            }
+        }
+        
+        override func drawBackground(in rect: NSRect) {
+            super.drawBackground(in: rect)
+            
+            for view in self.inlineDiagViews {
+                view.removeFromSuperview()
+            }
+            self.inlineDiagViews.removeAll()
+            
+            guard let layoutManager = unsafe layoutManager,
+                  let textContainer = unsafe textContainer else { return }
+            
+            var lineRanges: [NSRange] = []
+            var rangeStartIndex = self.string.startIndex
+            var currentIndex = self.string.startIndex
+            while currentIndex < self.string.endIndex {
+                let char = self.string[currentIndex]
+                if char == "\n" {
+                    lineRanges.append(
+                        .init(rangeStartIndex..<currentIndex, in: self.string)
+                    )
+                    rangeStartIndex = self.string.index(after: currentIndex)
+                }
+                self.string.formIndex(after: &currentIndex)
+            }
+            
+            for (line, range) in lineRanges.enumerated() {
+                if let message = diagnostics.first(where: { $0.line == line + 1 }) {
+                    let rect = layoutManager.boundingRect(
+                        forGlyphRange: range,
+                        in: textContainer
+                    )
+                    
+                    let diagSize = CGSize(width: self.frame.width - rect.width - 5,
+                                          height: rect.height)
+                    let diagView = NSHostingView(rootView: InlineDiagnosticView(
+                        diagnostic: message,
+                        size: diagSize
+                    ))
+                    diagView.frame = .init(
+                        x: rect.width + 5,
+                        y: rect.minY,
+                        width: diagSize.width,
+                        height: diagSize.height
+                    )
+                    self.inlineDiagViews.append(diagView)
+                    self.addSubview(diagView)
                 }
             }
         }
@@ -728,6 +795,38 @@ private struct CodeCompletionView: View {
     }
 }
 
+private struct InlineDiagnosticView: View {
+    var diagnostic: Diagnostic
+    var size: CGSize
+    var body: some View {
+        HStack(spacing: 0) {
+            Spacer(minLength: 0)
+            HStack(spacing: 0) {
+                Image(systemName: diagnostic.severity.symbol)
+                    .foregroundStyle(.white, diagnostic.severity.color)
+                    .padding(.horizontal, 3)
+                    .frame(height: size.height)
+                    .background {
+                        Rectangle()
+                            .fill(diagnostic.severity.color.opacity(0.3))
+                    }
+                Spacer()
+                    .frame(width: 1)
+                Text(diagnostic.message)
+                    .lineLimit(1)
+                    .padding(.horizontal, 5)
+                    .frame(height: size.height)
+                    .background {
+                        Rectangle()
+                            .fill(diagnostic.severity.color.opacity(0.3))
+                    }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 4))
+        }
+        .frame(width: size.width, height: size.height)
+    }
+}
+
 private func asyncCompleteCode(
     _ code: String,
     at index: String.Index
@@ -735,6 +834,28 @@ private func asyncCompleteCode(
     await withCheckedContinuation { continuation in
         DispatchQueue(label: "com.memz233.Greatdori.Zeile.Code-Completion", qos: .userInitiated).async {
             continuation.resume(returning: DoriStoryBuilder().completeCode(code, at: index))
+        }
+    }
+}
+
+extension Diagnostic.Severity {
+    var color: Color {
+        switch self {
+        case .error: .red
+        case .warning: .yellow
+        case .note: .gray
+        case .remark: .blue
+        @unknown default: .gray
+        }
+    }
+    
+    var symbol: String {
+        switch self {
+        case .error: "xmark.octagon.fill"
+        case .warning: "exclamationmark.triangle.fill"
+        case .note: "smallcircle.filled.circle.fill"
+        case .remark: "exclamationmark.square.fill"
+        @unknown default: "questionmark.circle.fill"
         }
     }
 }
