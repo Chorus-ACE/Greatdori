@@ -580,8 +580,18 @@ struct DebugPlaygroundView: View {
                         let startTime = CFAbsoluteTimeGetCurrent()
                         var diags: [Diagnostic] = []
                         if let irData = builder.buildIR(from: codeString, diags: &diags) {
-                            let downloadURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!.appending(path: "StoryIR.zir")
+                            let downloadBase = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+                            let downloadURL = downloadBase.appending(path: "StoryIR.zir")
                             try? irData.write(to: downloadURL)
+                            
+                            if let bdJSON = DoriStoryBuilder.Conversion.bestdoriJSON(fromIR: irData) {
+                                let bdURL = downloadBase.appending(path: "StoryBestdori.json")
+                                try? bdJSON.write(
+                                    to: bdURL,
+                                    atomically: true,
+                                    encoding: .utf8
+                                )
+                            }
                         }
                         let endTime = CFAbsoluteTimeGetCurrent()
                         print(diags.map { "\($0)" }.joined(separator: "\n"))

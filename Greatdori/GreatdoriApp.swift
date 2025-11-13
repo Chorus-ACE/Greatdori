@@ -83,17 +83,25 @@ struct GreatdoriApp: App {
             @unknown default: break
             }
         }
+        
         #if os(macOS)
         Window("Settings", id: "Secchi") {
             SettingsView()
         }
         #endif
         
+        DocumentGroup {
+            ZeileProjectDocument(emptyWithName: "Untitled.zeileproj")
+        } editor: { config in
+            ZeileEditorMainView(document: config.document)
+        }
+        
         WindowGroup("Window", id: "AnyWindow", for: AnyWindowData.self) { $data in
             if let data, data.isValid {
                 _AnyWindowView(data: data)
             }
         }
+        .commandsRemoved()
     }
 }
 private struct _AnyWindowView: View {

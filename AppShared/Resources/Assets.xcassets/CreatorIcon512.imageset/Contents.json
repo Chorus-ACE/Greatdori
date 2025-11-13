@@ -1,0 +1,22 @@
+{
+  "images" : [
+    {
+      "filename" : "CreatorIcon-iOS-Default-512x512@1x.png",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "CreatorIcon-iOS-Dark-512x512@1x.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

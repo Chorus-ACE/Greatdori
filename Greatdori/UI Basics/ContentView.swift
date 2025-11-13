@@ -278,7 +278,7 @@ enum InfoTab: Hashable {
 }
 
 enum ToolTab: Hashable {
-    case home, eventTracker, chartSimulator, storyViewer, live2dViewer, assetExplorer, station
+    case home, eventTracker, chartSimulator, storyViewer, live2dViewer, assetExplorer, station, zeileEditor
 }
 
 enum Platform {

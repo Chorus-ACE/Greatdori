@@ -125,6 +125,12 @@ import SwiftUI
         symbol: "folder",
         tabValue: .assetExplorer,
         destination: {AssetExplorerView()}
+    ),
+    ToolDestinationItem(
+        title: "App.tools.zeile-editor",
+        symbol: "star.fill",
+        tabValue: .zeileEditor,
+        destination: {ZeileWelcomeView()}
     )
 ]
 

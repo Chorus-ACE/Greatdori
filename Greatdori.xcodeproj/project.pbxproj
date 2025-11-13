@@ -70,6 +70,12 @@
 		8C3FA26D2E4BCE7B001526F2 /* TextStyleRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA26C2E4BCE77001526F2 /* TextStyleRender.swift */; };
 		8C3FA26F2E4BCEC2001526F2 /* WrapIf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA26E2E4BCEC0001526F2 /* WrapIf.swift */; };
 		8C3FA2712E4BD487001526F2 /* StyleEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA2702E4BD484001526F2 /* StyleEditorView.swift */; };
+		8C480BFF2EC5DAA800A8AE70 /* ZeileWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480BFE2EC5DAA400A8AE70 /* ZeileWelcomeView.swift */; };
+		8C480C022EC5E15500A8AE70 /* ZeileProjectDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C012EC5E15100A8AE70 /* ZeileProjectDocument.swift */; };
+		8C480C042EC60D0000A8AE70 /* ZeileProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C032EC60CFC00A8AE70 /* ZeileProjectConfig.swift */; };
+		8C480C062EC60FAA00A8AE70 /* ZeileEditorMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C052EC60FA300A8AE70 /* ZeileEditorMainView.swift */; };
+		8C480C082EC6159E00A8AE70 /* CodeTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C072EC6159200A8AE70 /* CodeTemplates.swift */; };
+		8C480C0A2EC6198D00A8AE70 /* UTType+ZeileTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C092EC6198300A8AE70 /* UTType+ZeileTypes.swift */; };
 		8C499F8D2E4FD9CE0073FCB6 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 8C499F8C2E4FD9CE0073FCB6 /* SwiftUIIntrospect */; };
 		8C499F8F2E4FEAC20073FCB6 /* OnChange+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */; };
 		8C499F992E5177540073FCB6 /* NewsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F982E51774F0073FCB6 /* NewsDetailView.swift */; };
@@ -507,6 +513,12 @@
 		8C3FA26C2E4BCE77001526F2 /* TextStyleRender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStyleRender.swift; sourceTree = "<group>"; };
 		8C3FA26E2E4BCEC0001526F2 /* WrapIf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapIf.swift; sourceTree = "<group>"; };
 		8C3FA2702E4BD484001526F2 /* StyleEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleEditorView.swift; sourceTree = "<group>"; };
+		8C480BFE2EC5DAA400A8AE70 /* ZeileWelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileWelcomeView.swift; sourceTree = "<group>"; };
+		8C480C012EC5E15100A8AE70 /* ZeileProjectDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileProjectDocument.swift; sourceTree = "<group>"; };
+		8C480C032EC60CFC00A8AE70 /* ZeileProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileProjectConfig.swift; sourceTree = "<group>"; };
+		8C480C052EC60FA300A8AE70 /* ZeileEditorMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorMainView.swift; sourceTree = "<group>"; };
+		8C480C072EC6159200A8AE70 /* CodeTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeTemplates.swift; sourceTree = "<group>"; };
+		8C480C092EC6198300A8AE70 /* UTType+ZeileTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UTType+ZeileTypes.swift"; sourceTree = "<group>"; };
 		8C499F892E4FCC050073FCB6 /* TestLyrics.json */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLyrics.json; sourceTree = "<group>"; };
 		8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnChange+.swift"; sourceTree = "<group>"; };
 		8C499F982E51774F0073FCB6 /* NewsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailView.swift; sourceTree = "<group>"; };
@@ -922,6 +934,17 @@
 			path = GreatLyrics;
 			sourceTree = "<group>";
 		};
+		8C480C002EC5E14800A8AE70 /* Documents */ = {
+			isa = PBXGroup;
+			children = (
+				8C480C092EC6198300A8AE70 /* UTType+ZeileTypes.swift */,
+				8C480C032EC60CFC00A8AE70 /* ZeileProjectConfig.swift */,
+				8C480C012EC5E15100A8AE70 /* ZeileProjectDocument.swift */,
+				8C480C072EC6159200A8AE70 /* CodeTemplates.swift */,
+			);
+			path = Documents;
+			sourceTree = "<group>";
+		};
 		8C6B8FC32E75372000452D7B /* Localization */ = {
 			isa = PBXGroup;
 			children = (
@@ -1111,7 +1134,10 @@
 		8CBC97532EC193C8007A1E33 /* Zeile */ = {
 			isa = PBXGroup;
 			children = (
+				8C480C002EC5E14800A8AE70 /* Documents */,
 				8CBC97542EC193D5007A1E33 /* CodeEditor.swift */,
+				8C480BFE2EC5DAA400A8AE70 /* ZeileWelcomeView.swift */,
+				8C480C052EC60FA300A8AE70 /* ZeileEditorMainView.swift */,
 			);
 			path = Zeile;
 			sourceTree = "<group>";
@@ -1784,6 +1810,7 @@
 				E9AF51252EAC634100BB808F /* TypeNames.swift in Sources */,
 				8CB4D4712E4454890085D57A /* CardCollectionManager.swift in Sources */,
 				E942192A2E8AA6CE00F24974 /* EventSearchView.swift in Sources */,
+				8C480C042EC60D0000A8AE70 /* ZeileProjectConfig.swift in Sources */,
 				E94218FA2E8AA3B000F24974 /* CardPreviewImage.swift in Sources */,
 				E94219072E8AA48A00F24974 /* ComicDetailView.swift in Sources */,
 				8CEA20C52EAB6362009D41C5 /* SongDetailMatchView.swift in Sources */,
@@ -1793,6 +1820,7 @@
 				8CBC97552EC193DC007A1E33 /* CodeEditor.swift in Sources */,
 				E960D3382EB64CE600EA6A5E /* StoryViewerDetails.swift in Sources */,
 				E955A0F92EBF08D800795C9D /* ISVDialogBox.swift in Sources */,
+				8C480C062EC60FAA00A8AE70 /* ZeileEditorMainView.swift in Sources */,
 				E955A0F72EBDF9CA00795C9D /* FontSuggestions_EN.md in Sources */,
 				E94443CE2E8E80C200593F07 /* SettingsDebugView.swift in Sources */,
 				E9B17BBB2EA5DC430049C92C /* SettingsAboutView.swift in Sources */,
@@ -1808,9 +1836,12 @@
 				E90769D62E546D5B00C9871C /* CornerstoneView.swift in Sources */,
 				E90769D72E546D5B00C9871C /* DebugView.swift in Sources */,
 				E94219152E8AA55700F24974 /* SongDifficultyIndicators.swift in Sources */,
+				8C480C022EC5E15500A8AE70 /* ZeileProjectDocument.swift in Sources */,
 				E94219282E8AA6BC00F24974 /* EventInfoForHome.swift in Sources */,
 				E949D28E2E93D9F800E50D3F /* Live2DViewer.swift in Sources */,
+				8C480BFF2EC5DAA800A8AE70 /* ZeileWelcomeView.swift in Sources */,
 				E94219172E8AA57B00F24974 /* CostumeInfo.swift in Sources */,
+				8C480C082EC6159E00A8AE70 /* CodeTemplates.swift in Sources */,
 				E94218FE2E8AA40100F24974 /* CardSearchView.swift in Sources */,
 				8C2BB9B42E92AF3C00D003D1 /* StoryViewer.swift in Sources */,
 				E942192C2E8AA6E700F24974 /* EventDetailView.swift in Sources */,
@@ -1842,6 +1873,7 @@
 				E9CD3A482E58975D00BF5EA9 /* Extensions.swift in Sources */,
 				E94219332E8AA76A00F24974 /* GachaInfo.swift in Sources */,
 				8C6C0EFF2E42462A00D1FB0A /* OptionsData.swift in Sources */,
+				8C480C0A2EC6198D00A8AE70 /* UTType+ZeileTypes.swift in Sources */,
 				8C0C99842E296A5500549B5C /* GreatdoriApp.swift in Sources */,
 				8C902FAA2EA4D31900202812 /* UIBasic.metal in Sources */,
 				E99B57652EC1E7DF0045EFC9 /* Station.swift in Sources */,
