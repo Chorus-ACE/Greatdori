@@ -571,9 +571,7 @@ struct DebugPlaygroundView: View {
     @State var isBuilding = false
     var body: some View {
         VStack {
-            #if os(macOS)
             CodeEditor(text: $codeString)
-            #endif
             HStack {
                 Button(String("Build")) {
                     isBuilding = true
@@ -597,6 +595,9 @@ struct DebugPlaygroundView: View {
                     .opacity(isBuilding ? 1 : 0)
             }
         }
+        #if os(iOS)
+        .interactiveDismissDisabled()
+        #endif
     }
 }
 

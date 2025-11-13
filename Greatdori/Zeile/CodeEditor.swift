@@ -16,9 +16,10 @@ import Combine
 import SwiftUI
 import DoriKit
 import SDWebImageSwiftUI
-import Carbon.HIToolbox.Events
 
 #if os(macOS)
+import Carbon.HIToolbox.Events
+
 struct CodeEditor: NSViewRepresentable {
     @Binding var text: String
     let textView = CodeTextView()
@@ -640,7 +641,588 @@ struct CodeEditor: NSViewRepresentable {
         }
     }
 }
-#endif
+#else // os(macOS)
+struct CodeEditor: UIViewRepresentable {
+    @Binding var text: String
+    let textView = CodeTextView(usingTextLayoutManager: true)
+    
+    func makeUIView(context: Context) -> CodeTextView {
+        textView.text = text
+        updateAttributes()
+        textView.smartQuotesType = .no
+        textView.smartDashesType = .no
+        textView.autocorrectionType = .no
+        textView.spellCheckingType = .no
+        textView.autocapitalizationType = .none
+        textView.inlinePredictionType = .no
+        textView.smartInsertDeleteType = .no
+        textView.delegate = context.coordinator
+        
+        return textView
+    }
+    func updateUIView(_ uiView: UIViewType, context: Context) {
+        updateAttributes()
+    }
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+    
+    func updateAttributes() {
+        let storage = textView.textStorage
+        storage.beginEditing()
+        DoriStoryBuilder().syntaxHighlight(for: storage)
+        storage.addAttribute(
+            .font,
+            value: UIFont.monospacedSystemFont(ofSize: 12, weight: .medium),
+            range: .init(location: 0, length: storage.length)
+        )
+        storage.edited(
+            .editedAttributes,
+            range: .init(location: 0, length: storage.length),
+            changeInLength: 0
+        )
+        storage.endEditing()
+    }
+    func updateDiags(_ sender: Coordinator) {
+        let code = textView.text!
+        sender.diagUpdateTask?.cancel()
+        sender.diagUpdateTask = Task.detached {
+            let diags = DoriStoryBuilder().generateDiagnostics(for: code)
+            await MainActor.run {
+                textView.diagnostics = diags
+                textView.setNeedsDisplay()
+            }
+        }
+    }
+    
+    class Coordinator: NSObject, UITextViewDelegate {
+        var parent: CodeEditor
+        
+        init(parent: CodeEditor) {
+            self.parent = parent
+        }
+        
+        var diagUpdateTask: Task<Void, Never>?
+        
+        // Prevent cycle selection change
+        private var isSettingSelectionRange = false
+        
+        func textViewDidChange(_ textView: UITextView) {
+            parent.text = parent.textView.text
+            parent.updateAttributes()
+            parent.updateDiags(self)
+            textView.layoutSubviews()
+        }
+        
+        func textViewDidChangeSelection(_ textView: UITextView) {
+            guard !isSettingSelectionRange else { return }
+            
+            let selectedLocation = parent.textView.selectedRange.location
+            let currentString = parent.textView.text!
+            let selectedIndex = currentString.index(
+                currentString.startIndex,
+                offsetBy: selectedLocation
+            )
+            var placeholderStartIndex: String.Index?
+            var placeholderEndIndex: String.Index?
+            var checkingIndex = selectedIndex
+            while checkingIndex > currentString.startIndex && checkingIndex < currentString.endIndex {
+                let char = currentString[checkingIndex]
+                if char == "<" {
+                    guard checkingIndex < currentString.endIndex else { break }
+                    let nextIndex = currentString.index(after: checkingIndex)
+                    guard nextIndex < currentString.endIndex else { break }
+                    let nextChar = currentString[nextIndex]
+                    if nextChar == "#" {
+                        placeholderStartIndex = checkingIndex
+                        break
+                    }
+                } else if char == "\n" || char == ">" {
+                    break
+                }
+                currentString.formIndex(before: &checkingIndex)
+            }
+            checkingIndex = selectedIndex
+            while checkingIndex < currentString.endIndex {
+                let char = currentString[checkingIndex]
+                if char == ">" {
+                    guard checkingIndex > currentString.startIndex else { break }
+                    let previousIndex = currentString.index(before: checkingIndex)
+                    let previousChar = currentString[previousIndex]
+                    if previousChar == "#" {
+                        placeholderEndIndex = checkingIndex
+                        break
+                    }
+                } else if char == "\n" || char == "<" {
+                    break
+                }
+                currentString.formIndex(after: &checkingIndex)
+            }
+            if let startIndex = placeholderStartIndex,
+               let endIndex = placeholderEndIndex {
+                isSettingSelectionRange = true
+                parent.textView.selectedRange =
+                    .init(startIndex...endIndex, in: parent.textView.text)
+                isSettingSelectionRange = false
+            }
+            
+            if (abs(parent.textView.selectedRange.location - parent.textView.lastPos) > 1) {
+                parent.textView.showingAutoCompletionView?.removeFromSuperview()
+                parent.textView.showingAutoCompletionView = nil
+            }
+            parent.textView.lastPos = parent.textView.selectedRange.location
+        }
+    }
+    
+    class CodeTextView: UITextView {
+        var showingAutoCompletionView: UIView?
+        var lastPos: Int = -1
+        var diagnostics: [Diagnostic] = []
+        fileprivate var inlineDiagViews: [_UIHostingView<InlineDiagnosticView>] = []
+        private var lineNumberView: LineNumberView?
+        
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            
+            // Draw line number
+            var isInitialLineNumberView = false
+            if lineNumberView == nil {
+                lineNumberView = .init(textView: self)
+                isInitialLineNumberView = true
+            }
+            let lineCount = self.text.count { $0 == "\n" }
+            let lineNumberLength = String(lineCount).count
+            let lineNumberWidth: CGFloat = CGFloat(lineNumberLength) * 15.0
+            self.textContainerInset.left = lineNumberWidth
+            lineNumberView?.frame.size.width = lineNumberWidth
+            lineNumberView?.frame.size.height = self.layoutManager.usedRect(
+                for: self.textContainer
+            ).height + self.textContainerInset.top
+            if isInitialLineNumberView {
+                self.addSubview(lineNumberView!)
+            }
+            lineNumberView?.setNeedsDisplay()
+        }
+        
+        // The default implementation is really broken
+        // for our range representation. We have to use the
+        // private class `NSCountableTextRange` in UIFoundation
+        // to make our custom `CodeTextRange` work,
+        // which is not allowed on the App Store.
+        // Therefore, we have to provide a implementation
+        // for this method by our own
+        override func replace(_ range: UITextRange, withText text: String) {
+            guard let range = range as? CodeTextRange else {
+                super.replace(range, withText: text)
+                return
+            }
+            
+            self.textStorage.replaceCharacters(in: range.range, with: text)
+        }
+        
+        override func insertText(_ text: String) {
+            switch text {
+            case ".":
+                super.insertText(text)
+                showAutoCompletion()
+            case "\"":
+                super.insertText(text)
+                let location = self.selectedRange.location - 2
+                guard location > 0 else { return }
+                let text = self.text!
+                var currentIndex = text.index(text.startIndex, offsetBy: location)
+                var hasAnotherQuote = false
+                while currentIndex > text.startIndex && currentIndex < text.endIndex {
+                    let char = text[currentIndex]
+                    if char == "\"" {
+                        hasAnotherQuote = true
+                        break
+                    } else if char == "\n" {
+                        break
+                    }
+                    text.formIndex(before: &currentIndex)
+                }
+                if !hasAnotherQuote {
+                    self.replace(
+                        CodeTextRange(location: location + 2, length: 0),
+                        withText: "\""
+                    )
+                    self.selectedRange = .init(location: location + 2, length: 0)
+                    self.delegate?.textViewDidChange?(self)
+                    showAutoCompletion()
+                }
+//            case UInt16(kVK_Escape):
+//                if showingAutoCompletionView == nil {
+//                    showAutoCompletion()
+//                } else {
+//                    showingAutoCompletionView?.close()
+//                    showingAutoCompletionView = nil
+//                }
+//            case UInt16(kVK_UpArrow):
+//                if showingAutoCompletionView != nil {
+//                    CodeCompletionView.previousItemSubject.send()
+//                } else {
+//                    super.keyDown(with: event)
+//                }
+//            case UInt16(kVK_DownArrow):
+//                if showingAutoCompletionView != nil {
+//                    CodeCompletionView.nextItemSubject.send()
+//                } else {
+//                    super.keyDown(with: event)
+//                }
+            case "\n", "\u{9}":
+                if showingAutoCompletionView != nil {
+                    CodeCompletionView.getCurrentSubject.send({ item in
+                        let currentLoc = self.selectedRange.location
+                        self.text = item.replacedCode
+                        self.delegate?.textViewDidChange?(self)
+                        self.selectedRange = .init(location: currentLoc, length: 0)
+                        if !self.selectPlaceholder() {
+                            let newLoc = currentLoc + item.replacingLength
+                            self.selectedRange = .init(location: newLoc, length: 0)
+                        }
+                    })
+                } else {
+                    if text == "\n" {
+                        let selectedRange = self.selectedRange
+                        let selectedText = self.text[Range(selectedRange, in: self.text)!]
+                        if selectedText.hasPrefix("<#")
+                            && selectedText.hasSuffix("#>") {
+                            let newText = selectedText.dropFirst(2).dropLast(2)
+                            self.replace(CodeTextRange(selectedRange), withText: String(newText))
+                            self.delegate?.textViewDidChange?(self)
+                        } else {
+                            super.insertText(text)
+                        }
+                    } else {
+                        if !selectPlaceholder() {
+                            if selectPlaceholder(previous: true) {
+                                while selectPlaceholder(previous: true) {}
+                            } else {
+                                super.insertText(text)
+                            }
+                        }
+                    }
+                }
+            case let c where "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_".contains(c):
+                super.insertText(text)
+                showAutoCompletion()
+            default:
+                super.insertText(text)
+                // Update auto completion content
+                if showingAutoCompletionView != nil {
+                    showAutoCompletion()
+                }
+            }
+        }
+        
+        // If the code completion view is presenting
+        // and users deletes any character,
+        // we need to refresh the content in the completion view
+        override func deleteBackward() {
+            super.deleteBackward()
+            
+            if showingAutoCompletionView != nil {
+                showAutoCompletion()
+            }
+        }
+        
+//        override func drawBackground(in rect: NSRect) {
+//            super.drawBackground(in: rect)
+//            
+//            for view in self.inlineDiagViews {
+//                view.removeFromSuperview()
+//            }
+//            self.inlineDiagViews.removeAll()
+//            
+//            guard let layoutManager = unsafe layoutManager,
+//                  let textContainer = unsafe textContainer else { return }
+//            
+//            var lineRanges: [NSRange] = []
+//            var rangeStartIndex = self.string.startIndex
+//            var currentIndex = self.string.startIndex
+//            while currentIndex < self.string.endIndex {
+//                let char = self.string[currentIndex]
+//                if char == "\n" {
+//                    lineRanges.append(
+//                        .init(rangeStartIndex..<currentIndex, in: self.string)
+//                    )
+//                    rangeStartIndex = self.string.index(after: currentIndex)
+//                }
+//                self.string.formIndex(after: &currentIndex)
+//            }
+//            
+//            for (line, range) in lineRanges.enumerated() {
+//                if let message = diagnostics.first(where: { $0.line == line + 1 }) {
+//                    let rect = layoutManager.boundingRect(
+//                        forGlyphRange: range,
+//                        in: textContainer
+//                    )
+//                    
+//                    let diagSize = CGSize(width: self.frame.width - rect.width - 5,
+//                                          height: rect.height)
+//                    let diagView = NSHostingView(rootView: InlineDiagnosticView(
+//                        diagnostic: message,
+//                        size: diagSize
+//                    ))
+//                    diagView.frame = .init(
+//                        x: rect.width + 5,
+//                        y: rect.minY,
+//                        width: diagSize.width,
+//                        height: diagSize.height
+//                    )
+//                    self.inlineDiagViews.append(diagView)
+//                    self.addSubview(diagView)
+//                }
+//            }
+//        }
+        
+        func caretRectInView() -> CGRect? {
+            let selectedRange = self.selectedRange
+            let location = min(selectedRange.location, self.text.count)
+            let glyphIndex = layoutManager.glyphIndexForCharacter(at: location)
+            
+            let rect = layoutManager.boundingRect(
+                forGlyphRange: NSRange(location: glyphIndex, length: 0),
+                in: textContainer
+            )
+            
+            return rect
+        }
+        
+        func showAutoCompletion() {
+            Task {
+                let code = self.text!
+                guard var index = Range(self.selectedRange, in: code)?.lowerBound,
+                      index > code.startIndex else {
+                    return
+                }
+                code.formIndex(before: &index)
+                let items = await asyncCompleteCode(code, at: index)
+                
+                showingAutoCompletionView?.removeFromSuperview()
+                showingAutoCompletionView = nil
+                
+                guard !items.isEmpty else { return }
+                
+                guard let rect = caretRectInView() else { return }
+                
+                var size = CGSize(width: 300, height: 150)
+                let hasPreviewContent = items.contains { $0.previewContent != nil }
+                for item in items {
+                    var newSize = item.displayName.size()
+                    if hasPreviewContent {
+                        newSize.width += 200
+                    }
+                    newSize.width += 60
+                    if newSize.width > size.width {
+                        size.width = newSize.width
+                    }
+                }
+                
+                let completionView = _UIHostingView(
+                    rootView: CodeCompletionView(
+                        items: items,
+                        size: size,
+                        hasPreviewContent: hasPreviewContent
+                    )
+                )
+                
+                var viewFrame = completionView.frame
+                viewFrame.size = size
+                viewFrame.origin = rect.origin
+                viewFrame.origin.y += rect.height + 10
+                
+                let visibleFrame = self.frame
+                if viewFrame.maxX > visibleFrame.maxX {
+                    viewFrame.origin.x = visibleFrame.maxX - viewFrame.width
+                }
+                if viewFrame.minX < visibleFrame.minX {
+                    viewFrame.origin.x = visibleFrame.minX
+                }
+                
+                completionView.frame = viewFrame
+                self.addSubview(completionView)
+                showingAutoCompletionView = completionView
+            }
+        }
+        
+        @discardableResult
+        func selectPlaceholder(previous: Bool = false) -> Bool {
+            let _range = self.selectedRange
+            var currentLoc = _range.location
+            if previous {
+                currentLoc -= 1
+                if currentLoc < 0 { return false }
+            } else {
+                currentLoc += _range.length
+            }
+            let currentString = self.text!
+            let selectedIndex = currentString.index(
+                currentString.startIndex,
+                offsetBy: currentLoc
+            )
+            var placeholderStartIndex: String.Index?
+            var placeholderEndIndex: String.Index?
+            var checkingIndex = selectedIndex
+            while checkingIndex > currentString.startIndex && checkingIndex < currentString.endIndex {
+                let char = currentString[checkingIndex]
+                if char == "<" {
+                    let nextIndex = currentString.index(after: checkingIndex)
+                    guard nextIndex < currentString.endIndex else { break }
+                    let nextChar = currentString[nextIndex]
+                    if nextChar == "#" {
+                        placeholderStartIndex = checkingIndex
+                        break
+                    }
+                } else if char == "\n" {
+                    break
+                }
+                if previous {
+                    currentString.formIndex(before: &checkingIndex)
+                } else {
+                    currentString.formIndex(after: &checkingIndex)
+                }
+            }
+            guard let placeholderStartIndex else { return false }
+            checkingIndex = placeholderStartIndex
+            while checkingIndex < currentString.endIndex {
+                let char = currentString[checkingIndex]
+                if char == ">" {
+                    guard checkingIndex > currentString.startIndex else { break }
+                    let previousIndex = currentString.index(before: checkingIndex)
+                    let previousChar = currentString[previousIndex]
+                    if previousChar == "#" {
+                        placeholderEndIndex = checkingIndex
+                        break
+                    }
+                } else if char == "\n" {
+                    break
+                }
+                currentString.formIndex(after: &checkingIndex)
+            }
+            if let endIndex = placeholderEndIndex {
+                self.selectedRange = .init(
+                    placeholderStartIndex...endIndex,
+                    in: currentString
+                )
+                return true
+            }
+            return false
+        }
+    }
+    
+    class LineNumberView: UIView {
+        var font: UIFont! {
+            didSet {
+                self.setNeedsDisplay()
+            }
+        }
+        
+        var textView: UITextView
+        
+        init(textView: UITextView) {
+            self.textView = textView
+            self.font = .monospacedSystemFont(ofSize: 12, weight: .medium)
+            super.init(frame: .zero)
+            self.isOpaque = false
+        }
+        
+        required init(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        override func draw(_ rect: CGRect) {
+            let layoutManager = textView.layoutManager
+            let textInset = textView.textContainerInset
+            let relativePoint = CGPoint(x: 0, y: textInset.top)
+            let lineNumberAttributes: [NSAttributedString.Key: Any] = [
+                .font: textView.font ?? UIFont.systemFont(ofSize: UIFont.systemFontSize),
+                .foregroundColor: UIColor.gray
+            ]
+            
+            func drawLineNumber(_ lineNumberString: String, at y: CGFloat) {
+                let attString = NSAttributedString(string: lineNumberString, attributes: lineNumberAttributes)
+                let x = bounds.width - attString.size().width - 4
+                attString.draw(at: CGPoint(x: x, y: relativePoint.y + y))
+            }
+            
+            let visibleGlyphRange = NSRange(
+                location: 0,
+                length: textView.textStorage.length
+            )
+            
+            var lineNumber = 1
+            var glyphIndexForStringLine = visibleGlyphRange.location
+            
+            while glyphIndexForStringLine < visibleGlyphRange.upperBound {
+                let characterRangeForStringLine = (textView.text as NSString).lineRange(
+                    for: NSMakeRange(layoutManager.characterIndexForGlyph(at: glyphIndexForStringLine), 0)
+                )
+                
+                let glyphRangeForStringLine = layoutManager.glyphRange(
+                    forCharacterRange: characterRangeForStringLine,
+                    actualCharacterRange: nil
+                )
+                
+                var glyphIndexForGlyphLine = glyphIndexForStringLine
+                var glyphLineCount = 0
+                
+                while glyphIndexForGlyphLine < glyphRangeForStringLine.upperBound {
+                    var effectiveRange = NSRange(location: 0, length: 0)
+                    let lineRect = unsafe layoutManager.lineFragmentUsedRect(
+                        forGlyphAt: glyphIndexForGlyphLine,
+                        effectiveRange: &effectiveRange,
+                        withoutAdditionalLayout: true
+                    )
+                    
+                    if glyphLineCount == 0 {
+                        drawLineNumber("\(lineNumber)", at: lineRect.minY)
+                    } else {
+                        drawLineNumber(" ", at: lineRect.minY)
+                    }
+                    
+                    glyphLineCount += 1
+                    glyphIndexForGlyphLine = NSMaxRange(effectiveRange)
+                }
+                
+                glyphIndexForStringLine = NSMaxRange(glyphRangeForStringLine)
+                lineNumber += 1
+            }
+            
+            if layoutManager.extraLineFragmentTextContainer != nil {
+                drawLineNumber("\(lineNumber)", at: layoutManager.extraLineFragmentRect.minY)
+            }
+        }
+    }
+    
+    private class CodeTextRange: UITextRange {
+        let range: NSRange
+        
+        init(_ range: NSRange) {
+            self.range = range
+        }
+        init(location: Int, length: Int) {
+            self.range = .init(location: location, length: length)
+        }
+        
+        override var start: CodeTextPosition {
+            .init(range.location)
+        }
+        override var end: CodeTextPosition {
+            .init(range.upperBound)
+        }
+        
+        fileprivate class CodeTextPosition: UITextPosition {
+            let position: Int
+            
+            init(_ position: Int) {
+                self.position = position
+            }
+        }
+    }
+}
+#endif // os(macOS)
 
 private struct CodeCompletionView: View {
     static let nextItemSubject = PassthroughSubject<Void, Never>()
