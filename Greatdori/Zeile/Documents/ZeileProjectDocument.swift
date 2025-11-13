@@ -16,7 +16,7 @@ import Combine
 import SwiftUI
 import UniformTypeIdentifiers
 
-final class ZeileProjectDocument: ReferenceFileDocument {
+final class ZeileProjectDocument: ReferenceFileDocument, @unchecked Sendable {
     static var readableContentTypes: [UTType] {
         [.zeileProject]
     }
@@ -24,13 +24,16 @@ final class ZeileProjectDocument: ReferenceFileDocument {
     let _wrapperLock = NSLock()
     nonisolated(unsafe) var _wrapper: FileWrapper
     
+    var configuration: ZeileProjectConfig
+    
     init(emptyWithName name: String) {
         let plistEncoder = PropertyListEncoder()
         plistEncoder.outputFormat = .xml
         
-        let zieprojData = try! plistEncoder.encode(ZeileProjectConfig(
+        self.configuration = .init(
             codePhases: ["Main.zeile"]
-        ))
+        )
+        let zieprojData = try! plistEncoder.encode(self.configuration)
         let zieprojWrapper = FileWrapper(
             regularFileWithContents: zieprojData
         )
@@ -50,7 +53,23 @@ final class ZeileProjectDocument: ReferenceFileDocument {
     }
     
     init(configuration: ReadConfiguration) throws {
+        guard configuration.file.isDirectory else {
+            throw CocoaError(.fileReadUnsupportedScheme)
+        }
+        
         unsafe self._wrapper = configuration.file
+        
+        if let configWrapper = configuration.file.fileWrappers?["project.zieproj"],
+           let _data = configWrapper.regularFileContents,
+           let config = try? PropertyListDecoder().decode(ZeileProjectConfig.self, from: _data) {
+            self.configuration = config
+        } else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+    }
+    
+    var wrapper: FileWrapper {
+        _wrapperLock.withLock { unsafe _wrapper }
     }
     
     func snapshot(contentType: UTType) throws -> FileWrapper {
@@ -62,5 +81,23 @@ final class ZeileProjectDocument: ReferenceFileDocument {
         configuration: WriteConfiguration
     ) throws -> FileWrapper {
         return snapshot
+    }
+}
+
+extension ZeileProjectDocument {
+    var codeFolderWrapper: FileWrapper {
+        if let wrapper = self.wrapper.fileWrappers!["Code"] {
+            _onFastPath()
+            return wrapper
+        } else {
+            let newWrapper = FileWrapper(directoryWithFileWrappers: [:])
+            newWrapper.filename = "Code"
+            self.wrapper.addFileWrapper(newWrapper)
+            return newWrapper
+        }
+    }
+    
+    func codeFileWrapper(name: String) -> FileWrapper? {
+        self.codeFolderWrapper.fileWrappers?[name]
     }
 }

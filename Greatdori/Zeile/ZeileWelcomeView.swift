@@ -56,16 +56,20 @@ private struct ZeileWelcomeHeading: View {
 }
 
 private struct ZeileWelcomeActions: View {
+    #if os(macOS)
     @Environment(\.newDocument) private var newDocument
     @Environment(\.openDocument) private var openDocument
+    #endif
     @State private var isOpenProjectPresented = false
     var body: some View {
         CustomGroupBox {
             VStack {
                 Button(action: {
+                    #if os(macOS)
                     newDocument {
                         ZeileProjectDocument(emptyWithName: "Untitled.zeileproj")
                     }
+                    #endif
                 }, label: {
                     HStack {
                         Image(systemName: "plus.square")
@@ -97,9 +101,11 @@ private struct ZeileWelcomeActions: View {
                     allowedContentTypes: [.zeileProject]
                 ) { result in
                     if case .success(let url) = result {
+                        #if os(macOS)
                         Task {
                             try? await openDocument(at: url)
                         }
+                        #endif
                     }
                 }
             }

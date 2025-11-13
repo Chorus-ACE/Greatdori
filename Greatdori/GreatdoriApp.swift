@@ -95,6 +95,9 @@ struct GreatdoriApp: App {
         } editor: { config in
             ZeileEditorMainView(document: config.document)
         }
+        .commands {
+            ZeileEditorCommands()
+        }
         
         WindowGroup("Window", id: "AnyWindow", for: AnyWindowData.self) { $data in
             if let data, data.isValid {

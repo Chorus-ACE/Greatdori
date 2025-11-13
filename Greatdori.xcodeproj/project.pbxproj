@@ -76,6 +76,9 @@
 		8C480C062EC60FAA00A8AE70 /* ZeileEditorMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C052EC60FA300A8AE70 /* ZeileEditorMainView.swift */; };
 		8C480C082EC6159E00A8AE70 /* CodeTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C072EC6159200A8AE70 /* CodeTemplates.swift */; };
 		8C480C0A2EC6198D00A8AE70 /* UTType+ZeileTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C092EC6198300A8AE70 /* UTType+ZeileTypes.swift */; };
+		8C480C0C2EC61DEB00A8AE70 /* ZeileEditorSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C0B2EC61DE100A8AE70 /* ZeileEditorSidebar.swift */; };
+		8C480C0E2EC62F5900A8AE70 /* ZeileEditorFileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C0D2EC62F2600A8AE70 /* ZeileEditorFileEditView.swift */; };
+		8C480C102EC633B200A8AE70 /* ZeileEditorCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C0F2EC633AD00A8AE70 /* ZeileEditorCommands.swift */; };
 		8C499F8D2E4FD9CE0073FCB6 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 8C499F8C2E4FD9CE0073FCB6 /* SwiftUIIntrospect */; };
 		8C499F8F2E4FEAC20073FCB6 /* OnChange+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */; };
 		8C499F992E5177540073FCB6 /* NewsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F982E51774F0073FCB6 /* NewsDetailView.swift */; };
@@ -519,6 +522,9 @@
 		8C480C052EC60FA300A8AE70 /* ZeileEditorMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorMainView.swift; sourceTree = "<group>"; };
 		8C480C072EC6159200A8AE70 /* CodeTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeTemplates.swift; sourceTree = "<group>"; };
 		8C480C092EC6198300A8AE70 /* UTType+ZeileTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UTType+ZeileTypes.swift"; sourceTree = "<group>"; };
+		8C480C0B2EC61DE100A8AE70 /* ZeileEditorSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorSidebar.swift; sourceTree = "<group>"; };
+		8C480C0D2EC62F2600A8AE70 /* ZeileEditorFileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorFileEditView.swift; sourceTree = "<group>"; };
+		8C480C0F2EC633AD00A8AE70 /* ZeileEditorCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorCommands.swift; sourceTree = "<group>"; };
 		8C499F892E4FCC050073FCB6 /* TestLyrics.json */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLyrics.json; sourceTree = "<group>"; };
 		8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnChange+.swift"; sourceTree = "<group>"; };
 		8C499F982E51774F0073FCB6 /* NewsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailView.swift; sourceTree = "<group>"; };
@@ -1137,7 +1143,10 @@
 				8C480C002EC5E14800A8AE70 /* Documents */,
 				8CBC97542EC193D5007A1E33 /* CodeEditor.swift */,
 				8C480BFE2EC5DAA400A8AE70 /* ZeileWelcomeView.swift */,
+				8C480C0F2EC633AD00A8AE70 /* ZeileEditorCommands.swift */,
 				8C480C052EC60FA300A8AE70 /* ZeileEditorMainView.swift */,
+				8C480C0B2EC61DE100A8AE70 /* ZeileEditorSidebar.swift */,
+				8C480C0D2EC62F2600A8AE70 /* ZeileEditorFileEditView.swift */,
 			);
 			path = Zeile;
 			sourceTree = "<group>";
@@ -1845,6 +1854,7 @@
 				E94218FE2E8AA40100F24974 /* CardSearchView.swift in Sources */,
 				8C2BB9B42E92AF3C00D003D1 /* StoryViewer.swift in Sources */,
 				E942192C2E8AA6E700F24974 /* EventDetailView.swift in Sources */,
+				8C480C102EC633B200A8AE70 /* ZeileEditorCommands.swift in Sources */,
 				E942190C2E8AA4C400F24974 /* SongDetailView.swift in Sources */,
 				E942192F2E8AA72D00F24974 /* DetailEventsSection.swift in Sources */,
 				E94443C72E8E6A2E00593F07 /* SettingsLocaleView.swift in Sources */,
@@ -1856,8 +1866,10 @@
 				8CD28FF22E9F6D5700831458 /* SongSelector.swift in Sources */,
 				8C889DE62EA2367900FBF01D /* StoryViewer.metal in Sources */,
 				E98B8B532E7E922A00B4C8A8 /* NavigationComponentsView.swift in Sources */,
+				8C480C0E2EC62F5900A8AE70 /* ZeileEditorFileEditView.swift in Sources */,
 				E90769D92E546D5B00C9871C /* SettingsView.swift in Sources */,
 				E9EE03812E4F5DB30088843B /* FilterView.swift in Sources */,
+				8C480C0C2EC61DEB00A8AE70 /* ZeileEditorSidebar.swift in Sources */,
 				E94219352E8AA78800F24974 /* GachaSearchView.swift in Sources */,
 				8CF827AD2E8ACEDC0045CA97 /* LoginCampaignDetailView.swift in Sources */,
 				E97C5B882E8E9A50004858A3 /* SettingsWidgetsView.swift in Sources */,

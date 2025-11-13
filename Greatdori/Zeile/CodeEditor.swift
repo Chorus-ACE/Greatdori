@@ -21,8 +21,22 @@ import SDWebImageSwiftUI
 import Carbon.HIToolbox.Events
 
 struct CodeEditor: NSViewRepresentable {
+    static let textFinderSubject: PassthroughSubject<(NSTextFinder) -> Void, Never> = .init()
+    
     @Binding var text: String
     let textView = CodeTextView()
+    let textFinder: NSTextFinder
+    
+    private let textFinderSubscription: AnyCancellable
+    
+    init(text: Binding<String>) {
+        self._text = text
+        let textFinder = NSTextFinder()
+        self.textFinder = textFinder
+        self.textFinderSubscription = Self.textFinderSubject.sink { action in
+            action(textFinder)
+        }
+    }
     
     func makeNSView(context: Context) -> NSScrollView {
         textView.string = text
@@ -43,6 +57,9 @@ struct CodeEditor: NSViewRepresentable {
         scrollView.verticalRulerView = lineNumberView
         scrollView.hasVerticalRuler = true
         scrollView.rulersVisible = true
+        
+        unsafe self.textFinder.client = textView
+        unsafe self.textFinder.findBarContainer = scrollView
         
         textView.postsFrameChangedNotifications = true
         NotificationCenter.default.addObserver(
@@ -67,10 +84,13 @@ struct CodeEditor: NSViewRepresentable {
             lineNumberView.needsDisplay = true
         }
         
+        context.coordinator.environment = context.environment
+        
         return scrollView
     }
     func updateNSView(_ nsView: NSViewType, context: Context) {
         updateAttributes()
+        context.coordinator.environment = context.environment
     }
     func makeCoordinator() -> Coordinator {
         Coordinator(parent: self)
@@ -94,17 +114,19 @@ struct CodeEditor: NSViewRepresentable {
             await MainActor.run {
                 textView.diagnostics = diags
                 textView.needsDisplay = true
+                sender.environment?.onDiagnosticsUpdate(diags)
             }
         }
     }
     
-    class Coordinator: NSObject, NSTextViewDelegate {
+    class Coordinator: NSObject, NSTextViewDelegate, @unchecked Sendable {
         var parent: CodeEditor
         
         init(parent: CodeEditor) {
             self.parent = parent
         }
         
+        var environment: EnvironmentValues?
         var diagUpdateTask: Task<Void, Never>?
         
         // Prevent cycle selection change
@@ -177,7 +199,7 @@ struct CodeEditor: NSViewRepresentable {
         }
     }
     
-    class CodeTextView: NSTextView {
+    class CodeTextView: NSTextView, @MainActor NSTextFinderClient {
         var showingAutoCompletionPanel: NSPanel?
         var lastPos: Int = -1
         var diagnostics: [Diagnostic] = []
@@ -618,7 +640,7 @@ struct CodeEditor: NSViewRepresentable {
                             )
                             
                             if glyphLineCount > 0 {
-                                drawLineNumber("-", lineRect.minY)
+                                drawLineNumber(" ", lineRect.minY)
                             } else {
                                 drawLineNumber("\(lineNumber)", lineRect.minY)
                             }
@@ -658,10 +680,13 @@ struct CodeEditor: UIViewRepresentable {
         textView.smartInsertDeleteType = .no
         textView.delegate = context.coordinator
         
+        context.coordinator.environment = context.environment
+        
         return textView
     }
     func updateUIView(_ uiView: UIViewType, context: Context) {
         updateAttributes()
+        context.coordinator.environment = context.environment
     }
     func makeCoordinator() -> Coordinator {
         Coordinator(parent: self)
@@ -691,17 +716,19 @@ struct CodeEditor: UIViewRepresentable {
             await MainActor.run {
                 textView.diagnostics = diags
                 textView.setNeedsDisplay()
+                sender.environment?.onDiagnosticsUpdate(diags)
             }
         }
     }
     
-    class Coordinator: NSObject, UITextViewDelegate {
+    class Coordinator: NSObject, UITextViewDelegate, @unchecked Sendable {
         var parent: CodeEditor
         
         init(parent: CodeEditor) {
             self.parent = parent
         }
         
+        var environment: EnvironmentValues?
         var diagUpdateTask: Task<Void, Never>?
         
         // Prevent cycle selection change
@@ -1440,4 +1467,8 @@ extension Diagnostic.Severity {
         @unknown default: "questionmark.circle.fill"
         }
     }
+}
+
+extension EnvironmentValues {
+    @Entry var onDiagnosticsUpdate: ([Diagnostic]) -> Void = { _ in }
 }
