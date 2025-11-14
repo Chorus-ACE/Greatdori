@@ -106,7 +106,7 @@ struct ComicDetailOverviewView: View {
                                                 .antialiased(true)
                                                 .resizable()
                                                 .frame(width: imageButtonSize, height: imageButtonSize)
-                                            if let name = PreCache.current.characters[id]?.characterName.forPreferredLocale() {
+                                            if let name = PreCache.current.characters.first(where: { $0.id == id })?.characterName.forPreferredLocale() {
                                                 Text(name)
                                             } else {
                                                 Text(verbatim: "Lorum Ipsum")

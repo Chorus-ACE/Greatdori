@@ -757,55 +757,7 @@ private struct BacklogView: View {
                 .padding(.horizontal, -15)
             #endif
             ScrollView {
-                HStack {
-                    VStack(alignment: .leading) {
-                        ForEach(asset.talkData[asset.talkData.startIndex...asset.talkData.firstIndex(of: currentTalk)!], id: \.self) { talk in
-                            HStack(alignment: .top) {
-                                ZStack(alignment: .bottomTrailing) {
-                                    WebImage(url: URL(string: "https://bestdori.com/res/icon/chara_icon_\(talk.talkCharacters.first?.characterID ?? -1).png"))
-                                        .resizable()
-                                        .frame(width: 40, height: 40)
-                                    if let voice = talk.voices.first, let audioData = audios[voice] {
-                                        Button(action: {
-                                            if let player = try? AVAudioPlayer(data: audioData) {
-                                                player.play()
-                                                DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
-                                                    _fixLifetime(player)
-                                                }
-                                            }
-                                        }, label: {
-                                            Image(systemName: "speaker.wave.3.fill")
-                                                .modifier(StrokeTextModifier(width: 1, color: .white))
-                                                .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
-                                                .shadow(radius: 1)
-                                        })
-                                        .buttonStyle(.plain)
-                                        .offset(x: 5, y: 5)
-                                    }
-                                }
-                                VStack(alignment: .leading) {
-                                    ZStack(alignment: .leading) {
-                                        Capsule()
-                                            .fill(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
-                                            .frame(width: 200, height: 20)
-                                        Text(talk.windowDisplayName)
-                                            .font(.custom(fontName(in: locale), size: 15))
-                                            .foregroundStyle(.white)
-                                            .padding(.horizontal, 10)
-                                    }
-                                    Text(talk.body)
-                                        .font(.custom(fontName(in: locale), size: 16))
-                                        .textSelection(.enabled)
-                                        .foregroundStyle(colorScheme == .light ? Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255) : .init(red: 238 / 255, green: 238 / 255, blue: 238 / 255))
-                                        .padding(.leading, 20)
-                                }
-                            }
-                            .padding(.bottom)
-                        }
-                    }
-                    Spacer()
-                }
-                .padding()
+                contentView
             }
         }
         #if !os(macOS)
@@ -819,6 +771,59 @@ private struct BacklogView: View {
             }
         }
         #endif
+    }
+    
+    @ViewBuilder
+    var contentView: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                ForEach(asset.talkData[asset.talkData.startIndex...asset.talkData.firstIndex(of: currentTalk)!], id: \.self) { talk in
+                    HStack(alignment: .top) {
+                        ZStack(alignment: .bottomTrailing) {
+                            WebImage(url: URL(string: "https://bestdori.com/res/icon/chara_icon_\(talk.talkCharacters.first?.characterID ?? -1).png"))
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                            if let voice = talk.voices.first, let audioData = audios[voice] {
+                                Button(action: {
+                                    if let player = try? AVAudioPlayer(data: audioData) {
+                                        player.play()
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+                                            _fixLifetime(player)
+                                        }
+                                    }
+                                }, label: {
+                                    Image(systemName: "speaker.wave.3.fill")
+                                        .modifier(StrokeTextModifier(width: 1, color: .white))
+                                        .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
+                                        .shadow(radius: 1)
+                                })
+                                .buttonStyle(.plain)
+                                .offset(x: 5, y: 5)
+                            }
+                        }
+                        VStack(alignment: .leading) {
+                            ZStack(alignment: .leading) {
+                                Capsule()
+                                    .fill(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
+                                    .frame(width: 200, height: 20)
+                                Text(talk.windowDisplayName)
+                                    .font(.custom(fontName(in: locale), size: 15))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 10)
+                            }
+                            Text(talk.body)
+                                .font(.custom(fontName(in: locale), size: 16))
+                                .textSelection(.enabled)
+                                .foregroundStyle(colorScheme == .light ? Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255) : .init(red: 238 / 255, green: 238 / 255, blue: 238 / 255))
+                                .padding(.leading, 20)
+                        }
+                    }
+                    .padding(.bottom)
+                }
+            }
+            Spacer()
+        }
+        .padding()
     }
 }
 
