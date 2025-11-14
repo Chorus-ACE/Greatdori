@@ -16,145 +16,125 @@ import SwiftUI
 import DoriKit
 import SDWebImageSwiftUI
 
-
-// MARK: ComicDetailView
 struct ComicDetailView: View {
     var id: Int
     var allComics: [Comic]? = nil
     var body: some View {
         DetailViewBase(forType: Comic.self, previewList: allComics, initialID: id) { information in
-            // FIXME: Implement `ComicDetailOverviewView` first
-            //                            ComicDetailOverviewView(information: information, cardNavigationDestinationID: $cardNavigationDestinationID)
-            
-            //                            if !information.cards.isEmpty {
-            //                                Rectangle()
-            //                                    .opacity(0)
-            //                                    .frame(height: 30)
-            //                                DetailsCardsSection(cards: information.cards)
-            //                            }
+            ComicDetailOverviewView(information: information)
+            DetailArtsSection {
+                ArtsTab("Comic.arts.thumb") {
+                    for locale in DoriLocale.allCases {
+                        if let url = information.thumbImageURL(in: locale, allowsFallback: false) {
+                            ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
+                        }
+                    }
+                }
+                ArtsTab("Comic.arts.comic") {
+                    for locale in DoriLocale.allCases {
+                        if let url = information.imageURL(in: locale, allowsFallback: false) {
+                            ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
+                        }
+                    }
+                }
+            }
         } switcherDestination: {
             ComicSearchView()
         }
     }
 }
 
-// FIXME
-// MARK: ComicDetailOverviewView
-//struct ComicDetailOverviewView: View {
-//    let information: Comic
-//    @State var cardsArray: [DoriFrontend.Card.PreviewCard] = []
-//    @State var cardsArraySeperated: [[DoriFrontend.Card.PreviewCard?]] = []
-//    @State var cardsPercentage: Int = -100
-//    @State var rewardsArray: [DoriFrontend.Card.PreviewCard] = []
-//    @State var cardsTitleWidth: CGFloat = 0 // Fixed
-//    @State var cardsPercentageWidth: CGFloat = 0 // Fixed
-//    @State var cardsContentRegularWidth: CGFloat = 0 // Fixed
-//    @State var cardsFixedWidth: CGFloat = 0 //Fixed
-//    @State var cardsUseCompactLayout = true
-//    @Binding var cardNavigationDestinationID: Int?
-//    var dateFormatter: DateFormatter { let df = DateFormatter(); df.dateStyle = .long; df.timeStyle = .short; return df }
-//    var body: some View {
-//        VStack {
-//            Group {
-//                // MARK: Title Image
-//                Group {
-//                    Rectangle()
-//                        .opacity(0)
-//                        .frame(height: 2)
-//                    // FIXME: Replace image with Live2D viewer
-//                    WebImage(url: information.thumbImageURL) { image in
-//                        image
-//                            .antialiased(true)
-//                            .resizable()
-//                            .scaledToFit()
-//                    } placeholder: {
-//                        RoundedRectangle(cornerRadius: 10)
-//                            .fill(getPlaceholderColor())
-//                    }
-//                    .interpolation(.high)
-//                    .frame(width: 96, height: 96)
-//                    Rectangle()
-//                        .opacity(0)
-//                        .frame(height: 2)
-//                }
-//
-//
-//                // MARK: Info
-//                CustomGroupBox(cornerRadius: 20) {
-//                    LazyVStack {
-//                        // MARK: Description
-//                        Group {
-//                            ListItemView(title: {
-//                                Text("Comic.title")
-//                                    .bold()
-//                            }, value: {
-//                                MultilingualText(information.description)
-//                            })
-//                            Divider()
-//                        }
-//
-//                        // MARK: Character
-//                        Group {
-//                            ListItemView(title: {
-//                                Text("Comic.character")
-//                                    .bold()
-//                            }, value: {
-//                                // FIXME: This requires `ExtendedComic` to be
-//                                // FIXME: implemented in DoriKit.
-//                            })
-//                            Divider()
-//                        }
-//
-//                        // MARK: Band
-//                        Group {
-//                            ListItemView(title: {
-//                                Text("Comic.band")
-//                                    .bold()
-//                            }, value: {
-//                                // FIXME: This requires `ExtendedComic` to be
-//                                // FIXME: implemented in DoriKit.
-//                            })
-//                            Divider()
-//                        }
-//
-//                        // MARK: Release Date
-//                        Group {
-//                            ListItemView(title: {
-//                                Text("Comic.release-date")
-//                                    .bold()
-//                            }, value: {
-//                                MultilingualText(information.publishedAt.map{dateFormatter.string(for: $0)}, showLocaleKey: true)
-//                            })
-//                            Divider()
-//                        }
-//
-//                        if !information.howToGet.isValueEmpty {
-//                            // MARK: How to Get
-//                            Group {
-//                                ListItemView(title: {
-//                                    Text("Comic.how-to-get")
-//                                        .bold()
-//                                }, value: {
-//                                    MultilingualText(information.howToGet)
-//                                }, displayMode: .basedOnUISizeClass)
-//                                Divider()
-//                            }
-//                        }
-//
-//                        // MARK: ID
-//                        Group {
-//                            ListItemView(title: {
-//                                Text("ID")
-//                                    .bold()
-//                            }, value: {
-//                                Text("\(String(information.id))")
-//                            })
-//                        }
-//
-//                    }
-//                }
-//            }
-//        }
-//        .frame(maxWidth: infoContentMaxWidth)
-//    }
-//}
+struct ComicDetailOverviewView: View {
+    let information: Comic
+    var dateFormatter: DateFormatter { let df = DateFormatter(); df.dateStyle = .long; df.timeStyle = .short; return df }
+    var body: some View {
+        VStack {
+            CustomGroupBox {
+                LazyVStack {
+                    Group {
+                        ListItem {
+                            Text("Comic.title")
+                        } value: {
+                            MultilingualText(information.title)
+                        }
+                        Divider()
+                    }
+                    
+                    Group {
+                        ListItem {
+                            Text("Comic.subtitle")
+                        } value: {
+                            MultilingualText(information.subTitle)
+                        }
+                        Divider()
+                    }
+                    
+                    if let type = information.type {
+                        Group {
+                            ListItem {
+                                Text("Comic.type")
+                            } value: {
+                                Text(type.localizedString)
+                            }
+                            Divider()
+                        }
+                    }
+                    
+                    // MARK: Release Date
+                    Group {
+                        ListItem {
+                            Text("Comic.character")
+                        } value: {
+                            ForEach(information.characterIDs, id: \.self) { id in
+                                #if os(macOS)
+                                NavigationLink(destination: {
+                                    CharacterDetailView(id: id)
+                                }, label: {
+                                    WebImage(url: .init(string: "https://bestdori.com/res/icon/chara_icon_\(id).png"))
+                                        .antialiased(true)
+                                        .resizable()
+                                        .frame(width: imageButtonSize, height: imageButtonSize)
+                                })
+                                .buttonStyle(.plain)
+                                #else
+                                Menu(content: {
+                                    NavigationLink(destination: {
+                                        CharacterDetailView(id: id)
+                                    }, label: {
+                                        HStack {
+                                            WebImage(url: .init(string: "https://bestdori.com/res/icon/chara_icon_\(id).png"))
+                                                .antialiased(true)
+                                                .resizable()
+                                                .frame(width: imageButtonSize, height: imageButtonSize)
+                                            if let name = PreCache.current.characters[id]?.characterName.forPreferredLocale() {
+                                                Text(name)
+                                            } else {
+                                                Text(verbatim: "Lorum Ipsum")
+                                                    .foregroundStyle(Color(UIColor.placeholderText))
+                                                    .redacted(reason: .placeholder)
+                                            }
+                                        }
+                                    })
+                                }, label: {
+                                    WebImage(url: .init(string: "https://bestdori.com/res/icon/chara_icon_\(id).png"))
+                                        .antialiased(true)
+                                        .resizable()
+                                        .frame(width: imageButtonSize, height: imageButtonSize)
+                                })
+                                #endif
+                            }
+                        }
+                        Divider()
+                    }
+                    
+                    ListItem {
+                        Text("ID")
+                    } value: {
+                        Text("\(String(information.id))")
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: infoContentMaxWidth)
+    }
+}

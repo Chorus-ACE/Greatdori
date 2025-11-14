@@ -168,7 +168,6 @@ struct CharacterSearchView: View {
                 }
             }
         }
-        //        .withSystemBackground()
         .navigationTitle("Character")
         .wrapIf(isMACOS && bandArray.count > 0, in: { content in
             if #available(iOS 26.0, macOS 26.0, *) {
@@ -186,9 +185,8 @@ struct CharacterSearchView: View {
     
     func getCharacters() async {
         infoIsAvailable = true
-        infoIsReady = false
         DoriCache.withCache(id: "CharacterList") {
-            await _DoriFrontend.Characters.categorizedCharacters()
+            await Character.categorized()
         } .onUpdate {
             if let characters = $0 {
                 self.charactersDict = characters

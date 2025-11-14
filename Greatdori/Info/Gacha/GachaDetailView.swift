@@ -24,6 +24,32 @@ struct GachaDetailView: View {
     var body: some View {
         DetailViewBase(previewList: allGachas, initialID: id) { information in
             GachaDetailOverviewView(information: information)
+            DetailsEventsSection(events: information.events)
+            DetailArtsSection {
+                ArtsTab("Gacha.arts.banner") {
+                    for locale in DoriLocale.allCases {
+                        if let url = information.gacha.bannerImageURL(in: locale, allowsFallback: false) {
+                            ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
+                        }
+                    }
+                }
+                ArtsTab("Gacha.arts.logo") {
+                    for locale in DoriLocale.allCases {
+                        if let url = information.gacha.logoImageURL(in: locale, allowsFallback: false) {
+                            ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
+                        }
+                    }
+                }
+                ArtsTab("Gacha.arts.logo") {
+                    for locale in DoriLocale.allCases {
+                        if let urls = information.gacha.pickupImageURLs(in: locale, allowsFallback: false) {
+                            for url in urls {
+                                ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
+                            }
+                        }
+                    }
+                }
+            }
         } switcherDestination: {
             GachaSearchView()
         }

@@ -26,6 +26,7 @@ struct SongDetailView: View {
             SongDetailOverviewView(information: information.song)
             SongDetailMatchView(song: information.song, songMatches: songMatches)
             SongDetailGameplayView(information: information)
+            DetailsEventsSection(events: information.events)
             DetailArtsSection {
                 ArtsTab("Song.arts.cover") {
                     for locale in DoriLocale.allCases {
