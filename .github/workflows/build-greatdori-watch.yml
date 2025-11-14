@@ -32,7 +32,7 @@ jobs:
       - name: Remove runner local related libs
         run: brew remove --ignore-dependencies libssh2
       - name: Update checkout
-        run: utils/update-checkout
+        run: utils/update-checkout --clone
       - name: Generate workspace
         run: utils/generate-workspace
       - name: Create build folder
