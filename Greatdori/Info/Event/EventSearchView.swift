@@ -28,6 +28,7 @@ struct EventSearchView: View {
                     let events = elements.chunked(into: 2)
                     ForEach(events, id: \.self) { eventGroup in
                         HStack(spacing: showDetails ? nil : 0) {
+                            Spacer(minLength: 0)
                             ForEach(eventGroup) { event in
                                 eachContent(event)
                                 if eventGroup.count == 1 && events[0].count != 1 {
@@ -36,6 +37,7 @@ struct EventSearchView: View {
                                         .opacity(0)
                                 }
                             }
+                            Spacer(minLength: 0)
                         }
                     }
                 }
@@ -48,6 +50,7 @@ struct EventSearchView: View {
             .animation(.spring(duration: 0.3, bounce: 0.1, blendDuration: 0), value: showDetails)
         } eachContent: { showDetails, element in
             EventInfo(element, showDetails: showDetails)
+                .frame(maxWidth: bannerWidth)
         } destination: { element, list in
             EventDetailView(id: element.id, allEvents: list)
         }
