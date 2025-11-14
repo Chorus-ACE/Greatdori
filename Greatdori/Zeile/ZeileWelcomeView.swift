@@ -129,11 +129,13 @@ private struct ZeileWelcomeActions: View {
             .buttonStyle(.plain)
         }
         .frame(maxWidth: infoContentMaxWidth)
+        #if os(iOS)
         .fullScreenCover(isPresented: $isProjectPresented) {
             ZeileEditorMainView(document: presentingProject!)
                 .onDisappear {
                     presentingProjectURL?.stopAccessingSecurityScopedResource()
                 }
         }
+        #endif
     }
 }
