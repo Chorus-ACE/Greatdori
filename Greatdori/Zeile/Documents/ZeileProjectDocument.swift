@@ -52,20 +52,24 @@ final class ZeileProjectDocument: ReferenceFileDocument, @unchecked Sendable {
         unsafe self._wrapper.filename = name
     }
     
-    init(configuration: ReadConfiguration) throws {
-        guard configuration.file.isDirectory else {
+    init(wrapper: FileWrapper) throws {
+        guard wrapper.isDirectory else {
             throw CocoaError(.fileReadUnsupportedScheme)
         }
         
-        unsafe self._wrapper = configuration.file
+        unsafe self._wrapper = wrapper
         
-        if let configWrapper = configuration.file.fileWrappers?["project.zieproj"],
+        if let configWrapper = wrapper.fileWrappers?["project.zieproj"],
            let _data = configWrapper.regularFileContents,
            let config = try? PropertyListDecoder().decode(ZeileProjectConfig.self, from: _data) {
             self.configuration = config
         } else {
             throw CocoaError(.fileReadCorruptFile)
         }
+    }
+    
+    convenience init(configuration: ReadConfiguration) throws {
+        try self.init(wrapper: configuration.file)
     }
     
     var wrapper: FileWrapper {
@@ -99,5 +103,18 @@ extension ZeileProjectDocument {
     
     func codeFileWrapper(name: String) -> FileWrapper? {
         self.codeFolderWrapper.fileWrappers?[name]
+    }
+}
+
+extension ZeileProjectDocument: Hashable {
+    static func == (lhs: ZeileProjectDocument, rhs: ZeileProjectDocument) -> Bool {
+        lhs._wrapperLock.withLock { unsafe lhs._wrapper }
+        == rhs._wrapperLock.withLock { unsafe rhs._wrapper }
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        _wrapperLock.withLock {
+            hasher.combine(unsafe _wrapper)
+        }
     }
 }

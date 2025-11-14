@@ -60,7 +60,12 @@ private struct ZeileWelcomeActions: View {
     @Environment(\.newDocument) private var newDocument
     @Environment(\.openDocument) private var openDocument
     #endif
+    @Environment(\.openURL) private var openURL
+    @Environment(\.supportsMultipleWindows) private var supportsMultipleWindows
     @State private var isOpenProjectPresented = false
+    @State private var isProjectPresented = false
+    @State private var presentingProject: ZeileProjectDocument?
+    @State private var presentingProjectURL: URL?
     var body: some View {
         CustomGroupBox {
             VStack {
@@ -105,6 +110,18 @@ private struct ZeileWelcomeActions: View {
                         Task {
                             try? await openDocument(at: url)
                         }
+                        #else
+                        if supportsMultipleWindows {
+                            openURL(url)
+                        } else {
+                            _ = url.startAccessingSecurityScopedResource()
+                            presentingProjectURL = url
+                            if let wrapper = try? FileWrapper(url: url),
+                               let project = try? ZeileProjectDocument(wrapper: wrapper) {
+                                presentingProject = project
+                                isProjectPresented = true
+                            }
+                        }
                         #endif
                     }
                 }
@@ -112,5 +129,11 @@ private struct ZeileWelcomeActions: View {
             .buttonStyle(.plain)
         }
         .frame(maxWidth: infoContentMaxWidth)
+        .fullScreenCover(isPresented: $isProjectPresented) {
+            ZeileEditorMainView(document: presentingProject!)
+                .onDisappear {
+                    presentingProjectURL?.stopAccessingSecurityScopedResource()
+                }
+        }
     }
 }

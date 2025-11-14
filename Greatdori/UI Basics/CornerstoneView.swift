@@ -188,11 +188,11 @@ struct CustomGroupBox<Content: View>: View {
                 } else {
                     ZStack {
                         RoundedRectangle(cornerRadius: cornerRadius)
-#if !os(macOS)
+                        #if !os(macOS)
                             .foregroundStyle(Color(.secondarySystemGroupedBackground))
-#else
+                        #else
                             .foregroundStyle(Color(NSColor.quaternarySystemFill))
-#endif
+                        #endif
                         let strokeLineWidth = strokeLineWidth > 0 ? strokeLineWidth : envStrokeLineWidth
                         if strokeLineWidth > 0 {
                             RoundedRectangle(cornerRadius: cornerRadius)

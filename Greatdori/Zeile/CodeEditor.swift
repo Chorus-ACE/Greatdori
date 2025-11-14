@@ -1373,6 +1373,7 @@ private struct CodeCompletionView: View {
                           0, 0, 1, 0,
                           -1, 1, 0, 1 ]
                         """)
+                        .clipped()
                         .frame(width: 200, height: 200)
                     @unknown default:
                         EmptyView()
