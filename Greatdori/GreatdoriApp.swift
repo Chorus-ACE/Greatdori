@@ -66,6 +66,15 @@ struct GreatdoriApp: App {
                 })
                 .keyboardShortcut(",", modifiers: .command)
             }
+//            CommandGroup(after: .newItem) {
+//                Button(action: {
+////                    openWindow(id: "New")
+//                    // TODO: Create Zeile Project
+//                }, label: {
+//                    Label("Zeile.menu-bar.new", systemImage: "plus")
+//                })
+//                .keyboardShortcut("N", modifiers: .command)
+//            }
         }
         .onChange(of: scenePhase) {
             switch scenePhase {

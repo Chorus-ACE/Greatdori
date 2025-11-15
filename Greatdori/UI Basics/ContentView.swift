@@ -200,14 +200,14 @@ struct ContentView: View {
                 ProgressView()
                     .onAppear {
                         os_log("CRASH VIEW HAD BEEN ENTERED")
-                        if AppFlag.DEBUG {
-                            showCrashAlert = true
-                        } else {
+//                        if AppFlag.DEBUG {
+//                            showCrashAlert = true
+//                        } else {
                             resetAllAdvancedSettings()
                             DoriCache.invalidateAll()
                             UserDefaults.standard.set(true, forKey: "AdvancedSettingsHaveReset")
                             mainAppShouldBeDisplayed = true
-                        }
+//                        }
                     }
                     .alert("Debug.crash-detected.title", isPresented: $showCrashAlert, actions: {
                         Button(role: .destructive, action: {

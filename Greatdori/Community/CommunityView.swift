@@ -127,6 +127,7 @@ private struct PostSectionView: View {
                             }
                         }
                         Text(post.time.formattedRelatively())
+                            .lineLimit(1)
                         Image(systemName: post.getPostTypeSymbol())
                     }
                     .foregroundStyle(.gray)

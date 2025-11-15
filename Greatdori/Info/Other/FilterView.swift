@@ -492,62 +492,78 @@ struct SorterPickerView: View {
     var sortingItemsHaveEndingDate = false
     @State var isMenuPresented = false // iOS only
     var body: some View {
+#if os(iOS)
         Menu(content: {
-            Section {
+            Picker(selection: Binding.init(get: {
+                sorter.keyword
+            }, set: {
+                if $0 == sorter.keyword {
+                    sorter.direction.reverse()
+                } else {
+                    sorter.keyword = $0
+                }
+            }), content: {
                 ForEach(_DoriFrontend.Sorter.Keyword.allCases, id: \.self) { item in
+                    // Super weird fix. Thanks to https://jeffverkoeyen.com/blog/2024/08/16/SwiftUI-Menu-subtitle-shenanigans/ for inspiration.
                     if allOptions.contains(item) {
-                        Button(action: {
-                            if sorter.keyword == item && !isMACOS {
-                                sorter.direction.reverse()
-                            } else {
-                                sorter.keyword = item
+                        Button(action: {}, label: {
+                            Text(item.localizedString(hasEndingDate: sortingItemsHaveEndingDate))
+                                .tag(item)
+                            if sorter.keyword == item {
+                                Text(sorter.localizedDirectionName())
                             }
-                        }, label: {
-                            Label(title: {
-                                Text(item.localizedString(hasEndingDate: sortingItemsHaveEndingDate))
-                            }, icon: {
-                                if sorter.keyword == item {
-                                    if isMACOS {
-                                        Image(systemName: "checkmark")
-                                    } else {
-                                        Image(systemName: sorter.direction == .ascending ? "chevron.up" : "chevron.down")
-                                    }
-                                }
-                            })
                         })
                     }
                 }
-            }
-#if os(macOS)
+            }, label: {
+                EmptyView()
+            })
+            .pickerStyle(.inline)
+            .labelsHidden()
+        }, label: {
+            Label("Sort", systemImage: "arrow.up.arrow.down")
+        })
+        #else
+        Menu(content: {
             Section {
-                Button(action: {
-                    sorter.direction = .ascending
-                }, label: {
-                    Label(title: {
-                        Text(sorter.localizedDirectionName(direction: .ascending))
-                    }, icon: {
-                        if sorter.direction == .ascending {
-                            Image(systemName: "checkmark")
+                Picker(selection: Binding.init(get: {
+                    sorter.keyword
+                }, set: {
+                    sorter.keyword = $0
+                }), content: {
+                    ForEach(_DoriFrontend.Sorter.Keyword.allCases, id: \.self) { item in
+                        Group {
+                            if allOptions.contains(item) {
+                                Text(item.localizedString(hasEndingDate: sortingItemsHaveEndingDate))
+                            }
                         }
-                    })
-                })
-                Button(action: {
-                    sorter.direction = .descending
+                        .tag(item)
+                    }
                 }, label: {
-                    Label(title: {
-                        Text(sorter.localizedDirectionName(direction: .descending))
-                    }, icon: {
-                        if sorter.direction == .descending {
-                            Image(systemName: "checkmark")
-                        }
-                    })
+                    EmptyView()
                 })
-                
+                .pickerStyle(.inline)
             }
-#endif
+            
+            Section {
+                Picker(selection: Binding.init(get: {
+                    sorter.direction
+                }, set: {
+                    sorter.direction = $0
+                }), content: {
+                    Text(sorter.localizedDirectionName(direction: .descending))
+                        .tag(DoriSorter.Direction.descending)
+                    Text(sorter.localizedDirectionName(direction: .ascending))
+                        .tag(DoriSorter.Direction.ascending)
+                }, label: {
+                    EmptyView()
+                })
+                .pickerStyle(.inline)
+            }
         }, label: {
             Label("Sort", systemImage: "arrow.up.arrow.down")
         })
         .menuIndicator(.hidden)
+        #endif
     }
 }

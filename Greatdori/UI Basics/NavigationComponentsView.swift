@@ -98,7 +98,7 @@ import SwiftUI
     ),
     ToolDestinationItem(
         title: "App.tools.station",
-        symbol: "flag.filled.and.flag.crossed",
+        symbol: "flag.2.crossed",
         tabValue: .station,
         destination: {StationView()}
     ),
@@ -128,7 +128,7 @@ import SwiftUI
     ),
     ToolDestinationItem(
         title: "App.tools.zeile-editor",
-        symbol: "star.fill",
+        symbol: "triangle",
         tabValue: .zeileEditor,
         destination: {ZeileWelcomeView()}
     )
