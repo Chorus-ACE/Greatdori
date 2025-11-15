@@ -571,18 +571,18 @@ struct DebugPlaygroundView: View {
     @State var isBuilding = false
     var body: some View {
         VStack {
-            CodeEditor(text: $codeString)
+            CodeEditor(text: $codeString, locale: .jp)
             HStack {
                 Button(String("Build")) {
                     isBuilding = true
                     DispatchQueue(label: "com.memz233.Greatdori.Zeile-Debug-Build", qos: .userInitiated).async {
-                        let builder = DoriStoryBuilder()
+                        let builder = DoriStoryBuilder(for: .jp)
                         let startTime = CFAbsoluteTimeGetCurrent()
                         var diags: [Diagnostic] = []
                         if let irData = builder.buildIR(from: codeString, diags: &diags) {
                             let downloadBase = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
                             let downloadURL = downloadBase.appending(path: "StoryIR.zir")
-                            try? irData.write(to: downloadURL)
+                            try? irData.binaryEncoded().write(to: downloadURL)
                             
                             if let bdJSON = DoriStoryBuilder.Conversion.bestdoriJSON(fromIR: irData) {
                                 let bdURL = downloadBase.appending(path: "StoryBestdori.json")

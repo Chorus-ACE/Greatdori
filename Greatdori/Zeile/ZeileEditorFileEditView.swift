@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import DoriKit
 import SwiftUI
 
 struct ZeileEditorFileEditView: View {
@@ -43,7 +44,7 @@ private struct ZeileCodeEditView: View {
     }
     
     var body: some View {
-        CodeEditor(text: $codeText)
+        CodeEditor(text: $codeText, locale: .jp) // FIXME
             .environment(\.onDiagnosticsUpdate) { diags in
                 sharedState.diagnostics.updateValue(diags, forKey: file.preferredFilename!)
             }

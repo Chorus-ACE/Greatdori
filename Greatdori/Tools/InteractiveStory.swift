@@ -21,50 +21,63 @@ import Alamofire
 import SDWebImageSwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
+private final class ReferenceCountingContainer: @unchecked Sendable, ObservableObject {
+    @Published var count: Int = 0
+    var observers: [AnyCancellable] = []
+}
+
 @safe
 struct InteractiveStoryView: View {
-    var asset: _DoriAPI.Misc.StoryAsset
-    var voiceBundleURL: URL
-    var locale: DoriLocale
-    @Environment(\.dismiss) var dismiss
+    var ir: StoryIR
     
-    @State var backgroundImageURL: URL?
-    @State var scenarioImageURL: URL?
+    @TaskLocal private static var performingActionCount = ReferenceCountingContainer()
     
-    @State var isScenarioImageFilter = false
+    @Environment(\.dismiss) private var dismiss
     
-    @State var bgmPlayer = AVQueuePlayer()
-    @State var bgmLooper: AVPlayerLooper!
-    @State var sePlayer = AVPlayer()
-    var voicePlayer: UnsafeMutablePointer<AVAudioPlayer>
-    @State var currentSnippetIndex = -1
-    @State var currentTelop: String?
+    @State private var backgroundImageURL: URL?
+    @State private var scenarioImageURL: URL?
     
-    @State var allDiffLayouts = [_DoriAPI.Misc.StoryAsset.LayoutData]()
-    @State var showingLayoutIndexs = [Int]()
-    @State var currentTalk: _DoriAPI.Misc.StoryAsset.TalkData?
-    @State var talkAudios = [_DoriAPI.Misc.StoryAsset.TalkData.Voice: Data]()
+    @State private var isScenarioImageFilter = false
     
-    @State var isDelaying = false
-    @State var whiteCoverIsDisplaying = false
-    @State var blackCoverIsShowing = false
+    @State private var bgmPlayer = AVQueuePlayer()
+    @State private var bgmLooper: AVPlayerLooper!
+    @State private var sePlayer = AVPlayer()
+    private var voicePlayer: UnsafeMutablePointer<AVAudioPlayer>
+    @State private var currentSnippetIndex = -1
+    @State private var currentTelop: String?
     
-    @State var lineIsAnimating = false
-    @State var uiIsHiding = false
-    @State var backlogIsPresenting = false
-    @State var isAutoPlaying = false
+    @State private var allDiffLayouts = [(characterID: Int, modelPath: String)]()
+    @State private var showingLayoutIndexs = [Int: LayoutState]()
+    @State private var currentTalk: TalkData?
+    @State private var talkAudios = [String: Data]()
     
-    @State var autoPlayTimer: Timer?
-    @State var fastForwardTimer: Timer?
-    @State var talkShakeDuration = 0.0
-    @State var screenShakeDuration = 0.0
+    @State private var currentInteractBlockingContinuation: CheckedContinuation<Void, Never>?
+    @State private var whiteCoverIsDisplaying = false
+    @State private var blackCoverIsShowing = false
     
-    init(asset: _DoriAPI.Misc.StoryAsset, voiceBundleURL: URL, locale: DoriLocale) {
-        self.asset = asset
-        self.voiceBundleURL = voiceBundleURL
-        self.locale = locale
+    @State private var lineIsAnimating = false
+    @State private var uiIsHiding = false
+    @State private var backlogIsPresenting = false
+    @State private var isAutoPlaying = false
+    
+    @State private var autoPlayTimer: Timer?
+    @State private var fastForwardTimer: Timer?
+    @State private var talkShakeDuration = 0.0
+    @State private var screenShakeDuration = 0.0
+    
+    init(_ ir: StoryIR) {
+        self.ir = ir
+        
         unsafe voicePlayer = .allocate(capacity: 1)
         unsafe voicePlayer.initialize(to: .init())
+    }
+    init(asset: _DoriAPI.Misc.StoryAsset, voiceBundlePath: String, locale: DoriLocale) {
+        let ir = DoriStoryBuilder.Conversion.zeileIR(
+            fromBandori: asset,
+            in: locale,
+            voiceBundlePath: voiceBundlePath
+        )
+        self.init(ir)
     }
     
     var body: some View {
@@ -72,43 +85,51 @@ struct InteractiveStoryView: View {
             // Characters
             GeometryReader { geometry in
                 ZStack {
-                    ForEach(Array(allDiffLayouts.enumerated()), id: \.element.costumeType) { index, layout in
+                    ForEach(Array(allDiffLayouts.enumerated()), id: \.element.modelPath) { index, layout in
                         HStack {
                             Spacer(minLength: 0)
                             VStack {
                                 Spacer(minLength: 0)
-                                unsafe InteractiveStoryLive2DView(data: layout, voicePlayer: voicePlayer, currentSpeckerID: currentTalk?.talkCharacters.first?.characterID ?? -1)
-                                    .frame(width: geometry.size.height, height: geometry.size.height)
-                                    .offset(x: {
-                                        switch layout.sideTo {
-                                        case .none: 0
+                                let offsetX = { () -> CGFloat in
+                                    if let state = showingLayoutIndexs[index] {
+                                        return switch state.position.base {
                                         case .left: -(geometry.size.width / 4)
-                                        case .leftOver: -(geometry.size.width / 3)
+                                        case .leftOutside: -(geometry.size.width / 3)
                                         case .leftInside: -(geometry.size.width / 6)
                                         case .center: 0
+                                        case .centerBottom: 0
                                         case .right: geometry.size.width / 4
-                                        case .rightOver: geometry.size.width / 3
+                                        case .rightOutside: geometry.size.width / 3
                                         case .rightInside: geometry.size.width / 6
-                                        case .leftUnder: -(geometry.size.width / 4)
-                                        case .leftInsideUnder: -(geometry.size.width / 6)
-                                        case .centerUnder: 0
-                                        case .rightUnder: geometry.size.width / 4
-                                        case .rightInsideUnder: geometry.size.width / 6
+                                        case .leftBottom: -(geometry.size.width / 4)
+                                        case .leftInsideBottom: -(geometry.size.width / 6)
+                                        case .rightBottom: geometry.size.width / 4
+                                        case .rightInsideBottom: geometry.size.width / 6
                                         @unknown default: 0
                                         }
-                                    }(), y: {
-                                        switch layout.sideTo {
-                                        case .leftUnder,
-                                                .leftInsideUnder,
-                                                .centerUnder,
-                                                .rightUnder,
-                                                .rightInsideUnder: geometry.size.height / 6
+                                    } else {
+                                        return 0
+                                    }
+                                }()
+                                let offsetY = { () -> CGFloat in
+                                    if let state = showingLayoutIndexs[index] {
+                                        return switch state.position.base {
+                                        case .leftBottom,
+                                                .leftInsideBottom,
+                                                .centerBottom,
+                                                .rightBottom,
+                                                .rightInsideBottom: geometry.size.height / 6
                                         default: 0
                                         }
-                                    }())
-                                    .opacity(showingLayoutIndexs.contains(index) ? 1 : 0)
-                                    .environment(\._layoutViewVisible, showingLayoutIndexs.contains(index))
-                                    .animation(.spring(duration: 0.4, bounce: 0.2), value: layout)
+                                    } else {
+                                        return 0
+                                    }
+                                }()
+                                unsafe InteractiveStoryLive2DView(modelPath: layout.modelPath, state: showingLayoutIndexs[index], voicePlayer: voicePlayer, currentSpeckerID: currentTalk?.characterIDs.first ?? -1)
+                                    .frame(width: geometry.size.height, height: geometry.size.height)
+                                    .offset(x: offsetX, y: offsetY)
+                                    .opacity(showingLayoutIndexs[index] != nil ? 1 : 0)
+                                    .environment(\._layoutViewVisible, showingLayoutIndexs[index] != nil)
                                     .animation(.spring(duration: 0.4, bounce: 0.25), value: showingLayoutIndexs)
                             }
                             Spacer(minLength: 0)
@@ -128,8 +149,8 @@ struct InteractiveStoryView: View {
                         Spacer()
                         InteractiveStoryDialogBoxView(
                             data: currentTalk,
-                            locale: locale,
-                            isDelaying: isDelaying,
+                            locale: ir.locale,
+                            isDelaying: false,
                             isAutoPlaying: isAutoPlaying,
                             isAnimating: $lineIsAnimating,
                             shakeDuration: $talkShakeDuration
@@ -153,7 +174,7 @@ struct InteractiveStoryView: View {
                         .rotationEffect(.degrees(0.5))
                         .frame(width: 380, height: 32)
                     Text(currentTelop)
-                        .font(.custom(fontName(in: locale), size: 18))
+                        .font(.custom(fontName(in: ir.locale), size: 18))
                         .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
                 }
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)).combined(with: .opacity))
@@ -250,7 +271,7 @@ struct InteractiveStoryView: View {
         .sheet(isPresented: $backlogIsPresenting) {
             if let talk = currentTalk {
                 NavigationStack {
-                    BacklogView(asset: asset, currentTalk: talk, locale: locale, audios: talkAudios)
+                    BacklogView(ir: ir, currentTalk: talk, locale: ir.locale, audios: talkAudios)
                     #if os(macOS)
                         .frame(width: 500, height: 350)
                     #endif
@@ -262,36 +283,34 @@ struct InteractiveStoryView: View {
                 return
             }
             
-            backgroundImageURL = .init(string: "https://bestdori.com/assets/jp/\(asset.firstBackgroundBundleName)_rip/\(asset.firstBackground).png")!
-            let bgmItem = AVPlayerItem(url: .init(string: "https://bestdori.com/assets/jp/sound/scenario/bgm/\(asset.firstBGM.lowercased())_rip/\(asset.firstBGM).mp3")!)
-            bgmLooper = .init(player: bgmPlayer, templateItem: bgmItem)
-            bgmPlayer.play()
-            
-            // FIXME: Debug Only
-//            bgmPlayer.volume = 0
-            
-            for layout in asset.layoutData {
-                if !layout.costumeType.isEmpty && !allDiffLayouts.contains(where: {
-                    $0.characterID == layout.characterID
-                    && $0.costumeType == layout.costumeType
-                }) {
-                    allDiffLayouts.append(layout)
-                }
-            }
-            
-            for talk in asset.talkData {
-                for voice in talk.voices {
-                    AF.request("\(voiceBundleURL.absoluteString)_rip/\(voice.voiceID).mp3").response { response in
-                        if let data = response.data {
-                            DispatchQueue.main.async {
-                                talkAudios.updateValue(data, forKey: voice)
+            func resolvePre(actions: [StoryIR.StepAction]) {
+                for action in actions {
+                    if case let .showModel(characterID: charaID, modelPath: modelPath, position: _) = action {
+                        if !allDiffLayouts.contains(where: {
+                            $0.characterID == charaID
+                            && $0.modelPath == modelPath
+                        }) {
+                            allDiffLayouts.append((charaID, modelPath))
+                        }
+                    } else if case let .talk(_, characterIDs: _, characterNames: _, voicePath: voicePath) = action,
+                              let voicePath {
+                        AF.request(resolveURL(from: voicePath)).response { response in
+                            if let data = response.data {
+                                DispatchQueue.main.async {
+                                    talkAudios.updateValue(data, forKey: voicePath)
+                                }
                             }
                         }
+                    } else if case let .blocking(actions) = action {
+                        resolvePre(actions: actions)
+                    } else if case let .forkTask(actions) = action {
+                        resolvePre(actions: actions)
                     }
                 }
             }
+            resolvePre(actions: ir.actions)
             
-            next()
+            start()
         }
         .onDisappear {
             exitViewer(dismiss: false)
@@ -323,11 +342,11 @@ struct InteractiveStoryView: View {
                         fastForwardTimer = nil
                         return
                     }
-                    fastForwardTimer = .scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
-                        DispatchQueue.main.async {
-                            next(ignoresDelay: true)
-                        }
-                    }
+//                    fastForwardTimer = .scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
+//                        DispatchQueue.main.async {
+//                            next(ignoresDelay: true)
+//                        }
+//                    }
                 }, label: {
                     if fastForwardTimer == nil {
                         Label("快进", systemImage: "forward")
@@ -359,43 +378,27 @@ struct InteractiveStoryView: View {
         .menuIndicator(.hidden)
     }
     
-    func next(ignoresDelay: Bool = false) {
-        func withDelay(_ closure: @escaping () async -> Void, onFinish finish: @escaping () -> Void = {}) {
-            Task(priority: .userInitiated) {
-                isDelaying = true
-                await closure()
-                isDelaying = false
-                finish()
+    func start() {
+        @safe nonisolated(unsafe) let ir = ir
+        Task.detached { @Sendable in
+            for action in ir.actions {
+                await perform(action: action)
             }
         }
-        
-        guard !isDelaying || ignoresDelay else { return }
-        
-        currentSnippetIndex += 1
-        
-        if currentSnippetIndex == asset.snippets.endIndex {
-            return
-        }
-        if currentSnippetIndex > asset.snippets.endIndex {
-            exitViewer()
-            return
-        }
-        
-        let snippet = asset.snippets[currentSnippetIndex]
+    }
+    func next() {
+        currentInteractBlockingContinuation?.resume()
+        currentInteractBlockingContinuation = nil
+    }
+    func perform(action: StoryIR.StepAction) async {
+        Self.performingActionCount.count += 1
         
         if currentTelop != nil {
-            if snippet.actionType == .effect,
-               asset.specialEffectData[snippet.referenceIndex].effectType == .telop {
-                isDelaying = true
-                currentSnippetIndex -= 1
+            if case .telop = action {
                 withAnimation {
                     currentTelop = nil
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    isDelaying = false
-                    next()
-                }
-                return
+                try? await Task.sleep(for: .seconds(1))
             } else {
                 withAnimation {
                     currentTelop = nil
@@ -403,191 +406,49 @@ struct InteractiveStoryView: View {
             }
         }
         
-        switch snippet.actionType {
-        case .none:
-            withDelay {
-                try? await Task.sleep(for: .seconds(snippet.delay))
-            } onFinish: {
-                next()
-            }
-        case .talk:
-            let talkData = asset.talkData[snippet.referenceIndex]
-            currentTalk = talkData
-            if let voice = talkData.voices.first,
-               let data = talkAudios[voice],
-               let newPlayer = try? AVAudioPlayer(data: data) {
-                newPlayer.isMeteringEnabled = true
-                unsafe voicePlayer.pointee = newPlayer
-                unsafe voicePlayer.pointee.play()
-                if isAutoPlaying {
-                    autoPlayTimer = .scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
-                        if unsafe !voicePlayer.pointee.isPlaying {
-                            timer.invalidate()
-                            autoPlayTimer = .scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
-                                DispatchQueue.main.async {
-                                    next()
+        switch action {
+        case .talk(let text, characterIDs: let characterIDs, characterNames: let characterNames, voicePath: let voicePath):
+            currentTalk = .init(
+                text: text,
+                characterIDs: characterIDs,
+                characterNames: characterNames
+            )
+            
+            await withCheckedContinuation { continuation in
+                if let voicePath,
+                   let voice = talkAudios[voicePath],
+                   let newPlayer = try? AVAudioPlayer(data: voice) {
+                    newPlayer.isMeteringEnabled = true
+                    unsafe voicePlayer.pointee = newPlayer
+                    unsafe voicePlayer.pointee.play()
+                    if isAutoPlaying {
+                        autoPlayTimer = .scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
+                            if unsafe !voicePlayer.pointee.isPlaying {
+                                timer.invalidate()
+                                autoPlayTimer = .scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
+                                    DispatchQueue.main.async {
+                                        next()
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            } else if isAutoPlaying {
-                autoPlayTimer = .scheduledTimer(withTimeInterval: 5, repeats: false) { _ in
-                    DispatchQueue.main.async {
-                        next()
+                } else if isAutoPlaying {
+                    autoPlayTimer = .scheduledTimer(withTimeInterval: 5, repeats: false) { _ in
+                        DispatchQueue.main.async {
+                            next()
+                        }
                     }
                 }
+                
+                currentInteractBlockingContinuation = continuation
             }
-            for motion in talkData.motions {
-                if let index = showingLayoutIndexs.first(where: { allDiffLayouts[$0].characterID == motion.characterID }) {
-                    allDiffLayouts[index].motionName = motion.motionName
-                    allDiffLayouts[index].expressionName = motion.expressionName
-                } else {
-                    print("Talk requires motion change to character \(motion.characterID), but she's not visible?!")
-                }
+        case .telop(let text):
+            withAnimation {
+                currentTalk = nil
+                currentTelop = text
             }
-            if currentSnippetIndex + 1 < asset.snippets.endIndex
-                && (asset.snippets[currentSnippetIndex + 1].actionType == .motion
-                    || (asset.snippets[currentSnippetIndex + 1].actionType == .effect
-                        && (asset.specialEffectData[asset.snippets[currentSnippetIndex + 1].referenceIndex].effectType == .shakeScreen
-                            || asset.specialEffectData[asset.snippets[currentSnippetIndex + 1].referenceIndex].effectType == .shakeWindow))) {
-                next()
-            }
-        case .layout, .motion:
-            let layoutData = asset.layoutData[snippet.referenceIndex]
-            withDelay {
-                if snippet.delay > 0 {
-                    if currentSnippetIndex + 1 < asset.snippets.endIndex {
-                        // Motions can appear continuously
-                        // and share the same start time for delay.
-                        // We find the motion snippets immediately after this
-                        // (if present) and perform them
-                        let s = asset.snippets[currentSnippetIndex + 1]
-                        if s.actionType == .motion && s.delay > 0 {
-                            // If the snippet after the next is still a motion,
-                            // the same code here in this call handles it
-                            next(ignoresDelay: true)
-                        }
-                        // Effects are like this, too
-                        if s.actionType == .effect && s.delay > 0 {
-                            next(ignoresDelay: true)
-                        }
-                    }
-                    try? await Task.sleep(for: .seconds(snippet.delay))
-                }
-                switch layoutData.type {
-                case .none, .move, .appear:
-                    var newData = layoutData
-                    // Find before for each empty data
-                    let dataBefore = asset.layoutData[asset.layoutData.startIndex...snippet.referenceIndex]
-                        .filter { $0.characterID == layoutData.characterID }
-                        .reversed()
-                    if newData.costumeType.isEmpty {
-                        for data in dataBefore where !data.costumeType.isEmpty {
-                            newData.costumeType = data.costumeType
-                            break
-                        }
-                    }
-                    if newData.motionName.isEmpty {
-                        for data in dataBefore where !data.motionName.isEmpty {
-                            newData.motionName = data.motionName
-                            break
-                        }
-                    }
-                    if newData.expressionName.isEmpty {
-                        for data in dataBefore where !data.expressionName.isEmpty {
-                            newData.expressionName = data.expressionName
-                            break
-                        }
-                    }
-                    if let index = allDiffLayouts.firstIndex(where: { $0.costumeType == newData.costumeType }) {
-                        if layoutData.type == .none {
-                            newData.sideFrom = allDiffLayouts[index].sideFrom
-                            newData.sideTo = allDiffLayouts[index].sideTo
-                            newData.sideFromOffsetX = allDiffLayouts[index].sideFromOffsetX
-                            newData.sideToOffsetX = allDiffLayouts[index].sideToOffsetX
-                        }
-                        allDiffLayouts[index] = newData
-                        if !showingLayoutIndexs.contains(index) {
-                            if layoutData.type == .appear {
-                                showingLayoutIndexs.append(index)
-                            } else {
-                                print("Scheduled a layout change, but it's not even visible?!")
-                            }
-                        }
-                    } else {
-                        print("A combined layout '\(newData)' doesn't match any layout in full list '\(allDiffLayouts)'?!")
-                    }
-                case .hide:
-                    showingLayoutIndexs.removeAll {
-                        allDiffLayouts[$0].characterID == layoutData.characterID
-                    }
-                case .shakeX:
-                    print("Not Implemented Layout: shakeY")
-                case .shakeY:
-                    print("Not Implemented Layout: shakeY")
-                @unknown default: break
-                }
-            } onFinish: {
-                if snippet.actionType == .layout {
-                    next()
-                }
-            }
-        case .input:
-            print("Not Implemented Action: input")
-        case .selectable:
-            print("Not Implemented Action: selectable")
-        case .effect:
-            let effect = asset.specialEffectData[snippet.referenceIndex]
-            switch effect.effectType {
-            case .none:
-                break
-            case .blackIn:
-                withAnimation(.linear(duration: effect.duration)) {
-                    blackCoverIsShowing = false
-                }
-                next()
-            case .blackOut:
-                withAnimation(.linear(duration: effect.duration)) {
-                    blackCoverIsShowing = true
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + effect.duration) {
-                    whiteCoverIsDisplaying = false
-                }
-                next()
-            case .whiteIn:
-                withAnimation(.linear(duration: effect.duration)) {
-                    whiteCoverIsDisplaying = false
-                }
-                next()
-            case .whiteOut:
-                withAnimation(.linear(duration: effect.duration)) {
-                    whiteCoverIsDisplaying = true
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + effect.duration) {
-                    blackCoverIsShowing = false
-                }
-                next()
-            case .shakeScreen:
-                withDelay {
-                    try? await Task.sleep(for: .seconds(snippet.delay))
-                    screenShakeDuration = effect.duration
-                }
-            case .shakeWindow:
-                withDelay {
-                    try? await Task.sleep(for: .seconds(snippet.delay))
-                    talkShakeDuration = effect.duration
-                }
-            case .changeBackground, .changeBackgroundStill, .changeCardStill:
-                withAnimation {
-                    backgroundImageURL = .init(string: "https://bestdori.com/assets/jp/\(effect.stringVal)_rip/\(effect.stringValSub).png")!
-                }
-                next()
-            case .telop:
-                withAnimation {
-                    currentTalk = nil
-                    currentTelop = effect.stringVal
-                }
+            await withCheckedContinuation { continuation in
                 if isAutoPlaying {
                     autoPlayTimer = .scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
                         DispatchQueue.main.async {
@@ -595,52 +456,126 @@ struct InteractiveStoryView: View {
                         }
                     }
                 }
-            case .flashbackIn:
-                print("Not Implemented Effect: flashbackIn")
-                next()
-            case .flashbackOut:
-                print("Not Implemented Effect: flashbackOut")
-                next()
-            case .ambientColorNormal:
-                // FIXME: What does this action change?
-                next()
-            case .ambientColorEvening:
-                // FIXME: What does this action change?
-                next()
-            case .ambientColorNight:
-                // FIXME: What does this action change?
-                next()
-            case .playScenarioEffect:
-                let lastStringVal = effect.stringValSub.components(separatedBy: "/").last
-                isScenarioImageFilter = lastStringVal?.hasPrefix("filter") ?? false || lastStringVal?.hasPrefix("fillter") ?? false
-                // Actually I only found `scenario/effects/fillter_damage` needs extra opacity,    |    expected ~~~^~~~
-                // they even typed an extra "l" in the name
-                withAnimation {
-                    scenarioImageURL = .init(string: "https://bestdori.com/assets/jp/\(effect.stringValSub)_rip/bg.png")!
-                }
-                next()
-            case .stopScenarioEffect:
-                withAnimation {
-                    scenarioImageURL = nil
-                }
-                next()
-            @unknown default: break
+                
+                currentInteractBlockingContinuation = continuation
             }
-        case .sound:
-            let soundData = asset.soundData[snippet.referenceIndex]
-            if !soundData.bgm.isEmpty {
-                bgmPlayer.pause()
-                bgmPlayer.removeAllItems()
-                let bgmItem = AVPlayerItem(url: .init(string: "https://bestdori.com/assets/jp/sound/scenario/bgm/\(soundData.bgm.lowercased())_rip/\(soundData.bgm).mp3")!)
-                bgmLooper = .init(player: bgmPlayer, templateItem: bgmItem)
-                bgmPlayer.play()
-            } else if !soundData.se.isEmpty {
-                sePlayer.replaceCurrentItem(with: .init(url: .init(string: "https://bestdori.com/assets/jp/sound/se/\(soundData.seBundleName)_rip/\(soundData.se).mp3")!))
-                sePlayer.play()
+        case .showModel(characterID: let characterID, modelPath: let modelPath, position: let position):
+            if let index = allDiffLayouts.firstIndex(where: {
+                $0.characterID == characterID && $0.modelPath == modelPath
+            }) {
+                showingLayoutIndexs.updateValue(.init(characterID: characterID, position: position), forKey: index)
             }
-            next()
-        @unknown default: break
+        case .hideModel(characterID: let characterID):
+            let indexs = allDiffLayouts.enumerated()
+                .filter({ $0.element.characterID == characterID })
+                .map({ $0.offset })
+            for index in indexs {
+                showingLayoutIndexs.removeValue(forKey: index)
+            }
+        case .moveModel(characterID: let characterID, position: let position):
+            let indexs = allDiffLayouts.enumerated()
+                .filter({ $0.element.characterID == characterID })
+                .map({ $0.offset })
+            for index in indexs {
+                if var currentState = showingLayoutIndexs[index] {
+                    currentState.position = position
+                    showingLayoutIndexs.updateValue(currentState, forKey: index)
+                }
+            }
+        case .act(characterID: let characterID, motionName: let motionName):
+            let indexs = allDiffLayouts.enumerated()
+                .filter({ $0.element.characterID == characterID })
+                .map({ $0.offset })
+            for index in indexs {
+                if var currentState = showingLayoutIndexs[index] {
+                    currentState.motion = motionName
+                    showingLayoutIndexs.updateValue(currentState, forKey: index)
+                }
+            }
+        case .express(characterID: let characterID, expressionName: let expressionName):
+            let indexs = allDiffLayouts.enumerated()
+                .filter({ $0.element.characterID == characterID })
+                .map({ $0.offset })
+            for index in indexs {
+                if var currentState = showingLayoutIndexs[index] {
+                    currentState.expression = expressionName
+                    showingLayoutIndexs.updateValue(currentState, forKey: index)
+                }
+            }
+        case .horizontalShake(characterID: let characterID):
+            break // FIXME
+        case .verticalShake(characterID: let characterID):
+            break // FIXME
+        case .showBlackCover(duration: let duration):
+            withAnimation(.linear(duration: duration)) {
+                blackCoverIsShowing = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+                whiteCoverIsDisplaying = false
+            }
+        case .hideBlackCover(duration: let duration):
+            withAnimation(.linear(duration: duration)) {
+                blackCoverIsShowing = false
+            }
+        case .showWhiteCover(duration: let duration):
+            withAnimation(.linear(duration: duration)) {
+                whiteCoverIsDisplaying = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+                blackCoverIsShowing = false
+            }
+        case .hideWhiteCover(duration: let duration):
+            withAnimation(.linear(duration: duration)) {
+                whiteCoverIsDisplaying = false
+            }
+        case .shakeScreen(duration: let duration):
+            screenShakeDuration = duration
+        case .shakeDialogBox(duration: let duration):
+            talkShakeDuration = duration
+        case .changeBackground(path: let path):
+            withAnimation {
+                backgroundImageURL = resolveURL(from: path)
+            }
+        case .changeBGM(path: let path):
+            bgmPlayer.pause()
+            bgmPlayer.removeAllItems()
+            let bgmItem = AVPlayerItem(url: resolveURL(from: path))
+            bgmLooper = .init(player: bgmPlayer, templateItem: bgmItem)
+            bgmPlayer.play()
+        case .changeSE(path: let path):
+            sePlayer.replaceCurrentItem(with: .init(url: resolveURL(from: path)))
+            sePlayer.play()
+        case .blocking(let actions):
+            await withTaskGroup { group in
+                for action in actions {
+                    group.addTask {
+                        await perform(action: action)
+                    }
+                }
+            }
+        case .delay(seconds: let seconds):
+            try? await Task.sleep(for: .seconds(seconds))
+        case .forkTask(let actions):
+            Task.detached {
+                for action in actions {
+                    await perform(action: action)
+                }
+            }
+        case .waitForAll:
+            Self.performingActionCount.count -= 1
+            if Self.performingActionCount.count > 0 {
+                await withCheckedContinuation { continuation in
+                    Self.performingActionCount.observers.append(Self.performingActionCount.$count.sink(receiveValue: { newCount in
+                        if newCount <= 0 {
+                            continuation.resume()
+                        }
+                    }))
+                }
+            }
+        default: break
         }
+        
+        Self.performingActionCount.count -= 1
     }
     
     func exitViewer(dismiss doDismiss: Bool = true) {
@@ -671,12 +606,25 @@ struct InteractiveStoryView: View {
         window.titleVisibility = isFullscreen ? .hidden : .visible
         window.titlebarAppearsTransparent = isFullscreen
     }
-    #endif
+    #endif // os(macOS)
+}
+private struct LayoutState: Equatable {
+    var characterID: Int
+    var position: StoryIR.StepAction.Position
+    var motion: String = ""
+    var expression: String = ""
+}
+struct TalkData: Hashable {
+    var text: String
+    var characterIDs: [Int]
+    var characterNames: [String]
+    var voicePath: String?
 }
 
 @safe
 private struct InteractiveStoryLive2DView: View {
-    var data: _DoriAPI.Misc.StoryAsset.LayoutData
+    var modelPath: String
+    var state: LayoutState?
     var voicePlayer: UnsafeMutablePointer<AVAudioPlayer>
     var currentSpeckerID: Int
     @Environment(\._layoutViewVisible) private var isVisible
@@ -685,11 +633,11 @@ private struct InteractiveStoryLive2DView: View {
     @State private var lipSyncValue = 0.0
     @State private var lipSyncTimer: Timer?
     var body: some View {
-        Live2DView(resourceURL: URL(string: "https://bestdori.com/assets/jp/live2d/chara/\(data.costumeType)_rip/buildData.asset")!)
+        Live2DView(resourceURL: URL(string: "https://bestdori.com/assets/\(modelPath)_rip/buildData.asset")!)
             .live2dPauseAnimations(!isVisible) // performance
-            .live2dMotion(isVisible ? motions.first(where: { $0.name == data.motionName }) : nil)
-            .live2dExpression(isVisible ? expressions.first(where: { $0.name == data.expressionName }) : nil)
-            .live2dLipSync(value: currentSpeckerID == data.characterID ? lipSyncValue : nil)
+            .live2dMotion(isVisible ? motions.first(where: { $0.name == state?.motion }) : nil)
+            .live2dExpression(isVisible ? expressions.first(where: { $0.name == state?.expression }) : nil)
+            .live2dLipSync(value: currentSpeckerID == state?.characterID ? lipSyncValue : nil)
             ._live2dZoomFactor(1.9)
             ._live2dCoordinateMatrix("""
             [ s, 0, 0, 0,
@@ -722,10 +670,10 @@ private struct InteractiveStoryLive2DView: View {
 }
 
 private struct BacklogView: View {
-    var asset: _DoriAPI.Misc.StoryAsset
-    var currentTalk: _DoriAPI.Misc.StoryAsset.TalkData
+    var ir: StoryIR
+    var currentTalk: TalkData
     var locale: DoriLocale
-    var audios: [_DoriAPI.Misc.StoryAsset.TalkData.Voice: Data]
+    var audios: [String: Data]
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     var body: some View {
@@ -777,13 +725,19 @@ private struct BacklogView: View {
     var contentView: some View {
         HStack {
             VStack(alignment: .leading) {
-                ForEach(asset.talkData[asset.talkData.startIndex...asset.talkData.firstIndex(of: currentTalk)!], id: \.self) { talk in
+                let talks = ir.actions.compactMap {
+                    if case let .talk(text, characterIDs: ids, characterNames: names, voicePath: vp) = $0 {
+                        return TalkData(text: text, characterIDs: ids, characterNames: names, voicePath: vp)
+                    }
+                    return nil
+                }
+                ForEach(talks[talks.startIndex...talks.firstIndex(of: currentTalk)!], id: \.self) { talk in
                     HStack(alignment: .top) {
                         ZStack(alignment: .bottomTrailing) {
-                            WebImage(url: URL(string: "https://bestdori.com/res/icon/chara_icon_\(talk.talkCharacters.first?.characterID ?? -1).png"))
+                            WebImage(url: URL(string: "https://bestdori.com/res/icon/chara_icon_\(talk.characterIDs.first ?? -1).png"))
                                 .resizable()
                                 .frame(width: 40, height: 40)
-                            if let voice = talk.voices.first, let audioData = audios[voice] {
+                            if let voice = talk.voicePath, let audioData = audios[voice] {
                                 Button(action: {
                                     if let player = try? AVAudioPlayer(data: audioData) {
                                         player.play()
@@ -806,12 +760,12 @@ private struct BacklogView: View {
                                 Capsule()
                                     .fill(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
                                     .frame(width: 200, height: 20)
-                                Text(talk.windowDisplayName)
+                                Text(talk.characterNames.joined(separator: " & "))
                                     .font(.custom(fontName(in: locale), size: 15))
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 10)
                             }
-                            Text(talk.body)
+                            Text(talk.text)
                                 .font(.custom(fontName(in: locale), size: 16))
                                 .textSelection(.enabled)
                                 .foregroundStyle(colorScheme == .light ? Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255) : .init(red: 238 / 255, green: 238 / 255, blue: 238 / 255))
@@ -910,6 +864,19 @@ struct StrokeTextModifier: ViewModifier {
 
 func fontName(in locale: DoriLocale) -> String {
     return UserDefaults.standard.string(forKey: "StoryViewerFont\(locale.rawValue.uppercased())") ?? storyViewerDefaultFont[locale] ?? ".AppleSystemUIFont"
+}
+
+func resolveURL(from path: String) -> URL {
+    if path.hasPrefix("http://") || path.hasPrefix("https://") {
+        return URL(string: path)!
+    } else {
+        var componments = path.components(separatedBy: "/")
+        if componments.count >= 2 {
+            let bundle = componments[componments.count - 2]
+            componments[componments.count - 2] = "\(bundle)_rip"
+        }
+        return URL(string: "https://bestdori.com/assets/\(componments.joined(separator: "/"))")!
+    }
 }
 
 extension EnvironmentValues {

@@ -16,7 +16,7 @@ import DoriKit
 import SwiftUI
 
 struct InteractiveStoryDialogBoxView: View {
-    var data: _DoriAPI.Misc.StoryAsset.TalkData
+    var data: TalkData
     var locale: DoriLocale
     var isDelaying: Bool
     var isAutoPlaying: Bool
@@ -100,7 +100,7 @@ struct InteractiveStoryDialogBoxView: View {
                     }
                     .aspectRatio(6.5, contentMode: .fit)
                     .frame(height: nameTagBarHeight)
-                Text(data.windowDisplayName)
+                Text(data.characterNames.joined(separator: " & "))
                     .font(.custom(fontName(in: locale), size: fontSize))
                     .foregroundStyle(.white)
                     .padding(.vertical)
@@ -136,7 +136,7 @@ struct InteractiveStoryDialogBoxView: View {
         .onAppear {
             animateText()
         }
-        .onChange(of: data.body) {
+        .onChange(of: data.text) {
             animateText()
         }
         .onChange(of: isAutoPlaying) {
@@ -154,7 +154,7 @@ struct InteractiveStoryDialogBoxView: View {
         .onChange(of: isAnimating) {
             if !isAnimating {
                 bodyAnimationTimer?.invalidate()
-                currentBody = data.body
+                currentBody = data.text
             }
         }
         .onChange(of: shakeDuration) {
@@ -222,7 +222,7 @@ struct InteractiveStoryDialogBoxView: View {
     func animateText() {
         isAnimating = true
         currentBody = ""
-        var iterator = data.body.makeIterator()
+        var iterator = data.text.makeIterator()
         bodyAnimationTimer?.invalidate()
         bodyAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
             DispatchQueue.main.async {

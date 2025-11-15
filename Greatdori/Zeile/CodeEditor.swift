@@ -24,13 +24,15 @@ struct CodeEditor: NSViewRepresentable {
     static let textFinderSubject: PassthroughSubject<(NSTextFinder) -> Void, Never> = .init()
     
     @Binding var text: String
-    let textView = CodeTextView()
+    var locale: DoriLocale
+    let textView = CodeTextView(usingTextLayoutManager: true)
     let textFinder: NSTextFinder
     
     private let textFinderSubscription: AnyCancellable
     
-    init(text: Binding<String>) {
+    init(text: Binding<String>, locale: DoriLocale) {
         self._text = text
+        self.locale = locale
         let textFinder = NSTextFinder()
         self.textFinder = textFinder
         self.textFinderSubscription = Self.textFinderSubject.sink { action in
@@ -98,7 +100,7 @@ struct CodeEditor: NSViewRepresentable {
     
     func updateAttributes() {
         if let storage = unsafe textView.textStorage {
-            DoriStoryBuilder().syntaxHighlight(for: storage)
+            DoriStoryBuilder(for: locale).syntaxHighlight(for: storage)
         }
         unsafe textView.textStorage?.addAttribute(
             .font,
@@ -110,7 +112,7 @@ struct CodeEditor: NSViewRepresentable {
         let code = textView.string
         sender.diagUpdateTask?.cancel()
         sender.diagUpdateTask = Task.detached {
-            let diags = DoriStoryBuilder().generateDiagnostics(for: code)
+            let diags = DoriStoryBuilder(for: locale).generateDiagnostics(for: code)
             await MainActor.run {
                 textView.diagnostics = diags
                 textView.needsDisplay = true
@@ -131,6 +133,10 @@ struct CodeEditor: NSViewRepresentable {
         
         // Prevent cycle selection change
         private var isSettingSelectionRange = false
+        
+        var locale: DoriLocale {
+            parent.locale
+        }
         
         func textDidChange(_ notification: Notification) {
             parent.text = parent.textView.string
@@ -426,7 +432,7 @@ struct CodeEditor: NSViewRepresentable {
                     return
                 }
                 code.formIndex(before: &index)
-                let items = await asyncCompleteCode(code, at: index)
+                let items = await asyncCompleteCode(code, at: index, in: (self.delegate as! Coordinator).locale)
                 
                 showingAutoCompletionPanel?.close()
                 showingAutoCompletionPanel = nil
@@ -666,6 +672,7 @@ struct CodeEditor: NSViewRepresentable {
 #else // os(macOS)
 struct CodeEditor: UIViewRepresentable {
     @Binding var text: String
+    var locale: DoriLocale
     let textView = CodeTextView(usingTextLayoutManager: true)
     
     func makeUIView(context: Context) -> CodeTextView {
@@ -695,7 +702,7 @@ struct CodeEditor: UIViewRepresentable {
     func updateAttributes() {
         let storage = textView.textStorage
         storage.beginEditing()
-        DoriStoryBuilder().syntaxHighlight(for: storage)
+        DoriStoryBuilder(for: locale).syntaxHighlight(for: storage)
         storage.addAttribute(
             .font,
             value: UIFont.monospacedSystemFont(ofSize: 12, weight: .medium),
@@ -712,7 +719,7 @@ struct CodeEditor: UIViewRepresentable {
         let code = textView.text!
         sender.diagUpdateTask?.cancel()
         sender.diagUpdateTask = Task.detached {
-            let diags = DoriStoryBuilder().generateDiagnostics(for: code)
+            let diags = DoriStoryBuilder(for: locale).generateDiagnostics(for: code)
             await MainActor.run {
                 textView.diagnostics = diags
                 textView.setNeedsDisplay()
@@ -733,6 +740,10 @@ struct CodeEditor: UIViewRepresentable {
         
         // Prevent cycle selection change
         private var isSettingSelectionRange = false
+        
+        var locale: DoriLocale {
+            parent.locale
+        }
         
         func textViewDidChange(_ textView: UITextView) {
             parent.text = parent.textView.text
@@ -1025,7 +1036,7 @@ struct CodeEditor: UIViewRepresentable {
                     return
                 }
                 code.formIndex(before: &index)
-                let items = await asyncCompleteCode(code, at: index)
+                let items = await asyncCompleteCode(code, at: index, in: (self.delegate as! Coordinator).locale)
                 
                 showingAutoCompletionView?.removeFromSuperview()
                 showingAutoCompletionView = nil
@@ -1439,11 +1450,12 @@ private struct InlineDiagnosticView: View {
 
 private func asyncCompleteCode(
     _ code: String,
-    at index: String.Index
+    at index: String.Index,
+    in locale: DoriLocale
 ) async -> [CodeCompletionItem] {
     await withCheckedContinuation { continuation in
         DispatchQueue(label: "com.memz233.Greatdori.Zeile.Code-Completion", qos: .userInitiated).async {
-            continuation.resume(returning: DoriStoryBuilder().completeCode(code, at: index))
+            continuation.resume(returning: DoriStoryBuilder(for: locale).completeCode(code, at: index))
         }
     }
 }

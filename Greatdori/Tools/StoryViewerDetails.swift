@@ -223,22 +223,22 @@ struct StoryDetailView: View {
         @Binding var asset: _DoriAPI.Misc.StoryAsset?
         var body: some View {
             if let asset {
-                InteractiveStoryView(asset: asset, voiceBundleURL: URL(string: {
+                InteractiveStoryView(asset: asset, voiceBundlePath: {
                     switch type {
                     case .event:
-                        "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/eventstory\(unsafeAssociatedID)_\(unsafeSecondaryAssociatedID!)"
+                        "\(locale.rawValue)/sound/voice/scenario/eventstory\(unsafeAssociatedID)_\(unsafeSecondaryAssociatedID!)"
                     case .main:
-                        "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/mainstory\(unsafeAssociatedID)"
+                        "\(locale.rawValue)/sound/voice/scenario/mainstory\(unsafeAssociatedID)"
                     case .band:
-                        "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/\(voiceAssetBundleName!)"
+                        "\(locale.rawValue)/sound/voice/scenario/\(voiceAssetBundleName!)"
                     case .card:
-                        "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/resourceset/\(unsafeAssociatedID)"
+                        "\(locale.rawValue)/sound/voice/scenario/resourceset/\(unsafeAssociatedID)"
                     case .actionSet:
-                        "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/actionset/actionset\(Int(floor(Double(unsafeAssociatedID)! / 200) * 10))"
+                        "\(locale.rawValue)/sound/voice/scenario/actionset/actionset\(Int(floor(Double(unsafeAssociatedID)! / 200) * 10))"
                     case .afterLive:
-                        "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/afterlivetalk/group\(Int(floor(Double(unsafeAssociatedID)! / 100)))"
+                        "\(locale.rawValue)/sound/voice/scenario/afterlivetalk/group\(Int(floor(Double(unsafeAssociatedID)! / 100)))"
                     }
-                }())!, locale: locale)
+                }(), locale: locale)
             } else {
                 ProgressView()
             }
