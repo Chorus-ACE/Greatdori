@@ -100,8 +100,6 @@ struct MiracleTicketView: View {
                                         }
                                     }
                                 }
-                                Spacer()
-                                    .frame(height: 15)
                                 CustomGroupBox {
                                     VStack {
                                         if let cards = selectedTicket.cards.forLocale(locale) {
@@ -114,15 +112,18 @@ struct MiracleTicketView: View {
                                                 cardsGridWidth = geometry.size.width
                                             }
                                             let trimmedCount = trimmedCount(of: cards)
-                                            if trimmedCount > 0 {
-                                                Button(action: {
-                                                    withAnimation {
-                                                        isExpanded = true
-                                                    }
-                                                }, label: {
-                                                    Label("Miracle.expand.\(trimmedCount)", systemImage: "chevron.down")
-                                                })
-                                            }
+                                            Divider()
+                                            Button(action: {
+                                                withAnimation {
+                                                    isExpanded.toggle()
+                                                }
+                                            }, label: {
+                                                if trimmedCount > 0 {
+                                                    Label("Miracle.expand.\(cards.count)", systemImage: "chevron.down")
+                                                } else {
+                                                    Label("Miracle.collapse.\(cards.count)", systemImage: "chevron.up")
+                                                }
+                                            })
                                         } else {
                                             HStack {
                                                 Spacer()

@@ -20,11 +20,11 @@ import SDWebImageSwiftUI
 struct SongDetailView: View {
     var id: Int
     var allSongs: [PreviewSong]? = nil
-    var songMatches: [Int: _DoriFrontend.Songs._SongMatchResult]?
+    @State var songMatches: [Int: _DoriFrontend.Songs._SongMatchResult]?
     var body: some View {
         DetailViewBase(previewList: allSongs, initialID: id) { information in
             SongDetailOverviewView(information: information.song)
-            SongDetailMatchView(song: information.song, songMatches: songMatches)
+            SongDetailMatchView(song: information.song, songMatches: $songMatches)
             SongDetailGameplayView(information: information)
             DetailsEventsSection(events: information.events)
             DetailArtsSection {
@@ -38,6 +38,15 @@ struct SongDetailView: View {
             }
         } switcherDestination: {
             SongSearchView()
+        }
+        .onAppear {
+            Task {
+                DoriCache.withCache(id: "_DoriFrontend.Songs._allMatches", trait: .invocationElidable) {
+                    await _DoriFrontend.Songs._allMatches()
+                }.onUpdate {
+                    self.songMatches = $0
+                }
+            }
         }
     }
 }

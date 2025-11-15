@@ -214,6 +214,26 @@ extension LocalizedData {
     init(forEveryLocale item: T?) {
         self.init(jp: item, en: item, tw: item, cn: item, kr: item)
     }
+    
+    func allAvailableLocales() -> [DoriLocale] {
+        var result: [DoriLocale] = []
+        for locale in DoriLocale.allCases {
+            if self.availableInLocale(locale) {
+                result.append(locale)
+            }
+        }
+        return result
+    }
+    
+    func allUnvailableLocales() -> [DoriLocale] {
+        var result: [DoriLocale] = []
+        for locale in DoriLocale.allCases {
+            if !self.availableInLocale(locale) {
+                result.append(locale)
+            }
+        }
+        return result
+    }
 }
 
 // MARK: LocalizedStringResource

@@ -320,6 +320,7 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
             if let selection {
                 HStack {
                     Text(selection.title.forPreferredLocale() ?? "#\(selection.id)")
+                        .multilineTextAlignment(.trailing)
                     Image(systemName: "chevron.up.chevron.down")
                         .bold(isMACOS)
                         .font(.footnote)
@@ -347,6 +348,8 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
                     CostumeSelector(selection: costumeBinding)
                 } else if let characterBinding = bindingCast($selection, to: PreviewCharacter?.self) {
                     CharacterSelector(selection: characterBinding)
+                } else if let songBinding = bindingCast($selection, to: PreviewSong?.self) {
+                    SongSelector(selection: songBinding)
                 }
             }
             #if os(macOS)

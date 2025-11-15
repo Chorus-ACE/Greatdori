@@ -31,7 +31,5 @@ struct DetailsCardsSection: View {
                 CardInfo(item)
             })
         }
-        .contentUnavailablePrompt("Details.cards.unavailable")
-        .contentUnavailableImage(systemName: "person.crop.square.on.square.angled")
     }
 }

@@ -20,50 +20,50 @@ struct ZeileEditorCommands: Commands {
     var body: some Commands {
         if let project {
             #if os(macOS)
-            CommandMenu("Find") {
+            CommandMenu("Zeile.command.find") {
                 Section {
-                    Button("Find…", systemImage: "text.page.badge.magnifyingglass") {
+                    Button("Zeile.command.find.find", systemImage: "text.page.badge.magnifyingglass") {
                         CodeEditor.textFinderSubject.send { finder in
                             finder.performAction(.showFindInterface)
                         }
                     }
-                    .keyboardShortcut("f", modifiers: .command)
-                    Button("Find and Replace…") {
+                    .keyboardShortcut("F", modifiers: .command)
+                    Button("Zeile.command.find.find-and.replace") {
                         CodeEditor.textFinderSubject.send { finder in
                             finder.performAction(.showReplaceInterface)
                         }
                     }
                     .keyboardShortcut("f", modifiers: [.command, .option])
-                    Button("Find Next") {
+                    Button("Zeile.command.find.find.next") {
                         CodeEditor.textFinderSubject.send { finder in
                             finder.performAction(.nextMatch)
                         }
                     }
-                    .keyboardShortcut("g", modifiers: .command)
-                    Button("Find Previous") {
+                    .keyboardShortcut("G", modifiers: .command)
+                    Button("Zeile.command.find.find.previous") {
                         CodeEditor.textFinderSubject.send { finder in
                             finder.performAction(.previousMatch)
                         }
                     }
-                    .keyboardShortcut("g", modifiers: [.command, .shift])
+                    .keyboardShortcut("G", modifiers: [.command, .shift])
                 }
                 Section {
-                    Button("Replace", systemImage: "text.page.badge.magnifyingglass") {
+                    Button("Zeile.command.find.replace", systemImage: "text.page.badge.magnifyingglass") {
                         CodeEditor.textFinderSubject.send { finder in
                             finder.performAction(.replace)
                         }
                     }
-                    Button("Replace All") {
+                    Button("Zeile.command.find.replace-all") {
                         CodeEditor.textFinderSubject.send { finder in
                             finder.performAction(.replaceAll)
                         }
                     }
-                    Button("Replace and Find Next") {
+                    Button("Zeile.command.find.replace.next") {
                         CodeEditor.textFinderSubject.send { finder in
                             finder.performAction(.replaceAndFind)
                         }
                     }
-                    Button("Replace and Find Previous") {
+                    Button("Zeile.command.find.replace.previous") {
                         CodeEditor.textFinderSubject.send { finder in
                             finder.performAction(.replace)
                             finder.performAction(.previousMatch)
@@ -71,7 +71,7 @@ struct ZeileEditorCommands: Commands {
                     }
                 }
                 Section {
-                    Button("Hide Find Bar", systemImage: "inset.filled.topthird.rectangle") {
+                    Button("Zeile.command.find.hide", systemImage: "inset.filled.topthird.rectangle") {
                         CodeEditor.textFinderSubject.send { finder in
                             finder.performAction(.hideFindInterface)
                         }
@@ -79,22 +79,22 @@ struct ZeileEditorCommands: Commands {
                 }
             }
             #endif // os(macOS)
-            CommandMenu("Product") {
+            CommandMenu("Zeile.command.product") {
                 Section {
-                    Button("Run", systemImage: "play.fill") {
+                    Button("Zeile.command.product.run", systemImage: "play.fill") {
                         
                     }
-                    .keyboardShortcut("r", modifiers: .command)
-                    Button("Archive", systemImage: "shippingbox.fill") {
+                    .keyboardShortcut("R", modifiers: .command)
+                    Button("Zeile.command.product.archive", systemImage: "shippingbox.fill") {
                         
                     }
-                    .keyboardShortcut("p", modifiers: .command)
+                    .keyboardShortcut("P", modifiers: .command)
                 }
                 Section {
-                    Button("Build", systemImage: "hammer.fill") {
+                    Button("Zeile.command.product.build", systemImage: "hammer.fill") {
                         
                     }
-                    .keyboardShortcut("b", modifiers: .command)
+                    .keyboardShortcut("B", modifiers: .command)
                 }
             }
         }

@@ -63,8 +63,6 @@ struct DetailsEventsSection: View {
                 })
             }
         }
-        .contentUnavailablePrompt("Details.events.unavailable")
-        .contentUnavailableImage(systemName: "star.hexagon")
         .onAppear {
             handleEvents()
         }

@@ -17,14 +17,14 @@ import SwiftUI
 
 struct Live2DViewerView: View {
     private let itemType: [LocalizedStringKey] = [
-        "Tools.live2d-viewer.type.card",
-        "Tools.live2d-viewer.type.costume",
-        "Tools.live2d-viewer.type.seasonal-costume"
+        "Live2d-viewer.type.card",
+        "Live2d-viewer.type.costume",
+        "Live2d-viewer.type.seasonal-costume"
     ]
     @State private var selectedItemTypeIndex = 0
     @State private var selectedCard: PreviewCard?
     @State private var selectedCharacter: PreviewCharacter?
-    @State private var costume: PreviewCostume?
+    @State private var selectedCostume: PreviewCostume?
     @State private var informationIsLoading = false
     @State private var seasonalCostumes: [SeasonCostume]?
     var body: some View {
@@ -35,7 +35,7 @@ struct Live2DViewerView: View {
                     CustomGroupBox {
                         VStack {
                             ListItem(title: {
-                                Text("Tools.live2d-viewer.type")
+                                Text("Live2d-viewer.type")
                                     .bold()
                             }, value: {
                                 Picker("", selection: $selectedItemTypeIndex, content: {
@@ -49,7 +49,7 @@ struct Live2DViewerView: View {
                             Divider()
                             if selectedItemTypeIndex == 0 {
                                 ListItem {
-                                    Text("Tools.live2d-viewer.card")
+                                    Text("Live2d-viewer.card")
                                         .bold()
                                 } value: {
                                     ItemSelectorButton(selection: $selectedCard)
@@ -59,14 +59,14 @@ struct Live2DViewerView: View {
                                 }
                             } else if selectedItemTypeIndex == 1 {
                                 ListItem {
-                                    Text("Tools.live2d-viewer.costume")
+                                    Text("Live2d-viewer.costume")
                                         .bold()
                                 } value: {
-                                    ItemSelectorButton(selection: $costume)
+                                    ItemSelectorButton(selection: $selectedCostume)
                                 }
                             } else if selectedItemTypeIndex == 2 {
                                 ListItem {
-                                    Text("Tools.live2d-viewer.character")
+                                    Text("Live2d-viewer.character")
                                         .bold()
                                 } value: {
                                     ItemSelectorButton(selection: $selectedCharacter)
@@ -78,6 +78,8 @@ struct Live2DViewerView: View {
                         }
                     }
                     DetailSectionsSpacer()
+                    
+                    
                     if informationIsLoading {
                         CustomGroupBox {
                             HStack {
@@ -87,11 +89,11 @@ struct Live2DViewerView: View {
                             }
                         }
                     } else {
-                        if let costume, [0, 1].contains(selectedItemTypeIndex) {
+                        if let selectedCostume, [0, 1].contains(selectedItemTypeIndex) {
                             NavigationLink(destination: {
-                                Live2DDetailView(costume: costume)
+                                Live2DDetailView(costume: selectedCostume)
                             }, label: {
-                                CostumeInfo(costume)
+                                CostumeInfo(selectedCostume)
                             })
                             .buttonStyle(.plain)
                         } else if let seasonalCostumes {
@@ -101,7 +103,7 @@ struct Live2DViewerView: View {
                                 }, label: {
                                     CustomGroupBox {
                                         ExtendedConstraints {
-                                            Text("第\(costume.seasonType.components(separatedBy: "_").last ?? "")年 \(costume.seasonCostumeType.localizedString)")
+                                            Text("Live2d-viewer.year\(costume.seasonType.components(separatedBy: "_").last ?? "").\(costume.seasonCostumeType.localizedString)")
                                         }
                                         .padding()
                                     }
@@ -112,7 +114,7 @@ struct Live2DViewerView: View {
                             CustomGroupBox {
                                 HStack {
                                     Spacer()
-                                    Text("Tools.live2d-viewer.unavailable")
+                                    Text("Live2d-viewer.unavailable")
                                         .bold()
                                         .foregroundStyle(.secondary)
                                     Spacer()
@@ -127,7 +129,7 @@ struct Live2DViewerView: View {
             }
         }
         .withSystemBackground()
-        .navigationTitle("Tools.live2d-viewer")
+        .navigationTitle("Live2d-viewer")
         .onChange(of: selectedItemTypeIndex) {
             updateDestination()
         }
@@ -136,13 +138,13 @@ struct Live2DViewerView: View {
         Task {
             informationIsLoading = true
             if selectedItemTypeIndex != 1 {
-                costume = nil
+                selectedCostume = nil
             }
             if selectedItemTypeIndex == 0 {
                 if let card = selectedCard,
                    let fullCard = await Card(preview: card),
                    let costume = await Costume(id: fullCard.costumeID) {
-                    self.costume = .init(costume)
+                    self.selectedCostume = .init(costume)
                 }
                 informationIsLoading = false
             } else if selectedItemTypeIndex == 2 {
@@ -152,6 +154,19 @@ struct Live2DViewerView: View {
                 }
             }
             informationIsLoading = false
+        }
+    }
+    
+    func selectionIsMeaningful() -> Bool {
+        switch selectedItemTypeIndex {
+        case 0:
+            return selectedCard != nil
+        case 1:
+            return selectedCostume != nil
+        case 2:
+            return selectedCharacter != nil
+        default:
+            return false
         }
     }
 }
@@ -217,8 +232,8 @@ struct Live2DDetailView: View {
         .inspector(isPresented: $isInspectorPresented) {
             Form {
                 Section {
-                    Picker("动作", selection: $currentMotion) {
-                        Text("(无)").tag(Optional<Live2DMotion>.none)
+                    Picker("Live2D.detail.motion", selection: $currentMotion) {
+                        Text("Live2D.detail.motion.none").tag(Optional<Live2DMotion>.none)
                         ForEach(motions, id: \.self) { motion in
                             Text(motion.name).tag(motion)
                         }
@@ -229,19 +244,19 @@ struct Live2DDetailView: View {
                     .onDisappear {
                         isInspectorVisible = false
                     }
-                    Picker("表情", selection: $currentExpression) {
-                        Text("(无)").tag(Optional<Live2DExpression>.none)
+                    Picker("Live2D.detail.expression", selection: $currentExpression) {
+                        Text("Live2D.detail.expression.none").tag(Optional<Live2DExpression>.none)
                         ForEach(expressions, id: \.self) { expression in
                             Text(expression.name).tag(expression)
                         }
                     }
-                    Toggle("摇摆", isOn: $isSwayEnabled)
-                    Toggle("呼吸", isOn: $isBreathEnabled)
-                    Toggle("眨眼", isOn: $isEyeBlinkEnabled)
+                    Toggle("Live2D.detail.sway", isOn: $isSwayEnabled)
+                    Toggle("Live2D.detail.breath", isOn: $isBreathEnabled)
+                    Toggle("Live2D.detail.blink", isOn: $isEyeBlinkEnabled)
                 }
                 Section {
-                    Toggle("跟踪参数", isOn: $isTrackingParameters)
-                    Toggle("暂停动画", isOn: $isPaused)
+                    Toggle("Live2D.detail.track-parameters", isOn: $isTrackingParameters)
+                    Toggle("Live2D.detail.freeze-animation", isOn: $isPaused)
                     Group {
                         ForEach(Array(parameters.enumerated()), id: \.element.id) { index, parameter in
                             VStack(alignment: .leading) {
@@ -253,7 +268,7 @@ struct Live2DDetailView: View {
                     }
                     .disabled(!isPaused)
                 } header: {
-                    Text("参数")
+                    Text("Live2D.parameters")
                 }
             }
             .formStyle(.grouped)
@@ -263,7 +278,7 @@ struct Live2DDetailView: View {
         }
         .toolbar {
             ToolbarItem {
-                Button("检查器", systemImage: "sidebar.right") {
+                Button("Live2D.inspector", systemImage: "slider.horizontal.3") {
                     isInspectorPresented.toggle()
                 }
             }

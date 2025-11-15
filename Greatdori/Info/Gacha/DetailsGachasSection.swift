@@ -60,8 +60,6 @@ struct DetailsGachasSection: View {
                 })
             }
         }
-        .contentUnavailablePrompt("Details.gachas.unavailable")
-        .contentUnavailableImage(systemName: "line.horizontal.star.fill.line.horizontal")
         .onAppear {
             handleGachas()
         }

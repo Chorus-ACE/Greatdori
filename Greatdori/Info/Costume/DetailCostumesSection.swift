@@ -28,7 +28,5 @@ struct DetailsCostumesSection: View {
                     .frame(maxWidth: infoContentMaxWidth)
             })
         }
-        .contentUnavailablePrompt("Details.costumes.unavailable")
-        .contentUnavailableImage(systemName: "swatchpalette")
     }
 }

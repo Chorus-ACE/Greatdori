@@ -25,19 +25,22 @@ import Vision
 
 extension View {
     @ViewBuilder
-    func withSystemBackground() -> some View {
-        self.modifier(SystemBackgroundModifier())
+    func withSystemBackground(isActive: Bool? = nil) -> some View {
+        self.modifier(SystemBackgroundModifier(isActive: isActive))
     }
 }
 private struct SystemBackgroundModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
+    var isActive: Bool?
     func body(content: Content) -> some View {
-    #if os(iOS)
-        content
-            .background(Color(.systemGroupedBackground))
-    #else
-        content
-    #endif
+        if isMACOS || !(isActive ?? ((UserDefaults.standard.value(forKey: "customGroupBoxVersion") as? Int) == 2)) {
+            content
+        } else {
+            #if os(iOS)
+            content
+                .background(Color(.systemGroupedBackground))
+            #endif
+        }
     }
 }
 

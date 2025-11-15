@@ -501,6 +501,15 @@ struct SettingsFontsDetail: View {
                                     .typesettingLanguage(locale.nsLocale().language)
                             }
                         }
+                        
+                        if !fontManager.fontSupportsLocale(fontName, locale: .jp) && !fontManager.fontSupportsLocale(fontName, locale: .en) && !fontManager.fontSupportsLocale(fontName, locale: .cn) && !fontManager.fontSupportsLocale(fontName, locale: .tw) && !fontManager.fontSupportsLocale(fontName, locale: .kr) {
+                            Text(fontManagerSampleText[.en]!)
+                                .font(.custom(fontName, size: 18))
+                                .fontWeight(fontManagerSampleTextFontWeight)
+                                .typesettingLanguage(DoriLocale.en.nsLocale().language)
+                            Text("Settings.fonts.info.preview.unavailable")
+                                .foregroundStyle(.secondary)
+                        }
                     }, header: {
                         Text("Settings.fonts.info.preview")
                     }, footer: {

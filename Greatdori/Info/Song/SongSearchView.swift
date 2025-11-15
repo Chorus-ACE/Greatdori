@@ -41,7 +41,11 @@ struct SongSearchView: View {
         }
         .onAppear {
             Task {
-                songMatches = await _DoriFrontend.Songs._allMatches()
+                DoriCache.withCache(id: "_DoriFrontend.Songs._allMatches", trait: .invocationElidable) {
+                    await _DoriFrontend.Songs._allMatches()
+                }.onUpdate {
+                    self.songMatches = $0
+                }
             }
         }
     }

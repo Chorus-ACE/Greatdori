@@ -29,6 +29,7 @@ struct CommunityView: View {
                         LazyVStack {
                             ForEach(Array(posts.content.enumerated()), id: \.element.id) { index, post in
                                 PostSectionView(post: post)
+                                /*
                                     .swipeActions {
                                         Button(action: {
                                             
@@ -42,6 +43,7 @@ struct CommunityView: View {
                                             }
                                         })
                                     }
+                                 */
                                     .onAppear {
                                         if index == posts.content.count - 1 {
                                             continueLoadPosts()
@@ -112,9 +114,16 @@ private struct PostSectionView: View {
             VStack(alignment: .leading) {
                 HStack {
                     if !post.author.nickname.isEmpty {
-                        Text(post.author.nickname)
-                        Text("@\(post.author.username)")
-                            .foregroundStyle(.secondary)
+                        ViewThatFits {
+                            Group {
+                                Text(post.author.nickname)
+                                Text("@\(post.author.username)")
+                                    .foregroundStyle(.secondary)
+                            }
+                            Group {
+                                Text(post.author.nickname)
+                            }
+                        }
                     } else {
                         Text("@\(post.author.username)")
                     }
@@ -127,7 +136,6 @@ private struct PostSectionView: View {
                             }
                         }
                         Text(post.time.formattedRelatively())
-                            .lineLimit(1)
                         Image(systemName: post.getPostTypeSymbol())
                     }
                     .foregroundStyle(.gray)
@@ -152,6 +160,7 @@ private struct PostSectionView: View {
                     
                 }
                 .font(.footnote)
+                .lineLimit(1)
                 Group {
                     if !post.title.isEmpty {
                         Text(post.title)

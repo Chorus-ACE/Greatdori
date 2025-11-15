@@ -43,7 +43,7 @@ struct StoryViewerView: View {
                         VStack {
                             Group {
                                 ListItem(title: {
-                                    Text("Tools.story-viewer.type")
+                                    Text("Story-viewer.type")
                                         .bold()
                                 }, value: {
                                     Picker(selection: $storyType) {
@@ -61,7 +61,7 @@ struct StoryViewerView: View {
                             switch storyType {
                             case .event:
                                 ListItem(title: {
-                                    Text("Tools.story-viewer.type.event")
+                                    Text("Story-viewer.type.event")
                                         .bold()
                                 }, value: {
                                     ItemSelectorButton(selection: $selectedEvent)
@@ -71,7 +71,7 @@ struct StoryViewerView: View {
                                 EmptyView()
                             case .band:
                                 ListItem(title: {
-                                    Text("Tools.story-viewer.band")
+                                    Text("Story-viewer.band")
                                         .bold()
                                 }, value: {
                                     Picker(selection: $selectedBand, content: {
@@ -87,7 +87,7 @@ struct StoryViewerView: View {
                                 Divider()
                                 
                                 ListItem(title: {
-                                    Text("Tools.story-viewer.story")
+                                    Text("Story-viewer.story")
                                         .bold()
                                 }, value: {
                                     let availableBandStories: [_DoriAPI.Misc.BandStory] = allBandStories.filter({ $0.bandID == selectedBand?.id }).sorted { $0.chapterNumber < $1.chapterNumber }
@@ -102,7 +102,7 @@ struct StoryViewerView: View {
                                         if let item = selectedBandStory {
                                             Text(verbatim: "\(item.mainTitle.forLocale(locale) ?? "")\(getLocalizedColon(forLocale: locale))\(item.subTitle.forLocale(locale) ?? "")")
                                         } else {
-                                            Text("Tools.story-viewer.story.select")
+                                            Text("Story-viewer.story.select")
                                         }
                                     })
                                     .labelsHidden()
@@ -110,7 +110,7 @@ struct StoryViewerView: View {
                                 Divider()
                             case .card:
                                 ListItem(title: {
-                                    Text("Tools.story-viewer.type.card")
+                                    Text("Story-viewer.type.card")
                                         .bold()
                                 }, value: {
                                     ItemSelectorButton(selection: $selectedCard)
@@ -123,7 +123,7 @@ struct StoryViewerView: View {
                             }
                             
                             ListItem(title: {
-                                Text("Tools.story-viewer.locale")
+                                Text("Story-viewer.locale")
                                     .bold()
                             }, value: {
                                 Picker(selection: $locale) {
@@ -167,7 +167,7 @@ struct StoryViewerView: View {
                                         if informationIsAvailable && !(displayingStories.forLocale(locale)?.isEmpty ?? true) {
                                             ProgressView()
                                         } else {
-                                            Text("Tools.story-viewer.unavailable")
+                                            Text("Story-viewer.unavailable")
                                                 .bold()
                                                 .foregroundStyle(.secondary)
                                         }
@@ -191,7 +191,7 @@ struct StoryViewerView: View {
             }
         }
         .withSystemBackground()
-        .navigationTitle("Tools.story-viewer")
+        .navigationTitle("Story-viewer")
         .onAppear {
             informationIsAvailable = true
             DoriCache.withCache(id: "EventStories") {
@@ -329,7 +329,7 @@ extension StoryViewerView {
                 }
                 .toolbar {
                     ToolbarItem {
-                        Button("Tools.story-viewer.filter", systemImage: "line.3.horizontal.decrease") {
+                        Button("Story-viewer.filter", systemImage: "line.3.horizontal.decrease") {
                             isFilterSettingsPresented = true
                         }
                         .foregroundColor(filter.isFiltered ? .accent : nil)
@@ -360,7 +360,7 @@ extension StoryViewerView {
                     }
                 } else {
                     ExtendedConstraints {
-                        ContentUnavailableView("Tools.story-viewer.error", systemImage: "text.rectangle.page")
+                        ContentUnavailableView("Story-viewer.error", systemImage: "text.rectangle.page")
                             .onTapGesture {
                                 Task {
                                     await getActionSets()
@@ -430,7 +430,7 @@ extension StoryViewerView {
                 }
                 .toolbar {
                     ToolbarItem {
-                        Button("Tools.story-viewer.filter", systemImage: "line.3.horizontal.decrease") {
+                        Button("Story-viewer.filter", systemImage: "line.3.horizontal.decrease") {
                             isFilterSettingsPresented = true
                         }
                         .foregroundColor(filter.isFiltered ? .accent : nil)
@@ -461,7 +461,7 @@ extension StoryViewerView {
                     }
                 } else {
                     ExtendedConstraints {
-                        ContentUnavailableView("Tools.story-viewer.error", systemImage: "text.rectangle.page")
+                        ContentUnavailableView("Story-viewer.error", systemImage: "text.rectangle.page")
                             .onTapGesture {
                                 Task {
                                     await getStories()
@@ -550,7 +550,7 @@ struct StoryCardView: View {
                             Text(synopsis)
                                 .foregroundStyle(.gray)
                         } else {
-                            Text(caption == "memorial" ? "Tools.story-viewer.card.memorial" : "Tools.story-viewer.card.standard")
+                            Text(caption == "memorial" ? "Story-viewer.card.memorial" : "Story-viewer.card.standard")
                             Text(title)
                                 .bold()
                                 .font(.title3)
@@ -575,12 +575,12 @@ enum StoryType: String, CaseIterable, Hashable {
     
     var name: LocalizedStringKey {
         switch self {
-        case .event: "Tools.story-viewer.type.event"
-        case .main: "Tools.story-viewer.type.main"
-        case .band: "Tools.story-viewer.type.band"
-        case .card: "Tools.story-viewer.type.card"
-        case .actionSet: "Tools.story-viewer.type.action-set"
-        case .afterLive: "Tools.story-viewer.type.after-live"
+        case .event: "Story-viewer.type.event"
+        case .main: "Story-viewer.type.main"
+        case .band: "Story-viewer.type.band"
+        case .card: "Story-viewer.type.card"
+        case .actionSet: "Story-viewer.type.action-set"
+        case .afterLive: "Story-viewer.type.after-live"
         }
     }
 }

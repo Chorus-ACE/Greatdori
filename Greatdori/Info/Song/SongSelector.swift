@@ -15,7 +15,7 @@
 import DoriKit
 import SwiftUI
 
-struct SongSelector: View {
+struct MultiSongSelector: View {
     @Binding var selection: [PreviewSong]
     let gridLayoutItemWidth: CGFloat = 225
     var body: some View {
@@ -37,5 +37,13 @@ struct SongSelector: View {
         .resultCountDescription { count in
             "Song.count.\(count)"
         }
+    }
+}
+
+struct SongSelector: View {
+    @Binding var selection: PreviewSong?
+    var body: some View {
+        MultiSongSelector(selection: .init { [selection].compactMap { $0 } } set: { selection = $0.first })
+            .selectorDisablesMultipleSelection()
     }
 }

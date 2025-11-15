@@ -28,7 +28,5 @@ struct DetailsSongsSection: View {
                 SongInfo(item, layout: .horizontal)
             })
         }
-        .contentUnavailablePrompt("Details.songs.unavailable")
-        .contentUnavailableImage(systemName: "person.crop.square.on.square.angled")
     }
 }

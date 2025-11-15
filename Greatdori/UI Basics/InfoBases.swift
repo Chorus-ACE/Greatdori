@@ -354,7 +354,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
     @Environment(\.colorScheme) private var colorScheme
     @Namespace private var navigationAnimationNamespace
     @State private var filter: _DoriFrontend.Filter
-    @State private var sorter = _DoriFrontend.Sorter(keyword: .releaseDate(in: .jp), direction: .descending)
+    @State private var sorter = DoriSorter(keyword: Element.applicableSortingTypes.contains(.releaseDate(in: .jp)) ? .releaseDate(in: .jp) : .id, direction: .descending)
     @State private var elements: [Element]?
     @State private var searchedElements: [Element]?
     @State private var infoIsAvailable = true
@@ -575,9 +575,6 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
     var showLocalePicker: Bool
     var makeEachContent: (Element) -> Content
     
-    var unavailablePrompt: LocalizedStringResource = "Details.unavailable"
-    var unavailableSystemImage: String = "bolt.horizontal.fill"
-    
     init(
         elements: [Element],
         @ViewBuilder eachContent: @escaping (Element) -> Content
@@ -609,7 +606,7 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
                                 .buttonStyle(.plain)
                         }
                     } else {
-                        DetailUnavailableView(title: unavailablePrompt, symbol: unavailableSystemImage)
+                        DetailUnavailableView(title: "Details.unavailable.\(Element.singularName)", symbol: Element.symbol)
                     }
                 }
                 .frame(maxWidth: infoContentMaxWidth)
@@ -635,19 +632,6 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
                 .frame(maxWidth: 615)
             }
         }
-    }
-}
-
-extension DetailSectionBase {
-    func contentUnavailablePrompt(_ prompt: LocalizedStringResource) -> Self {
-        var mutable = self
-        mutable.unavailablePrompt = prompt
-        return mutable
-    }
-    func contentUnavailableImage(systemName: String) -> Self {
-        var mutable = self
-        mutable.unavailableSystemImage = systemName
-        return mutable
     }
 }
 

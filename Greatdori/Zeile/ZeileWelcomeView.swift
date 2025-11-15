@@ -29,7 +29,7 @@ struct ZeileWelcomeView: View {
                 Spacer(minLength: 0)
             }
         }
-        .navigationTitle(String("Zeile Editor"))
+        .navigationTitle("Zeile.editor")
     }
 }
 
@@ -41,7 +41,7 @@ private struct ZeileWelcomeHeading: View {
                     .resizable()
                     .frame(width: 50, height: 50)
                 VStack(alignment: .leading) {
-                    Text(verbatim: "Zeile Editor")
+                    Text("Zeile.editor")
                         .font(.title)
                         .fontWeight(.semibold)
                     Text(verbatim: "Version 1.0.0")
@@ -72,7 +72,7 @@ private struct ZeileWelcomeActions: View {
                 Button(action: {
                     #if os(macOS)
                     newDocument {
-                        ZeileProjectDocument(emptyWithName: "Untitled.zeileproj")
+                        ZeileProjectDocument(emptyWithName: "Story.zeileproj")
                     }
                     #endif
                 }, label: {
@@ -80,7 +80,7 @@ private struct ZeileWelcomeActions: View {
                         Image(systemName: "plus.square")
                             .foregroundStyle(.gray)
                             .frame(width: 20)
-                        Text("创建新项目…")
+                        Text("Zeile.home.new")
                             .fontWeight(.medium)
                         Spacer()
                     }
@@ -95,7 +95,7 @@ private struct ZeileWelcomeActions: View {
                         Image(systemName: "folder")
                             .foregroundStyle(.gray)
                             .frame(width: 20)
-                        Text("打开现有项目…")
+                        Text("Zeile.home.open")
                             .fontWeight(.medium)
                         Spacer()
                     }
