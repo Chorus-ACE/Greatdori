@@ -16,6 +16,6 @@ Timbre算法完全匿名，不会记录卡片ID和精选集标题以外的任何
 
 
 
-有关算法的具体技术细节，欢迎访问 https://github.com/WindowsMEMZ/Greatdori/ 。
+有关算法的具体技术细节，欢迎访问 https://github.com/Greatdori/Greatdori/ 。
 
 最后更新于2025年10月6日

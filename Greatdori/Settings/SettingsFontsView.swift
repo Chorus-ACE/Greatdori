@@ -85,7 +85,8 @@ struct SettingsFontsMain: View {
                 }
             }
             
-            Section("Settings.fonts.story-viewer") {
+            Section(content: {
+                
                 ForEach(DoriLocale.allCases, id: \.self) { locale in
                     NavigationLink(destination: {
                         SettingsFontsPicker(externalUpdateIndex: $storyViewerUpdateIndex, locale: locale)
@@ -98,35 +99,28 @@ struct SettingsFontsMain: View {
                         }
                     })
                 }
-            }
+                
+            }, header: {
+                Text("Settings.fonts.story-viewer")
+            }, footer: {
+                if isMACOS {
+                    SettingsDocumentButton(label: "Settings.fonts.learn-more", content: "FontSuggestions")
+                }
+            })
             .onChange(of: storyViewerUpdateIndex, initial: true) {
                 for locale in DoriLocale.allCases {
                     storyViewerFonts.updateValue(UserDefaults.standard.string(forKey: "StoryViewerFont\(locale.rawValue.uppercased())") ?? storyViewerDefaultFont[locale] ?? ".AppleSystemUIFont", forKey: locale)
                 }
             }
             
-            Section {
-                Button(action: {
-                    showAboutSheet = true
-                }, label: {
-                    Text("Settings.fonts.learn-more")
-                })
+            if !isMACOS {
+                Section {
+                    SettingsDocumentButton(label: "Settings.fonts.learn-more", content: "FontSuggestions")
+                }
             }
         }
         .navigationTitle("Settings.fonts")
         .formStyle(.grouped)
-        .sheet(isPresented: $showAboutSheet, content: {
-            if let content = readMarkdownFile("FontSuggestions") {
-                ScrollView {
-                    Markdown(content)
-                        .padding(.horizontal)
-                }
-            } else {
-                Text("Settings.content-unavailable")
-                    .bold()
-                    .foregroundStyle(.secondary)
-            }
-        })
         .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {

@@ -16,4 +16,4 @@ Greatdori! Development Team had found all the fonts used in different regions. D
 
 In JP, Kanji uses「新ゴ」, while all other characters (Kana, alphabets, numbers, punctuations, etc.) all uses 「タイプラボN」. 「タイプラボN」has no Kanji. KR's font may be wrong since no one in our development team knows Korean. If there's an error, please do not hesitate to report to us.
 
-We also recommend Noto Sans Family. Noto Sans is licensed by Open Font License. You can found it in https://fonts.google.com/noto or https://github.com/google/fonts .
+We also recommend Noto Sans Family. Noto Sans is licensed by Open Font License. You can found it on https://fonts.google.com/noto or https://github.com/google/fonts .

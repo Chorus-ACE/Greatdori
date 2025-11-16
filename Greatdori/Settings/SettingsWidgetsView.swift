@@ -65,7 +65,6 @@ struct SettingsWidgetsCollectionView: View {
     @State private var cardPreload: PreloadDescriptor<[PreviewCard]>?
     #endif
     @State var aboutCollectionCode: String = ""
-    @State var showAboutCollectionCodeSheet = false
     var body: some View {
         Group {
             Section(content: {
@@ -258,12 +257,8 @@ struct SettingsWidgetsCollectionView: View {
                     }
                 })
             }, footer: {
-                Button(action: {
-                    showAboutCollectionCodeSheet = true
-                }, label: {
-                    Text("Settings.widgets.collections.learn-more")
-                        .font(isMACOS ? .body : .caption)
-                })
+                SettingsDocumentButton(label: "Settings.widgets.collections.learn-more", content: "CollectionCode")
+                    .font(isMACOS ? .body : .caption)
                 .toolbar {
                     if isMACOS {
                         ToolbarItem {
@@ -284,38 +279,11 @@ struct SettingsWidgetsCollectionView: View {
                 SettingsWidgetsCollectionDetailsView(collectionGivenName: destinationCollection.name, isPresented: $showDestination)
             }
         })
-        .sheet(isPresented: $showAboutCollectionCodeSheet, content: {
-            if let content = readMarkdownFile("CollectionCode") {
-                ScrollView {
-                    Markdown(content)
-                        .padding(.horizontal)
-                }
-            } else {
-                Text("Settings.content-unavailable")
-                    .bold()
-                    .foregroundStyle(.secondary)
-            }
-        })
         .alert("Settings.widgets.collections.user.add.alert.title", isPresented: $newCollectionSheetIsDisplaying, actions: {
             CollectionAddingActions(newCollectionTitle: $newCollectionInput, newCollectionIsAdding: $newCollectionIsImporting)
         }, message: {
             Text("Settings.widgets.collections.user.add.alert.message")
         })
-        .onAppear {
-            var collectionCodeDocLanguage = "EN"
-            if #available(iOS 16, macOS 13, *) {
-                if Locale.current.language.languageCode?.identifier == "zh" &&
-                    Locale.current.language.script?.identifier == "Hans" {
-                    collectionCodeDocLanguage = "ZH-HANS"
-                }
-            }
-            if let path = Bundle.main.path(forResource: "CollectionCode_\(collectionCodeDocLanguage)", ofType: "md") {
-                if let content = try? String(contentsOfFile: path, encoding: .utf8) {
-                    aboutCollectionCode = content
-                }
-            }
-
-        }
         #if os(iOS)
         .introspect(.viewController, on: .iOS(.v17...)) { viewController in
             currentViewController = viewController

@@ -196,6 +196,9 @@
 		E90769D72E546D5B00C9871C /* DebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90769D12E546D5B00C9871C /* DebugView.swift */; };
 		E90769D92E546D5B00C9871C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90769D32E546D5B00C9871C /* SettingsView.swift */; };
 		E9076E2F2E8B83A100A9F5AE /* SettingsAdvanced.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9076E2E2E8B839D00A9F5AE /* SettingsAdvanced.swift */; };
+		E91787152EC95C7300C33779 /* SettingsDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91787142EC95C6E00C33779 /* SettingsDocument.swift */; };
+		E91787162EC960A300C33779 /* FontSuggestions_ZH-HANS.md in Resources */ = {isa = PBXBuildFile; fileRef = E9AEC8C72EBA2EFC00490B75 /* FontSuggestions_ZH-HANS.md */; };
+		E91787172EC960A300C33779 /* FontSuggestions_EN.md in Resources */ = {isa = PBXBuildFile; fileRef = E955A0F62EBDF9C300795C9D /* FontSuggestions_EN.md */; };
 		E92401612E993B9D003BF482 /* NewsDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92401602E993B94003BF482 /* NewsDetailsView.swift */; };
 		E94218F02E8AA2FF00F24974 /* CharacterDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94218EF2E8AA2FB00F24974 /* CharacterDetailView.swift */; };
 		E94218F22E8AA32000F24974 /* CharacterSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94218F12E8AA31D00F24974 /* CharacterSearchView.swift */; };
@@ -642,6 +645,7 @@
 		E90769D12E546D5B00C9871C /* DebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugView.swift; sourceTree = "<group>"; };
 		E90769D32E546D5B00C9871C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		E9076E2E2E8B839D00A9F5AE /* SettingsAdvanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAdvanced.swift; sourceTree = "<group>"; };
+		E91787142EC95C6E00C33779 /* SettingsDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDocument.swift; sourceTree = "<group>"; };
 		E92401602E993B94003BF482 /* NewsDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailsView.swift; sourceTree = "<group>"; };
 		E94218EF2E8AA2FB00F24974 /* CharacterDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDetailView.swift; sourceTree = "<group>"; };
 		E94218F12E8AA31D00F24974 /* CharacterSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSearchView.swift; sourceTree = "<group>"; };
@@ -1373,6 +1377,7 @@
 				E9AE9E072E909ED100AAB049 /* SettingsCollectionCardSelector.swift */,
 				E90769D12E546D5B00C9871C /* DebugView.swift */,
 				8CC046DB2E6C8F5D009FDC13 /* AppFlags.swift */,
+				E91787142EC95C6E00C33779 /* SettingsDocument.swift */,
 				E9490BB52E937BBB00E50D3F /* CollectionCode_ZH-HANS.md */,
 				8C2B642A2E9581EC00D003D1 /* CollectionCode_EN.md */,
 				E9AEC8C72EBA2EFC00490B75 /* FontSuggestions_ZH-HANS.md */,
@@ -1663,6 +1668,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E91787162EC960A300C33779 /* FontSuggestions_ZH-HANS.md in Resources */,
+				E91787172EC960A300C33779 /* FontSuggestions_EN.md in Resources */,
 				8CD290142E9FCBB700831458 /* ChartSimAssets.xcassets in Resources */,
 				E949D28B2E93805E00E50D3F /* CollectionCode_ZH-HANS.md in Resources */,
 				E9E3C05A2E35D0150059BCE8 /* Localizable.xcstrings in Resources */,
@@ -1823,6 +1830,7 @@
 				E94218FA2E8AA3B000F24974 /* CardPreviewImage.swift in Sources */,
 				E94219072E8AA48A00F24974 /* ComicDetailView.swift in Sources */,
 				8CEA20C52EAB6362009D41C5 /* SongDetailMatchView.swift in Sources */,
+				E91787152EC95C7300C33779 /* SettingsDocument.swift in Sources */,
 				E949A5612EAA00CB007441A6 /* WelcomeView.swift in Sources */,
 				E94218F22E8AA32000F24974 /* CharacterSearchView.swift in Sources */,
 				E942190E2E8AA4D700F24974 /* SongDetailGameplayView.swift in Sources */,

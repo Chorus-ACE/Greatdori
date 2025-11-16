@@ -15,6 +15,6 @@ Timbre is completely anonymous, it will not contain any data other than card IDs
 (Note: Importing collection requires internet collection in order to fetch card cover image. Thus you might not import collections from Greatdori! offline.)
 
 
-For more technical details, feel free to access https://github.com/WindowsMEMZ/Greatdori/ .
+For more technical details, feel free to access https://github.com/Greatdori/Greatdori/ .
 
 Last Update: Oct 6 2025
