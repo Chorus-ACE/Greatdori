@@ -31,6 +31,7 @@ struct SettingsDocumentButton: View {
                     ScrollView {
                         Markdown(markdownContent)
                             .padding()
+                            .textSelection(.enabled)
                     }
                 } else {
                     ExtendedConstraints {
