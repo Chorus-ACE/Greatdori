@@ -22,15 +22,53 @@ import SDWebImageSwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
 private final class ReferenceCountingContainer: @unchecked Sendable, ObservableObject {
-    @Published var count: Int = 0
-    var observers: [AnyCancellable] = []
+    @Published var _count: Int = 0
+    @Published var _tappingActionCount: Int = 0
+    var observers: [UUID: AnyCancellable] = [:]
+    
+    let isValidInstance: Bool
+    
+    init(valid: Bool = true) {
+        self.isValidInstance = valid
+    }
+    
+    private let countLock = NSLock()
+    var count: Int {
+        get {
+            assert(isValidInstance, "Attempting to access an invalid ReferenceCountingContainer")
+            return countLock.withLock {
+                _count
+            }
+        }
+        set {
+            assert(isValidInstance, "Attempting to access an invalid ReferenceCountingContainer")
+            countLock.withLock {
+                _count = newValue
+            }
+        }
+    }
+    private let tappingCountLock = NSLock()
+    var tappingActionCount: Int {
+        get {
+            assert(isValidInstance, "Attempting to access an invalid ReferenceCountingContainer")
+            return tappingCountLock.withLock {
+                _tappingActionCount
+            }
+        }
+        set {
+            assert(isValidInstance, "Attempting to access an invalid ReferenceCountingContainer")
+            tappingCountLock.withLock {
+                _tappingActionCount = newValue
+            }
+        }
+    }
 }
 
 @safe
 struct InteractiveStoryView: View {
     var ir: StoryIR
     
-    @TaskLocal private static var performingActionCount = ReferenceCountingContainer()
+    @TaskLocal nonisolated private static var performingActionCount = ReferenceCountingContainer(valid: false)
     
     @Environment(\.dismiss) private var dismiss
     
@@ -380,7 +418,7 @@ struct InteractiveStoryView: View {
     
     func start() {
         @safe nonisolated(unsafe) let ir = ir
-        Task.detached { @Sendable in
+        detachedReferenceCountedTask { @Sendable in
             for action in ir.actions {
                 await perform(action: action)
             }
@@ -408,13 +446,15 @@ struct InteractiveStoryView: View {
         
         switch action {
         case .talk(let text, characterIDs: let characterIDs, characterNames: let characterNames, voicePath: let voicePath):
-            currentTalk = .init(
-                text: text,
-                characterIDs: characterIDs,
-                characterNames: characterNames
-            )
-            
-            await withCheckedContinuation { continuation in
+            Task {
+                Self.performingActionCount.tappingActionCount += 1
+                
+                currentTalk = .init(
+                    text: text,
+                    characterIDs: characterIDs,
+                    characterNames: characterNames
+                )
+                
                 if let voicePath,
                    let voice = talkAudios[voicePath],
                    let newPlayer = try? AVAudioPlayer(data: voice) {
@@ -441,14 +481,22 @@ struct InteractiveStoryView: View {
                     }
                 }
                 
-                currentInteractBlockingContinuation = continuation
+                await withCheckedContinuation { continuation in
+                    currentInteractBlockingContinuation = continuation
+                }
+                
+                Self.performingActionCount.count -= 1
+                Self.performingActionCount.tappingActionCount -= 1
             }
         case .telop(let text):
-            withAnimation {
-                currentTalk = nil
-                currentTelop = text
-            }
-            await withCheckedContinuation { continuation in
+            Task {
+                Self.performingActionCount.tappingActionCount += 1
+                
+                withAnimation {
+                    currentTalk = nil
+                    currentTelop = text
+                }
+                
                 if isAutoPlaying {
                     autoPlayTimer = .scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
                         DispatchQueue.main.async {
@@ -457,7 +505,12 @@ struct InteractiveStoryView: View {
                     }
                 }
                 
-                currentInteractBlockingContinuation = continuation
+                await withCheckedContinuation { continuation in
+                    currentInteractBlockingContinuation = continuation
+                }
+                
+                Self.performingActionCount.count -= 1
+                Self.performingActionCount.tappingActionCount -= 1
             }
         case .showModel(characterID: let characterID, modelPath: let modelPath, position: let position):
             if let index = allDiffLayouts.firstIndex(where: {
@@ -465,12 +518,24 @@ struct InteractiveStoryView: View {
             }) {
                 showingLayoutIndexs.updateValue(.init(characterID: characterID, position: position), forKey: index)
             }
+            
+            // Showing a model takes constant time
+            Task {
+                try? await Task.sleep(for: .seconds(0.3))
+                Self.performingActionCount.count -= 1
+            }
         case .hideModel(characterID: let characterID):
             let indexs = allDiffLayouts.enumerated()
                 .filter({ $0.element.characterID == characterID })
                 .map({ $0.offset })
             for index in indexs {
                 showingLayoutIndexs.removeValue(forKey: index)
+            }
+            
+            // Hiding a model takes constant time
+            Task {
+                try? await Task.sleep(for: .seconds(0.3))
+                Self.performingActionCount.count -= 1
             }
         case .moveModel(characterID: let characterID, position: let position):
             let indexs = allDiffLayouts.enumerated()
@@ -482,6 +547,12 @@ struct InteractiveStoryView: View {
                     showingLayoutIndexs.updateValue(currentState, forKey: index)
                 }
             }
+            
+            // Moving a model takes constant time
+            Task {
+                try? await Task.sleep(for: .seconds(0.3))
+                Self.performingActionCount.count -= 1
+            }
         case .act(characterID: let characterID, motionName: let motionName):
             let indexs = allDiffLayouts.enumerated()
                 .filter({ $0.element.characterID == characterID })
@@ -491,6 +562,12 @@ struct InteractiveStoryView: View {
                     currentState.motion = motionName
                     showingLayoutIndexs.updateValue(currentState, forKey: index)
                 }
+            }
+            
+            // FIXME: Resume when the action is really finished
+            Task {
+                try? await Task.sleep(for: .seconds(0.5))
+                Self.performingActionCount.count -= 1
             }
         case .express(characterID: let characterID, expressionName: let expressionName):
             let indexs = allDiffLayouts.enumerated()
@@ -502,13 +579,23 @@ struct InteractiveStoryView: View {
                     showingLayoutIndexs.updateValue(currentState, forKey: index)
                 }
             }
+            
+            // FIXME: Resume when the action is really finished
+            Task {
+                try? await Task.sleep(for: .seconds(0.5))
+                Self.performingActionCount.count -= 1
+            }
         case .horizontalShake(characterID: let characterID):
+            Self.performingActionCount.count -= 1
             break // FIXME
         case .verticalShake(characterID: let characterID):
+            Self.performingActionCount.count -= 1
             break // FIXME
         case .showBlackCover(duration: let duration):
             withAnimation(.linear(duration: duration)) {
                 blackCoverIsShowing = true
+            } completion: {
+                Self.performingActionCount.count -= 1
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
                 whiteCoverIsDisplaying = false
@@ -516,10 +603,14 @@ struct InteractiveStoryView: View {
         case .hideBlackCover(duration: let duration):
             withAnimation(.linear(duration: duration)) {
                 blackCoverIsShowing = false
+            } completion: {
+                Self.performingActionCount.count -= 1
             }
         case .showWhiteCover(duration: let duration):
             withAnimation(.linear(duration: duration)) {
                 whiteCoverIsDisplaying = true
+            } completion: {
+                Self.performingActionCount.count -= 1
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
                 blackCoverIsShowing = false
@@ -527,55 +618,107 @@ struct InteractiveStoryView: View {
         case .hideWhiteCover(duration: let duration):
             withAnimation(.linear(duration: duration)) {
                 whiteCoverIsDisplaying = false
+            } completion: {
+                Self.performingActionCount.count -= 1
             }
         case .shakeScreen(duration: let duration):
             screenShakeDuration = duration
+            
+            Task {
+                try? await Task.sleep(for: .seconds(duration))
+                Self.performingActionCount.count -= 1
+            }
         case .shakeDialogBox(duration: let duration):
             talkShakeDuration = duration
+            
+            Task {
+                try? await Task.sleep(for: .seconds(duration))
+                Self.performingActionCount.count -= 1
+            }
         case .changeBackground(path: let path):
             withAnimation {
                 backgroundImageURL = resolveURL(from: path)
             }
+            
+            Self.performingActionCount.count -= 1
         case .changeBGM(path: let path):
             bgmPlayer.pause()
             bgmPlayer.removeAllItems()
             let bgmItem = AVPlayerItem(url: resolveURL(from: path))
             bgmLooper = .init(player: bgmPlayer, templateItem: bgmItem)
             bgmPlayer.play()
+            
+            Self.performingActionCount.count -= 1
         case .changeSE(path: let path):
             sePlayer.replaceCurrentItem(with: .init(url: resolveURL(from: path)))
             sePlayer.play()
+            
+            Self.performingActionCount.count -= 1
         case .blocking(let actions):
-            await withTaskGroup { group in
-                for action in actions {
-                    group.addTask {
-                        await perform(action: action)
+            Self.performingActionCount.count -= 1
+            await withCheckedContinuation { continuation in
+                detachedReferenceCountedTask {
+                    await withTaskGroup { group in
+                        for action in actions {
+                            group.addTask {
+                                await perform(action: action)
+                            }
+                        }
+                        group.addTask {
+                            await perform(action: .waitForAll)
+                        }
                     }
+                    continuation.resume()
                 }
             }
         case .delay(seconds: let seconds):
             try? await Task.sleep(for: .seconds(seconds))
+            Self.performingActionCount.count -= 1
         case .forkTask(let actions):
-            Task.detached {
+            detachedReferenceCountedTask {
                 for action in actions {
                     await perform(action: action)
                 }
             }
+            Self.performingActionCount.count -= 1
         case .waitForAll:
             Self.performingActionCount.count -= 1
             if Self.performingActionCount.count > 0 {
+                let id = UUID()
                 await withCheckedContinuation { continuation in
-                    Self.performingActionCount.observers.append(Self.performingActionCount.$count.sink(receiveValue: { newCount in
+                    let observer = Self.performingActionCount.$_count.sink { newCount in
                         if newCount <= 0 {
                             continuation.resume()
                         }
-                    }))
+                    }
+                    Self.performingActionCount.observers.updateValue(observer, forKey: id)
                 }
+                Self.performingActionCount.observers.removeValue(forKey: id)
             }
-        default: break
+        case .waitForTap:
+            Self.performingActionCount.count -= 1
+            if Self.performingActionCount.tappingActionCount > 0 {
+                let id = UUID()
+                await withCheckedContinuation { continuation in
+                    let observer = Self.performingActionCount.$_tappingActionCount.sink { newCount in
+                        if newCount <= 0 {
+                            continuation.resume()
+                        }
+                    }
+                    Self.performingActionCount.observers.updateValue(observer, forKey: id)
+                }
+                Self.performingActionCount.observers.removeValue(forKey: id)
+            }
+        @unknown default: break
         }
-        
-        Self.performingActionCount.count -= 1
+    }
+    
+    func detachedReferenceCountedTask(operation: sending @escaping @isolated(any) () async -> Void) {
+        Task.detached {
+            await Self.$performingActionCount.withValue(.init()) {
+                await operation()
+            }
+        }
     }
     
     func exitViewer(dismiss doDismiss: Bool = true) {

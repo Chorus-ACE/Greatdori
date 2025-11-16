@@ -79,6 +79,8 @@
 		8C480C0C2EC61DEB00A8AE70 /* ZeileEditorSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C0B2EC61DE100A8AE70 /* ZeileEditorSidebar.swift */; };
 		8C480C0E2EC62F5900A8AE70 /* ZeileEditorFileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C0D2EC62F2600A8AE70 /* ZeileEditorFileEditView.swift */; };
 		8C480C102EC633B200A8AE70 /* ZeileEditorCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C0F2EC633AD00A8AE70 /* ZeileEditorCommands.swift */; };
+		8C48F2452EC8C73F00A8AE70 /* ZeileProductActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C48F2442EC8C73700A8AE70 /* ZeileProductActions.swift */; };
+		8C48F2472EC8D97200A8AE70 /* ZeileStoryViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C48F2462EC8D96E00A8AE70 /* ZeileStoryViewerView.swift */; };
 		8C499F8D2E4FD9CE0073FCB6 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 8C499F8C2E4FD9CE0073FCB6 /* SwiftUIIntrospect */; };
 		8C499F8F2E4FEAC20073FCB6 /* OnChange+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */; };
 		8C499F992E5177540073FCB6 /* NewsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F982E51774F0073FCB6 /* NewsDetailView.swift */; };
@@ -528,6 +530,8 @@
 		8C480C0B2EC61DE100A8AE70 /* ZeileEditorSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorSidebar.swift; sourceTree = "<group>"; };
 		8C480C0D2EC62F2600A8AE70 /* ZeileEditorFileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorFileEditView.swift; sourceTree = "<group>"; };
 		8C480C0F2EC633AD00A8AE70 /* ZeileEditorCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorCommands.swift; sourceTree = "<group>"; };
+		8C48F2442EC8C73700A8AE70 /* ZeileProductActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileProductActions.swift; sourceTree = "<group>"; };
+		8C48F2462EC8D96E00A8AE70 /* ZeileStoryViewerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileStoryViewerView.swift; sourceTree = "<group>"; };
 		8C499F892E4FCC050073FCB6 /* TestLyrics.json */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLyrics.json; sourceTree = "<group>"; };
 		8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnChange+.swift"; sourceTree = "<group>"; };
 		8C499F982E51774F0073FCB6 /* NewsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailView.swift; sourceTree = "<group>"; };
@@ -1151,6 +1155,8 @@
 				8C480C052EC60FA300A8AE70 /* ZeileEditorMainView.swift */,
 				8C480C0B2EC61DE100A8AE70 /* ZeileEditorSidebar.swift */,
 				8C480C0D2EC62F2600A8AE70 /* ZeileEditorFileEditView.swift */,
+				8C48F2442EC8C73700A8AE70 /* ZeileProductActions.swift */,
+				8C48F2462EC8D96E00A8AE70 /* ZeileStoryViewerView.swift */,
 			);
 			path = Zeile;
 			sourceTree = "<group>";
@@ -1807,6 +1813,7 @@
 				8C3DFB0E2EAF6B8D0004E1F5 /* CharacterSelector.swift in Sources */,
 				E94219392E8AA7B300F24974 /* GachaDetailView.swift in Sources */,
 				E94219112E8AA51600F24974 /* SongInfo.swift in Sources */,
+				8C48F2452EC8C73F00A8AE70 /* ZeileProductActions.swift in Sources */,
 				8CF827A92E8ACD380045CA97 /* LoginCampaignInfo.swift in Sources */,
 				E92401612E993B9D003BF482 /* NewsDetailsView.swift in Sources */,
 				E99B3D912EC29A700045EFC9 /* SettingsAccountsView.swift in Sources */,
@@ -1837,6 +1844,7 @@
 				8CBC97552EC193DC007A1E33 /* CodeEditor.swift in Sources */,
 				E960D3382EB64CE600EA6A5E /* StoryViewerDetails.swift in Sources */,
 				E955A0F92EBF08D800795C9D /* ISVDialogBox.swift in Sources */,
+				8C48F2472EC8D97200A8AE70 /* ZeileStoryViewerView.swift in Sources */,
 				8C480C062EC60FAA00A8AE70 /* ZeileEditorMainView.swift in Sources */,
 				E955A0F72EBDF9CA00795C9D /* FontSuggestions_EN.md in Sources */,
 				E94443CE2E8E80C200593F07 /* SettingsDebugView.swift in Sources */,
@@ -2349,6 +2357,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
 				PRODUCT_NAME = "Greatdori!";
@@ -2416,6 +2425,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
 				PRODUCT_NAME = "Greatdori!";
@@ -2549,6 +2559,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
 				PRODUCT_NAME = "Greatdori!";
@@ -2711,6 +2722,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
 				PRODUCT_NAME = "Greatdori!";

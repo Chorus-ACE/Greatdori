@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import DoriKit
 import Foundation
 
 struct ZeileProjectConfig: Codable {
@@ -21,6 +22,7 @@ struct ZeileProjectConfig: Codable {
     var codePhases: [String] = []
     
     struct ProjectMetadata: Codable {
+        var locale: DoriLocale = .jp
         var projectName: String = ""
         var author: String = ""
         var description: String = ""

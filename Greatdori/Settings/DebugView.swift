@@ -583,6 +583,8 @@ struct DebugPlaygroundView: View {
                             let downloadBase = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
                             let downloadURL = downloadBase.appending(path: "StoryIR.zir")
                             try? irData.binaryEncoded().write(to: downloadURL)
+                            try? DoriStoryBuilder.Conversion.plainText(fromIR: irData)
+                                .write(to: downloadBase.appending(path: "StoryIR.txt"), atomically: true, encoding: .utf8)
                             
                             if let bdJSON = DoriStoryBuilder.Conversion.bestdoriJSON(fromIR: irData) {
                                 let bdURL = downloadBase.appending(path: "StoryBestdori.json")

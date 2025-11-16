@@ -22,58 +22,14 @@ struct ZeileEditorSidebar: View {
     
     @ObservedObject var document: ZeileProjectDocument
     @Binding var fileSelection: FileWrapper?
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab: SidebarTab = .code
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                Button(action: {
-                    selectedTab = .code
-                }, label: {
-                    HStack {
-                        Spacer(minLength: 0)
-                        Image(systemName: "applescript")
-                            .padding(6)
-                        Spacer(minLength: 0)
-                    }
-                    .background {
-                        Capsule()
-                            .fill(.accent)
-                            .opacity(selectedTab == .code ? 1 : 0)
-                    }
-                    .contentShape(Rectangle())
-                })
-                Button(action: {
-                    selectedTab = .assets
-                }, label: {
-                    HStack {
-                        Spacer(minLength: 0)
-                        Image(systemName: "folder")
-                            .padding(6)
-                        Spacer(minLength: 0)
-                    }
-                    .background {
-                        Capsule()
-                            .fill(.accent)
-                            .opacity(selectedTab == .assets ? 1 : 0)
-                    }
-                    .contentShape(Rectangle())
-                })
-                Button(action: {
-                    selectedTab = .diagnostics
-                }, label: {
-                    HStack {
-                        Spacer(minLength: 0)
-                        Image(systemName: "exclamationmark.triangle")
-                            .padding(6)
-                        Spacer(minLength: 0)
-                    }
-                    .background {
-                        Capsule()
-                            .fill(.accent)
-                            .opacity(selectedTab == .diagnostics ? 1 : 0)
-                    }
-                    .contentShape(Rectangle())
-                })
+                tabButton(for: .code, systemImage: "ellipsis.curlybraces")
+                tabButton(for: .assets, systemImage: "folder")
+                tabButton(for: .diagnostics, systemImage: "exclamationmark.triangle")
             }
             .font(.system(size: 14))
             .buttonStyle(.plain)
@@ -92,6 +48,27 @@ struct ZeileEditorSidebar: View {
         .onReceive(Self.switchTabSubject) { newTab in
             selectedTab = newTab
         }
+    }
+    
+    @ViewBuilder
+    private func tabButton(for tab: SidebarTab, systemImage: String) -> some View {
+        Button(action: {
+            selectedTab = tab
+        }, label: {
+            HStack {
+                Spacer(minLength: 0)
+                Image(systemName: systemImage)
+                    .padding(6)
+                Spacer(minLength: 0)
+            }
+            .foregroundStyle(selectedTab == tab && colorScheme == .light ? .white : .primary)
+            .background {
+                Capsule()
+                    .fill(.accent)
+                    .opacity(selectedTab == tab ? 1 : 0)
+            }
+            .contentShape(Rectangle())
+        })
     }
     
     enum SidebarTab {

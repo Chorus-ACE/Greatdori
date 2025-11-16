@@ -160,6 +160,13 @@ struct StoryDetailView: View {
                     Image(systemName: "triangle")
                 })
             }
+            #if os(macOS)
+            if AppFlag.DEBUG {
+                ToolbarItem {
+                    debugMenu
+                }
+            }
+            #endif
         }
         .onChange(of: interactivePlayerIsInFullScreen) {
             #if os(iOS)
@@ -211,6 +218,51 @@ struct StoryDetailView: View {
         }
         transcript = asset?.transcript
     }
+    
+    #if os(macOS)
+    @ViewBuilder
+    private var debugMenu: some View {
+        let voiceBundlePath = {
+            switch type {
+            case .event:
+                "\(locale.rawValue)/sound/voice/scenario/eventstory\(unsafeAssociatedID)_\(unsafeSecondaryAssociatedID!)"
+            case .main:
+                "\(locale.rawValue)/sound/voice/scenario/mainstory\(unsafeAssociatedID)"
+            case .band:
+                "\(locale.rawValue)/sound/voice/scenario/\(voiceAssetBundleName!)"
+            case .card:
+                "\(locale.rawValue)/sound/voice/scenario/resourceset/\(unsafeAssociatedID)"
+            case .actionSet:
+                "\(locale.rawValue)/sound/voice/scenario/actionset/actionset\(Int(floor(Double(unsafeAssociatedID)! / 200) * 10))"
+            case .afterLive:
+                "\(locale.rawValue)/sound/voice/scenario/afterlivetalk/group\(Int(floor(Double(unsafeAssociatedID)! / 100)))"
+            }
+        }()
+        if let asset {
+            Menu(String("Debug"), systemImage: "ant.fill") {
+                Section {
+                    Button(String("Dump IR"), systemImage: "text.word.spacing") {
+                        let downloadBase = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+                        let dst = downloadBase.appending(path: "DumpIR.txt")
+                        let ir = DoriStoryBuilder.Conversion.zeileIR(
+                            fromBandori: asset,
+                            in: locale,
+                            voiceBundlePath: voiceBundlePath
+                        )
+                        let text = DoriStoryBuilder.Conversion.plainText(fromIR: ir)
+                        try? text.write(to: dst, atomically: true, encoding: .utf8)
+                        NSWorkspace.shared.selectFile(
+                            nil,
+                            inFileViewerRootedAtPath: dst.path
+                        )
+                    }
+                }
+            }
+            .menuIndicator(.hidden)
+            .menuStyle(.button)
+        }
+    }
+    #endif
     
     struct StoryDetailInteractiveStoryEntryView: View {
         var title: String
