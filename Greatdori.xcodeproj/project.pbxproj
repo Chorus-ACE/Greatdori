@@ -32,7 +32,7 @@
 		8C0C99892E296A5800549B5C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0C99862E296A5800549B5C /* ContentView.swift */; };
 		8C0C998A2E296A5800549B5C /* GreatdoriApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0C99872E296A5800549B5C /* GreatdoriApp.swift */; };
 		8C2B64022E940B2800D003D1 /* InteractiveStory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2B64012E940B2100D003D1 /* InteractiveStory.swift */; };
-		8C2B64262E95600B00D003D1 /* GeneralCardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2B64252E95600400D003D1 /* GeneralCardSelector.swift */; };
+		8C2B64262E95600B00D003D1 /* CardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2B64252E95600400D003D1 /* CardSelector.swift */; };
 		8C2B642B2E9581EC00D003D1 /* CollectionCode_EN.md in Resources */ = {isa = PBXBuildFile; fileRef = 8C2B642A2E9581EC00D003D1 /* CollectionCode_EN.md */; };
 		8C2BB9B42E92AF3C00D003D1 /* StoryViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2BB9B32E92AF3700D003D1 /* StoryViewer.swift */; };
 		8C2BD6442E9248B600D003D1 /* ItemSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2BD6432E9248AE00D003D1 /* ItemSelector.swift */; };
@@ -249,7 +249,7 @@
 		E99B57652EC1E7DF0045EFC9 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B57642EC1E7DD0045EFC9 /* Station.swift */; };
 		E9A126FC2E8CB62000BBD39E /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A126FB2E8CB61900BBD39E /* EventTracker.swift */; };
 		E9AE639E2EB745B100490B75 /* SettingsFontsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE639D2EB745B100490B75 /* SettingsFontsView.swift */; };
-		E9AE9E082E909EDF00AAB049 /* CardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE9E072E909ED100AAB049 /* CardSelector.swift */; };
+		E9AE9E082E909EDF00AAB049 /* SettingsCollectionCardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE9E072E909ED100AAB049 /* SettingsCollectionCardSelector.swift */; };
 		E9AF51252EAC634100BB808F /* TypeNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AF51242EAC633D00BB808F /* TypeNames.swift */; };
 		E9B17BBB2EA5DC430049C92C /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */; };
 		E9CD3A482E58975D00BF5EA9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A472E58975900BF5EA9 /* Extensions.swift */; };
@@ -482,7 +482,7 @@
 		8C0C99872E296A5800549B5C /* GreatdoriApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreatdoriApp.swift; sourceTree = "<group>"; };
 		8C0C99C22E2E664900549B5C /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		8C2B64012E940B2100D003D1 /* InteractiveStory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveStory.swift; sourceTree = "<group>"; };
-		8C2B64252E95600400D003D1 /* GeneralCardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralCardSelector.swift; sourceTree = "<group>"; };
+		8C2B64252E95600400D003D1 /* CardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSelector.swift; sourceTree = "<group>"; };
 		8C2B642A2E9581EC00D003D1 /* CollectionCode_EN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CollectionCode_EN.md; sourceTree = "<group>"; };
 		8C2BB9B32E92AF3700D003D1 /* StoryViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewer.swift; sourceTree = "<group>"; };
 		8C2BD6432E9248AE00D003D1 /* ItemSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSelector.swift; sourceTree = "<group>"; };
@@ -694,7 +694,7 @@
 		E99B57642EC1E7DD0045EFC9 /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		E9A126FB2E8CB61900BBD39E /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
 		E9AE639D2EB745B100490B75 /* SettingsFontsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFontsView.swift; sourceTree = "<group>"; };
-		E9AE9E072E909ED100AAB049 /* CardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSelector.swift; sourceTree = "<group>"; };
+		E9AE9E072E909ED100AAB049 /* SettingsCollectionCardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCollectionCardSelector.swift; sourceTree = "<group>"; };
 		E9AEC8C72EBA2EFC00490B75 /* FontSuggestions_ZH-HANS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "FontSuggestions_ZH-HANS.md"; sourceTree = "<group>"; };
 		E9AF51242EAC633D00BB808F /* TypeNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeNames.swift; sourceTree = "<group>"; };
 		E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
@@ -1233,7 +1233,7 @@
 				E94218FF2E8AA40E00F24974 /* CardDetailView.swift */,
 				E94219012E8AA43000F24974 /* CardDetailStatsView.swift */,
 				E942191F2E8AA5FD00F24974 /* DetailsCardsSection.swift */,
-				8C2B64252E95600400D003D1 /* GeneralCardSelector.swift */,
+				8C2B64252E95600400D003D1 /* CardSelector.swift */,
 			);
 			path = Card;
 			sourceTree = "<group>";
@@ -1370,7 +1370,7 @@
 				E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */,
 				E99B3D902EC29A670045EFC9 /* SettingsAccountsView.swift */,
 				E94443CD2E8E80BC00593F07 /* SettingsDebugView.swift */,
-				E9AE9E072E909ED100AAB049 /* CardSelector.swift */,
+				E9AE9E072E909ED100AAB049 /* SettingsCollectionCardSelector.swift */,
 				E90769D12E546D5B00C9871C /* DebugView.swift */,
 				8CC046DB2E6C8F5D009FDC13 /* AppFlags.swift */,
 				E9490BB52E937BBB00E50D3F /* CollectionCode_ZH-HANS.md */,
@@ -1858,9 +1858,9 @@
 				E942190C2E8AA4C400F24974 /* SongDetailView.swift in Sources */,
 				E942192F2E8AA72D00F24974 /* DetailEventsSection.swift in Sources */,
 				E94443C72E8E6A2E00593F07 /* SettingsLocaleView.swift in Sources */,
-				8C2B64262E95600B00D003D1 /* GeneralCardSelector.swift in Sources */,
+				8C2B64262E95600B00D003D1 /* CardSelector.swift in Sources */,
 				E94219222E8AA65500F24974 /* DetailSongsSection.swift in Sources */,
-				E9AE9E082E909EDF00AAB049 /* CardSelector.swift in Sources */,
+				E9AE9E082E909EDF00AAB049 /* SettingsCollectionCardSelector.swift in Sources */,
 				E94443C92E8E6C8200593F07 /* SettingsHomeView.swift in Sources */,
 				E9A126FC2E8CB62000BBD39E /* EventTracker.swift in Sources */,
 				8CD28FF22E9F6D5700831458 /* SongSelector.swift in Sources */,

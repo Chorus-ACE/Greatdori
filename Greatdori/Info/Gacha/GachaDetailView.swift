@@ -12,9 +12,10 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftUI
 import DoriKit
+import Foundation
 import SDWebImageSwiftUI
+import SwiftUI
 
 
 // MARK: GachaDetailView
@@ -25,6 +26,8 @@ struct GachaDetailView: View {
         DetailViewBase(previewList: allGachas, initialID: id) { information in
             GachaDetailOverviewView(information: information)
             DetailsEventsSection(events: information.events)
+            GachaDetailCardsView(information: information)
+            GachaDetailPossibilityView(information: information)
             DetailArtsSection {
                 ArtsTab("Gacha.arts.banner") {
                     for locale in DoriLocale.allCases {
@@ -163,22 +166,25 @@ struct GachaDetailOverviewView: View {
                             Divider()
                         }
                         
-                        //                        //MARK: Spotlight Card
-                        //                        if !cardsArray.isEmpty {
-                        //                            ListItemWithWrappingView(title: {
-                        //                                Text("Event.spotlight-card")
-                        //                                    .bold()
-                        //                            }, element: { value in
-                        //                                NavigationLink(destination: {
-                        //                                    //TODO: [NAVI785]CardD
-                        //                                    Text("\(value)")
-                        //                                }, label: {
-                        //                                    CardPreviewImage(value!, sideLength: cardThumbnailSideLength, showNavigationHints: true)
-                        //                                })
-                        //                                .buttonStyle(.plain)
-                        //                            }, caption: nil, contentArray: cardsArray, columnNumbers: 3, elementWidth: cardThumbnailSideLength)
-                        //                            Divider()
-                        //                        }
+                        // MARK: Spotlight Card
+                        if !information.pickupCards.isEmpty {
+                            ListItem(displayMode: .compactOnly, title: {
+                                Text("Gacha.spotlight-card")
+                                    .bold()
+                            }, value: {
+                                WrappingHStack(columnSpacing: 3, contentWidth: cardThumbnailSideLength) {
+                                    ForEach(information.pickupCards) { card in
+                                        NavigationLink(destination: {
+                                            CardDetailView(id: card.id)
+                                        }, label: {
+                                            CardPreviewImage(card, sideLength: cardThumbnailSideLength, showNavigationHints: true)
+                                        })
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                            })
+                            Divider()
+                        }
                         
                         // MARK: Description
                         Group {
@@ -243,5 +249,252 @@ struct GachaDetailOverviewView: View {
              */
         }
         
+    }
+}
+
+
+struct GachaDetailCardsView: View {
+    var information: ExtendedGacha
+    @State var locale: DoriLocale = .primaryLocale
+    @State var raritySectionIsExpanded: [Int: Bool] = [:]
+    var body: some View {
+        LazyVStack(pinnedViews: .sectionHeaders) {
+            Section(content: {
+                VStack {
+                    if !information.cardDetails.isEmpty, let rates = information.gacha.rates.forLocale(locale) {
+                        let rarities = rates.keys.sorted(by: >)
+                        ForEach(rarities, id: \.self) { rarity in
+                            if rates[rarity]!.weightTotal > 0 {
+                                CustomGroupBox {
+                                    VStack {
+                                        HStack {
+                                            Text(verbatim: "\(rates[rarity]!.rate)%")
+                                                .bold()
+                                            HStack(spacing: 1) {
+                                                ForEach(1...rarity, id: \.self) { _ in
+                                                    Image(rarity > 2 ? .trainedStar : .star)
+                                                        .resizable()
+                                                        .frame(width: 16, height: 16)
+                                                }
+                                            }
+                                            Spacer()
+                                            if let cardsCount = information.gacha.details.forLocale(locale)?.filter({ $0.value.rarityIndex == rarity }).count {
+                                                Text("\(cardsCount)")
+                                                    .foregroundStyle(.secondary)
+                                            }
+                                            Image(systemName: "chevron.forward")
+                                                .rotationEffect(Angle(degrees: (raritySectionIsExpanded[rarity] ?? false) ? 90 : 0))
+                                        }
+                                        .contentShape(Rectangle())
+                                        .onTapGesture {
+                                            withAnimation {
+                                                _ = raritySectionIsExpanded.updateValue(raritySectionIsExpanded[rarity]?.reversed() ?? true, forKey: rarity)
+                                            }
+                                        }
+                                        
+                                        if raritySectionIsExpanded[rarity] ?? false {
+                                            if let cards = information.gacha.details.forLocale(locale)?.filter { $0.value.rarityIndex == rarity } {
+                                                
+                                                if cards.contains(where: { $0.value.pickup }) {
+                                                    let pickUpCards = cards.filter { $0.value.pickup }
+                                                    /*
+                                                     Button(action: {
+                                                     if pickUpCards.count > 1 {
+                                                     cardListPresentation = information.cardDetails[rarity]!.filter { pickUpCards.map { $0.key }.contains($0.id) }
+                                                     } else {
+                                                     cardDetailPresentation = pickUpCards.first!.key
+                                                     }
+                                                     }, label: {
+                                                     HStack {
+                                                     VStack(alignment: .leading) {
+                                                     Text(verbatim: "\(unsafe String(format: "%.2f", Double(pickUpCards.first!.value.weight) / Double(rates[rarity]!.weightTotal) * rates[rarity]!.rate))%")
+                                                     Spacer()
+                                                     Text("\(pickUpCards.count)张")
+                                                     .font(.system(size: 13))
+                                                     .opacity(0.6)
+                                                     }
+                                                     Spacer()
+                                                     CardIconView(information.cardDetails[rarity]!.first(where: { $0.id == pickUpCards.first!.key })!)
+                                                     }
+                                                     })
+                                                     */
+                                                }
+                                                
+                                                let nonPickUpCards = cards.filter { !$0.value.pickup }
+                                                Text(verbatim: "\(unsafe String(format: "%.2f", Double(nonPickUpCards.first!.value.weight) / Double(rates[rarity]!.weightTotal) * rates[rarity]!.rate))%")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .frame(maxWidth: infoContentMaxWidth)
+            }, header: {
+                HStack {
+                    Text("Gacha.cards")
+                        .font(.title2)
+                        .bold()
+                    DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
+                    Spacer()
+                }
+                .frame(maxWidth: 615)
+            })
+        }
+    }
+}
+
+// MARK: GachaDetailPossibilityView
+struct GachaDetailPossibilityView: View {
+    var information: ExtendedGacha
+    @State var locale: DoriLocale = .primaryLocale
+    @State var selectedCard: PreviewCard?
+    @State var calculatePlaysByPossibility = true
+    @State var possibility: Double = 0.5
+    @State var plays: Int = 1
+    var body: some View {
+        LazyVStack(pinnedViews: .sectionHeaders) {
+            Section(content: {
+                VStack {
+                    CustomGroupBox {
+                        VStack {
+                            ListItem(title: {
+                                Text("Gacha.possibility.card")
+                            }, value: {
+                                ItemSelectorButton(selection: $selectedCard, updateList: {
+                                    information.cardDetails.flatMap({ $0.value })
+                                })
+                            })
+                            
+                            Divider()
+                            
+                            ListItem(title: {
+                                Text("Gacha.possibility.calculate")
+                            }, value: {
+                                Picker(selection: $calculatePlaysByPossibility, content: {
+                                    Text("Gacha.possibility.calculate.plays-by-possibility")
+                                        .tag(true)
+                                    Text("Gacha.possibility.calculate.possibility-by-plays")
+                                        .tag(false)
+                                }, label: {
+                                    EmptyView()
+                                })
+                                .labelsHidden()
+                            })
+                            
+                            Divider()
+                            
+                            if calculatePlaysByPossibility {
+                                ListItem(title: {
+                                    Text("Gacha.possibility.possibility")
+                                }, value: {
+                                    HStack {
+                                        TextField("", value: $possibility, formatter: PossibilityNumberFormatter())
+                                            .labelsHidden()
+                                    }
+                                })
+                            } else {
+                                HStack {
+                                    TextField("", value: $plays, formatter: PlaysNumberFormatter())
+                                        .labelsHidden()
+                                }
+                            }
+                        }
+                    }
+                    if let selectedCard {
+                        CustomGroupBox {
+                            var singlePossibility = information.cardDetails.first(where: { $0.value.contains(where: {$0.id == selectedCard.id}) })!.key
+                            
+                            Text("\(information.gacha.rates)")
+                            
+//                            Text(singlePossibility)
+                            var singlePlayCost = information.gacha.paymentMethods.first(where: { [.freeStar, .paidStar].contains($0.paymentMethod) })?.quantity
+                            HStack {
+                                if calculatePlaysByPossibility {
+                                } else {
+                                    let calculatedPossibility = 1 - exp(Double(plays) * log1p(-Double(singlePossibility)))
+                                    if let singlePlayCost {
+                                        Text("Gacha.possibility.plays.\(plays).\(plays*singlePlayCost).\(calculatedPossibility)")
+                                    } else {
+                                        Text("Gacha.possibility.plays.\(plays).nil.\(calculatedPossibility)")
+                                    }
+                                }
+                                Spacer(minLength: 0)
+                            }
+                            .multilineTextAlignment(.leading)
+                        }
+                    }
+                }
+                .frame(maxWidth: infoContentMaxWidth)
+            }, header: {
+                HStack {
+                    Text("Gacha.possibility")
+                        .font(.title2)
+                        .bold()
+                    DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
+                    Spacer()
+                }
+                .frame(maxWidth: 615)
+            })
+        }
+    }
+}
+
+
+class PossibilityNumberFormatter: NumberFormatter {
+    override init() {
+//        self.condition = condition
+        super.init()
+        self.numberStyle = .decimal
+        self.minimumFractionDigits = 0
+//        self.maximumFractionDigits = 2
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func getObjectValue(_ obj: AutoreleasingUnsafeMutablePointer<AnyObject?>?, for string: String, errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
+        guard let value = Double(string) else { return false }
+        guard value >= 0 && value < 100 else { return false }
+        obj?.pointee = NSNumber(value: value)
+        return true
+    }
+    
+    override func string(for obj: Any?) -> String? {
+        guard let number = obj as? NSNumber else { return nil }
+        let value = number.doubleValue
+        guard value >= 0 && value < 100 else { return nil }
+        return super.string(for: number)
+    }
+}
+
+
+class PlaysNumberFormatter: NumberFormatter {
+    override init() {
+        //        self.condition = condition
+        super.init()
+        self.numberStyle = .decimal
+        self.minimumFractionDigits = 0
+        //        self.maximumFractionDigits = 2
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func getObjectValue(_ obj: AutoreleasingUnsafeMutablePointer<AnyObject?>?, for string: String, errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
+        guard let value = Double(string) else { return false }
+        guard value >= 0 else { return false }
+        obj?.pointee = NSNumber(value: value)
+        return true
+    }
+    
+    override func string(for obj: Any?) -> String? {
+        guard let number = obj as? NSNumber else { return nil }
+        let value = number.doubleValue
+        guard value >= 0 else { return nil }
+        return super.string(for: number)
     }
 }

@@ -20,8 +20,9 @@ struct MultiCardSelector: View {
     let gridLayoutItemWidth: CGFloat = 200
     let galleryLayoutItemMinimumWidth: CGFloat = 400
     let galleryLayoutItemMaximumWidth: CGFloat = 500
+    var updateList: () async -> [PreviewCard]? = { await Card.all() }
     var body: some View {
-        ItemSelectorView("Cards", selection: $selection, initialLayout: 1, layoutOptions: [("Filter.view.list", "list.bullet", 1), ("Filter.view.grid", "square.grid.2x2", 2), ("Filter.view.gallery", "text.below.rectangle", 3)]) { layout, _, content, _ in
+        ItemSelectorView(selection: $selection, initialLayout: 1, updateList: updateList, layoutOptions: [("Filter.view.list", "list.bullet", 1), ("Filter.view.grid", "square.grid.2x2", 2), ("Filter.view.gallery", "text.below.rectangle", 3)]) { layout, _, content, _ in
             if layout == 1 {
                 LazyVStack {
                     content
@@ -35,7 +36,6 @@ struct MultiCardSelector: View {
         } eachContent: { layout, element in
             CardInfo(element, layoutType: layout)
         }
-        .contentUnavailableImage(systemName: "line.horizontal.star.fill.line.horizontal")
         .resultCountDescription { count in
             "Card.count.\(count)"
         }
@@ -44,8 +44,9 @@ struct MultiCardSelector: View {
 
 struct CardSelector: View {
     @Binding var selection: PreviewCard?
+    var updateList: () async -> [PreviewCard]? = { await Card.all() }
     var body: some View {
-        MultiCardSelector(selection: .init { [selection].compactMap { $0 } } set: { selection = $0.first })
+        MultiCardSelector(selection: .init { [selection].compactMap { $0 } } set: { selection = $0.first }, updateList: updateList)
             .selectorDisablesMultipleSelection()
     }
 }

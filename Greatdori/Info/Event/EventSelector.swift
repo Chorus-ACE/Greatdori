@@ -18,7 +18,7 @@ import SwiftUI
 struct MultiEventSelector: View {
     @Binding var selection: [PreviewEvent]
     var body: some View {
-        ItemSelectorView("Events", selection: $selection, initialLayout: true, layoutOptions: [("Filter.view.banner-and-details", "text.below.rectangle", true)]) { showDetails, elements, content, eachContent in
+        ItemSelectorView(selection: $selection, initialLayout: true, layoutOptions: [("Filter.view.banner-and-details", "text.below.rectangle", true)]) { showDetails, elements, content, eachContent in
             ViewThatFits {
                 LazyVStack(spacing: showDetails ? nil : 15) {
                     let events = elements.chunked(into: 2)
@@ -45,7 +45,6 @@ struct MultiEventSelector: View {
         } eachContent: { showDetails, element in
             EventInfo(element, showDetails: showDetails)
         }
-        .contentUnavailableImage(systemName: "star.hexagon")
         .resultCountDescription { count in
             "Event.count.\(count)"
         }

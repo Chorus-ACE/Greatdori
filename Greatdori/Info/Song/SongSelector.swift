@@ -19,7 +19,7 @@ struct MultiSongSelector: View {
     @Binding var selection: [PreviewSong]
     let gridLayoutItemWidth: CGFloat = 225
     var body: some View {
-        ItemSelectorView("Songs", selection: $selection, initialLayout: .horizontal, layoutOptions: verticalAndHorizontalLayouts) { layout, _, content, _ in
+        ItemSelectorView(selection: $selection, initialLayout: .horizontal, layoutOptions: verticalAndHorizontalLayouts) { layout, _, content, _ in
             if layout == .horizontal {
                 LazyVStack {
                     content
@@ -33,7 +33,6 @@ struct MultiSongSelector: View {
         } eachContent: { layout, element in
             SongInfo(element, layout: layout)
         }
-        .contentUnavailableImage(systemName: "music.note")
         .resultCountDescription { count in
             "Song.count.\(count)"
         }

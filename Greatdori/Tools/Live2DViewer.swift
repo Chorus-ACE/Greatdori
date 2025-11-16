@@ -110,7 +110,7 @@ struct Live2DViewerView: View {
                                 })
                                 .buttonStyle(.plain)
                             }
-                        } else {
+                        } else if selectionIsMeaningful() {
                             CustomGroupBox {
                                 HStack {
                                     Spacer()

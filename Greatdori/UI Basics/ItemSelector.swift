@@ -16,8 +16,8 @@ import DoriKit
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
-struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable, Layout, LayoutPicker: View, Container: View, Content: View>: View {
-    var titleKey: LocalizedStringResource
+struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable & DoriTypeDescribable, Layout, LayoutPicker: View, Container: View, Content: View>: View {
+//    var titleKey: LocalizedStringResource
     @Binding var selection: [Element]
     var updateList: @Sendable () async -> [Element]?
     var makeLayoutPicker: (Binding<Layout>) -> LayoutPicker
@@ -25,13 +25,11 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
     var makeSomeContent: (Layout, Element) -> Content
     @State var currentLayout: Layout
     
-    var unavailablePrompt: LocalizedStringResource
     var unavailableSystemImage: String = "bolt.horizontal.fill"
-    var searchPlaceholder: LocalizedStringResource
     var getResultCountDescription: ((Int) -> LocalizedStringResource)?
     
     init(
-        _ titleKey: LocalizedStringResource,
+//        _ titleKey: LocalizedStringResource,
         selection: Binding<[Element]>,
         initialLayout: Layout,
         layoutOptions: [(LocalizedStringKey, String, Layout)],
@@ -39,7 +37,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
         @ViewBuilder eachContent: @escaping (_ layout: Layout, _ element: Element) -> Content
     ) where Element: ListGettable, Layout: Hashable, LayoutPicker == Greatdori.LayoutPicker<Layout> {
         self.init(
-            titleKey,
+//            titleKey,
             selection: selection,
             initialLayout: initialLayout,
             layoutPicker: { layout in
@@ -50,7 +48,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
         )
     }
     init(
-        _ titleKey: LocalizedStringResource,
+//        _ titleKey: LocalizedStringResource,
         selection: Binding<[Element]>,
         initialLayout: Layout,
         updateList: @Sendable @escaping () async -> [Element]?,
@@ -59,7 +57,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
         @ViewBuilder eachContent: @escaping (_ layout: Layout, _ element: Element) -> Content
     ) where Layout: Hashable, LayoutPicker == Greatdori.LayoutPicker<Layout> {
         self.init(
-            titleKey,
+//            titleKey,
             selection: selection,
             initialLayout: initialLayout,
             updateList: updateList,
@@ -71,7 +69,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
         )
     }
     init(
-        _ titleKey: LocalizedStringResource,
+//        _ titleKey: LocalizedStringResource,
         selection: Binding<[Element]>,
         initialLayout: Layout,
         @ViewBuilder layoutPicker: @escaping (Binding<Layout>) -> LayoutPicker,
@@ -79,7 +77,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
         @ViewBuilder eachContent: @escaping (_ layout: Layout, _ element: Element) -> Content
     ) where Element: ListGettable {
         self.init(
-            titleKey,
+//            titleKey,
             selection: selection,
             initialLayout: initialLayout,
             updateList: Element.all,
@@ -89,7 +87,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
         )
     }
     init(
-        _ titleKey: LocalizedStringResource,
+//        _ titleKey: LocalizedStringResource,
         selection: Binding<[Element]>,
         initialLayout: Layout,
         updateList: @Sendable @escaping () async -> [Element]?,
@@ -97,16 +95,14 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
         @ViewBuilder container: @escaping (_ layout: Layout, _ elements: [Element], _ content: AnyView, _ eachContent: @escaping (Element) -> AnyView) -> Container,
         @ViewBuilder eachContent: @escaping (_ layout: Layout, _ element: Element) -> Content
     ) {
-        self.titleKey = titleKey
+//        self.titleKey = titleKey
         self._selection = selection
         self.updateList = updateList
         self.makeLayoutPicker = layoutPicker
         self.makeContainer = container
         self.makeSomeContent = eachContent
         self._currentLayout = .init(initialValue: initialLayout)
-        self.unavailablePrompt = "Search.unavailable.\(String(localized: titleKey))"
-        self.searchPlaceholder = "Search.prompt.\(String(localized: titleKey))"
-        self._filter = .init(initialValue: .recoverable(id: titleKey.key))
+        self._filter = .init(initialValue: .recoverable(id: Element.singularName.key))
     }
     
     @Environment(\.dismiss) private var dismiss
@@ -195,7 +191,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
                         }
                     } else {
                         ExtendedConstraints {
-                            ContentUnavailableView(unavailablePrompt, systemImage: unavailableSystemImage, description: Text("Search.unavailable.description"))
+                            ContentUnavailableView("Search.unavailable.\(Element.singularName)", systemImage: Element.symbol, description: Text("Search.unavailable.description"))
                                 .onTapGesture {
                                     Task {
                                         await getList()
@@ -205,8 +201,8 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
                     }
                 }
             }
-            .searchable(text: $searchedText, prompt: searchPlaceholder)
-            .navigationTitle(titleKey)
+            .searchable(text: $searchedText, prompt: "Search.prompt.\(Element.pluralName)")
+            .navigationTitle(Element.pluralName)
             .wrapIf(searchedElements != nil, in: { content in
                 if #available(iOS 26.0, *) {
                     content.navigationSubtitle((searchedText.isEmpty && !filter.isFiltered) ? (getResultCountDescription?(searchedElements!.count) ?? "Search.item.\(searchedElements!.count)") :  "Search.result.\(searchedElements!.count)")
@@ -276,7 +272,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
     
     func getList() async {
         infoIsAvailable = true
-        withDoriCache(id: "\(titleKey.key)List_\(filter.identity)", trait: .realTime) {
+        withDoriCache(id: "\(Element.singularName.key)List_\(filter.identity)", trait: .realTime) {
             await updateList()
         }.onUpdate {
             if let cards = $0 {
@@ -288,12 +284,8 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
         }
     }
 }
+
 extension ItemSelectorView {
-    func contentUnavailableImage(systemName: String) -> Self {
-        var mutable = self
-        mutable.unavailableSystemImage = systemName
-        return mutable
-    }
     func resultCountDescription(content: ((Int) -> LocalizedStringResource)?) -> Self {
         var mutable = self
         mutable.getResultCountDescription = content
@@ -309,9 +301,10 @@ extension EnvironmentValues {
     @Entry fileprivate var _itemSelectorMultiSelectionDisabled = false
 }
 
-struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCacheable & TitleDescribable & DoriTypeDescribable>: View { 
+struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCacheable & TitleDescribable & DoriTypeDescribable & ListGettable>: View {
     @Binding var selection: Element?
     var closeWindowOnSelectionChange = false
+    var updateList: () async -> [Element]? = { await Element.all() }
     @State private var selectorWindowIsPresented = false
     var body: some View {
         Button(action: {
@@ -343,7 +336,7 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
                 if let eventBinding = bindingCast($selection, to: PreviewEvent?.self) {
                     EventSelector(selection: eventBinding)
                 } else if let cardBinding = bindingCast($selection, to: PreviewCard?.self) {
-                    CardSelector(selection: cardBinding)
+                    CardSelector(selection: cardBinding, updateList: castUpdateList(updateList, to: PreviewCard.self)!)
                 } else if let costumeBinding = bindingCast($selection, to: PreviewCostume?.self) {
                     CostumeSelector(selection: costumeBinding)
                 } else if let characterBinding = bindingCast($selection, to: PreviewCharacter?.self) {
@@ -352,13 +345,22 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
                     SongSelector(selection: songBinding)
                 }
             }
-            #if os(macOS)
+#if os(macOS)
             .introspect(.window, on: .macOS(.v14...)) { window in
                 window.standardWindowButton(.zoomButton)?.isEnabled = false
                 window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
                 window.level = .floating
             }
-            #endif
+#endif
+        }
+    }
+    func castUpdateList<T>(
+        _ updateList: @escaping () async -> [Element]?,
+        to: T.Type
+    ) -> (() async -> [T]?)? {
+        return {
+            let array = await updateList()
+            return array as? [T]
         }
     }
 }

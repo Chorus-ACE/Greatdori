@@ -19,49 +19,10 @@ import SDWebImageSwiftUI
 struct ComicDetailView: View {
     var id: Int
     var allComics: [Comic]? = nil
-    
-    @State var locale: DoriLocale = .primaryLocale
-    @State var comicLoadingHadFailed = false
     var body: some View {
         DetailViewBase(forType: Comic.self, previewList: allComics, initialID: id) { information in
             ComicDetailOverviewView(information: information)
-            
-            LazyVStack(pinnedViews: .sectionHeaders) {
-                Section(content: {
-                    WebImage(url: information.imageURL(in: locale, allowsFallback: false), content: { image in
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    }, placeholder: {
-                        if !comicLoadingHadFailed {
-                            CustomGroupBox {
-                                HStack {
-                                    Spacer()
-                                    ProgressView()
-                                    Spacer()
-                                }
-                            }
-                        } else {
-                            DetailUnavailableView(title: "Details.unavailable.\(Comic.singularName)", symbol: Comic.symbol)
-                        }
-                    }).onFailure { _ in
-                        comicLoadingHadFailed = true
-                    }
-                    .frame(maxWidth: infoContentMaxWidth)
-                    .onChange(of: locale) {
-                        comicLoadingHadFailed = false
-                    }
-                }, header: {
-                    HStack {
-                        Text("Comic.comic")
-                            .font(.title2)
-                            .bold()
-                        DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
-                        Spacer()
-                    }
-                    .frame(maxWidth: 615)
-                })
-            }
+            ComicDetailComicView(information: information)
             
             DetailArtsSection {
                 ArtsTab("Comic.arts.thumb") {
@@ -177,5 +138,49 @@ struct ComicDetailOverviewView: View {
             }
         }
         .frame(maxWidth: infoContentMaxWidth)
+    }
+}
+
+struct ComicDetailComicView: View {
+    var information: Comic
+    @State var locale: DoriLocale = .primaryLocale
+    @State var comicLoadingHadFailed = false
+    var body: some View {
+        LazyVStack(pinnedViews: .sectionHeaders) {
+            Section(content: {
+                WebImage(url: information.imageURL(in: locale, allowsFallback: false), content: { image in
+                    image
+                        .resizable()
+                        .scaledToFit()
+                }, placeholder: {
+                    if !comicLoadingHadFailed {
+                        CustomGroupBox {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                        }
+                    } else {
+                        DetailUnavailableView(title: "Details.unavailable.\(Comic.singularName)", symbol: Comic.symbol)
+                    }
+                }).onFailure { _ in
+                    comicLoadingHadFailed = true
+                }
+                .frame(maxWidth: infoContentMaxWidth)
+                .onChange(of: locale) {
+                    comicLoadingHadFailed = false
+                }
+            }, header: {
+                HStack {
+                    Text("Comic.comic")
+                        .font(.title2)
+                        .bold()
+                    DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
+                    Spacer()
+                }
+                .frame(maxWidth: 615)
+            })
+        }
     }
 }

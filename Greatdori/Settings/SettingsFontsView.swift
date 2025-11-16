@@ -636,7 +636,7 @@ struct SettingsFontsPicker: View {
                 
                 DetailSectionsSpacer()
                 
-                if !fontManager.loadedFonts.isEmpty {
+                if !fontManager.loadedFonts.filter({ fontManager.fontSupportsLocale($0.fontName, locale: locale) }).isEmpty {
                     Section {
                         HStack {
                             Text("Settings.fonts.installed")
