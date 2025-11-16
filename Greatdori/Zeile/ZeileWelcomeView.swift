@@ -78,7 +78,7 @@ private struct ZeileWelcomeActions: View {
                 }, label: {
                     HStack {
                         Image(systemName: "plus.square")
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(.secondary)
                             .frame(width: 20)
                         Text("Zeile.home.new")
                             .fontWeight(.medium)
@@ -93,7 +93,7 @@ private struct ZeileWelcomeActions: View {
                 }, label: {
                     HStack {
                         Image(systemName: "folder")
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(.secondary)
                             .frame(width: 20)
                         Text("Zeile.home.open")
                             .fontWeight(.medium)
