@@ -36,4 +36,20 @@ public enum CodeTemplates {
         
         """
     }
+    
+    static func newFileZeile(named name: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .none
+        
+        return """
+        //
+        // \(name)
+        //
+        // Created on \(formatter.string(from: .now))
+        //
+        
+        
+        """
+    }
 }

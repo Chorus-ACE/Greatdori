@@ -39,11 +39,11 @@ func zeileProductBuild(project: ZeileProjectDocument, with state: ZeileProjectSh
             if let ir = builder.buildIR(from: codeList, diags: &diags) {
                 try? ir.binaryEncoded().write(to: buildFolder.appending(path: "Story.zir"))
                 state.removeWork(work)
-                state.lastWork = .init(description: "Build Succeeded", progress: -1)
+                state.setLastWork(.init(description: "Build Succeeded", progress: -1))
                 continuation.resume(returning: true)
             } else {
                 state.removeWork(work)
-                state.lastWork = .init(description: "Build Failed", progress: -1)
+                state.setLastWork(.init(description: "Build Failed", progress: -1))
                 continuation.resume(returning: false)
             }
         }
@@ -65,7 +65,11 @@ func zeileProductRun(project: ZeileProjectDocument, with state: ZeileProjectShar
             value: ZeileStoryViewerWindowData(id: uuid, irURL: irURL)
         )
         state.addRunningWindow(id: uuid)
-        state.addWork(.init(id: uuid, description: "Running \(project.configuration.metadata.projectName)", progress: -1))
+        state.addWork(.init(
+            id: uuid,
+            description: "Running \(project.configuration.metadata.projectName)",
+            progress: -1
+        ))
         return uuid
     } else {
         return nil

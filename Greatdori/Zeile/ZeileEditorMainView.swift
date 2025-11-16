@@ -27,10 +27,15 @@ struct ZeileEditorMainView: View {
                 document: document,
                 fileSelection: $selectedFile
             )
+            .navigationSplitViewColumnWidth(min: 200, ideal: 300)
         } detail: {
             Group {
                 if let file = selectedFile, file.preferredFilename != nil {
                     ZeileEditorFileEditView(project: document, file: file)
+                } else {
+                    ExtendedConstraints {
+                        EmptyView()
+                    }
                 }
             }
             .toolbar {
@@ -83,7 +88,7 @@ private struct ZeileEditorStatusBar: View {
                     workIndicator(sharedState.lastWork)
                 }
             }
-            .frame(width: widthAvailable / 4, alignment: .trailing)
+            .frame(width: widthAvailable / 5, alignment: .trailing)
         }
         .padding(.trailing, 10)
     }
@@ -112,21 +117,24 @@ final class ZeileProjectSharedState: @unchecked Sendable, ObservableObject {
     
     // MARK: - Work
     @Published var lastWork: Work = .init(description: "Idle", progress: -1)
-    @Published var currentWorks: [Work] = [] {
-        willSet {
-            if newValue.isEmpty, let previousLast = currentWorks.last {
-                lastWork = previousLast
-            }
-        }
-    }
+    @Published var currentWorks: [Work] = []
     
     @discardableResult
     func addWork(_ work: Work) -> Work {
-        currentWorks.append(work)
+        DispatchQueue.main.async {
+            self.currentWorks.append(work)
+        }
         return work
     }
     func removeWork(_ work: Work) {
-        currentWorks.removeAll { $0.id == work.id }
+        DispatchQueue.main.async {
+            self.currentWorks.removeAll { $0.id == work.id }
+        }
+    }
+    func setLastWork(_ work: Work) {
+        DispatchQueue.main.async {
+            self.lastWork = work
+        }
     }
     
     struct Work: Identifiable {
@@ -147,7 +155,7 @@ final class ZeileProjectSharedState: @unchecked Sendable, ObservableObject {
                     self.runningWindowID = nil
                     self.attachedRunningWindowDismissHandler = nil
                     self.currentWorks.removeAll { $0.id == id }
-                    self.lastWork = .init(description: "Finished running", progress: -1)
+                    self.setLastWork(.init(description: "Finished running", progress: -1))
                 }
             }
         }
@@ -157,7 +165,7 @@ final class ZeileProjectSharedState: @unchecked Sendable, ObservableObject {
         if let windowID = self.runningWindowID {
             ZeileStoryViewerView.shouldDismissSubject.send(windowID)
             self.currentWorks.removeAll { $0.id == windowID }
-            self.lastWork = .init(description: "Finished running", progress: -1)
+            self.setLastWork(.init(description: "Finished running", progress: -1))
             self.runningWindowID = nil
             self.attachedRunningWindowDismissHandler = nil
         }

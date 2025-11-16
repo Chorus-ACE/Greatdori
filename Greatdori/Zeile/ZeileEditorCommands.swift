@@ -114,6 +114,12 @@ struct ZeileEditorCommands: Commands {
                             inFileViewerRootedAtPath: _buildFolder(for: project).path
                         )
                     }
+                    Button("Copy Build Folder Path", systemImage: "document.on.document") {
+                        NSWorkspace.shared.selectFile(
+                            nil,
+                            inFileViewerRootedAtPath: _buildFolder(for: project).path
+                        )
+                    }
                 }
                 #endif
             }

@@ -24,16 +24,17 @@ final class ZeileProjectDocument: ReferenceFileDocument, @unchecked Sendable {
     let _wrapperLock = NSLock()
     nonisolated(unsafe) var _wrapper: FileWrapper
     
-    var configuration: ZeileProjectConfig
+    @Published var configuration: ZeileProjectConfig
     
     init(emptyWithName name: String) {
         let plistEncoder = PropertyListEncoder()
         plistEncoder.outputFormat = .xml
         
-        self.configuration = .init(
+        let configuration = ZeileProjectConfig(
             codePhases: ["Main.zeile"]
         )
-        let zieprojData = try! plistEncoder.encode(self.configuration)
+        self._configuration = .init(initialValue: configuration)
+        let zieprojData = try! plistEncoder.encode(configuration)
         let zieprojWrapper = FileWrapper(
             regularFileWithContents: zieprojData
         )
@@ -49,7 +50,7 @@ final class ZeileProjectDocument: ReferenceFileDocument, @unchecked Sendable {
                 "Main.zeile": mainCodeWrapper
             ])
         ])
-        unsafe self._wrapper.filename = name
+        unsafe self._wrapper.preferredFilename = name
     }
     
     init(wrapper: FileWrapper) throws {
@@ -77,7 +78,13 @@ final class ZeileProjectDocument: ReferenceFileDocument, @unchecked Sendable {
     }
     
     func snapshot(contentType: UTType) throws -> FileWrapper {
-        return _wrapperLock.withLock { unsafe self._wrapper }
+        let encoder = PropertyListEncoder()
+        encoder.outputFormat = .xml
+        let newConfigData = try encoder.encode(self.configuration)
+        return _wrapperLock.withLock {
+            unsafe self._wrapper.updateFile(named: "project.zieproj", data: newConfigData)
+            return unsafe self._wrapper
+        }
     }
     
     func fileWrapper(
@@ -95,7 +102,7 @@ extension ZeileProjectDocument {
             return wrapper
         } else {
             let newWrapper = FileWrapper(directoryWithFileWrappers: [:])
-            newWrapper.filename = "Code"
+            newWrapper.preferredFilename = "Code"
             self.wrapper.addFileWrapper(newWrapper)
             return newWrapper
         }
@@ -116,5 +123,26 @@ extension ZeileProjectDocument: Hashable {
         _wrapperLock.withLock {
             hasher.combine(unsafe _wrapper)
         }
+    }
+}
+
+extension FileWrapper {
+    func updateFile(named name: String, data: Data) {
+        if let file = self.fileWrappers?[name] {
+            self.removeFileWrapper(file)
+        }
+        let file = FileWrapper(regularFileWithContents: data)
+        file.preferredFilename = name
+        self.addFileWrapper(file)
+    }
+    
+    func renameFile(from oldName: String, to newName: String) {
+        let oldWrapper = self.fileWrappers![oldName]!
+        let newWrapper = FileWrapper(
+            regularFileWithContents: oldWrapper.regularFileContents!
+        )
+        newWrapper.preferredFilename = newName
+        self.removeFileWrapper(oldWrapper)
+        self.addFileWrapper(newWrapper)
     }
 }

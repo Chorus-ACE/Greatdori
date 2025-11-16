@@ -28,9 +28,10 @@ struct ZeileEditorFileEditView: View {
 
 private struct ZeileCodeEditView: View {
     @ObservedObject var project: ZeileProjectDocument
-    @State var file: FileWrapper
+    var file: FileWrapper
     @EnvironmentObject private var sharedState: ZeileProjectSharedState
     @State private var codeText: String
+    @State private var isShowingEditor = true
     
     init(project: ZeileProjectDocument, file: FileWrapper) {
         self.project = project
@@ -44,16 +45,30 @@ private struct ZeileCodeEditView: View {
     }
     
     var body: some View {
-        CodeEditor(text: $codeText, locale: .jp) // FIXME
-            .environment(\.onDiagnosticsUpdate) { diags in
-                sharedState.diagnostics.updateValue(diags, forKey: file.preferredFilename!)
+        if isShowingEditor {
+            CodeEditor(text: $codeText, locale: project.configuration.metadata.locale)
+                .environment(\.onDiagnosticsUpdate) { diags in
+                    sharedState.diagnostics.updateValue(diags, forKey: file.preferredFilename!)
+                }
+                .onChange(of: codeText) {
+                    let name = file.preferredFilename!
+                    project.codeFolderWrapper.updateFile(named: name, data: codeText.data(using: .utf8)!)
+                }
+                .onChange(of: file) {
+                    isShowingEditor = false
+                    codeText = .init(
+                        data: file.regularFileContents!,
+                        encoding: .utf8
+                    )!
+                    DispatchQueue.main.async {
+                        isShowingEditor = true
+                    }
+                }
+        } else {
+            ExtendedConstraints {
+                ProgressView()
+                    .controlSize(.large)
             }
-            .onChange(of: codeText) {
-                let name = file.preferredFilename
-                project.codeFolderWrapper.removeFileWrapper(file)
-                file = .init(regularFileWithContents: codeText.data(using: .utf8)!)
-                file.preferredFilename = name
-                project.codeFolderWrapper.addFileWrapper(file)
-            }
+        }
     }
 }

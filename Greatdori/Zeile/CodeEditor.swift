@@ -1386,6 +1386,34 @@ private struct CodeCompletionView: View {
                         """)
                         .clipped()
                         .frame(width: 200, height: 200)
+                    case .live2dMotion(let url, let motion):
+                        Live2DView(resourceURL: url) {
+                            ProgressView()
+                        }
+                        .live2dMotion(motion)
+                        ._live2dZoomFactor(2)
+                        ._live2dCoordinateMatrix("""
+                        [ s, 0, 0, 0,
+                          0,-s, 0, 0,
+                          0, 0, 1, 0,
+                          -1, 1, 0, 1 ]
+                        """)
+                        .clipped()
+                        .frame(width: 200, height: 200)
+                    case .live2dExpression(let url, let expression):
+                        Live2DView(resourceURL: url) {
+                            ProgressView()
+                        }
+                        .live2dExpression(expression)
+                        ._live2dZoomFactor(4)
+                        ._live2dCoordinateMatrix("""
+                        [ s, 0, 0, 0,
+                          0,-s, 0, 0,
+                          0, 0, 1, 0,
+                          -2, 1.3, 0, 1 ]
+                        """)
+                        .clipped()
+                        .frame(width: 200, height: 200)
                     @unknown default:
                         EmptyView()
                     }
