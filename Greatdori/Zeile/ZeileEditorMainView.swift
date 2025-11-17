@@ -148,8 +148,8 @@ final class ZeileProjectSharedState: @unchecked Sendable, ObservableObject {
     var attachedRunningWindowDismissHandler: AnyCancellable?
     
     func addRunningWindow(id: UUID) {
-        runningWindowID = id
         DispatchQueue.main.async {
+            self.runningWindowID = id
             self.attachedRunningWindowDismissHandler = ZeileStoryViewerView.willDismissSubject.sink { msgID in
                 if msgID == id {
                     self.runningWindowID = nil

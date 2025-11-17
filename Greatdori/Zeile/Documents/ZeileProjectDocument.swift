@@ -111,6 +111,22 @@ extension ZeileProjectDocument {
     func codeFileWrapper(name: String) -> FileWrapper? {
         self.codeFolderWrapper.fileWrappers?[name]
     }
+    
+    var assetFolderWrapper: FileWrapper {
+        if let wrapper = self.wrapper.fileWrappers!["Assets"] {
+            _onFastPath()
+            return wrapper
+        } else {
+            let newWrapper = FileWrapper(directoryWithFileWrappers: [:])
+            newWrapper.preferredFilename = "Assets"
+            self.wrapper.addFileWrapper(newWrapper)
+            return newWrapper
+        }
+    }
+    
+    func assetFileWrapper(name: String) -> FileWrapper? {
+        self.assetFolderWrapper.fileWrappers?[name]
+    }
 }
 
 extension ZeileProjectDocument: Hashable {

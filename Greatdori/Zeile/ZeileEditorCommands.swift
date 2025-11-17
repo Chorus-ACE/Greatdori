@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import Combine
+import DoriKit
 import SwiftUI
 
 struct ZeileEditorCommands: Commands {
@@ -89,7 +90,17 @@ struct ZeileEditorCommands: Commands {
                     }
                     .keyboardShortcut("R", modifiers: .command)
                     Button("Zeile.command.product.archive", systemImage: "shippingbox.fill") {
-                        
+                        Task {
+                            if await zeileProductArchive(
+                                project: project,
+                                with: sharedState
+                            ) {
+                                NSWorkspace.shared.selectFile(
+                                    _buildFolder(for: project).appending(path: "Story.sar").path,
+                                    inFileViewerRootedAtPath: ""
+                                )
+                            }
+                        }
                     }
                     .keyboardShortcut("P", modifiers: .command)
                 }
@@ -100,6 +111,18 @@ struct ZeileEditorCommands: Commands {
                         }
                     }
                     .keyboardShortcut("B", modifiers: .command)
+                    Button("Clean Build Folder", systemImage: "bubbles.and.sparkles") {
+                        Task {
+                            await zeileProductCleanBuildFolder(
+                                project: project,
+                                with: sharedState
+                            )
+                        }
+                    }
+                    .keyboardShortcut("K", modifiers: [.command, .shift])
+                    Button("Clear All Issues", systemImage: "xmark.circle") {
+                        sharedState.diagnostics.removeAll()
+                    }
                     Button("Zeile.command.product.stop", systemImage: "stop.fill") {
                         sharedState.removeRunningWindow()
                     }

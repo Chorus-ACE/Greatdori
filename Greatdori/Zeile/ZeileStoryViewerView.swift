@@ -24,15 +24,17 @@ struct ZeileStoryViewerView: View {
     var data: ZeileStoryViewerWindowData?
     @Environment(\.dismissWindow) private var dismissWindow
     @State private var irData: StoryIR?
+    @State private var assetFolder: URL?
     var body: some View {
         Group {
             if let irData {
-                InteractiveStoryView(irData)
+                InteractiveStoryView(irData, assetFolder: assetFolder)
             } else {
                 ProgressView()
                     .controlSize(.large)
                     .onAppear {
                         if let data, let data = try? Data(contentsOf: data.irURL) {
+                            assetFolder = unsafe self.data.unsafelyUnwrapped.assetFolder
                             irData = StoryIR(binary: data)
                         }
                     }
@@ -53,7 +55,26 @@ struct ZeileStoryViewerView: View {
         .onOpenURL { url in
             if FileManager.default.fileExists(atPath: url.path),
                let data = try? Data(contentsOf: url) {
-                irData = StoryIR(binary: data)
+                if url.path.hasSuffix(".zir") {
+                    irData = StoryIR(binary: data)
+                } else if url.path.hasSuffix(".sar") {
+                    Task {
+                        let folderName = url.lastPathComponent.dropLast(".sar".count)
+                        let tmpFolderURL = URL(filePath: NSTemporaryDirectory() + "/StoryPlayerIntermediate/\(folderName)")
+                        if FileManager.default.fileExists(atPath: tmpFolderURL.path) {
+                            try? FileManager.default.removeItem(at: tmpFolderURL)
+                        }
+                        if await StoryArchive.extract(from: data, to: tmpFolderURL),
+                           let ir = try? Data(contentsOf: tmpFolderURL.appending(path: "Story.zir")) {
+                            assetFolder = tmpFolderURL.appending(path: "Assets")
+                            irData = StoryIR(binary: ir)
+                        } else {
+                            dismissWindow()
+                        }
+                    }
+                } else {
+                    dismissWindow()
+                }
             } else {
                 dismissWindow()
             }
@@ -69,4 +90,5 @@ struct ZeileStoryViewerView: View {
 struct ZeileStoryViewerWindowData: Identifiable, Hashable, Codable {
     var id: UUID = .init()
     var irURL: URL
+    var assetFolder: URL?
 }

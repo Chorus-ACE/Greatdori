@@ -37,10 +37,29 @@ func zeileProductBuild(project: ZeileProjectDocument, with state: ZeileProjectSh
             
             var diags: [Diagnostic] = []
             if let ir = builder.buildIR(from: codeList, diags: &diags) {
-                try? ir.binaryEncoded().write(to: buildFolder.appending(path: "Story.zir"))
-                state.removeWork(work)
-                state.setLastWork(.init(description: "Build Succeeded", progress: -1))
-                continuation.resume(returning: true)
+                do {
+                    // Write IR
+                    try ir.binaryEncoded().write(to: buildFolder.appending(path: "Story.zir"))
+                    
+                    // Copy assets
+                    let assetFolder = buildFolder.appending(path: "Assets")
+                    if FileManager.default.fileExists(atPath: assetFolder.path) {
+                        try FileManager.default.removeItem(at: assetFolder)
+                    }
+                    try project.assetFolderWrapper.write(
+                        to: assetFolder,
+                        options: .atomic,
+                        originalContentsURL: nil
+                    )
+                    
+                    state.removeWork(work)
+                    state.setLastWork(.init(description: "Build Succeeded", progress: -1))
+                    continuation.resume(returning: true)
+                } catch {
+                    state.removeWork(work)
+                    state.setLastWork(.init(description: "Build Failed", progress: -1))
+                    continuation.resume(returning: false)
+                }
             } else {
                 state.removeWork(work)
                 state.setLastWork(.init(description: "Build Failed", progress: -1))
@@ -58,11 +77,16 @@ func zeileProductRun(project: ZeileProjectDocument, with state: ZeileProjectShar
     }
     
     if await zeileProductBuild(project: project, with: state) {
-        let irURL = _buildFolder(for: project).appending(path: "Story.zir")
+        let buildFolder = _buildFolder(for: project)
+        let irURL = buildFolder.appending(path: "Story.zir")
         let uuid = UUID()
         await EnvironmentValues().openWindow(
             id: "ZeileStoryViewer",
-            value: ZeileStoryViewerWindowData(id: uuid, irURL: irURL)
+            value: ZeileStoryViewerWindowData(
+                id: uuid,
+                irURL: irURL,
+                assetFolder: buildFolder.appending(path: "Assets")
+            )
         )
         state.addRunningWindow(id: uuid)
         state.addWork(.init(
@@ -73,6 +97,57 @@ func zeileProductRun(project: ZeileProjectDocument, with state: ZeileProjectShar
         return uuid
     } else {
         return nil
+    }
+}
+
+@discardableResult
+func zeileProductArchive(
+    project: ZeileProjectDocument,
+    with state: ZeileProjectSharedState
+) async -> Bool {
+    if await zeileProductBuild(project: project, with: state) {
+        let buildFolder = _buildFolder(for: project)
+        let ir = StoryIR(binary: try! Data(
+            contentsOf: buildFolder.appending(path: "Story.zir")
+        ))!
+        try? await StoryArchive.archive(
+            ir: ir,
+            assetFolder: buildFolder.appending(path: "Assets")
+        )?.write(to: buildFolder.appending(path: "Story.sar"))
+        return true
+    } else {
+        return false
+    }
+}
+
+@discardableResult
+func zeileProductCleanBuildFolder(
+    project: ZeileProjectDocument,
+    with state: ZeileProjectSharedState
+) async -> Bool {
+    let work = state.addWork(.init(description: "Cleaning", progress: -1))
+    
+    if state.runningWindowID != nil {
+        await state.removeRunningWindow()
+    }
+    
+    return await withCheckedContinuation { continuation in
+        DispatchQueue(label: "com.memz233.Greatdori.Zeile-Editor.Clean-Build-Folder").async {
+            do {
+                let folder = _buildFolder(for: project)
+                try FileManager.default.removeItem(at: folder)
+                
+                state.removeWork(work)
+                state.setLastWork(.init(description: "Clean Succeeded", progress: -1))
+                
+                continuation.resume(returning: true)
+            } catch {
+                state.removeWork(work)
+                state.setLastWork(.init(description: "Clean Failed", progress: -1))
+                
+                continuation.resume(returning: false)
+            }
+        }
     }
 }
 

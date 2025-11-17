@@ -67,15 +67,14 @@ private final class ReferenceCountingContainer: @unchecked Sendable, ObservableO
 @safe
 struct InteractiveStoryView: View {
     var ir: StoryIR
+    var assetFolder: URL?
     
     @TaskLocal nonisolated private static var performingActionCount = ReferenceCountingContainer(valid: false)
     
     @Environment(\.dismiss) private var dismiss
     
     @State private var backgroundImageURL: URL?
-    @State private var scenarioImageURL: URL?
-    
-    @State private var isScenarioImageFilter = false
+    @State private var isBackgroundImageNative = true
     
     @State private var bgmPlayer = AVQueuePlayer()
     @State private var bgmLooper: AVPlayerLooper!
@@ -103,8 +102,9 @@ struct InteractiveStoryView: View {
     @State private var talkShakeDuration = 0.0
     @State private var screenShakeDuration = 0.0
     
-    init(_ ir: StoryIR) {
+    init(_ ir: StoryIR, assetFolder: URL? = nil) {
         self.ir = ir
+        self.assetFolder = assetFolder
         
         unsafe voicePlayer = .allocate(capacity: 1)
         unsafe voicePlayer.initialize(to: .init())
@@ -258,17 +258,9 @@ struct InteractiveStoryView: View {
         .background {
             WebImage(url: backgroundImageURL)
                 .resizable()
-                .aspectRatio(4 / 3, contentMode: .fill)
+                .aspectRatio(isBackgroundImageNative ? 4 / 3 : nil, contentMode: .fill)
                 .clipped()
                 .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
-            if let scenarioImageURL {
-                WebImage(url: scenarioImageURL)
-                    .resizable()
-                    .aspectRatio(4 / 3, contentMode: .fill)
-                    .clipped()
-                    .opacity(isScenarioImageFilter ? 0.5 : 1)
-                    .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
-            }
         }
         .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration)) //FIXME: Consider Edits
         .onTapGesture {
@@ -332,7 +324,7 @@ struct InteractiveStoryView: View {
                         }
                     } else if case let .talk(_, characterIDs: _, characterNames: _, voicePath: voicePath) = action,
                               let voicePath {
-                        AF.request(resolveURL(from: voicePath)).response { response in
+                        AF.request(resolveURL(from: voicePath, assetFolder: assetFolder)).response { response in
                             if let data = response.data {
                                 DispatchQueue.main.async {
                                     talkAudios.updateValue(data, forKey: voicePath)
@@ -637,20 +629,24 @@ struct InteractiveStoryView: View {
             }
         case .changeBackground(path: let path):
             withAnimation {
-                backgroundImageURL = resolveURL(from: path)
+                backgroundImageURL = resolveURL(
+                    from: path,
+                    assetFolder: assetFolder,
+                    isNative: &isBackgroundImageNative
+                )
             }
             
             Self.performingActionCount.count -= 1
         case .changeBGM(path: let path):
             bgmPlayer.pause()
             bgmPlayer.removeAllItems()
-            let bgmItem = AVPlayerItem(url: resolveURL(from: path))
+            let bgmItem = AVPlayerItem(url: resolveURL(from: path, assetFolder: assetFolder))
             bgmLooper = .init(player: bgmPlayer, templateItem: bgmItem)
             bgmPlayer.play()
             
             Self.performingActionCount.count -= 1
         case .changeSE(path: let path):
-            sePlayer.replaceCurrentItem(with: .init(url: resolveURL(from: path)))
+            sePlayer.replaceCurrentItem(with: .init(url: resolveURL(from: path, assetFolder: assetFolder)))
             sePlayer.play()
             
             Self.performingActionCount.count -= 1
@@ -1009,15 +1005,24 @@ func fontName(in locale: DoriLocale) -> String {
     return UserDefaults.standard.string(forKey: "StoryViewerFont\(locale.rawValue.uppercased())") ?? storyViewerDefaultFont[locale] ?? ".AppleSystemUIFont"
 }
 
-func resolveURL(from path: String) -> URL {
+@safe
+func resolveURL(from path: String, assetFolder: URL?, isNative: UnsafeMutablePointer<Bool>? = nil) -> URL {
+    // We can't use `inout` for isNative because
+    // it prevents us to provide a default value (nil) for it
+    
     if path.hasPrefix("http://") || path.hasPrefix("https://") {
+        unsafe isNative?.pointee = path.hasPrefix("https://bestdori.com/assets")
         return URL(string: path)!
+    } else if path.hasPrefix("/"), let assetFolder {
+        unsafe isNative?.pointee = false
+        return assetFolder.appending(path: path.dropFirst())
     } else {
         var componments = path.components(separatedBy: "/")
         if componments.count >= 2 {
             let bundle = componments[componments.count - 2]
             componments[componments.count - 2] = "\(bundle)_rip"
         }
+        unsafe isNative?.pointee = true
         return URL(string: "https://bestdori.com/assets/\(componments.joined(separator: "/"))")!
     }
 }

@@ -25,14 +25,16 @@ struct CodeEditor: NSViewRepresentable {
     
     @Binding var text: String
     var locale: DoriLocale
+    var assetFolder: FileWrapper?
     let textView = CodeTextView(usingTextLayoutManager: true)
     let textFinder: NSTextFinder
     
     private let textFinderSubscription: AnyCancellable
     
-    init(text: Binding<String>, locale: DoriLocale) {
+    init(text: Binding<String>, locale: DoriLocale, assetFolder: FileWrapper? = nil) {
         self._text = text
         self.locale = locale
+        self.assetFolder = assetFolder
         let textFinder = NSTextFinder()
         self.textFinder = textFinder
         self.textFinderSubscription = Self.textFinderSubject.sink { action in
@@ -136,6 +138,9 @@ struct CodeEditor: NSViewRepresentable {
         
         var locale: DoriLocale {
             parent.locale
+        }
+        var assetFolder: FileWrapper? {
+            parent.assetFolder
         }
         
         func textDidChange(_ notification: Notification) {
@@ -432,7 +437,13 @@ struct CodeEditor: NSViewRepresentable {
                     return
                 }
                 code.formIndex(before: &index)
-                let items = await asyncCompleteCode(code, at: index, in: (self.delegate as! Coordinator).locale)
+                let coordinator = (self.delegate as! Coordinator)
+                let items = await asyncCompleteCode(
+                    code,
+                    at: index,
+                    in: coordinator.locale,
+                    assetFolder: coordinator.assetFolder
+                )
                 
                 showingAutoCompletionPanel?.close()
                 showingAutoCompletionPanel = nil
@@ -673,6 +684,7 @@ struct CodeEditor: NSViewRepresentable {
 struct CodeEditor: UIViewRepresentable {
     @Binding var text: String
     var locale: DoriLocale
+    var assetFolder: FileWrapper? = nil
     let textView = CodeTextView(usingTextLayoutManager: true)
     
     func makeUIView(context: Context) -> CodeTextView {
@@ -743,6 +755,9 @@ struct CodeEditor: UIViewRepresentable {
         
         var locale: DoriLocale {
             parent.locale
+        }
+        var assetFolder: FileWrapper? {
+            parent.assetFolder
         }
         
         func textViewDidChange(_ textView: UITextView) {
@@ -1036,7 +1051,13 @@ struct CodeEditor: UIViewRepresentable {
                     return
                 }
                 code.formIndex(before: &index)
-                let items = await asyncCompleteCode(code, at: index, in: (self.delegate as! Coordinator).locale)
+                let coordinator = (self.delegate as! Coordinator)
+                let items = await asyncCompleteCode(
+                    code,
+                    at: index,
+                    in: coordinator.locale,
+                    assetFolder: coordinator.assetFolder
+                )
                 
                 showingAutoCompletionView?.removeFromSuperview()
                 showingAutoCompletionView = nil
@@ -1298,6 +1319,10 @@ private struct CodeCompletionView: View {
                                                     Color.orange
                                                 case .keyword:
                                                     Color.gray
+                                                case .file:
+                                                    Color.blue
+                                                case .folder:
+                                                    Color.blue
                                                 @unknown default: Color.red
                                                 }
                                             }())
@@ -1313,6 +1338,12 @@ private struct CodeCompletionView: View {
                                             case .keyword:
                                                 Image(systemName: "circle.fill")
                                                     .font(.system(size: 3))
+                                            case .file:
+                                                Image(systemName: "document.fill")
+                                                    .font(.system(size: 9, weight: .medium))
+                                            case .folder:
+                                                Image(systemName: "folder.fill")
+                                                    .font(.system(size: 9, weight: .medium))
                                             default:
                                                 Text(result.itemType.rawValue.first!.uppercased())
                                             }
@@ -1479,11 +1510,18 @@ private struct InlineDiagnosticView: View {
 private func asyncCompleteCode(
     _ code: String,
     at index: String.Index,
-    in locale: DoriLocale
+    in locale: DoriLocale,
+    assetFolder: FileWrapper?
 ) async -> [CodeCompletionItem] {
     await withCheckedContinuation { continuation in
         DispatchQueue(label: "com.memz233.Greatdori.Zeile.Code-Completion", qos: .userInitiated).async {
-            continuation.resume(returning: DoriStoryBuilder(for: locale).completeCode(code, at: index))
+            continuation.resume(
+                returning: DoriStoryBuilder(for: locale).completeCode(
+                    code,
+                    at: index,
+                    assetFolder: assetFolder
+                )
+            )
         }
     }
 }

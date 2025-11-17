@@ -15,6 +15,8 @@
 import Combine
 import DoriKit
 import SwiftUI
+import SDWebImageSwiftUI
+import UniformTypeIdentifiers
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct ZeileEditorSidebar: View {
@@ -214,9 +216,6 @@ private struct SidebarCodeListView: View {
             .onAppear {
                 renameText = name
             }
-            .onChange(of: isRenaming) {
-                print(isRenaming)
-            }
         }
     }
 }
@@ -224,8 +223,129 @@ private struct SidebarCodeListView: View {
 private struct SidebarAssetListView: View {
     @ObservedObject var project: ZeileProjectDocument
     @Binding var fileSelection: FileWrapper?
+    @State private var fileWrappers: [FileWrapper]
+    @State private var contentUpdateTimer: Timer?
+    
+    init(project: ZeileProjectDocument, fileSelection: Binding<FileWrapper?>) {
+        self._project = .init(initialValue: project)
+        self._fileSelection = fileSelection
+        self._fileWrappers = .init(
+            initialValue: project.assetFolderWrapper.fileWrappers!.values.map { $0 }
+        )
+    }
+    
     var body: some View {
-        Spacer() // FIXME
+        Group {
+            if !fileWrappers.isEmpty {
+                ScrollView {
+                    LazyVGrid(columns: [.init(.adaptive(minimum: 120, maximum: 120), alignment: .leading)], alignment: .leading) {
+                        let sortedWrappers = fileWrappers.sorted { $0.preferredFilename! < $1.preferredFilename! }
+                        ForEach(sortedWrappers, id: \.self) { wrapper in
+                            FileLink(project: project, fileSelection: $fileSelection, wrapper: wrapper)
+                        }
+                    }
+                    .padding()
+                }
+            } else {
+                ExtendedConstraints {
+                    ContentUnavailableView(
+                        "No Assets",
+                        systemImage: "folder.fill",
+                        description: Text("Drag files here to add")
+                    )
+                }
+            }
+        }
+        .onDrop(of: [.fileURL], isTargeted: nil) { providers in
+            for provider in providers {
+                _ = provider.loadDataRepresentation(for: .fileURL) { data, _ in
+                    if let data,
+                       let url = URL(dataRepresentation: data, relativeTo: nil) {
+                        _ = url.startAccessingSecurityScopedResource()
+                        defer { url.stopAccessingSecurityScopedResource() }
+                        if let content = try? Data(contentsOf: url) {
+                            project.assetFolderWrapper.addRegularFile(
+                                withContents: content,
+                                preferredFilename: url.lastPathComponent
+                            )
+                        }
+                    }
+                }
+            }
+            return true
+        }
+        .onAppear {
+            contentUpdateTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                DispatchQueue.main.async {
+                    fileWrappers = project.assetFolderWrapper.fileWrappers!.values.map { $0 }
+                }
+            }
+        }
+        .onDisappear {
+            contentUpdateTimer?.invalidate()
+        }
+    }
+    
+    private struct FileLink: View {
+        @ObservedObject var project: ZeileProjectDocument
+        @Binding var fileSelection: FileWrapper?
+        var wrapper: FileWrapper
+        @State private var isRenaming = false
+        @State private var renameText = ""
+        @State private var thumbnailImage: PlatformImage?
+        var body: some View {
+            Button {
+                fileSelection = wrapper
+            } label: {
+                VStack {
+                    Group {
+                        if let thumbnailImage {
+                            #if os(macOS)
+                            Image(nsImage: thumbnailImage)
+                                .resizable()
+                                .scaledToFit()
+                            #else
+                            Image(uiImage: thumbnailImage)
+                                .resizable()
+                                .scaledToFit()
+                            #endif
+                        }
+                    }
+                    if !isRenaming {
+                        Text(renameText)
+                    } else {
+                        TextField("", text: $renameText)
+                            .onSubmit {
+                                let oldName = wrapper.preferredFilename!
+                                project.assetFolderWrapper.renameFile(from: oldName, to: renameText)
+                                isRenaming = false
+                            }
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+            .contextMenu {
+                Section {
+                    Button("Rename", systemImage: "pencil.line") {
+                        isRenaming = true
+                    }
+                }
+                Section {
+                    Button("Delete", systemImage: "trash", role: .destructive) {
+                        project.assetFolderWrapper.removeFileWrapper(wrapper)
+                    }
+                }
+            }
+            .onAppear {
+                renameText = wrapper.preferredFilename!
+                
+                if thumbnailImage == nil {
+                    if let image = PlatformImage(data: wrapper.regularFileContents!) {
+                        thumbnailImage = image
+                    }
+                }
+            }
+        }
     }
 }
 

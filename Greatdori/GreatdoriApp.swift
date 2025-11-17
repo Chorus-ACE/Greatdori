@@ -111,7 +111,7 @@ struct GreatdoriApp: App {
         WindowGroup("Zeile Story Viewer", id: "ZeileStoryViewer", for: ZeileStoryViewerWindowData.self) { $data in
             ZeileStoryViewerView(data: data)
         }
-        .handlesExternalEvents(matching: [".zir"])
+        .handlesExternalEvents(matching: [".zir", ".sar"])
         
         WindowGroup("Window", id: "AnyWindow", for: AnyWindowData.self) { $data in
             if let data, data.isValid {
