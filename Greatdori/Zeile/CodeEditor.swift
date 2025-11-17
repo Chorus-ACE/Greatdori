@@ -1551,3 +1551,5 @@ extension Diagnostic.Severity {
 extension EnvironmentValues {
     @Entry var onDiagnosticsUpdate: ([Diagnostic]) -> Void = { _ in }
 }
+
+extension FileWrapper: @unchecked @retroactive Sendable {}

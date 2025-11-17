@@ -95,10 +95,12 @@ struct ZeileEditorCommands: Commands {
                                 project: project,
                                 with: sharedState
                             ) {
+                                #if os(macOS)
                                 NSWorkspace.shared.selectFile(
                                     _buildFolder(for: project).appending(path: "Story.sar").path,
                                     inFileViewerRootedAtPath: ""
                                 )
+                                #endif
                             }
                         }
                     }
