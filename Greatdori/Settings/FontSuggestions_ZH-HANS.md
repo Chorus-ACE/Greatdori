@@ -17,3 +17,5 @@ Greatdori!开发团队在制作字体管理器已经找出了所有地区所使�
 其中JP的汉字使用「新ゴ」，其余的所有字符（假名、字母、数字和标点等）都使用「タイプラボN」。「タイプラボN」不包含汉字。由于开发团队中无人会韩文，因此KR的字体信息可能有误。若有误，欢迎向我们报告。
 
 同时，我们还推荐Noto Sans系列。Noto Sans的License是Open Font License。你可以在 https://fonts.google.com/noto 或 https://github.com/google/fonts 找到Noto Sans系列。
+
+最后更新于2025年10月8日

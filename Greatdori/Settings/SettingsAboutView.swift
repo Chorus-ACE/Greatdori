@@ -91,35 +91,41 @@ struct SettingsAboutDetailIconView: View {
             Text(verbatim: "Greatdori!")
                 .bold()
                 .font(.largeTitle)
-            Text("Settings.about.version.\(appVersion)")
-                .foregroundStyle(.secondary)
-                .font(.title3)
-                .onTapGesture(count: 3, perform: {
-                    showDebugVerificationAlert = true
-                })
-                .alert("Settings.debug.activate-alert.title", isPresented: $showDebugVerificationAlert, actions: {
+            Group {
+                if AppFlag.DEBUG {
+                    Text("Settings.about.version.\(appVersion)") + Text(verbatim: " - ") + Text(verbatim: "DEBUG")
+                } else {
+                    Text("Settings.about.version.\(appVersion)")
+                }
+            }
+            .foregroundStyle(.secondary)
+            .font(.title3)
+            .onTapGesture(count: 3, perform: {
+                showDebugVerificationAlert = true
+            })
+            .alert("Settings.debug.activate-alert.title", isPresented: $showDebugVerificationAlert, actions: {
 #if os(iOS)
-                    TextField("Settings.debug.activate-alert.prompt", text: $password)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-                        .fontDesign(.monospaced)
+                TextField("Settings.debug.activate-alert.prompt", text: $password)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .fontDesign(.monospaced)
 #else
-                    TextField("Settings.debug.activate-alert.prompt", text: $password)
-                        .autocorrectionDisabled()
-                    //                        .textInputSuggestions(nil)
-                        .fontDesign(.monospaced)
+                TextField("Settings.debug.activate-alert.prompt", text: $password)
+                    .autocorrectionDisabled()
+                //                        .textInputSuggestions(nil)
+                    .fontDesign(.monospaced)
 #endif
-                    Button(action: {
-                        if password == correctDebugPassword {
-                            lastDebugPassword = password
-                            AppFlag.set(true, forKey: "DEBUG")
-                            showDebugVerificationAlert = false
-                            showDebugUnlockAlert = true
-                        }
-                        password = ""
-                    }, label: {
-                        Text("Settings.debug.activate-alert.confirm")
-                    })
+                Button(action: {
+                    if password == correctDebugPassword {
+                        lastDebugPassword = password
+                        AppFlag.set(true, forKey: "DEBUG")
+                        showDebugVerificationAlert = false
+                        showDebugUnlockAlert = true
+                    }
+                    password = ""
+                }, label: {
+                    Text("Settings.debug.activate-alert.confirm")
+                })
                     .keyboardShortcut(.defaultAction)
                     Button(role: .cancel, action: {}, label: {
                         Text("Settings.debug.activate-alert.cancel")
@@ -134,12 +140,81 @@ struct SettingsAboutDetailIconView: View {
 
 struct SettingsAboutDetailListView: View {
     var body: some View {
-//        Group {
-            NavigationLink(destination: {
-                
-            }, label: {
-                Text("Settings.about.acknowledgements")
-            })
-//        }
+        Text(verbatim: "Licensed under Apache License 2.0")
+        Link(destination: URL(string: "https://github.com/Greatdori")!, label: {
+            HStack {
+                Text("Settings.about.github")
+                Spacer()
+                Image(systemName: "arrow.up.forward.app")
+                    .foregroundStyle(.secondary)
+            }
+            .contentShape(Rectangle())
+        })
+        .foregroundStyle(.primary)
+        NavigationLink(destination: {
+            SettingsAboutAcknowledgementsView()
+        }, label: {
+            Text("Settings.about.acknowledgements")
+        })
     }
+}
+
+struct SettingsAboutAcknowledgementsView: View {
+    var body: some View {
+        Form {
+            Section(content: {
+                ForEach(acknowledgements, id: \.self) { item in
+                    SettingsAboutAcknowledgementItem(item: item)
+                }
+            }, footer: {
+                Text("Settings.about.acknowledgements.footer")
+            })
+        }
+        .navigationTitle("Settings.about.acknowledgements")
+        .formStyle(.grouped)
+    }
+    
+    struct SettingsAboutAcknowledgementItem: View {
+        var item: AcknowledgementItem
+        @State var isExpanded = false
+        var body: some View {
+            VStack {
+                HStack {
+                    Image(systemName: "shippingbox")
+                        .foregroundStyle(.brown)
+                        .font(.title3)
+                    VStack(alignment: .leading) {
+                        Text(item.title)
+                        Text(item.subtitle)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.forward")
+                        .foregroundStyle(.secondary)
+                        .rotationEffect(Angle(degrees: isExpanded ? 90 : 0))
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    withAnimation {
+                        isExpanded.toggle()
+                    }
+                }
+                if isExpanded {
+                    Rectangle()
+                        .frame(height: 1)
+                        .opacity(0)
+                    Text(item.licenseVerbatim)
+                        .fontDesign(.monospaced)
+                        .multilineTextAlignment(.leading)
+                        .textSelection(.enabled)
+                }
+            }
+        }
+    }
+}
+
+struct AcknowledgementItem: Equatable, Hashable {
+    var title: String
+    var subtitle: String
+    var licenseVerbatim: String
 }
