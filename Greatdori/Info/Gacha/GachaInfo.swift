@@ -35,6 +35,9 @@ struct GachaInfo: View {
         self.showDetails = showDetails
     }
     
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.regularInfoImageSizeFactor) private var sizeFactor
+    
     var body: some View {
         SummaryViewBase(.vertical(hidesDetail: !showDetails), source: information) {
             WebImage(url: information.bannerImageURL) { image in
@@ -43,12 +46,12 @@ struct GachaInfo: View {
                     .antialiased(true)
                     .scaledToFit()
                     .aspectRatio(3.0, contentMode: .fit)
-                    .frame(maxWidth: 420, maxHeight: 140)
+                    .frame(maxWidth: 420 * (sizeClass == .regular ? sizeFactor : 1))
             } placeholder: {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(getPlaceholderColor())
                     .aspectRatio(3.0, contentMode: .fill)
-                    .frame(maxWidth: 420, maxHeight: 140)
+                    .frame(maxWidth: 420 * (sizeClass == .regular ? sizeFactor : 1))
             }
             .interpolation(.high)
             .cornerRadius(10)

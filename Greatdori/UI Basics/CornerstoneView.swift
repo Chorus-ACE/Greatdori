@@ -1273,8 +1273,8 @@ struct WrappingHStack<Content: View>: View {
     
     var body: some View {
         LazyVGrid(
-            columns: [.init(.adaptive(minimum: contentWidth), spacing: columnSpacing)],
-            alignment: alignment,
+            columns: [.init(.adaptive(minimum: contentWidth, maximum: contentWidth), spacing: columnSpacing)],
+            alignment: alignment == .leading ? .trailing : alignment == .trailing ? .leading : alignment,
             spacing: rowSpacing
         ) {
             makeContent()

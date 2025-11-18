@@ -52,6 +52,7 @@ struct DetailsEventsSection: View {
                     EventDetailView(id: item.id)
                 }, label: {
                     EventInfo(item, showDetails: true)
+                        .regularInfoImageSizeFactor(0.85)
                         .frame(maxWidth: infoContentMaxWidth)
                 })
             } else {

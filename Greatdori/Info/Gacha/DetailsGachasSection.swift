@@ -49,6 +49,7 @@ struct DetailsGachasSection: View {
                     GachaDetailView(id: item.id)
                 }, label: {
                     GachaInfo(item)
+                        .regularInfoImageSizeFactor(0.85)
                         .frame(maxWidth: infoContentMaxWidth)
                 })
             } else {

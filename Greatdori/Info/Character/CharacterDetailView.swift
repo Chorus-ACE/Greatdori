@@ -63,11 +63,17 @@ struct CharacterDetailView: View {
                                     }, label: {
                                         Label("Character.random-card", systemImage: "arrow.clockwise")
                                     })
-                                    .buttonStyle(.bordered)
+                                    .wrapIf(true) { content in
+                                        if #available(iOS 26.0, macOS 26.0, *) {
+                                            content
+                                                .buttonStyle(.glass)
+                                        } else {
+                                            content
+                                                .buttonStyle(.bordered)
+                                        }
+                                    }
                                     .buttonBorderShape(.capsule)
                                 }
-                                
-                                //                            CharacterDetailOverviewView(information: information, cardNavigationDestinationID: $cardNavigationDestinationID)
                             }
                             .padding(.horizontal)
                             Spacer(minLength: 0)

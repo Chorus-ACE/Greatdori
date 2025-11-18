@@ -32,7 +32,7 @@ struct CharacterSearchView: View {
     @State var bandArray: [Band?] = []
     @State var infoIsAvailable = true
     @State var infoIsReady = false
-    @State var chunkedOtherCharacters: [[PreviewCharacter]] = [[]]
+    @State var otherCharacters: [PreviewCharacter] = []
     var body: some View {
         Group {
             if infoIsReady {
@@ -50,7 +50,7 @@ struct CharacterSearchView: View {
                                         ForEach(charactersDict![band]!.swappedAt(0, 3).swappedAt(2, 3), id: \.self) { char in
                                             NavigationLink(destination: {
                                                 CharacterDetailView(id: char.id, allCharacters: allCharacters)
-#if !os(macOS)
+                                                #if !os(macOS)
                                                     .wrapIf(true, in: { content in
                                                         if #available(iOS 18.0, *) {
                                                             content
@@ -59,7 +59,7 @@ struct CharacterSearchView: View {
                                                             content
                                                         }
                                                     })
-#endif
+                                                #endif
                                             }, label: {
                                                 CharacterImageView(character: char)
                                             })
@@ -80,7 +80,8 @@ struct CharacterSearchView: View {
                                     }
                                 }
                             }
-                            if !chunkedOtherCharacters.isEmpty {
+                            if !otherCharacters.isEmpty {
+                                DetailSectionsSpacer()
                                 HStack {
                                     Text("Characters.search.others")
                                         .font(.title2)
@@ -88,60 +89,27 @@ struct CharacterSearchView: View {
                                     Spacer()
                                 }
                                 .frame(maxWidth: 675)
-                                ForEach(chunkedOtherCharacters, id: \.self) { item in
-                                    HStack {
-                                        ForEach(0...1, id: \.self) { itemIndex in
-                                            if !(itemIndex == 1 && item.count <= 1) {
-                                                NavigationLink(destination: {
-                                                    CharacterDetailView(id: item[itemIndex].id, allCharacters: allCharacters)
-#if !os(macOS)
-                                                        .wrapIf(true, in: { content in
-                                                            if #available(iOS 18.0, *) {
-                                                                content
-                                                                    .navigationTransition(.zoom(sourceID: item[itemIndex].id, in: detailNavigation))
-                                                            } else {
-                                                                content
-                                                            }
-                                                        })
-#endif
-                                                }, label: {
-                                                    CustomGroupBox {
-                                                        HStack {
-                                                            Spacer()
-                                                            Text(item[itemIndex].characterName.forPreferredLocale() ?? "nil")
-                                                            //                                                                .bold()
-                                                                .font(isMACOS ? .title3 : .body)
-                                                                .multilineTextAlignment(.center)
-                                                            Spacer()
-                                                        }
-                                                        .frame(height: 40)
-                                                    }
-                                                })
-                                                .buttonStyle(.plain)
-                                                .wrapIf(true, in: { content in
-                                                    if #available(iOS 18.0, macOS 15.0, *) {
-                                                        content
-                                                            .matchedTransitionSource(id: item[itemIndex].id, in: detailNavigation)
-                                                    } else {
-                                                        content
-                                                    }
-                                                })
-                                            } else {
-                                                CustomGroupBox {
-                                                    HStack {
-                                                        Spacer()
-                                                        Text("")
-                                                        Spacer()
-                                                    }
+                                LazyVGrid(columns: [.init(.flexible(minimum: 40)), .init(.flexible(minimum: 40))]) {
+                                    ForEach(otherCharacters, id: \.self) { item in
+                                        NavigationLink(destination: {
+                                            CharacterDetailView(id: item.id, allCharacters: allCharacters)
+                                        }, label: {
+                                            CustomGroupBox {
+                                                HStack {
+                                                    Spacer()
+                                                    Text(item.characterName.forPreferredLocale() ?? "nil")
+                                                        .font(isMACOS ? .title3 : .body)
+                                                        .multilineTextAlignment(.center)
+                                                    Spacer()
                                                 }
-                                                .opacity(0)
+                                                .frame(minHeight: 40)
                                             }
-                                        }
+                                        })
+                                        .buttonStyle(.plain)
                                     }
                                 }
                                 .frame(maxWidth: 650)
                             }
-                            
                         }
                         Spacer(minLength: 0)
                     }
@@ -197,7 +165,7 @@ struct CharacterSearchView: View {
                     }
                     bandArray.sort { ($0?.id ?? 9999) < ($1?.id ?? 9999) }
                 }
-                chunkedOtherCharacters = characters[nil]?.chunked(into: 2) ?? [[]]
+                otherCharacters = characters[nil] ?? []
                 infoIsReady = true
             } else {
                 infoIsAvailable = false

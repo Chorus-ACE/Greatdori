@@ -356,3 +356,11 @@ extension MutableCollection {
     }
 }
 
+extension EnvironmentValues {
+    @Entry var regularInfoImageSizeFactor: CGFloat = 1
+}
+extension View {
+    func regularInfoImageSizeFactor(_ sizeFactor: CGFloat) -> some View {
+        environment(\.regularInfoImageSizeFactor, sizeFactor)
+    }
+}

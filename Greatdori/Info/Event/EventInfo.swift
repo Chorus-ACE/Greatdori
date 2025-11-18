@@ -33,6 +33,9 @@ struct EventInfo: View {
         self.showDetails = showDetails
     }
     
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.regularInfoImageSizeFactor) private var sizeFactor
+    
     var body: some View {
         SummaryViewBase(.vertical(hidesDetail: !showDetails), source: information) {
             FallbackableWebImage(throughURLs: [information.bannerImageURL, information.homeBannerImageURL]) { image in
@@ -40,12 +43,12 @@ struct EventInfo: View {
                     .resizable()
                     .antialiased(true)
                     .aspectRatio(3.0, contentMode: .fit)
-                    .frame(maxWidth: 420, maxHeight: 140)
+                    .frame(maxWidth: 420 * (sizeClass == .regular ? sizeFactor : 1))
             } placeholder: {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(getPlaceholderColor())
                     .aspectRatio(3.0, contentMode: .fill)
-                    .frame(maxWidth: 420, maxHeight: 140)
+                    .frame(maxWidth: 420 * (sizeClass == .regular ? sizeFactor : 1))
             }
             .interpolation(.high)
             .upscale { image in
@@ -53,7 +56,7 @@ struct EventInfo: View {
                     .resizable()
                     .antialiased(true)
                     .aspectRatio(3.0, contentMode: .fit)
-                    .frame(maxWidth: 420, maxHeight: 140)
+                    .frame(maxWidth: 420 * (sizeClass == .regular ? sizeFactor : 1))
             }
             .cornerRadius(10)
         } detail: {

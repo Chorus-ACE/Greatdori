@@ -341,7 +341,7 @@ struct EventDetailOverviewView: View {
                                     Text("Event.card")
                                         .bold()
                                 }, value: {
-                                    WrappingHStack(columnSpacing: 3, contentWidth: cardThumbnailSideLength) {
+                                    WrappingHStack(alignment: .trailing, contentWidth: cardThumbnailSideLength) {
                                         ForEach(cardsArray) { card in
                                             NavigationLink(destination: {
                                                 CardDetailView(id: card.id)
