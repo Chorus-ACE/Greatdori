@@ -398,6 +398,33 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                                                     // after the `matchedTransitionSource(id:in:)` call
                                                     // if needed to solve this problem.
                                                     // That's why codes here seem wired.
+                                                    CustomGroupBox(showGroupBox: isCustomGroupBoxActive) {
+                                                        makeSomeContent(currentLayout, element)
+                                                            .highlightKeyword($searchedText)
+                                                            .environment(\._suppressCustomGroupBox, true)
+                                                            .onPreferenceChange(CustomGroupBoxActivePreference.self) { isActive in
+                                                                isCustomGroupBoxActive = isActive
+                                                            }
+                                                            .wrapIf(true) { content in
+                                                                if #available(iOS 18.0, macOS 15.0, *) {
+                                                                    content
+                                                                        .matchedTransitionSource(id: element.hashValue, in: navigationAnimationNamespace)
+                                                                } else {
+                                                                    content
+                                                                }
+                                                            }
+                                                    }
+                                                })
+                                                .buttonStyle(.plain)
+                                            }
+                                        )
+                                    ) { element in
+                                        AnyView(
+                                            Button(action: {
+                                                showFilterSheet = false
+                                                presentingElement = element
+                                            }, label: {
+                                                CustomGroupBox(showGroupBox: isCustomGroupBoxActive) {
                                                     makeSomeContent(currentLayout, element)
                                                         .highlightKeyword($searchedText)
                                                         .environment(\._suppressCustomGroupBox, true)
@@ -412,40 +439,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                                                                 content
                                                             }
                                                         }
-                                                        .wrapIf(isCustomGroupBoxActive) { content in
-                                                            CustomGroupBox {
-                                                                content
-                                                            }
-                                                        }
-                                                })
-                                                .buttonStyle(.plain)
-                                            }
-                                        )
-                                    ) { element in
-                                        AnyView(
-                                            Button(action: {
-                                                showFilterSheet = false
-                                                presentingElement = element
-                                            }, label: {
-                                                makeSomeContent(currentLayout, element)
-                                                    .highlightKeyword($searchedText)
-                                                    .environment(\._suppressCustomGroupBox, true)
-                                                    .onPreferenceChange(CustomGroupBoxActivePreference.self) { isActive in
-                                                        isCustomGroupBoxActive = isActive
-                                                    }
-                                                    .wrapIf(true) { content in
-                                                        if #available(iOS 18.0, macOS 15.0, *) {
-                                                            content
-                                                                .matchedTransitionSource(id: element.hashValue, in: navigationAnimationNamespace)
-                                                        } else {
-                                                            content
-                                                        }
-                                                    }
-                                                    .wrapIf(isCustomGroupBoxActive) { content in
-                                                        CustomGroupBox {
-                                                            content
-                                                        }
-                                                    }
+                                                }
                                             })
                                             .buttonStyle(.plain)
                                         )

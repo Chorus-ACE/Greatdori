@@ -568,48 +568,22 @@ struct DebugRulerOverlay: View {
 
 struct DebugPlaygroundView: View {
     @AppStorage("DebugStoryBuilderCodeString") var codeString = ""
-    @State var isBuilding = false
+    @State var isShowing = true
     var body: some View {
         VStack {
-            CodeEditor(text: $codeString, locale: .jp)
-            HStack {
-                Button(String("Build")) {
-                    isBuilding = true
-                    DispatchQueue(label: "com.memz233.Greatdori.Zeile-Debug-Build", qos: .userInitiated).async {
-                        let builder = DoriStoryBuilder(for: .jp)
-                        let startTime = CFAbsoluteTimeGetCurrent()
-                        var diags: [Diagnostic] = []
-                        if let irData = builder.buildIR(from: codeString, diags: &diags) {
-                            let downloadBase = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
-                            let downloadURL = downloadBase.appending(path: "StoryIR.zir")
-                            try? irData.binaryEncoded().write(to: downloadURL)
-                            try? DoriStoryBuilder.Conversion.plainText(fromIR: irData)
-                                .write(to: downloadBase.appending(path: "StoryIR.txt"), atomically: true, encoding: .utf8)
-                            
-                            if let bdJSON = DoriStoryBuilder.Conversion.bestdoriJSON(fromIR: irData) {
-                                let bdURL = downloadBase.appending(path: "StoryBestdori.json")
-                                try? bdJSON.write(
-                                    to: bdURL,
-                                    atomically: true,
-                                    encoding: .utf8
-                                )
-                            }
-                        }
-                        let endTime = CFAbsoluteTimeGetCurrent()
-                        print(diags.map { "\($0)" }.joined(separator: "\n"))
-                        print("Build Time: \(unsafe String(format: "%.4f", endTime - startTime))")
-                        isBuilding = false
-                    }
-                }
-                .disabled(isBuilding)
-                ProgressView()
-                    .controlSize(.small)
-                    .opacity(isBuilding ? 1 : 0)
+            Text(verbatim: "CustomGroupBox Animation")
+                .font(.largeTitle)
+            CustomGroupBox(showGroupBox: isShowing) {
+                WebImage(url: URL(string: "https://greatdori.com/anon.png")!)
+                    .resizable()
             }
+            .frame(width: 240, height: 240)
+            .animation(.spring(duration: 0.3, bounce: 0.2), value: isShowing)
+            .padding(.vertical)
+            Toggle(String("Show"), isOn: $isShowing)
+                .toggleStyle(.switch)
         }
-        #if os(iOS)
-        .interactiveDismissDisabled()
-        #endif
+        .padding()
     }
 }
 

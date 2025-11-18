@@ -50,7 +50,7 @@ struct GachaInfo: View {
             } placeholder: {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(getPlaceholderColor())
-                    .aspectRatio(3.0, contentMode: .fill)
+                    .aspectRatio(3.0, contentMode: .fit)
                     .frame(maxWidth: 420 * (sizeClass == .regular ? sizeFactor : 1))
             }
             .interpolation(.high)
