@@ -104,7 +104,9 @@ struct SettingsFontsMain: View {
                 Text("Settings.fonts.story-viewer")
             }, footer: {
                 if isMACOS {
-                    SettingsDocumentButton(label: "Settings.fonts.learn-more", content: "FontSuggestions")
+                    SettingsDocumentButton(document: "FontSuggestions") {
+                        Text("Settings.fonts.learn-more")
+                    }
                 }
             })
             .onChange(of: storyViewerUpdateIndex, initial: true) {
@@ -115,7 +117,9 @@ struct SettingsFontsMain: View {
             
             if !isMACOS {
                 Section {
-                    SettingsDocumentButton(label: "Settings.fonts.learn-more", content: "FontSuggestions")
+                    SettingsDocumentButton(document: "FontSuggestions") {
+                        Text("Settings.fonts.learn-more")
+                    }
                 }
             }
         }

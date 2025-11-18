@@ -257,8 +257,10 @@ struct SettingsWidgetsCollectionView: View {
                     }
                 })
             }, footer: {
-                SettingsDocumentButton(label: "Settings.widgets.collections.learn-more", content: "CollectionCode")
-                    .font(isMACOS ? .body : .caption)
+                SettingsDocumentButton(document: "CollectionCode") {
+                    Text("Settings.widgets.collections.learn-more")
+                }
+                .font(isMACOS ? .body : .caption)
                 .toolbar {
                     if isMACOS {
                         ToolbarItem {

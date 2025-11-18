@@ -140,6 +140,15 @@ struct SettingsAboutDetailIconView: View {
 
 struct SettingsAboutDetailListView: View {
     var body: some View {
+        SettingsDocumentButton(document: "T&C") {
+            HStack {
+                Text("Settings.about.user-agreement-license")
+                Spacer()
+                Image(systemName: "arrow.up.forward.circle")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .buttonStyle(.plain)
         Text(verbatim: "Licensed under Apache License 2.0")
         Link(destination: URL(string: "https://github.com/Greatdori")!, label: {
             HStack {

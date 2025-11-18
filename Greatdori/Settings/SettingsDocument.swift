@@ -15,19 +15,21 @@
 import MarkdownUI
 import SwiftUI
 
-struct SettingsDocumentButton: View {
-    var label: LocalizedStringResource
-    var content: String
+
+struct SettingsDocumentButton<L: View>: View {
+    var document: String
+    var label: () -> L
     @State var sheetIsDisplayed = false
     var body: some View {
         Button(action: {
             sheetIsDisplayed = true
         }, label: {
-            Text(label)
+//            Text(label)
+            label()
         })
         .sheet(isPresented: $sheetIsDisplayed, content: {
             Group {
-                if let markdownContent = readMarkdownFile(content) {
+                if let markdownContent = readMarkdownFile(document) {
                     ScrollView {
                         Markdown(markdownContent)
                             .padding()
