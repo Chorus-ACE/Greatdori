@@ -27,7 +27,7 @@ struct CostumeDetailView: View {
                 DetailsCardsSection(cards: information.cards)
             }
             DetailArtsSection {
-                ArtsTab("Costume.arts.thumb") {
+                ArtsTab("Costume.arts.thumb", ratio: 1) {
                     ArtsItem(title: "Costume.arts.thumb", url: information.costume.thumbImageURL)
                 }
             }

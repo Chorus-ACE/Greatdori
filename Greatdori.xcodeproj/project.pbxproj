@@ -879,6 +879,7 @@
 				E9A126FD2E8CB62700BBD39E /* Tools */,
 				8CBC97532EC193C8007A1E33 /* Zeile */,
 				E9BD6C4F2E547A7200D56E55 /* Settings */,
+				E944C3022ECC694C0005EE55 /* Documents */,
 			);
 			path = Greatdori;
 			sourceTree = "<group>";
@@ -1341,6 +1342,20 @@
 			path = Methods;
 			sourceTree = "<group>";
 		};
+		E944C3022ECC694C0005EE55 /* Documents */ = {
+			isa = PBXGroup;
+			children = (
+				E9490BB52E937BBB00E50D3F /* CollectionCode_ZH-HANS.md */,
+				8C2B642A2E9581EC00D003D1 /* CollectionCode_EN.md */,
+				E9AEC8C72EBA2EFC00490B75 /* FontSuggestions_ZH-HANS.md */,
+				E955A0F62EBDF9C300795C9D /* FontSuggestions_EN.md */,
+				E944DCB62ECB39B50005EE55 /* DataSource_ZH-HANS.md */,
+				E944DCB82ECB3C450005EE55 /* T&C_ZH-Hans.md */,
+				E944DCC82ECBCEEC0005EE55 /* T&C_EN.md */,
+			);
+			path = Documents;
+			sourceTree = "<group>";
+		};
 		E98BE10F2E7E8C5E00B4C8A8 /* Info */ = {
 			isa = PBXGroup;
 			children = (
@@ -1392,13 +1407,6 @@
 				8CC046DB2E6C8F5D009FDC13 /* AppFlags.swift */,
 				E91787142EC95C6E00C33779 /* SettingsDocument.swift */,
 				E944DCB42ECB253A0005EE55 /* Acknowledgements.swift */,
-				E9490BB52E937BBB00E50D3F /* CollectionCode_ZH-HANS.md */,
-				8C2B642A2E9581EC00D003D1 /* CollectionCode_EN.md */,
-				E9AEC8C72EBA2EFC00490B75 /* FontSuggestions_ZH-HANS.md */,
-				E955A0F62EBDF9C300795C9D /* FontSuggestions_EN.md */,
-				E944DCB62ECB39B50005EE55 /* DataSource_ZH-HANS.md */,
-				E944DCB82ECB3C450005EE55 /* T&C_ZH-Hans.md */,
-				E944DCC82ECBCEEC0005EE55 /* T&C_EN.md */,
 			);
 			path = Settings;
 			sourceTree = "<group>";

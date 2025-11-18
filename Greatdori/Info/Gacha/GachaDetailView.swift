@@ -29,25 +29,25 @@ struct GachaDetailView: View {
             GachaDetailCardsView(information: information)
             GachaDetailPossibilityView(information: information)
             DetailArtsSection {
-                ArtsTab("Gacha.arts.banner") {
+                ArtsTab("Gacha.arts.banner", ratio: 3) {
                     for locale in DoriLocale.allCases {
                         if let url = information.gacha.bannerImageURL(in: locale, allowsFallback: false) {
                             ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
                         }
                     }
                 }
-                ArtsTab("Gacha.arts.logo") {
+                ArtsTab("Gacha.arts.logo", ratio: 540/240) {
                     for locale in DoriLocale.allCases {
                         if let url = information.gacha.logoImageURL(in: locale, allowsFallback: false) {
                             ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
                         }
                     }
                 }
-                ArtsTab("Gacha.arts.logo") {
+                ArtsTab("Gacha.arts.pickup", ratio: 964/613) {
                     for locale in DoriLocale.allCases {
                         if let urls = information.gacha.pickupImageURLs(in: locale, allowsFallback: false) {
-                            for url in urls {
-                                ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
+                            for i in 0..<urls.count {
+                                ArtsItem(title: LocalizedStringResource(stringLiteral: "\(locale.rawValue.uppercased()) \(i+1)"), url: urls[i])
                             }
                         }
                     }

@@ -25,10 +25,10 @@ struct LoginCampaignDetailView: View {
         DetailViewBase(forType: LoginCampaign.self, previewList: allLoginCampaigns, initialID: id) { information in
             LoginCampaignDetailOverviewView(information: information)
             DetailArtsSection {
-                ArtsTab("Login-campaign.arts.background") {
+                ArtsTab("Login-campaign.arts.background", ratio: 600/360) {
                     for locale in DoriLocale.allCases {
                         if let url = information.backgroundImageURL(in: locale, allowsFallback: false) {
-                            ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
+                            ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url, forceApplyRatio: true)
                         }
                     }
                 }
@@ -42,28 +42,36 @@ struct LoginCampaignDetailView: View {
 struct LoginCampaignDetailOverviewView: View {
     let information: LoginCampaign
     var dateFormatter: DateFormatter { let df = DateFormatter(); df.dateStyle = .long; df.timeStyle = .short; return df }
+    
+    @State var backgroundImageIsHidden = false
     var body: some View {
         VStack {
             Group {
-                Group {
-                    Rectangle()
-                        .opacity(0)
-                        .frame(height: 2)
-                    WebImage(url: information.backgroundImageURL) { image in
-                        image
-                            .resizable()
-                            .antialiased(true)
-                            .aspectRatio(184/110, contentMode: .fit)
-                    } placeholder: {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(getPlaceholderColor())
+                if !backgroundImageIsHidden {
+                    Group {
+                        Rectangle()
+                            .opacity(0)
+                            .frame(height: 2)
+                        WebImage(url: information.backgroundImageURL, content: { image in
+                            image
+                                .resizable()
+                                .antialiased(true)
+                                .aspectRatio(184/110, contentMode: .fit)
+                        }, placeholder: {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(getPlaceholderColor())
+                                .aspectRatio(184/110, contentMode: .fit)
+                        })
+                        .onFailure { _ in
+                            backgroundImageIsHidden = true
+                        }
+                        .interpolation(.high)
+                        .frame(maxWidth: bannerWidth, maxHeight: bannerWidth/3)
+                        .cornerRadius(10)
+                        Rectangle()
+                            .opacity(0)
+                            .frame(height: 2)
                     }
-                    .interpolation(.high)
-                    .frame(maxWidth: bannerWidth, maxHeight: bannerWidth/3)
-                    .cornerRadius(10)
-                    Rectangle()
-                        .opacity(0)
-                        .frame(height: 2)
                 }
                 
                 CustomGroupBox {

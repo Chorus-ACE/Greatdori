@@ -25,14 +25,14 @@ struct ComicDetailView: View {
             ComicDetailComicView(information: information)
             
             DetailArtsSection {
-                ArtsTab("Comic.arts.thumb") {
+                ArtsTab("Comic.arts.thumb", ratio: 192/140) {
                     for locale in DoriLocale.allCases {
                         if let url = information.thumbImageURL(in: locale, allowsFallback: false) {
                             ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
                         }
                     }
                 }
-                ArtsTab("Comic.arts.comic") {
+                ArtsTab("Comic.arts.comic", ratio: 600/436) {
                     for locale in DoriLocale.allCases {
                         if let url = information.imageURL(in: locale, allowsFallback: false) {
                             ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)

@@ -71,20 +71,22 @@ struct ArtsItemBuilder {
 struct ArtsTab: Identifiable, Hashable, Equatable {
     var tabName: LocalizedStringResource
     var content: [ArtsItem]
-    
-    init(_ tabName: LocalizedStringResource, content: [ArtsItem]) {
-        self.tabName = tabName
-        self.content = content
-    }
+    var ratio: CGFloat
     
     var id: String {
         tabName.key
     }
-}
-extension ArtsTab {
-    init(_ name: LocalizedStringResource, @ArtsItemBuilder content: () -> [ArtsItem]) {
+    
+    init(_ tabName: LocalizedStringResource, content: [ArtsItem], ratio: CGFloat = 1) {
+        self.tabName = tabName
+        self.content = content
+        self.ratio = ratio
+    }
+    
+    init(_ name: LocalizedStringResource, ratio: CGFloat = 1, @ArtsItemBuilder content: () -> [ArtsItem]) {
         self.tabName = name
         self.content = content()
+        self.ratio = ratio
     }
 }
 
@@ -92,7 +94,8 @@ struct ArtsItem: Hashable, Equatable {
     let id = UUID()
     var title: LocalizedStringResource
     var url: URL
-    var expectedRatio: CGFloat = 3.0
+    var ratio: CGFloat? = nil
+    var forceApplyRatio: Bool = false
 }
 
 // MARK: DetailArtsSection
@@ -108,12 +111,12 @@ struct DetailArtsSection: View {
     @State var hiddenItems: [UUID] = []
     
     let itemMinimumWidth: CGFloat = 280
-    let itemMaximumWidth: CGFloat = 320
+    let itemMaximumWidth: CGFloat = 440
     var body: some View {
         LazyVStack(pinnedViews: .sectionHeaders) {
             Section(content: {
                 Group {
-                    if let tab, let tabContent = information.first(where: {$0.id == tab}) {
+                    if let tab, let tabContent = information.first(where: {$0.id == tab}), !tabContent.content.isEmpty, tabContent.content.contains(where: { !hiddenItems.contains($0.id) }) {
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: itemMinimumWidth, maximum: itemMaximumWidth))]) {
                             ForEach(tabContent.content, id: \.self) { item in
                                 if !hiddenItems.contains(item.id) {
@@ -145,11 +148,12 @@ struct DetailArtsSection: View {
                                                     image
                                                         .resizable()
                                                         .antialiased(true)
-                                                        .scaledToFit()
+//                                                        .scaledToFit()
+                                                        .aspectRatio(item.forceApplyRatio ? (item.ratio ?? tabContent.ratio) : nil, contentMode: .fit)
                                                 } placeholder: {
                                                     RoundedRectangle(cornerRadius: 10)
                                                         .fill(getPlaceholderColor())
-                                                        .aspectRatio(3, contentMode: .fit)
+                                                        .aspectRatio(item.ratio ?? tabContent.ratio, contentMode: .fit)
                                                 }
                                                 .interpolation(.high)
                                                 .onSuccess { image, _, _ in

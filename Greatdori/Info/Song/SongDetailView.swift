@@ -28,10 +28,10 @@ struct SongDetailView: View {
             DetailsEventsSection(events: information.events)
             SongDetailMatchView(song: information.song, songMatches: $songMatches)
             DetailArtsSection {
-                ArtsTab("Song.arts.cover") {
+                ArtsTab("Song.arts.cover", ratio: 1) {
                     for locale in DoriLocale.allCases {
                         if let url = information.song.jacketImageURL(in: locale, allowsFallback: false) {
-                            ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url, expectedRatio: 1)
+                            ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url, ratio: 1)
                         }
                     }
                 }

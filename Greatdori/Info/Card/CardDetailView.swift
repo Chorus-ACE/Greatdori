@@ -34,25 +34,25 @@ struct CardDetailView: View {
                 DetailsGachasSection(sources: information.cardSource)
             }
             DetailArtsSection {
-                ArtsTab("Card.arts.full") {
+                ArtsTab("Card.arts.full", ratio: 1334/1002) {
                     ArtsItem(title: "Card.arts.normal", url: information.card.coverNormalImageURL)
                     if let url = information.card.coverAfterTrainingImageURL {
                         ArtsItem(title: "Card.arts.trained", url: url)
                     }
                 }
-                ArtsTab("Card.arts.trimmed") {
+                ArtsTab("Card.arts.trimmed", ratio: 1) {
                     ArtsItem(title: "Card.arts.normal", url: information.card.trimmedNormalImageURL)
                     if let url = information.card.trimmedAfterTrainingImageURL {
                         ArtsItem(title: "Card.arts.trained", url: url)
                     }
                 }
-                ArtsTab("Card.arts.thumb") {
+                ArtsTab("Card.arts.thumb", ratio: 1) {
                     ArtsItem(title: "Card.arts.normal", url: information.card.thumbNormalImageURL)
                     if let url = information.card.thumbAfterTrainingImageURL {
                         ArtsItem(title: "Card.arts.trained", url: url)
                     }
                 }
-                ArtsTab("Card.arts.livesd") {
+                ArtsTab("Card.arts.livesd", ratio: 1) {
                     ArtsItem(title: "Card.arts.livesd", url: information.card.sdImageURL)
                 }
             }
