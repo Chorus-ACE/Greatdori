@@ -30,6 +30,8 @@ Important: To the extent that this software may be used to copy, modify, publish
 
 5. You understand that while using the Software, you may be exposed to content that is considered inappropriate, uncomfortable, or offensive; such content may include explicit material or may appear unexpectedly through search results or links to certain websites. You agree to assume all risks associated with using the Software, and the Greatdori! Development Team shall not be held responsible for any content that may cause discomfort.
 
+6. Some features may require an account in order to use. You understand and agree that all accounts in the Software is provided by third-party services, and adding account and password to this Software means that you allow this Software to access the data provided by third-party services on your behalf.
+
 ## III. Disclaimer
 
 1. The laws of your country or region may grant you certain statutory rights that render some of the restrictions in these terms unenforceable. If such restrictions are prohibited by local law, they shall not apply to you. To better understand your rights, you may consult local consumer protection agencies and refer to any supplemental provisions applicable in your jurisdiction.
