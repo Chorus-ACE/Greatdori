@@ -283,6 +283,7 @@ struct GachaDetailCardsView: View {
                                                     .foregroundStyle(.secondary)
                                             }
                                             Image(systemName: "chevron.forward")
+                                                .foregroundStyle(.secondary)
                                                 .rotationEffect(Angle(degrees: (raritySectionIsExpanded[rarity] ?? false) ? 90 : 0))
                                         }
                                         .contentShape(Rectangle())

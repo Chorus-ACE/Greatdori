@@ -151,12 +151,14 @@ struct SettingsAboutDetailListView: View {
             .contentShape(Rectangle())
         })
         .foregroundStyle(.primary)
-        SettingsDocumentButton(document: "T&C") {
+        SettingsDocumentButton(document: "T&C", preferNavigationLink: true) {
             HStack {
                 Text("Settings.about.user-agreement-license")
                 Spacer()
-                Image(systemName: "arrow.up.forward.circle")
-                    .foregroundStyle(.secondary)
+                Image(systemName: "chevron.forward")
+                    .foregroundStyle(.tertiary)
+                    .font(.footnote)
+                    .bold()
             }
         }
         .buttonStyle(.plain)

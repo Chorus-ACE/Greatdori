@@ -18,16 +18,45 @@ import SwiftUI
 
 struct SettingsDocumentButton<L: View>: View {
     var document: String
+    var preferNavigationLink: Bool = false
     var label: () -> L
     @State var sheetIsDisplayed = false
+    @State var navigationLinkIsEntered = false
     var body: some View {
         Button(action: {
-            sheetIsDisplayed = true
+            if preferNavigationLink {
+                navigationLinkIsEntered = true
+            } else {
+                sheetIsDisplayed = true
+            }
         }, label: {
 //            Text(label)
             label()
         })
+        .navigationDestination(isPresented: $navigationLinkIsEntered, destination: {
+            SettingsDocumentView(document: document)
+        })
         .sheet(isPresented: $sheetIsDisplayed, content: {
+            SettingsDocumentView(document: document)
+                .toolbar {
+#if os(macOS)
+                    ToolbarItem(placement: .cancellationAction) {
+                        DismissButton(label: {
+                            Text("Settings.document.close")
+                        })
+                    }
+#else
+                    ToolbarItem(placement: .topBarTrailing, content: {
+                        Label("Settings.document.close", systemImage: "xmark")
+                    })
+#endif
+                }
+        })
+    }
+    
+    struct SettingsDocumentView: View {
+        var document: String
+        var body: some View {
             Group {
                 if let markdownContent = readMarkdownFile(document) {
                     ScrollView {
@@ -41,20 +70,7 @@ struct SettingsDocumentButton<L: View>: View {
                     }
                 }
             }
-            .toolbar {
-#if os(macOS)
-                ToolbarItem(placement: .cancellationAction) {
-                    DismissButton(label: {
-                        Text("Settings.document.close")
-                    })
-                }
-#else
-                ToolbarItem(placement: .topBarTrailing, content: {
-                    Label("Settings.document.close", systemImage: "xmark")
-                })
-#endif
-            }
-        })
+        }
     }
 }
 
