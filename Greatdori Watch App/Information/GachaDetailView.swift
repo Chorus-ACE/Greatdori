@@ -100,8 +100,8 @@ struct GachaDetailView: View {
                                 .listRowBackground(Color.clear)
                                 if let _details = information.gacha.details.forPreferredLocale() {
                                     let details = _details.filter { $0.value.rarityIndex == key }
-                                    if details.contains(where: { $0.value.pickup }) {
-                                        let pickups = details.filter { $0.value.pickup }
+                                    ForEach(Set(details.values.map { $0.weight }).sorted(by: >), id: \.self) { weight in
+                                        let pickups = details.filter { $0.value.weight == weight }
                                         Button(action: {
                                             if pickups.count > 1 {
                                                 cardListPresentation = information.cardDetails[key]!.filter { pickups.map { $0.key }.contains($0.id) }
@@ -122,26 +122,6 @@ struct GachaDetailView: View {
                                             }
                                         })
                                     }
-                                    let nonPickups = details.filter { !$0.value.pickup }
-                                    Button(action: {
-                                        if nonPickups.count > 1 {
-                                            cardListPresentation = information.cardDetails[key]!.filter { nonPickups.map { $0.key }.contains($0.id) }
-                                        } else {
-                                            cardDetailPresentation = nonPickups.first!.key
-                                        }
-                                    }, label: {
-                                        HStack {
-                                            VStack(alignment: .leading) {
-                                                Text(verbatim: "\(unsafe String(format: "%.2f", Double(nonPickups.first!.value.weight) / Double(rates[key]!.weightTotal) * rates[key]!.rate))%")
-                                                Spacer()
-                                                Text("\(nonPickups.count)张")
-                                                    .font(.system(size: 13))
-                                                    .opacity(0.6)
-                                            }
-                                            Spacer()
-                                            CardIconView(information.cardDetails[key]!.first(where: { $0.id == nonPickups.first!.key })!)
-                                        }
-                                    })
                                 }
                             }
                         }
