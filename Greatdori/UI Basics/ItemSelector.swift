@@ -345,13 +345,14 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
                     SongSelector(selection: songBinding)
                 }
             }
-#if os(macOS)
+            #if os(macOS)
             .introspect(.window, on: .macOS(.v14...)) { window in
                 window.standardWindowButton(.zoomButton)?.isEnabled = false
                 window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
+                window.collectionBehavior = [.fullScreenAuxiliary, .fullScreenNone]
                 window.level = .floating
             }
-#endif
+            #endif
         }
     }
     func castUpdateList<T>(
