@@ -41,68 +41,79 @@ struct WelcomeView: View {
             Rectangle()
                 .frame(height: 1)
                 .opacity(0)
+            Form {
+                Section(content: {
+                    Picker(selection: $primaryLocale, content: {
+                        Text("Home.servers.selection.jp")
+                            .tag("jp")
+                            .disabled(secondaryLocale == "jp")
+                        Text("Home.servers.selection.en")
+                            .tag("en")
+                            .disabled(secondaryLocale == "en")
+                        Text("Home.servers.selection.cn")
+                            .tag("cn")
+                            .disabled(secondaryLocale == "cn")
+                        Text("Home.servers.selection.tw")
+                            .tag("tw")
+                            .disabled(secondaryLocale == "tw")
+                        Text("Home.servers.selection.kr")
+                            .tag("kr")
+                            .disabled(secondaryLocale == "kr")
+                    }, label: {
+                        Text("Welcome.primaryLocale")
+                    })
+                    .onChange(of: primaryLocale, {
+                        DoriLocale.primaryLocale = localeFromStringDict[primaryLocale] ?? .jp
+                    })
+                    Picker(selection: $secondaryLocale, content: {
+                        Text("Home.servers.selection.jp")
+                            .tag("jp")
+                            .disabled(primaryLocale == "jp")
+                        Text("Home.servers.selection.en")
+                            .tag("en")
+                            .disabled(primaryLocale == "en")
+                        Text("Home.servers.selection.cn")
+                            .tag("cn")
+                            .disabled(primaryLocale == "cn")
+                        Text("Home.servers.selection.tw")
+                            .tag("tw")
+                            .disabled(primaryLocale == "tw")
+                        Text("Home.servers.selection.kr")
+                            .tag("kr")
+                            .disabled(primaryLocale == "kr")
+                    }, label: {
+                        Text("Welcome.secondaryLocale")
+                    })
+                    .onChange(of: secondaryLocale, {
+                        DoriLocale.secondaryLocale = localeFromStringDict[secondaryLocale] ?? .en
+                    })
+                }, footer: {
+                    Text("Welcome.agreement-prompt")
+                    // FIXME: [251119] Insert Link
+                })
+            }
+            .formStyle(.grouped)
+            .scrollDisabled(true)
+            .padding(-20)
+            /*
             HStack {
 #if os(iOS)
                 Text("Welcome.primaryLocale")
                 Spacer()
 #endif
-                Picker(selection: $primaryLocale, content: {
-                    Text("Home.servers.selection.jp")
-                        .tag("jp")
-                        .disabled(secondaryLocale == "jp")
-                    Text("Home.servers.selection.en")
-                        .tag("en")
-                        .disabled(secondaryLocale == "en")
-                    Text("Home.servers.selection.cn")
-                        .tag("cn")
-                        .disabled(secondaryLocale == "cn")
-                    Text("Home.servers.selection.tw")
-                        .tag("tw")
-                        .disabled(secondaryLocale == "tw")
-                    Text("Home.servers.selection.kr")
-                        .tag("kr")
-                        .disabled(secondaryLocale == "kr")
-                }, label: {
-                    Text("Welcome.primaryLocale")
-                })
-                .onChange(of: primaryLocale, {
-                    DoriLocale.primaryLocale = localeFromStringDict[primaryLocale] ?? .jp
-                })
+                
             }
             HStack {
 #if os(iOS)
                 Text("Welcome.secondaryLocale")
                 Spacer()
 #endif
-                Picker(selection: $secondaryLocale, content: {
-                    Text("Home.servers.selection.jp")
-                        .tag("jp")
-                        .disabled(primaryLocale == "jp")
-                    Text("Home.servers.selection.en")
-                        .tag("en")
-                        .disabled(primaryLocale == "en")
-                    Text("Home.servers.selection.cn")
-                        .tag("cn")
-                        .disabled(primaryLocale == "cn")
-                    Text("Home.servers.selection.tw")
-                        .tag("tw")
-                        .disabled(primaryLocale == "tw")
-                    Text("Home.servers.selection.kr")
-                        .tag("kr")
-                        .disabled(primaryLocale == "kr")
-                }, label: {
-                    Text("Welcome.secondaryLocale")
-                })
-                .onChange(of: secondaryLocale, {
-                    DoriLocale.secondaryLocale = localeFromStringDict[secondaryLocale] ?? .en
-                })
             }
             Rectangle()
                 .frame(height: 1)
                 .opacity(0)
-            Text("Welcome.footnote")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            
+             */
             Spacer()
 #if os(iOS)
             Button(action: {
@@ -138,10 +149,16 @@ struct WelcomeView: View {
                     //                    dismiss()
                     showWelcomeScreen = false
                 }, label: {
-                    Text("Done")
+                    Text("Welcome.agree-done")
                 })
                 //                .background()
             })
+            #if os(macOS)
+            ToolbarItem(placement: .destructiveAction) {
+                Text("Welcome.footnote")
+                    .foregroundStyle(.secondary)
+            }
+            #endif
         }
     }
 }
