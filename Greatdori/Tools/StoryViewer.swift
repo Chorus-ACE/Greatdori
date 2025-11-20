@@ -262,6 +262,7 @@ struct StoryViewerView: View {
                         informationIsAvailable = false
                     }
                 }
+            }
         case .card:
             if let selectedCard {
                 DoriCache.withCache(id: "CardDetail_\(selectedCard.id)") {
