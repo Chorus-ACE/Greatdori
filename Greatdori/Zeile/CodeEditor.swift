@@ -51,6 +51,7 @@ struct CodeEditor: NSViewRepresentable {
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticSpellingCorrectionEnabled = false
         textView.delegate = context.coordinator
+        textView.backgroundColor = .init(.zeileEditorBackground)
         
         let scrollView = NSScrollView()
         scrollView.hasVerticalScroller = true
@@ -598,8 +599,9 @@ struct CodeEditor: NSViewRepresentable {
             super.init(scrollView: textView.enclosingScrollView!, orientation: .verticalRuler)
             self.font = .monospacedSystemFont(ofSize: 12, weight: .medium)
             self.clientView = textView
-            
             self.ruleThickness = 40
+            self.wantsLayer = true
+            self.layer?.masksToBounds = true
         }
         
         required init(coder: NSCoder) {

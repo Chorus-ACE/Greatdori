@@ -157,8 +157,8 @@ struct CustomGroupBox<Content: View>: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: cornerRadius)
                                 .fill(.black.opacity(0.1))
-                                .offset(y: 3)
-                                .blur(radius: 3)
+                                .offset(y: 2)
+                                .blur(radius: 2)
                                 .mask {
                                     Rectangle()
                                         .size(width: geometry.size.width + 18, height: geometry.size.height + 18)
@@ -170,8 +170,8 @@ struct CustomGroupBox<Content: View>: View {
                                 }
                             RoundedRectangle(cornerRadius: cornerRadius)
                                 .fill(.black.opacity(0.1))
-                                .offset(y: 4)
-                                .blur(radius: 10)
+                                .offset(y: 2)
+                                .blur(radius: 4)
                                 .mask {
                                     Rectangle()
                                         .size(width: geometry.size.width + 60, height: geometry.size.height + 60)
