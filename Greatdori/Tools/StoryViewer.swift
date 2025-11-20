@@ -228,13 +228,15 @@ struct StoryViewerView: View {
                 } .onUpdate {
                     if let stories = $0 {
                         self.allEventStories = stories
+                        let eventStory = allEventStories.first {
+                            $0.id == (selectedEvent?.id ?? -1)
+                        }
+                        displayingStories = eventStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
                     } else {
                         informationIsAvailable = false
                     }
                 }
             }
-            let eventStory = allEventStories.first(where: { $0.id == (selectedEvent?.id ?? -1) })
-            displayingStories = eventStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
         case .main:
             if allMainStories.isEmpty {
                 DoriCache.withCache(id: "MainStories") {
@@ -242,12 +244,12 @@ struct StoryViewerView: View {
                 } .onUpdate {
                     if let stories = $0 {
                         self.allMainStories = stories
+                        displayingStories = allMainStories.convertToLocalizedData()
                     } else {
                         informationIsAvailable = false
                     }
                 }
             }
-            displayingStories = allMainStories.convertToLocalizedData()
         case .band:
             if allBandStories.isEmpty {
                 DoriCache.withCache(id: "BandStories") {
@@ -255,12 +257,11 @@ struct StoryViewerView: View {
                 } .onUpdate {
                     if let bands = $0 {
                         self.allBandStories = bands
+                        displayingStories = selectedBandStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
                     } else {
                         informationIsAvailable = false
                     }
                 }
-            }
-            displayingStories = selectedBandStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
         case .card:
             if let selectedCard {
                 DoriCache.withCache(id: "CardDetail_\(selectedCard.id)") {
