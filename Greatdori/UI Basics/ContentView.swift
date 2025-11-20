@@ -311,5 +311,3 @@ extension EnvironmentValues {
 func doSth() {
     print("")
 }
-
-let
