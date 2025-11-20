@@ -206,7 +206,7 @@ struct SettingsAboutAcknowledgementsView: View {
                 }
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    withAnimation {
+                    withAnimation(.spring(duration: 0.3, bounce: 0.1)) {
                         isExpanded.toggle()
                     }
                 }

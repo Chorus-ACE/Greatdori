@@ -131,6 +131,40 @@ struct ZeileEditorCommands: Commands {
                     .disabled(sharedState.runningWindowID == nil)
                     .keyboardShortcut(".", modifiers: .command)
                 }
+                Section {
+                    Button("Build Textual IR", systemImage: "gearshape.fill") {
+                        Task {
+                            if await zeileProductBuild(
+                                project: project,
+                                with: sharedState,
+                                for: .textualIR
+                            ) {
+                                #if os(macOS)
+                                NSWorkspace.shared.selectFile(
+                                    _buildFolder(for: project).appending(path: "Story.ir.txt").path,
+                                    inFileViewerRootedAtPath: ""
+                                )
+                                #endif
+                            }
+                        }
+                    }
+                    Button("Build for Bestdori!", systemImage: "ellipsis.curlybraces") {
+                        Task {
+                            if await zeileProductBuild(
+                                project: project,
+                                with: sharedState,
+                                for: .bestdori
+                            ) {
+                                #if os(macOS)
+                                NSWorkspace.shared.selectFile(
+                                    _buildFolder(for: project).appending(path: "StoryBestdori.json").path,
+                                    inFileViewerRootedAtPath: ""
+                                )
+                                #endif
+                            }
+                        }
+                    }
+                }
                 #if os(macOS)
                 Section {
                     Button("Show Build Folder in Finder", systemImage: "folder") {

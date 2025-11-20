@@ -17,7 +17,11 @@ import SwiftUI
 import Foundation
 
 @discardableResult
-func zeileProductBuild(project: ZeileProjectDocument, with state: ZeileProjectSharedState) async -> Bool {
+func zeileProductBuild(
+    project: ZeileProjectDocument,
+    with state: ZeileProjectSharedState,
+    for destination: ProductBuildDestination = .binaryIR
+) async -> Bool {
     let work = state.addWork(.init(description: "Building", progress: 0.5))
     
     return await withCheckedContinuation { continuation in
@@ -39,7 +43,26 @@ func zeileProductBuild(project: ZeileProjectDocument, with state: ZeileProjectSh
             if let ir = builder.buildIR(from: codeList, diags: &diags) {
                 do {
                     // Write IR
-                    try ir.binaryEncoded().write(to: buildFolder.appending(path: "Story.zir"))
+                    switch destination {
+                    case .binaryIR:
+                        try ir.binaryEncoded()
+                            .write(to: buildFolder.appending(path: "Story.zir"))
+                    case .textualIR:
+                        try DoriStoryBuilder.Conversion.plainText(fromIR: ir)
+                            .write(
+                                to: buildFolder.appending(path: "Story.ir.txt"),
+                                atomically: true,
+                                encoding: .utf8
+                            )
+                    case .bestdori:
+                        if let json = DoriStoryBuilder.Conversion.bestdoriJSON(fromIR: ir) {
+                            try json.write(
+                                to: buildFolder.appending(path: "StoryBestdori.json"),
+                                atomically: true,
+                                encoding: .utf8
+                            )
+                        }
+                    }
                     
                     // Copy assets
                     let assetFolder = buildFolder.appending(path: "Assets")
@@ -67,6 +90,11 @@ func zeileProductBuild(project: ZeileProjectDocument, with state: ZeileProjectSh
             }
         }
     }
+}
+enum ProductBuildDestination {
+    case binaryIR
+    case textualIR
+    case bestdori
 }
 
 @discardableResult
