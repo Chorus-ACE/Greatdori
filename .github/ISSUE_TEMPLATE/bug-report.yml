@@ -6,16 +6,16 @@
 # See https://greatdori.com/LICENSE.txt for license information
 # See https://greatdori.com/CONTRIBUTORS.txt for the list of Greatdori! project authors
 
-name: 🪲 Report a bug in library
+name: 🪲 Report a bug
 description: >
-  Report a deviation from expected behavior, but not a crash, in library.
-labels: [bug, library, triage needed]
+  Report a deviation from expected behavior, but not a crash.
+labels: [bug, app, triage needed]
 body:
   - type: textarea
     attributes:
       label: Description
       description: >
-        A concise description of what causes the problem, in human language.
+        A concise description of what causes the problem.
         Though not required, it may help us to more accurately
         triage the issue as well as understand a non-trivial test case.
     validations:
@@ -24,15 +24,9 @@ body:
     attributes:
       label: Reproduction
       description: >
-        Provide a test case, preferably in a Markdown code block, and explain
-        how to build or run it to reproduce the problem.
-        Consider reducing the test case to the smallest amount of code
-        possible — a smaller test case is easier to reason about and more
-        appealing to contributors.
+        Provide steps to reproduce the problem.
       value: |
-        ```swift
-        
-        ```
+        1. 
     validations:
       required: true
   - type: textarea
@@ -46,14 +40,18 @@ body:
     attributes:
       label: Environment
       description: >
-        Provide the library version, tag, or revision.
-        The name and version of build tool and its holder platform.
-      placeholder: |
-        DoriKit 1.0.0
-        $ swiftc -version
-        $ xcodebuild -version
+        Provide the app version, tag, or revision.
+        The device running the app and its system version.
+      placeholder: Greatdori! 1.0.0, iPhone 16, iOS 26.0
     validations:
       required: true
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: >
+        Add screenshots to help explain your problem, if applicable.
+    validations:
+      required: false
   - type: textarea
     attributes:
       label: Additional information
