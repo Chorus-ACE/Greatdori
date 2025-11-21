@@ -6619,7 +6619,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sorted in alphabetical order."
+            "value" : "All sorted alphabetically."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "均以字母排序。"
           }
         }
       }
@@ -6634,7 +6640,8 @@
             "value" : "Github"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Settings.about.user-agreement-license" : {
       "comment" : "Label for a button that opens a view with the user agreement and license information.",
@@ -6644,6 +6651,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Greatdori! Software License Agreement"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Greatdori! 软件许可协议"
           }
         }
       }
@@ -10077,6 +10090,12 @@
             "state" : "translated",
             "value" : "Band"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "乐队"
+          }
         }
       }
     },
@@ -10149,6 +10168,12 @@
             "state" : "translated",
             "value" : "Locale"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地区"
+          }
         }
       }
     },
@@ -10176,6 +10201,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Select Story…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择故事…"
           }
         }
       }
@@ -10314,6 +10345,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Story Unavailable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "故事不可用"
           }
         }
       }
@@ -10676,6 +10713,12 @@
             "state" : "translated",
             "value" : "Agree"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同意"
+          }
         }
       }
     },
@@ -10687,6 +10730,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "By clicking Agree, you agree to Greatdori! Software Agreement License."
+          }
+        },
+        "zh-Hans" : {
+          "variations" : {
+            "device" : {
+              "mac" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "点击同意即代表你同意 Greatdori! 软件许可协议。"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "轻触同意即代表你同意 Greatdori! 软件许可协议。"
+                }
+              }
+            }
           }
         }
       }
@@ -10988,6 +11049,12 @@
             "state" : "translated",
             "value" : "Find"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查找"
+          }
         }
       }
     },
@@ -10999,6 +11066,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Find..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查找…"
           }
         }
       }
@@ -11012,6 +11085,12 @@
             "state" : "translated",
             "value" : "Find and Replace…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查找与替换…"
+          }
         }
       }
     },
@@ -11023,6 +11102,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Find Next"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查找下一个"
           }
         }
       }
@@ -11036,6 +11121,12 @@
             "state" : "translated",
             "value" : "Find Previous"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查找上一个"
+          }
         }
       }
     },
@@ -11047,6 +11138,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hide Find Bar"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏查找栏"
           }
         }
       }
@@ -11060,6 +11157,12 @@
             "state" : "translated",
             "value" : "Replace"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "替换"
+          }
         }
       }
     },
@@ -11071,6 +11174,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Replace All"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部替换"
           }
         }
       }
@@ -11084,6 +11193,12 @@
             "state" : "translated",
             "value" : "Replace and Find Next"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "替换并查找下一个"
+          }
         }
       }
     },
@@ -11094,6 +11209,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Replace and Find Previous"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "替换并查找上一个"
           }
         }
       }
@@ -11107,6 +11228,12 @@
             "state" : "translated",
             "value" : "Product"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "产品"
+          }
         }
       }
     },
@@ -11118,6 +11245,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archive"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "归档"
           }
         }
       }
@@ -11131,6 +11264,12 @@
             "state" : "translated",
             "value" : "Build"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "构建"
+          }
         }
       }
     },
@@ -11143,12 +11282,32 @@
             "state" : "translated",
             "value" : "Run"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "运行"
+          }
         }
       }
     },
     "Zeile.command.product.stop" : {
       "comment" : "A command to stop the current build process.",
-      "isCommentAutoGenerated" : true
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止"
+          }
+        }
+      }
     },
     "Zeile.editor" : {
       "comment" : "The title of the view.",
@@ -11158,6 +11317,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zeile Editor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeile 编辑器"
           }
         }
       }
@@ -11171,6 +11336,12 @@
             "state" : "translated",
             "value" : "Create New Project…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建新项目…"
+          }
         }
       }
     },
@@ -11182,6 +11353,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open Existing Project…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开现有项目…"
           }
         }
       }
