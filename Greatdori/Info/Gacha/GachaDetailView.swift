@@ -355,6 +355,7 @@ struct GachaDetailPossibilityView: View {
     @State var possibility: Double = 0.5
     @State var plays: Int = 1
     var body: some View {
+        
         LazyVStack(pinnedViews: .sectionHeaders) {
             Section(content: {
                 VStack {
@@ -404,7 +405,9 @@ struct GachaDetailPossibilityView: View {
                         }
                     }
                     if let selectedCard {
+                        
                         CustomGroupBox {
+                            
                             var singlePossibility = information.cardDetails.first(where: { $0.value.contains(where: {$0.id == selectedCard.id}) })!.key
                             
                             Text("\(information.gacha.rates)")
@@ -441,7 +444,6 @@ struct GachaDetailPossibilityView: View {
         }
     }
 }
-
 
 class PossibilityNumberFormatter: NumberFormatter {
     override init() {

@@ -173,25 +173,35 @@ struct SettingsAboutDetailListView: View {
 struct SettingsAboutAcknowledgementsView: View {
     var body: some View {
         Form {
-            Section(content: {
+            Section {
                 ForEach(acknowledgements, id: \.self) { item in
-                    SettingsAboutAcknowledgementItem(item: item)
+                    SettingsAboutAcknowledgementItem(type: .package, item: item)
                 }
-            }, footer: {
+            } header: {
+                Text("Packages")
+            }
+            Section {
+                ForEach(codeSnippetsAck, id: \.self) { item in
+                    SettingsAboutAcknowledgementItem(type: .codeSnippet, item: item)
+                }
+            } header: {
+                Text("Code Snippets")
+            } footer: {
                 Text("Settings.about.acknowledgements.footer")
-            })
+            }
         }
         .navigationTitle("Settings.about.acknowledgements")
         .formStyle(.grouped)
     }
     
     struct SettingsAboutAcknowledgementItem: View {
+        var type: ItemType
         var item: AcknowledgementItem
         @State var isExpanded = false
         var body: some View {
             VStack {
                 HStack {
-                    Image(systemName: "shippingbox")
+                    Image(systemName: type == .package ? "shippingbox" : "ellipsis.curlybraces")
                         .foregroundStyle(.brown)
                         .font(.title3)
                     VStack(alignment: .leading) {
@@ -220,6 +230,11 @@ struct SettingsAboutAcknowledgementsView: View {
                         .textSelection(.enabled)
                 }
             }
+        }
+        
+        enum ItemType {
+            case package
+            case codeSnippet
         }
     }
 }
