@@ -294,35 +294,16 @@ struct GachaDetailCardsView: View {
                                         }
                                         
                                         if raritySectionIsExpanded[rarity] ?? false {
-                                            if let cards = information.gacha.details.forLocale(locale)?.filter { $0.value.rarityIndex == rarity } {
-                                                
-                                                if cards.contains(where: { $0.value.pickup }) {
-                                                    let pickUpCards = cards.filter { $0.value.pickup }
-                                                    /*
-                                                     Button(action: {
-                                                     if pickUpCards.count > 1 {
-                                                     cardListPresentation = information.cardDetails[rarity]!.filter { pickUpCards.map { $0.key }.contains($0.id) }
-                                                     } else {
-                                                     cardDetailPresentation = pickUpCards.first!.key
-                                                     }
-                                                     }, label: {
-                                                     HStack {
-                                                     VStack(alignment: .leading) {
-                                                     Text(verbatim: "\(unsafe String(format: "%.2f", Double(pickUpCards.first!.value.weight) / Double(rates[rarity]!.weightTotal) * rates[rarity]!.rate))%")
-                                                     Spacer()
-                                                     Text("\(pickUpCards.count)张")
-                                                     .font(.system(size: 13))
-                                                     .opacity(0.6)
-                                                     }
-                                                     Spacer()
-                                                     CardIconView(information.cardDetails[rarity]!.first(where: { $0.id == pickUpCards.first!.key })!)
-                                                     }
-                                                     })
-                                                     */
+                                            if let _details = information.gacha.details.forPreferredLocale() {
+                                                let details = _details.filter { $0.value.rarityIndex == rarity }
+                                                ForEach(Set(details.values.map { $0.weight }).sorted(by: >), id: \.self) { weight in
+                                                    let pickups = details.filter { $0.value.weight == weight }
+                                                    HStack(alignment: .top) {
+                                                        Text(verbatim: "\(unsafe String(format: "%.2f", Double(pickups.first!.value.weight) / Double(rates[rarity]!.weightTotal) * rates[rarity]!.rate))%")
+                                                            .frame(width: 60, alignment: .leading)
+                                                        CardImageGridContent(cards: information.cardDetails[rarity]!.filter { details[$0.id]?.weight == weight })
+                                                    }
                                                 }
-                                                
-                                                let nonPickUpCards = cards.filter { !$0.value.pickup }
-                                                Text(verbatim: "\(unsafe String(format: "%.2f", Double(nonPickUpCards.first!.value.weight) / Double(rates[rarity]!.weightTotal) * rates[rarity]!.rate))%")
                                             }
                                         }
                                     }
@@ -342,6 +323,35 @@ struct GachaDetailCardsView: View {
                 }
                 .frame(maxWidth: 615)
             })
+        }
+    }
+    
+    struct CardImageGridContent: View {
+        var cards: [PreviewCard]
+        @State private var isExpanded = false
+        var body: some View {
+            VStack {
+                WrappingHStack(alignment: .trailing, contentWidth: 60) {
+                    ForEach(isExpanded ? cards : Array(cards.prefix(20))) { card in
+                        CardPreviewImage(card, sideLength: 60)
+                    }
+                }
+                if cards.count > 20 {
+                    Button(action: {
+                        isExpanded.toggle()
+                    }, label: {
+                        HStack {
+                            Spacer()
+                            if isExpanded {
+                                Text("显示更少")
+                            } else {
+                                Text("显示更多(\(cards.count - 20))")
+                            }
+                            Spacer()
+                        }
+                    })
+                }
+            }
         }
     }
 }
