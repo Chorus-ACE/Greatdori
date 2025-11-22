@@ -362,7 +362,7 @@ struct GachaDetailPossibilityView: View {
     @State var locale: DoriLocale = .primaryLocale
     @State var selectedCard: PreviewCard?
     @State var calculatePlaysByPossibility = true
-    @State var possibility: Double = 0.5
+    @State var possibility: Double = 99
     @State var plays: Int = 1
     var body: some View {
         
@@ -407,33 +407,50 @@ struct GachaDetailPossibilityView: View {
                                     }
                                 })
                             } else {
-                                HStack {
-                                    TextField("", value: $plays, formatter: PlaysNumberFormatter())
-                                        .labelsHidden()
-                                }
+                                ListItem(title: {
+                                    Text("Gacha.possibility.plays")
+                                }, value: {
+                                    HStack {
+                                        TextField("", value: $plays, formatter: PlaysNumberFormatter())
+                                            .labelsHidden()
+                                    }
+                                })
                             }
                         }
                     }
                     if let selectedCard {
-                        
                         CustomGroupBox {
-                            
-                            var singlePossibility = information.cardDetails.first(where: { $0.value.contains(where: {$0.id == selectedCard.id}) })!.key
-                            
-                            Text("\(information.gacha.rates)")
-                            
-//                            Text(singlePossibility)
-                            var singlePlayCost = information.gacha.paymentMethods.first(where: { [.freeStar, .paidStar].contains($0.paymentMethod) })?.quantity
                             HStack {
-                                if calculatePlaysByPossibility {
-                                } else {
-                                    let calculatedPossibility = 1 - exp(Double(plays) * log1p(-Double(singlePossibility)))
-                                    if let singlePlayCost {
-                                        Text("Gacha.possibility.plays.\(plays).\(plays*singlePlayCost).\(calculatedPossibility)")
-                                    } else {
-                                        Text("Gacha.possibility.plays.\(plays).nil.\(calculatedPossibility)")
+                                Text({ () -> LocalizedStringKey in
+                                    guard let rates = information.gacha.rates.forLocale(locale)?[selectedCard.rarity] else {
+                                        return ""
                                     }
-                                }
+                                    guard let weight = information.gacha.details.forLocale(locale)?[selectedCard.id]?.weight else {
+                                        return ""
+                                    }
+                                    let rate = rates.rate
+                                    let weightTotal = (consume rates).weightTotal
+                                    let e = rate / 100 * Double(weight) / Double(weightTotal)
+                                    var i = 250
+                                    if information.gacha.paymentMethods.count == 1 {
+                                        i = information.gacha.paymentMethods[0].quantity
+                                    }
+                                    if calculatePlaysByPossibility {
+                                        let n = possibility / 100
+                                        guard n >= 0 && n < 1 else {
+                                            return ""
+                                        }
+                                        let t = Int(ceil(log(1 - n) / log(1 - e)))
+                                        return "Gacha.possibility.possibility.\(t).\(t * i).\(unsafe String(format: "%.1f", n * 100))"
+                                    } else {
+                                        let r = Double(plays)
+                                        guard r >= 0 else {
+                                            return ""
+                                        }
+                                        let t = 1 - pow(1.0 - e, r)
+                                        return "Gacha.possibility.plays.\(plays).\(plays * i).\(unsafe String(format: "%.1f", t * 100))"
+                                    }
+                                }())
                                 Spacer(minLength: 0)
                             }
                             .multilineTextAlignment(.leading)
