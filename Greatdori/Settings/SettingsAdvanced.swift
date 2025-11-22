@@ -121,14 +121,46 @@ struct SettingsAdvancedImageSection: View {
 
 struct SettingsAdvancedUISection: View {
     @AppStorage("customGroupBoxVersion") var customGroupBoxVersion = 2
+    @AppStorage("ISVStyleTestFlag") var isvStyleTestFlag = 0
+    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
     var body: some View {
-        Section(content: {
-            Toggle(isOn: .init { customGroupBoxVersion != 2 } set: { customGroupBoxVersion = $0 ? 1 : 2 }, label: {
+        Section {
+            Toggle(isOn: .init { customGroupBoxVersion != 2 } set: { customGroupBoxVersion = $0 ? 1 : 2 }) {
                 Text("Settings.advanced.ui.legacy-custom-group-box")
-            })
-        }, header: {
+            }
+            if isvStyleTestFlag > 0 { // See the initializer in AppDelegate
+                Toggle(isOn: .init {
+                    isvStyleTestFlag == 1
+                    ? !isvAlwaysFullScreen : isvAlwaysFullScreen
+                } set: {
+                    isvStyleTestFlag == 1
+                    ? (isvAlwaysFullScreen = !$0)
+                    : (isvAlwaysFullScreen = $0)
+                }) {
+                    if isvStyleTestFlag == 1 {
+                        Text("非全屏时显示故事播放器")
+                    } else { // == 2
+                        Text("仅全屏显示故事播放器")
+                    }
+                }
+                .onChange(of: isvAlwaysFullScreen) {
+                    Task {
+                        await submitStats(
+                            key: "ISVPreferAlwaysFullScreen",
+                            action: isvAlwaysFullScreen
+                        )
+                    }
+                    Task {
+                        await submitStats(
+                            key: "ISVPreferPreviewable",
+                            action: !isvAlwaysFullScreen
+                        )
+                    }
+                }
+            }
+        } header: {
             Text("Settings.advanced.ui")
-        })
+        }
     }
 }
 

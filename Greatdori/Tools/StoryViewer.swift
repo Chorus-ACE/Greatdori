@@ -193,16 +193,6 @@ struct StoryViewerView: View {
         .withSystemBackground()
         .navigationTitle("Story-viewer")
         .onAppear {
-            informationIsAvailable = true
-            DoriCache.withCache(id: "EventStories") {
-                await _DoriAPI.Events.allStories()
-            } .onUpdate {
-                if let stories = $0 {
-                    self.allEventStories = stories
-                } else {
-                    informationIsAvailable = false
-                }
-            }
             Task {
                 await getStories()
             }
@@ -225,7 +215,7 @@ struct StoryViewerView: View {
             if allEventStories.isEmpty {
                 DoriCache.withCache(id: "EventStories") {
                     await _DoriAPI.Events.allStories()
-                } .onUpdate {
+                }.onUpdate {
                     if let stories = $0 {
                         self.allEventStories = stories
                         let eventStory = allEventStories.first {
@@ -236,19 +226,26 @@ struct StoryViewerView: View {
                         informationIsAvailable = false
                     }
                 }
+            } else {
+                let eventStory = allEventStories.first {
+                    $0.id == (selectedEvent?.id ?? -1)
+                }
+                displayingStories = eventStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
             }
         case .main:
             if allMainStories.isEmpty {
                 DoriCache.withCache(id: "MainStories") {
                     await _DoriAPI.Misc.mainStories()
-                } .onUpdate {
+                }.onUpdate {
                     if let stories = $0 {
-                        self.allMainStories = stories
+                        allMainStories = stories
                         displayingStories = allMainStories.convertToLocalizedData()
                     } else {
                         informationIsAvailable = false
                     }
                 }
+            } else {
+                displayingStories = allMainStories.convertToLocalizedData()
             }
         case .band:
             if allBandStories.isEmpty {
@@ -262,6 +259,8 @@ struct StoryViewerView: View {
                         informationIsAvailable = false
                     }
                 }
+            } else {
+                displayingStories = selectedBandStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
             }
         case .card:
             if let selectedCard {
@@ -279,8 +278,7 @@ struct StoryViewerView: View {
             //            <#code#>
             //        case .afterLive:
             //            <#code#>
-        default:
-            doNothing()
+        default: break
         }
     }
     

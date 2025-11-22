@@ -14,11 +14,14 @@
 
 // (In Alphabetic Order)
 
+import Alamofire
 import CoreImage.CIFilterBuiltins
 import DoriKit
 import Network
 import SDWebImageSwiftUI
+import SwiftJWT
 import SwiftUI
+import SwiftyJSON
 import UniformTypeIdentifiers
 import Vision
 
@@ -330,4 +333,38 @@ enum ListItemType: Hashable, Equatable {
     case expandedOnly
     case automatic
     case basedOnUISizeClass
+}
+
+@discardableResult
+func submitStats(
+    key: String,
+    action: Bool /* true: +1, false: -1 */
+) async -> Bool {
+    guard !statsAPIPrivateKey.isEmpty else {
+        return false
+    }
+    struct S: Claims {
+        var sub: String
+        var action: Bool
+        var iat: Date
+    }
+    return await withCheckedContinuation { continuation in
+        var jwt = JWT(header: .init(), claims: S(sub: key, action: action, iat: .now))
+        let signer = JWTSigner.rs512(privateKey: statsAPIPrivateKey.data(using: .utf8)!)
+        guard let signed = try? jwt.sign(using: signer) else {
+            return continuation.resume(returning: false)
+        }
+        AF.request(
+            "https://stats.greatdori.com/submit",
+            method: .post,
+            parameters: ["payload": signed],
+            encoder: .json
+        ).response { response in
+            if let data = response.data, let json = try? JSON(data: data) {
+                return continuation.resume(returning: json["success"].boolValue)
+            } else {
+                return continuation.resume(returning: false)
+            }
+        }
+    }
 }

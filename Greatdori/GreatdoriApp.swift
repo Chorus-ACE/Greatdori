@@ -173,6 +173,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Don't say lazy
         _ = NetworkMonitor.shared
+        
+        initializeISV_ABTest()
     }
     
     func application(_ application: NSApplication, open urls: [URL]) {
@@ -212,6 +214,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         // Don't say lazy
         _ = NetworkMonitor.shared
+        
+        initializeISV_ABTest()
         
         return true
     }
@@ -268,5 +272,22 @@ private struct _ExternalViewHandlerModifier: ViewModifier {
                     isViewPresented = true
                 }
             }
+    }
+}
+
+private func initializeISV_ABTest() {
+    if UserDefaults.standard.integer(forKey: "ISVStyleTestFlag") == 0 {
+        let flag = Bool.random()
+        UserDefaults.standard.set(flag ? 1 : 2, forKey: "ISVStyleTestFlag")
+        UserDefaults.standard.set(flag, forKey: "ISVAlwaysFullScreen")
+    }
+    if !UserDefaults.standard.bool(forKey: "ISVTestInitialSubmit") {
+        Task {
+            let flag = UserDefaults.standard.integer(forKey: "ISVStyleTestFlag")
+            let key = flag == 1 ? "ISVPreferAlwaysFullScreen" : "ISVPreferPreviewable"
+            if await submitStats(key: key, action: true /* +1 */) {
+                UserDefaults.standard.set(true, forKey: "ISVTestInitialSubmit")
+            }
+        }
     }
 }

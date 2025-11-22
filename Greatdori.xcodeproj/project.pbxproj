@@ -183,6 +183,8 @@
 		8CD290172E9FFD6700831458 /* ChartViewer_LongNoteLine.fsh in Copy Shaders */ = {isa = PBXBuildFile; fileRef = 8CD290162E9FFD4F00831458 /* ChartViewer_LongNoteLine.fsh */; };
 		8CD2A9D22E9F690D00831458 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8CD2A9D12E9F690D00831458 /* Alamofire */; };
 		8CD580BC2EA7CE73007A3F49 /* AssetExplorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */; };
+		8CE0BBAC2ED2FE1F00E22ED6 /* SwiftJWT in Frameworks */ = {isa = PBXBuildFile; productRef = 8CE0BBAB2ED2FE1F00E22ED6 /* SwiftJWT */; };
+		8CE0BBAE2ED2FE7B00E22ED6 /* Secrets.swift.gyb in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0BBAD2ED2FE7200E22ED6 /* Secrets.swift.gyb */; };
 		8CEA20C52EAB6362009D41C5 /* SongDetailMatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEA20C42EAB62DA009D41C5 /* SongDetailMatchView.swift */; };
 		8CF826D42E8AC1120045CA97 /* FallingWebImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF826D32E8AC10D0045CA97 /* FallingWebImage.swift */; };
 		8CF827A92E8ACD380045CA97 /* LoginCampaignInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF827A82E8ACD380045CA97 /* LoginCampaignInfo.swift */; };
@@ -290,7 +292,7 @@
 			filePatterns = "*.gyb";
 			fileType = pattern.proxy;
 			inputFiles = (
-				"$(SRCROOT)/BuildTool/gyb.py",
+				"$(SRCROOT)/utils/gyb.py",
 			);
 			isEditable = 1;
 			name = "Convert GYB Source";
@@ -298,7 +300,7 @@
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE)",
 			);
 			runOncePerArchitecture = 0;
-			script = "$SRCROOT/BuildTool/gyb.py --line-directive '#sourceLocation(file: \"%(file)s\", line: %(line)d)' -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE\" \"$INPUT_FILE_PATH\"\n";
+			script = "$SRCROOT/utils/gyb.py --line-directive '#sourceLocation(file: \"%(file)s\", line: %(line)d)' -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE\" \"$INPUT_FILE_PATH\"\n";
 		};
 /* End PBXBuildRule section */
 
@@ -637,6 +639,7 @@
 		8CD290132E9FCBB700831458 /* ChartSimAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ChartSimAssets.xcassets; sourceTree = "<group>"; };
 		8CD290162E9FFD4F00831458 /* ChartViewer_LongNoteLine.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ChartViewer_LongNoteLine.fsh; sourceTree = "<group>"; };
 		8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetExplorer.swift; sourceTree = "<group>"; };
+		8CE0BBAD2ED2FE7200E22ED6 /* Secrets.swift.gyb */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Secrets.swift.gyb; sourceTree = "<group>"; };
 		8CEA20C42EAB62DA009D41C5 /* SongDetailMatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailMatchView.swift; sourceTree = "<group>"; };
 		8CF826D32E8AC10D0045CA97 /* FallingWebImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallingWebImage.swift; sourceTree = "<group>"; };
 		8CF827A82E8ACD380045CA97 /* LoginCampaignInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginCampaignInfo.swift; sourceTree = "<group>"; };
@@ -750,6 +753,7 @@
 				8C2C89262E9E153400058FF7 /* DoriKit.framework in Frameworks */,
 				E94944E22E92A19600E50D3F /* MarkdownUI in Frameworks */,
 				8C6264EF2E9105D600FF6950 /* SwiftUIIntrospect in Frameworks */,
+				8CE0BBAC2ED2FE1F00E22ED6 /* SwiftJWT in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1338,6 +1342,7 @@
 				8CBF73122E9029FE00D88F96 /* CardCollectionCoding.swift */,
 				E9AF51242EAC633D00BB808F /* TypeNames.swift */,
 				8C3DFB1F2EAFA1610004E1F5 /* URLHandler.swift */,
+				8CE0BBAD2ED2FE7200E22ED6 /* Secrets.swift.gyb */,
 			);
 			path = Methods;
 			sourceTree = "<group>";
@@ -1454,6 +1459,7 @@
 				E94944E12E92A19600E50D3F /* MarkdownUI */,
 				8CD2A9D12E9F690D00831458 /* Alamofire */,
 				8C3D4E7B2EA7AABE0034E831 /* SwiftyJSON */,
+				8CE0BBAB2ED2FE1F00E22ED6 /* SwiftJWT */,
 			);
 			productName = Greatdori;
 			productReference = 8C0C995D2E296A4400549B5C /* Greatdori!.app */;
@@ -1669,6 +1675,7 @@
 				8CE186AB2E535324009C1C87 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				8C8E44F92E5F6867005590F0 /* XCRemoteSwiftPackageReference "swift-syntax" */,
 				E94944E02E92A19600E50D3F /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				8CE0BBAA2ED2FE1E00E22ED6 /* XCRemoteSwiftPackageReference "Swift-JWT" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8C0C995E2E296A4400549B5C /* Products */;
@@ -1860,6 +1867,7 @@
 				E94219072E8AA48A00F24974 /* ComicDetailView.swift in Sources */,
 				8CEA20C52EAB6362009D41C5 /* SongDetailMatchView.swift in Sources */,
 				E91787152EC95C7300C33779 /* SettingsDocument.swift in Sources */,
+				8CE0BBAE2ED2FE7B00E22ED6 /* Secrets.swift.gyb in Sources */,
 				E949A5612EAA00CB007441A6 /* WelcomeView.swift in Sources */,
 				E94218F22E8AA32000F24974 /* CharacterSearchView.swift in Sources */,
 				E942190E2E8AA4D700F24974 /* SongDetailGameplayView.swift in Sources */,
@@ -2356,6 +2364,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Greatdori/Info.plist;
@@ -2424,6 +2433,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Greatdori/Info.plist;
@@ -2558,6 +2568,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Greatdori/Info.plist;
@@ -2721,6 +2732,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Greatdori/Info.plist;
@@ -3999,6 +4011,14 @@
 				minimumVersion = 1.8.0;
 			};
 		};
+		8CE0BBAA2ED2FE1E00E22ED6 /* XCRemoteSwiftPackageReference "Swift-JWT" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Kitura/Swift-JWT";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.2;
+			};
+		};
 		8CE186AB2E535324009C1C87 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
@@ -4062,6 +4082,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8C0C99AC2E296F2D00549B5C /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		8CE0BBAB2ED2FE1F00E22ED6 /* SwiftJWT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8CE0BBAA2ED2FE1E00E22ED6 /* XCRemoteSwiftPackageReference "Swift-JWT" */;
+			productName = SwiftJWT;
 		};
 		E94944E12E92A19600E50D3F /* MarkdownUI */ = {
 			isa = XCSwiftPackageProductDependency;

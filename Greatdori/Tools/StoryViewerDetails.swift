@@ -25,31 +25,42 @@ struct StoryDetailView: View {
     var locale: _DoriAPI.Locale
     var unsafeAssociatedID: String // WTF --@WindowsMEMZ
     var unsafeSecondaryAssociatedID: String?
+    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
     @State var asset: _DoriAPI.Misc.StoryAsset?
     @State var transcript: [_DoriAPI.Misc.StoryAsset.Transcript]?
     @State var audioPlayer = AVPlayer()
     @State var interactivePlayerIsInFullScreen = false
     @State var screenWidth: CGFloat = 0
     @State var screenHeight: CGFloat = 0
-    
+    @State var safeAreaInsets = EdgeInsets()
     var body: some View {
-        Group {
+        ZStack {
             if let transcript {
                 ScrollView {
                     HStack {
                         Spacer(minLength: 0)
                         VStack {
-                            Section {
-                                StoryDetailInteractiveStoryEntryView(title: title, scenarioID: scenarioID, type: type, locale: locale, unsafeAssociatedID: unsafeAssociatedID, unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID, asset: $asset)
-//                                    .border(.secondary, width: interactivePlayerIsInFullScreen ? 0 : 1)
-                                    .aspectRatio(interactivePlayerIsInFullScreen ? screenWidth/screenHeight : 16/10, contentMode: .fill)
+                            if !isvAlwaysFullScreen || interactivePlayerIsInFullScreen {
+                                Section {
+                                    StoryDetailInteractiveStoryEntryView(
+                                        title: title,
+                                        scenarioID: scenarioID,
+                                        type: type,
+                                        locale: locale,
+                                        unsafeAssociatedID: unsafeAssociatedID,
+                                        unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID,
+                                        asset: $asset
+                                    )
+                                    .safeAreaPadding(interactivePlayerIsInFullScreen ? safeAreaInsets : .init())
+                                    .aspectRatio(interactivePlayerIsInFullScreen ? screenWidth/screenHeight : 16/10, contentMode: .fit)
                                     .clipped()
-//                                    .cornerRadius(interactivePlayerIsInFullScreen ? 0 : 10)
+                                }
+                                .frame(maxWidth: interactivePlayerIsInFullScreen ? nil : infoContentMaxWidth)
                             }
-                            .frame(maxWidth: interactivePlayerIsInFullScreen ? nil : infoContentMaxWidth)
-//                            .frame(width: interactivePlayerIsInFullScreen ? UIScreen.main.bounds.height : nil)
                             if !interactivePlayerIsInFullScreen {
-                                DetailSectionsSpacer(height: 15)
+                                if !isvAlwaysFullScreen {
+                                    DetailSectionsSpacer(height: 15)
+                                }
                                 
                                 // Dialog
                                 Section {
@@ -133,7 +144,12 @@ struct StoryDetailView: View {
                 .onFrameChange { geometry in
                     screenWidth = geometry.size.width
                     screenHeight = geometry.size.height
-                    print("\(screenWidth), \(screenHeight)")
+                    
+                    var insets = geometry.safeAreaInsets
+                    if !isMACOS {
+                        insets.bottom += 30
+                    }
+                    self.safeAreaInsets = insets
                 }
             } else {
                 ExtendedConstraints {
