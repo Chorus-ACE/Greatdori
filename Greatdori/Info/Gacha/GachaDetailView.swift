@@ -107,10 +107,7 @@ struct GachaDetailOverviewView: View {
                 
                 // MARK: Info
                 CustomGroupBox(cornerRadius: 20) {
-                    // Make this lazy fixes [250920-a] last appears in 8783d44.
-                    // Seems like a bug of SwiftUI, idk why make this lazy
-                    // fixes that bug. Whatever, it works.
-                    LazyVStack {
+                    VStack {
                         // MARK: Title
                         Group {
                             ListItem(title: {

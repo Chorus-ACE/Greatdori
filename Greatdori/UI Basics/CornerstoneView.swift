@@ -775,6 +775,7 @@ struct MultilingualText: View {
                 content
                     .textSelection(.disabled)
             })
+            .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

@@ -626,6 +626,7 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
                 .frame(maxWidth: 615)
             }
         }
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 

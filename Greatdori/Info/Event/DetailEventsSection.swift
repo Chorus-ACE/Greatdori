@@ -60,6 +60,7 @@ struct DetailsEventsSection: View {
                     EventDetailView(id: item.id)
                 }, label: {
                     EventInfo(item, subtitle: (pointsDict[item] == nil ? "Details.source.release-during-event" :"Details.events.source.rewarded-at-points.\(pointsDict[item]!)"), showDetails: true)
+                        .regularInfoImageSizeFactor(0.85)
                         .frame(maxWidth: infoContentMaxWidth)
                 })
             }
