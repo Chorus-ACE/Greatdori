@@ -669,10 +669,10 @@ struct SettingsWidgetsCollectionsItemView: View {
                                     .layoutPriority(1)
                                 Group {
                                     if layoutType == 1 {
-                                        Text(characterName?.forPreferredLocale() ?? "nil") + Text("Typography.bold-dot-seperater").bold() + Text("#\(String(doriCard.id))").fontDesign(.monospaced)
+                                        Text(characterName?.forPreferredLocale() ?? String(localized: "Character.unknown")) + Text("Typography.bold-dot-seperater").bold() + Text("#\(String(doriCard.id))").fontDesign(.monospaced)
                                         Text(collectionCard.isTrained ? "Settings.widgets.collections.card.trained" : "Settings.widgets.collections.card.normal")
                                     } else {
-                                        Text(characterName?.forPreferredLocale() ?? "nil") + Text("Typography.bold-dot-seperater").bold() + Text("#\(String(doriCard.id))").fontDesign(.monospaced) + Text("Typography.bold-dot-seperater").bold() +  Text(collectionCard.isTrained ? "Settings.widgets.collections.card.trained" : "Settings.widgets.collections.card.normal")
+                                        Text(characterName?.forPreferredLocale() ?? String(localized: "Character.unknown")) + Text("Typography.bold-dot-seperater").bold() + Text("#\(String(doriCard.id))").fontDesign(.monospaced) + Text("Typography.bold-dot-seperater").bold() +  Text(collectionCard.isTrained ? "Settings.widgets.collections.card.trained" : "Settings.widgets.collections.card.normal")
                                     }
                                 }
                                 .foregroundStyle(.secondary)

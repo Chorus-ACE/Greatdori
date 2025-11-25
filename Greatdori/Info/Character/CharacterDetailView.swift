@@ -356,7 +356,7 @@ struct CharacterDetailOverviewView: View {
                                     MultilingualText({
                                         var localizedContent = LocalizedData<String>()
                                         for locale in DoriLocale.allCases {
-                                            localizedContent._set("\(profile.schoolYear.forLocale(locale) ?? "nil") - \(profile.schoolClass.forLocale(locale) ?? "nil")", forLocale: locale)
+                                            localizedContent._set("\(profile.schoolYear.forLocale(locale) ?? String(localized: "Info.unknown")) - \(profile.schoolClass.forLocale(locale) ?? String(localized: "Info.unknown"))", forLocale: locale)
                                         }
                                         return localizedContent
                                     }())

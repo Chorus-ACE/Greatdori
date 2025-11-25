@@ -57,7 +57,7 @@ struct SongInfo: View {
         } detail: {
             Text(bandName)
                 .font(isMACOS ? .body : .caption)
-                .wrapIf(bandName == "Lorem Ipsum Dolor", in: { content in
+                .wrapIf(bandName == "Lorem Ipsum", in: { content in
                     Text(bandName)
                         .redacted(reason: .placeholder)
                 })
@@ -70,11 +70,11 @@ struct SongInfo: View {
                 .preferHiddenInCompactLayout()
         }
         .onAppear {
-            bandName = DoriCache.preCache.bands.first { $0.id == information.bandID }?.bandName.forPreferredLocale() ?? "Lorem Ipsum Dolor"
-            if bandName == "Lorem Ipsum Dolor" {
+            bandName = DoriCache.preCache.bands.first { $0.id == information.bandID }?.bandName.forPreferredLocale() ?? "Lorem Ipsum"
+            if bandName == "Lorem Ipsum" {
                 Task {
                     let allBands = await Band.all()
-                    bandName = allBands?.first{ $0.id == information.bandID }?.bandName.forPreferredLocale() ?? String(localized: "Band.unknown")
+                    bandName = allBands?.first{ $0.id == information.bandID }?.bandName.forPreferredLocale() ?? "Lorem Ipsum"
                 }
             }
         }

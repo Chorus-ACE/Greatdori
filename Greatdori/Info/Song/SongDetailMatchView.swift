@@ -31,6 +31,8 @@ struct SongDetailMatchView: View {
                             Button(action: {
                                 if let url = result.appleMusicURL {
                                     openURL(url)
+                                } else if let url = result.webURL {
+                                    openURL(url)
                                 }
                             }, label: {
                                 CustomGroupBox {
@@ -50,13 +52,17 @@ struct SongDetailMatchView: View {
                                             
                                             VStack(alignment: .leading) {
                                                 Text(result.title ?? "")
-                                                Text(result.artist ?? "")
-                                                    .foregroundStyle(.secondary)
+                                                Group {
+                                                    Text(result.artist ?? "") + Text(" · ") + Text(result.appleMusicURL != nil ? "Song.shazam.apple-music" : "Song.shazam.shazam")
+                                                }
+                                                .foregroundStyle(.secondary)
                                             }
                                             Spacer()
-                                            Image(systemName: "arrow.up.forward.app")
-                                                .foregroundStyle(.secondary)
-                                                .font(.title3)
+                                            if result.appleMusicURL != nil || result.webURL != nil {
+                                                Image(systemName: "arrow.up.forward.app")
+                                                    .foregroundStyle(.secondary)
+                                                    .font(.title3)
+                                            }
                                         }
                                     }
                                 }
@@ -66,7 +72,7 @@ struct SongDetailMatchView: View {
                         .frame(maxWidth: infoContentMaxWidth)
                     } header: {
                         HStack {
-                            Text("Song.apple-music")
+                            Text("Song.shazam")
                                 .font(.title2)
                                 .bold()
                             Spacer()

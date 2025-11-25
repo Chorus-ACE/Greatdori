@@ -97,7 +97,7 @@ struct CharacterSearchView: View {
                                             CustomGroupBox {
                                                 HStack {
                                                     Spacer()
-                                                    Text(item.characterName.forPreferredLocale() ?? "nil")
+                                                    Text(item.characterName.forPreferredLocale() ?? String(localized: "Character.unknown"))
                                                         .font(isMACOS ? .title3 : .body)
                                                         .multilineTextAlignment(.center)
                                                     Spacer()

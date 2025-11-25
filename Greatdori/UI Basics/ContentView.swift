@@ -307,7 +307,3 @@ extension EnvironmentValues {
         self[PlatformKey.self]
     }
 }
-
-func doSth() {
-    print("")
-}

@@ -282,6 +282,7 @@ struct GachaDetailCardsView: View {
                                             Image(systemName: "chevron.forward")
                                                 .foregroundStyle(.secondary)
                                                 .rotationEffect(Angle(degrees: (raritySectionIsExpanded[rarity] ?? false) ? 90 : 0))
+                                                .font(isMACOS ? .body : .caption)
                                         }
                                         .contentShape(Rectangle())
                                         .onTapGesture {
@@ -294,14 +295,21 @@ struct GachaDetailCardsView: View {
                                             if let _details = information.gacha.details.forPreferredLocale() {
                                                 let details = _details.filter { $0.value.rarityIndex == rarity }
                                                 ForEach(Set(details.values.map { $0.weight }).sorted(by: >), id: \.self) { weight in
+                                                    Divider()
                                                     let pickups = details.filter { $0.value.weight == weight }
                                                     HStack(alignment: .top) {
-                                                        Text(verbatim: "\(unsafe String(format: "%.2f", Double(pickups.first!.value.weight) / Double(rates[rarity]!.weightTotal) * rates[rarity]!.rate))%")
-                                                            .frame(width: 60, alignment: .leading)
+                                                        VStack(alignment: .leading) {
+                                                            Text(verbatim: "\(unsafe String(format: "%.2f", Double(pickups.first!.value.weight) / Double(rates[rarity]!.weightTotal) * rates[rarity]!.rate))%")
+                                                                .frame(width: 60, alignment: .leading)
+                                                        }
                                                         CardImageGridContent(cards: information.cardDetails[rarity]!.filter { details[$0.id]?.weight == weight })
                                                     }
                                                 }
                                             }
+                                            
+//                                            if rarity != rarities.last {
+//                                                Divider()
+//                                            }
                                         }
                                     }
                                 }
@@ -325,9 +333,9 @@ struct GachaDetailCardsView: View {
     
     struct CardImageGridContent: View {
         var cards: [PreviewCard]
-        @State private var isExpanded = false
+        @State var isExpanded = false
         var body: some View {
-            VStack {
+            VStack(alignment: .trailing) {
                 WrappingHStack(alignment: .trailing, contentWidth: 60) {
                     ForEach(isExpanded ? cards : Array(cards.prefix(20))) { card in
                         CardPreviewImage(card, sideLength: 60)
@@ -337,16 +345,15 @@ struct GachaDetailCardsView: View {
                     Button(action: {
                         isExpanded.toggle()
                     }, label: {
-                        HStack {
-                            Spacer()
+//                        HStack {
+//                            Spacer()
                             if isExpanded {
-                                Text("显示更少")
+                                Label("Gacha.cards.collapse", systemImage: "chevron.up")
                             } else {
-                                Text("显示更多(\(cards.count - 20))")
+                                Label("Gacha.cards.expand.\(cards.count)", systemImage: "chevron.down")
                             }
-                            Spacer()
-                        }
                     })
+                    .buttonStyle(.borderless)
                 }
             }
         }
@@ -368,6 +375,20 @@ struct GachaDetailPossibilityView: View {
                 VStack {
                     CustomGroupBox {
                         VStack {
+                            ListItem(title: {
+                                Text("Gacha.possibility.locale")
+                            }, value: {
+                                Picker("", selection: $locale, content: {
+                                    ForEach(DoriLocale.allCases, id: \.self) { item in
+                                        Text(item.rawValue.uppercased())
+                                            .tag(item)
+                                    }
+                                })
+                                .labelsHidden()
+                            })
+                            
+                            Divider()
+                            
                             ListItem(title: {
                                 Text("Gacha.possibility.card")
                             }, value: {
@@ -401,6 +422,9 @@ struct GachaDetailPossibilityView: View {
                                     HStack {
                                         TextField("", value: $possibility, formatter: PossibilityNumberFormatter())
                                             .labelsHidden()
+                                            .frame(maxWidth: 100)
+                                        Stepper("", value: $possibility, in: 0...99)
+                                            .labelsHidden()
                                     }
                                 })
                             } else {
@@ -410,48 +434,20 @@ struct GachaDetailPossibilityView: View {
                                     HStack {
                                         TextField("", value: $plays, formatter: PlaysNumberFormatter())
                                             .labelsHidden()
+                                            .frame(maxWidth: 100)
+                                        Stepper("", value: $plays, in: 0...Int.max)
+                                            .labelsHidden()
                                     }
                                 })
                             }
                         }
                     }
-                    if let selectedCard {
-                        CustomGroupBox {
-                            HStack {
-                                Text({ () -> LocalizedStringKey in
-                                    guard let rates = information.gacha.rates.forLocale(locale)?[selectedCard.rarity] else {
-                                        return ""
-                                    }
-                                    guard let weight = information.gacha.details.forLocale(locale)?[selectedCard.id]?.weight else {
-                                        return ""
-                                    }
-                                    let rate = rates.rate
-                                    let weightTotal = (consume rates).weightTotal
-                                    let e = rate / 100 * Double(weight) / Double(weightTotal)
-                                    var i = 250
-                                    if information.gacha.paymentMethods.count == 1 {
-                                        i = information.gacha.paymentMethods[0].quantity
-                                    }
-                                    if calculatePlaysByPossibility {
-                                        let n = possibility / 100
-                                        guard n >= 0 && n < 1 else {
-                                            return ""
-                                        }
-                                        let t = Int(ceil(log(1 - n) / log(1 - e)))
-                                        return "Gacha.possibility.possibility.\(t).\(t * i).\(unsafe String(format: "%.1f", n * 100))"
-                                    } else {
-                                        let r = Double(plays)
-                                        guard r >= 0 else {
-                                            return ""
-                                        }
-                                        let t = 1 - pow(1.0 - e, r)
-                                        return "Gacha.possibility.plays.\(plays).\(plays * i).\(unsafe String(format: "%.1f", t * 100))"
-                                    }
-                                }())
-                                Spacer(minLength: 0)
-                            }
-                            .multilineTextAlignment(.leading)
+                    CustomGroupBox {
+                        HStack {
+                            Text(calculateProbability())
+                            Spacer(minLength: 0)
                         }
+                        .multilineTextAlignment(.leading)
                     }
                 }
                 .frame(maxWidth: infoContentMaxWidth)
@@ -460,11 +456,45 @@ struct GachaDetailPossibilityView: View {
                     Text("Gacha.possibility")
                         .font(.title2)
                         .bold()
-                    DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
                     Spacer()
                 }
                 .frame(maxWidth: 615)
             })
+        }
+    }
+    
+    func calculateProbability() -> LocalizedStringKey {
+        guard let selectedCard else {
+            return "Gacha.possibility.error.card-not-selected"
+        }
+        
+        guard let rates = information.gacha.rates.forLocale(locale)?[selectedCard.rarity] else {
+            return "Gacha.possibility.error.\(-101)"
+        }
+        guard let weight = information.gacha.details.forLocale(locale)?[selectedCard.id]?.weight else {
+            return "Gacha.possibility.error.\(-102)"
+        }
+        let rate = rates.rate
+        let weightTotal = (consume rates).weightTotal
+        let e = rate / 100 * Double(weight) / Double(weightTotal)
+        var i = 250
+        if information.gacha.paymentMethods.count == 1 {
+            i = information.gacha.paymentMethods[0].quantity
+        }
+        if calculatePlaysByPossibility {
+            let n = possibility / 100
+            guard n >= 0 && n < 1 else {
+                return "Gacha.possibility.error.\(-201)"
+            }
+            let t = Int(ceil(log(1 - n) / log(1 - e)))
+            return "Gacha.possibility.possibility.\(t).\(t * i).\(unsafe String(format: "%.1f", n * 100))"
+        } else {
+            let r = Double(plays)
+            guard r >= 0 else {
+                return "Gacha.possibility.error.\(-301)"
+            }
+            let t = 1 - pow(1.0 - e, r)
+            return "Gacha.possibility.plays.\(plays).\(plays * i).\(unsafe String(format: "%.1f", t * 100))"
         }
     }
 }

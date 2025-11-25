@@ -66,7 +66,7 @@ struct CardInfo: View {
             }
         } detail: {
             Group {
-                Text(cardCharacterName?.forPreferredLocale() ?? "nil") + Text("Typography.bold-dot-seperater").bold() + Text(previewCard.type.localizedString)
+                Text(cardCharacterName?.forPreferredLocale() ?? String(localized: "Character.unknown")) + Text("Typography.bold-dot-seperater").bold() + Text(previewCard.type.localizedString)
             }
             .foregroundStyle(.secondary)
             .font(isMACOS ? .body : .caption)

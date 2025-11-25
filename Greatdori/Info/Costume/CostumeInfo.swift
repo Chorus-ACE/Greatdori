@@ -50,7 +50,7 @@ struct CostumeInfo: View {
             }
             .interpolation(.high)
         } detail: {
-            Text(DoriCache.preCache.characters.first(where: {$0.id == information.characterID})?.characterName.forPreferredLocale() ?? "nil")
+            Text(DoriCache.preCache.characters.first(where: {$0.id == information.characterID})?.characterName.forPreferredLocale() ?? String(localized: "Character.unknown"))
                 .font(isMACOS ? .body : .caption)
         }
     }

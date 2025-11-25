@@ -498,7 +498,7 @@ struct CollectionEditorItemView: View {
                                 .bold()
                                 .layoutPriority(1)
                             Group {
-                                Text(characterName?.forPreferredLocale() ?? "nil") + Text("Typography.bold-dot-seperater").bold() + Text("#\(String(doriCard.id))").fontDesign(.monospaced)
+                                Text(characterName?.forPreferredLocale() ?? String(localized: "Character.unknown")) + Text("Typography.bold-dot-seperater").bold() + Text("#\(String(doriCard.id))").fontDesign(.monospaced)
                             }
                             .foregroundStyle(.secondary)
                             .font(.caption)
