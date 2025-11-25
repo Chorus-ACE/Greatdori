@@ -478,12 +478,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Band Information Unavailable"
+            "value" : "Band Info Unavailable"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "乐队信息不可用"
           }
         }
@@ -1452,7 +1452,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Character Information Unavailable"
+            "value" : "Character Info Unavailable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "角色信息不可用"
           }
         }
       }
@@ -3912,12 +3918,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "[DEBUG][CRITICAL] Pre-cache Not Available"
+            "value" : "[DEBUG][CRITICAL] Pre-Cache Not Available"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "[DEBUG][CRITICAL] Pre-cache未启用"
           }
         }
@@ -4405,6 +4411,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Info Unknown"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "信息未知"
           }
         }
       }
@@ -6705,11 +6717,16 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Github"
+            "value" : "GitHub"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub"
           }
         }
-      },
-      "shouldTranslate" : false
+      }
     },
     "Settings.about.user-agreement-license" : {
       "comment" : "Label for a button that opens a view with the user agreement and license information.",

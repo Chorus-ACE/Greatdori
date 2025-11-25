@@ -15,7 +15,7 @@
 import DoriKit
 import SwiftUI
 
-//MARK: WelcomeView
+// MARK: WelcomeView
 struct WelcomeView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
@@ -23,6 +23,7 @@ struct WelcomeView: View {
     @State var secondaryLocale = "en"
     @Binding var showWelcomeScreen: Bool
     var body: some View {
+        #if os(macOS)
         VStack(alignment: .leading) {
             Image("MacAppIcon\(colorScheme == .dark ? "Dark" : "")")
                 .resizable()
@@ -160,5 +161,8 @@ struct WelcomeView: View {
             }
             #endif
         }
+        #else
+        // TODO: 行こう
+        #endif
     }
 }
