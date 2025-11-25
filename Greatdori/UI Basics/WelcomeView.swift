@@ -35,12 +35,10 @@ struct WelcomeView: View {
             Text("Welcome.title")
                 .font(.title)
                 .bold()
-            Rectangle()
-                .frame(height: 1)
-                .opacity(0)
+                .padding(.bottom, 3)
             Text("Welcome.message")
             Rectangle()
-                .frame(height: 1)
+                .frame(height: 5)
                 .opacity(0)
             Form {
                 Section(content: {

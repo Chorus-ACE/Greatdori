@@ -10900,12 +10900,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agree"
+            "value" : "Done"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "同意"
           }
         }
@@ -10918,7 +10918,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "By clicking Agree, you agree to Greatdori! Software Agreement License."
+            "value" : "By clicking “Done”, you agree to Greatdori! Software Agreement License."
           }
         },
         "zh-Hans" : {
@@ -10926,13 +10926,13 @@
             "device" : {
               "mac" : {
                 "stringUnit" : {
-                  "state" : "translated",
+                  "state" : "needs_review",
                   "value" : "点击同意即代表你同意 Greatdori! 软件许可协议。"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "translated",
+                  "state" : "needs_review",
                   "value" : "轻触同意即代表你同意 Greatdori! 软件许可协议。"
                 }
               }
