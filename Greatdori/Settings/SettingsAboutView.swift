@@ -162,6 +162,17 @@ struct SettingsAboutDetailListView: View {
             }
         }
         .buttonStyle(.plain)
+        SettingsDocumentButton(document: "Privacy", preferNavigationLink: true) {
+            HStack {
+                Text("Greatdori! and Privacy")
+                Spacer()
+                Image(systemName: "chevron.forward")
+                    .foregroundStyle(.tertiary)
+                    .font(.footnote)
+                    .bold()
+            }
+        }
+        .buttonStyle(.plain)
         NavigationLink(destination: {
             SettingsAboutAcknowledgementsView()
         }, label: {
@@ -202,7 +213,7 @@ struct SettingsAboutAcknowledgementsView: View {
             VStack {
                 HStack {
                     Image(systemName: type == .package ? "shippingbox" : "ellipsis.curlybraces")
-                        .foregroundStyle(.brown)
+                        .foregroundStyle(type == .package ? .brown : .blue)
                         .font(.title3)
                     VStack(alignment: .leading) {
                         Text(item.title)
