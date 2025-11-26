@@ -72,10 +72,8 @@ jobs:
     needs:
       - build
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Download App archive
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v6.0.0
         with:
           name: Greatdori.xcarchive
           path: ./Greatdori.xcarchive
@@ -145,7 +143,7 @@ jobs:
       ASCAPI_KEY: ${{ secrets.ASCAPI_KEY }}
     steps:
       - name: Download IPA
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v6.0.0
         with:
           name: Greatdori!.ipa
       - name: Prepare API Key
