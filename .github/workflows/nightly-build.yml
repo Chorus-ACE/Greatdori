@@ -128,7 +128,7 @@ jobs:
       - name: Export IPA file
         run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./ExportOptions/app-store.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES
       - name: Upload IPA file
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: Greatdori!.ipa
           path: ./Greatdori!.ipa
