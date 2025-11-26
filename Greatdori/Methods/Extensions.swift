@@ -207,10 +207,12 @@ extension Int?: @retroactive Identifiable {
 
 // MARK: LocalizedData
 extension LocalizedData {
+    @inline(__always)
     init(jp: T? = nil, en: T? = nil, tw: T? = nil, cn: T? = nil, kr: T? = nil) {
         self.init(_jp: jp, en: en, tw: tw, cn: cn, kr: kr)
     }
     
+    @inline(__always)
     init(forEveryLocale item: T?) {
         self.init(jp: item, en: item, tw: item, cn: item, kr: item)
     }

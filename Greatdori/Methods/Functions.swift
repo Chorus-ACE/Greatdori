@@ -161,6 +161,7 @@ func getImageSubject(_ data: Data) async -> Data? {
 }
 
 // MARK: getLocalizedColon
+@inline(__always)
 func getLocalizedColon(forLocale locale: DoriLocale) -> String {
     return locale == .en ? ": " : "："
 }
@@ -193,6 +194,7 @@ func getPlaceholderColor() -> Color {
 }
 
 // MARK: getSecondaryBackgroundColor
+@inline(__always)
 func getTertiaryLabelColor() -> Color {
 #if os(iOS)
     return Color(UIColor.tertiaryLabel)
