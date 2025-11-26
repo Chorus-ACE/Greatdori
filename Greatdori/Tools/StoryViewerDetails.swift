@@ -64,7 +64,7 @@ struct StoryDetailView: View {
                                 
                                 // Dialog
                                 Section {
-                                    ForEach(transcript, id: \.self) { transcript in
+                                    ForEach(Array(transcript.enumerated()), id: \.element.self) { index, transcript in
                                         switch transcript {
                                         case .notation(let content):
                                             HStack {
@@ -74,7 +74,7 @@ struct StoryDetailView: View {
                                                     .multilineTextAlignment(.center)
                                                 Spacer()
                                             }
-                                            .padding(.vertical)
+                                            .padding(index > 0 && { if case .notation = self.transcript![index - 1] { true } else { false } }() ? .bottom : .vertical)
                                         case .talk(let talk):
                                             CustomGroupBox {
                                                 Button(action: {
