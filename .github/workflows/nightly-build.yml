@@ -1,0 +1,157 @@
+#===---*- Greatdori! -*----------------------------------------------------===#
+#
+# build-greatdori.yml
+#
+# This source file is part of the Greatdori! open source project
+#
+# Copyright (c) 2025 the Greatdori! project authors
+# Licensed under Apache License v2.0
+#
+# See https://greatdori.com/LICENSE.txt for license information
+# See https://greatdori.com/CONTRIBUTORS.txt for the list of Greatdori! project authors
+#
+#===-----------------------------------------------------------------------===#
+
+name: Nightly Build
+
+on: # FIXME: Change to nightly build after debugging
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  build:
+    name: Build & Archive
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+      - name: Remove runner local related libs
+        run: brew remove --ignore-dependencies libssh2
+      - name: Update checkout
+        run: utils/update-checkout --clone
+      - name: Generate workspace
+        run: utils/generate-workspace
+      - name: Create build folder
+        run: mkdir build
+      - name: Install Apple certificate and provisioning profile
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          # import certificate and provisioning profile from secrets
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+          # apply provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      - name: Archive
+        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -archivePath ./Greatdori.xcarchive -destination "generic/platform=iOS" archive CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=B57D8PP775
+      - name: Upload archive result
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: Greatdori.xcarchive
+          path: ./Greatdori.xcarchive
+          if-no-files-found: error
+  export:
+    name: Export IPA
+    runs-on: macos-26
+    needs:
+      - build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download App archive
+        uses: actions/download-artifact@v3
+        with:
+          name: Greatdori.xcarchive
+          path: ./Greatdori.xcarchive
+      - name: Install Apple certificate and provisioning profile
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          # import certificate and provisioning profile from secrets
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+          # apply provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      - name: Prepare export option
+        run: |
+          cat <<EOF > export-option.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>compileBitcode</key>
+            <false/>
+            <key>destination</key>
+            <string>export</string>
+            <key>method</key>
+            <string>app-store</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>teamID</key>
+            <string>B38QUJMY47</string>
+            <key>thinning</key>
+            <string>&lt;none&gt;</string>
+          </dict>
+          </plist>
+          EOF
+      - name: Export IPA file
+        run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./ExportOptions/app-store.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES
+      - name: Upload IPA file
+        uses: actions/upload-artifact@v3
+        with:
+          name: Greatdori!.ipa
+          path: ./Greatdori!.ipa
+  deploy:
+    name: Deploy to TestFlight
+    runs-on: macos-26
+    needs:
+      - export
+    env:
+      ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
+      ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+      ASCAPI_KEY: ${{ secrets.ASCAPI_KEY }}
+    steps:
+      - name: Download IPA
+        uses: actions/download-artifact@v3
+        with:
+          name: Greatdori!.ipa
+      - name: Prepare API Key
+        run: |
+          mkdir ~/.private_keys
+          echo "$ASCAPI_KEY" >> ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
+      - name: Upload to App Store Connect
+        run: xcrun altool --upload-app -f ./Greatdori!.ipa -t ios --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID
+        
