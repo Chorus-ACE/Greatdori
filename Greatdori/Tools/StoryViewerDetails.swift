@@ -100,9 +100,20 @@ struct StoryDetailView: View {
                                                     HStack {
                                                         VStack(alignment: .leading) {
                                                             HStack {
-                                                                WebImage(url: talk.characterIconImageURL)
-                                                                    .resizable()
-                                                                    .frame(width: 20, height: 20)
+                                                                switch talk.personGroupType {
+                                                                case .single:
+                                                                    if let url = talk.characterIconImageURL {
+                                                                        WebImage(url: url)
+                                                                            .resizable()
+                                                                            .frame(width: 20, height: 20)
+                                                                    } else {
+                                                                        Image(systemName: "person.crop.circle.fill")
+                                                                    }
+                                                                case .multiple:
+                                                                    Image(systemName: "person.3.fill")
+                                                                case .unknown:
+                                                                    Image(systemName: "person.crop.circle.badge.questionmark.fill")
+                                                                }
                                                                 Text(talk.characterName)
                                                                     .font(.headline)
                                                             }
@@ -117,7 +128,7 @@ struct StoryDetailView: View {
                                                 })
                                                 .buttonStyle(.borderless)
                                             }
-#if os(macOS)
+                                            #if os(macOS)
                                             .wrapIf(true) { content in
                                                 if #available(macOS 15.0, *) {
                                                     content
@@ -126,7 +137,7 @@ struct StoryDetailView: View {
                                                     content
                                                 }
                                             }
-#endif
+                                            #endif
                                         @unknown default:
                                             EmptyView()
                                         }
@@ -158,10 +169,10 @@ struct StoryDetailView: View {
             }
         }
         .navigationTitle(title)
-#if os(iOS)
+        #if os(iOS)
         .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .navigationBar)
         .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .tabBar)
-#endif
+        #endif
         .navigationBarBackButtonHidden(interactivePlayerIsInFullScreen && !isMACOS)
         
         .withSystemBackground()
@@ -268,8 +279,8 @@ struct StoryDetailView: View {
                         let text = DoriStoryBuilder.Conversion.plainText(fromIR: ir)
                         try? text.write(to: dst, atomically: true, encoding: .utf8)
                         NSWorkspace.shared.selectFile(
-                            nil,
-                            inFileViewerRootedAtPath: dst.path
+                            dst.path,
+                            inFileViewerRootedAtPath: ""
                         )
                     }
                 }
@@ -314,4 +325,36 @@ struct StoryDetailView: View {
     }
 }
 
+extension _DoriAPI.Misc.StoryAsset.Transcript.Talk {
+    var personGroupType: PersonGroupType {
+        if characterName == "一同"
+            || characterName == "全员"
+            || characterName == "全員"
+            || characterName == "All"
+            || characterName.middleContains("・")
+            || characterName.middleContains("と")
+            || characterName.middleContains("&") {
+            return .multiple
+        } else if characterName == "???" || characterName == "？？？" {
+            return .unknown
+        }
+        
+        return .single
+    }
+    
+    enum PersonGroupType {
+        case single
+        case multiple
+        case unknown
+    }
+}
 
+extension String {
+    fileprivate func middleContains(_ other: some StringProtocol) -> Bool {
+        if _fastPath(self.count > 2) {
+            self.dropFirst().dropLast().contains(other)
+        } else {
+            false
+        }
+    }
+}
