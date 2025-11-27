@@ -18,6 +18,8 @@ on: # FIXME: Change to nightly build after debugging
   push:
     branches:
       - 'main'
+    paths:
+      - '.github/workflows/nightly-build.yml'
 
 jobs:
   build:
