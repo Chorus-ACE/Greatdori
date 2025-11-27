@@ -113,20 +113,30 @@ jobs:
             <key>destination</key>
             <string>export</string>
             <key>method</key>
-            <string>app-store</string>
+            <string>app-store-connect</string>
             <key>signingStyle</key>
             <string>automatic</string>
             <key>stripSwiftSymbols</key>
             <true/>
             <key>teamID</key>
-            <string>B38QUJMY47</string>
+            <string>B57D8PP775</string>
             <key>thinning</key>
             <string>&lt;none&gt;</string>
           </dict>
           </plist>
           EOF
+      - name: Prepare API Key
+        env:
+          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+          ASCAPI_KEY: ${{ secrets.ASCAPI_KEY }}
+        run: |
+          mkdir ~/.private_keys
+          echo "$ASCAPI_KEY" >> ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
       - name: Export IPA file
-        run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./export-option.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES
+        env:
+          ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
+          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+        run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./export-option.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES -allowProvisioningUpdates -authenticationKeyIssuerID $ASCAPI_ISSUER_ID -authenticationKeyID $ASCAPI_KEY_ID -authenticationKeyPath ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
       - name: Upload IPA file
         uses: actions/upload-artifact@v4.6.2
         with:
