@@ -14,9 +14,9 @@ Important: To the extent that this software may be used to copy, modify, publish
 
 4. This License may be provided in multiple language versions. Where not restricted by local jurisdiction, the Simplified Chinese version shall prevail.
 
-5. If any provision of this Agreement is found unenforceable for any reason by a court of competent jurisdiction, that provision shall be enforced to the maximum extent permitted in order to reflect the original intent of the parties, and the remainder of this Agreement shall remain in full force and effect.
+5. If any provision of this License is found unenforceable for any reason by a court of competent jurisdiction, that provision shall be enforced to the maximum extent permitted in order to reflect the original intent of the parties, and the remainder of this License shall remain in full force and effect.
 
-6. The failure of the Greatdori! Development Team to enforce any provision of this Agreement shall not be construed as a waiver of its right to enforce that provision or any other provision in the future. Any law or regulation that would require ambiguities in a contract to be interpreted against the drafter shall not apply to this Agreement. Section headings are provided for convenience only and shall not be considered in interpreting this Agreement.
+6. The failure of the Greatdori! Development Team to enforce any provision of this License shall not be construed as a waiver of its right to enforce that provision or any other provision in the future. Any law or regulation that would require ambiguities in a contract to be interpreted against the drafter shall not apply to this License. Section headings are provided for convenience only and shall not be considered in interpreting this License.
 
 ## II. Third-Party Data
 
@@ -46,6 +46,6 @@ Important: To the extent that this software may be used to copy, modify, publish
 
 ## IV. Jurisdictional Supplement
 
-1. If you are located in the province of Quebec, Canada, or within a governmental organization in France, the following terms apply: The parties acknowledge that they have requested this Agreement and all related documents to be drafted in Simplified Chinese. Les parties ont exigé que le présent contrat et tous les documents connexes soient rédigés en chinois simplifié.
+1. If you are located in the province of Quebec, Canada, or within a governmental organization in France, the following terms apply: The parties acknowledge that they have requested this License and all related documents to be drafted in Chinese Simplified. Les parties ont exigé que le présent contrat et tous les documents connexes soient rédigés en chinois simplifié.
 
-Last Update: Nov 18 2025
+Last Update: Nov 27 2025
