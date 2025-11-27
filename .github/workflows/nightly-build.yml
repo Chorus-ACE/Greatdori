@@ -126,7 +126,7 @@ jobs:
           </plist>
           EOF
       - name: Export IPA file
-        run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./ExportOptions/app-store.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES
+        run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./export-option.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES
       - name: Upload IPA file
         uses: actions/upload-artifact@v4.6.2
         with:
