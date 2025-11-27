@@ -795,7 +795,10 @@ private struct InteractiveStoryLive2DView: View {
                     lipSyncTimer = Timer.scheduledTimer(withTimeInterval: 0.04, repeats: true) { _ in
                         DispatchQueue.main.async {
                             unsafe voicePlayer.pointee.updateMeters()
-                            lipSyncValue = pow(10, Double(unsafe voicePlayer.pointee.peakPower(forChannel: 0)) / 20) - 0.3
+                            
+                            // -160.0...0.0
+                            let power = Double(unsafe voicePlayer.pointee.peakPower(forChannel: 0))
+                            lipSyncValue = pow(10, power / 20) - 0.3
                         }
                     }
                 } else {

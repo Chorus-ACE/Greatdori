@@ -156,11 +156,11 @@ struct StoryDetailView: View {
                     screenWidth = geometry.size.width
                     screenHeight = geometry.size.height
                     
-                    var insets = geometry.safeAreaInsets
                     if !isMACOS {
+                        var insets = geometry.safeAreaInsets
                         insets.bottom += 30
+                        self.safeAreaInsets = insets
                     }
-                    self.safeAreaInsets = insets
                 }
             } else {
                 ExtendedConstraints {
@@ -174,7 +174,6 @@ struct StoryDetailView: View {
         .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .tabBar)
         #endif
         .navigationBarBackButtonHidden(interactivePlayerIsInFullScreen && !isMACOS)
-        
         .withSystemBackground()
         .task {
             await loadTranscript()
