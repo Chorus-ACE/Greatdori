@@ -359,17 +359,17 @@ struct ISVLayoutPickerSheet: View {
                     Text(verbatim: "2")
                 }
                 Spacer()
-                #if os(iOS)
+#if os(iOS)
                 Button(action: {
                     
                 }, label: {
                     Text(verbatim: "3")
                 })
-                #endif
+#endif
             }
             .padding()
             .toolbar {
-                #if os(macOS)
+#if os(macOS)
                 ToolbarItem(placement: .confirmationAction) {
                     Button(action: {
                         submit()
@@ -378,8 +378,17 @@ struct ISVLayoutPickerSheet: View {
                     })
                     .disabled(selection == "N")
                 }
-                #endif
+#endif
             }
+        }
+    }
+    private func submit() {
+        isvAlwaysFullScreen = selection == "F"
+        ISVHadChosenOption = true
+    }
+}
+
+
 extension _DoriAPI.Misc.StoryAsset.Transcript.Talk {
     var personGroupType: PersonGroupType {
         if characterName == "一同"
@@ -397,9 +406,6 @@ extension _DoriAPI.Misc.StoryAsset.Transcript.Talk {
         return .single
     }
     
-    private func submit() {
-        isvAlwaysFullScreen = selection == "F"
-        ISVHadChosenOption = true
     enum PersonGroupType {
         case single
         case multiple
