@@ -25,6 +25,9 @@ jobs:
   build:
     name: Build & Archive
     runs-on: macos-26
+    strategy:
+      matrix:
+        destination: ["macOS", "iOS"]
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
@@ -61,23 +64,26 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
       - name: Archive
-        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -archivePath ./Greatdori.xcarchive -destination "generic/platform=iOS" archive CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=B57D8PP775
+        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -archivePath ./Greatdori.xcarchive -destination "generic/platform=${{ matrix.destination }}" archive CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=B57D8PP775
       - name: Upload archive result
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: Greatdori.xcarchive
+          name: Greatdori-${{ matrix.destination }}.xcarchive
           path: ./Greatdori.xcarchive
           if-no-files-found: error
   export:
-    name: Export IPA
+    name: Export Archive
     runs-on: macos-26
     needs:
       - build
+    strategy:
+      matrix:
+        destination: ["macOS", "iOS"]
     steps:
       - name: Download App archive
         uses: actions/download-artifact@v6.0.0
         with:
-          name: Greatdori.xcarchive
+          name: Greatdori-${{ matrix.destination }}.xcarchive
           path: ./Greatdori.xcarchive
       - name: Install Apple certificate and provisioning profile
         env:
@@ -139,29 +145,34 @@ jobs:
           ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
           ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
         run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./export-option.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES -allowProvisioningUpdates -authenticationKeyIssuerID $ASCAPI_ISSUER_ID -authenticationKeyID $ASCAPI_KEY_ID -authenticationKeyPath ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
+      - name: Debug print # FIXME
+        run: ls
       - name: Upload IPA file
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: Greatdori!.ipa
-          path: ./Greatdori!.ipa
+          name: ${{ matrix.destination == 'macOS' && 'Greatdori!-Intermediate.pkg' || 'Greatdori!.ipa' }}
+          path: ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }}
   deploy:
     name: Deploy to TestFlight
     runs-on: macos-26
     needs:
       - export
+    strategy:
+      matrix:
+        destination: ["macOS", "iOS"]
     env:
       ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
       ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
       ASCAPI_KEY: ${{ secrets.ASCAPI_KEY }}
     steps:
-      - name: Download IPA
+      - name: Download exported file
         uses: actions/download-artifact@v6.0.0
         with:
-          name: Greatdori!.ipa
+          name: ${{ matrix.destination == 'macOS' && 'Greatdori!-Intermediate.pkg' || 'Greatdori!.ipa' }}
       - name: Prepare API Key
         run: |
           mkdir ~/.private_keys
           echo "$ASCAPI_KEY" >> ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
       - name: Upload to App Store Connect
-        run: xcrun altool --upload-app -f ./Greatdori!.ipa -t ios --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID
+        run: xcrun altool --upload-app -f ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }} -t ${{ matrix.destination == 'macOS' && 'macos' || 'ios' }} --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID
         

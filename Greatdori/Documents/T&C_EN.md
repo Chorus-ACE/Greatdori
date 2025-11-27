@@ -12,7 +12,7 @@ Important: To the extent that this software may be used to copy, modify, publish
 
 3. This License remains in effect until terminated. If you fail to comply with any term of this License, your rights under it will automatically terminate, or be deemed terminated, without the need for further notice from the Greatdori! Development Team. Upon termination, you must cease all use of the Software and delete or destroy all copies of the Software, in whole or in part. Sections 4, 5, and 6 of Part I, and Sections 3 and 4 of Part II, shall remain in effect after termination of this License.
 
-4. This License may be provided in multiple language versions. Where not restricted by local jurisdiction, the Simplified Chinese version shall prevail.
+4. This License may be provided in multiple language versions. Where not restricted by local jurisdiction, the Chinese Simplified version shall prevail.
 
 5. If any provision of this License is found unenforceable for any reason by a court of competent jurisdiction, that provision shall be enforced to the maximum extent permitted in order to reflect the original intent of the parties, and the remainder of this License shall remain in full force and effect.
 
