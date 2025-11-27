@@ -106,16 +106,16 @@ private struct SidebarProjectSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Picker("Locale", selection: $configuration.metadata.locale) {
+                Picker("Zeile.project.metadata.locale", selection: $configuration.metadata.locale) {
                     ForEach(DoriLocale.allCases, id: \.rawValue) { locale in
                         Text(locale.rawValue.uppercased()).tag(locale)
                     }
                 }
-                TextField("Project Name", text: $configuration.metadata.projectName)
-                TextField("Author", text: $configuration.metadata.author)
-                TextField("Description", text: $configuration.metadata.description)
+                TextField("Zeile.project.metadata.name", text: $configuration.metadata.projectName)
+                TextField("Zeile.project.metadata.author", text: $configuration.metadata.author)
+                TextField("Zeile.project.metadata.description", text: $configuration.metadata.description)
             } header: {
-                Text("Metadata")
+                Text("Zeile.project.metadata")
             }
         }
         .formStyle(.grouped)

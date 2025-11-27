@@ -42,6 +42,30 @@ extension Bool {
     }
 }
 
+// MARK: Button
+extension Button {
+    @preconcurrency
+    public init(
+        optionalRole: UniversalButtonRole? = nil,
+        action: @escaping @MainActor () -> Void,
+        @ViewBuilder label: () -> Label
+    ) {
+        if #available(iOS 26.0, macOS 26.0, *), let role = optionalRole {
+            var roleTable: [UniversalButtonRole: ButtonRole] = [.cancel: .cancel, .destructive: .destructive, .close: .close, .confirm: .confirm]
+            self.init(role: roleTable[role]!, action: action, label: label)
+        } else {
+            self.init(action: action, label: label)
+        }
+    }
+    
+    public enum UniversalButtonRole {
+        case cancel
+        case destructive
+        case close
+        case confirm
+    }
+}
+
 // MARK: Color
 extension Color {
     func toHex() -> String? {

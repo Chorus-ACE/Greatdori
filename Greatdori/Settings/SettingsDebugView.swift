@@ -38,6 +38,7 @@ struct SettingsDebugView: View {
         @AppStorage("isFirstLaunchResettable") var isFirstLaunchResettable = true
         @AppStorage("startUpSucceeded") var startUpSucceeded = true
         @AppStorage("EnableRulerOverlay") var enableRulerOverlay = false
+        @AppStorage("ISVStyleTestFlag") var isvStyleTestFlag = 0
         @State var showDebugDisactivationAlert = false
         
         var body: some View {
@@ -111,6 +112,21 @@ struct SettingsDebugView: View {
                     }, label: {
                         Text("Settings.debug.disable.turn-off")
                     })
+                })
+                ListItem(title: {
+                    Text(verbatim: "ISV A/B Test")
+                }, value: {
+                    Group {
+                        switch isvStyleTestFlag {
+                        case 1:
+                            Text(verbatim: "Default Always Full Screen")
+                        case 2:
+                            Text(verbatim: "Default Previewable")
+                        default:
+                            Text(verbatim: "N/A")
+                        }
+                    }
+                    .foregroundStyle(.secondary)
                 })
             }
         }

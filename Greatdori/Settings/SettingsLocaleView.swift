@@ -41,61 +41,35 @@ struct SettingsLocaleView: View {
     
     
     struct SettingsPrimaryAndSecondaryLocalePicker: View {
-        @State var primaryLocale = "jp"
-        @State var secondaryLocale = "en"
+        @State var primaryLocale = DoriLocale.jp
+        @State var secondaryLocale = DoriLocale.en
         var body: some View {
             Group {
-                Picker(selection: $primaryLocale, content: {
-                    Text("Home.servers.selection.jp")
-                        .tag("jp")
-                    Text("Home.servers.selection.en")
-                        .tag("en")
-                    Text("Home.servers.selection.cn")
-                        .tag("cn")
-                    Text("Home.servers.selection.tw")
-                        .tag("tw")
-                    Text("Home.servers.selection.kr")
-                        .tag("kr")
-                        .disabled(secondaryLocale == "kr")
-                }, label: {
-                    Text("Settings.servers.primaryLocale")
-                })
+                LocalePicker($primaryLocale) {
+                    Text("Settings.locale.primary-locale")
+                }
                 .onChange(of: primaryLocale, { oldValue, newValue in
-                    if DoriLocale.secondaryLocale == DoriLocale(rawValue: newValue) {
-                        DoriLocale.secondaryLocale = DoriLocale(rawValue: oldValue)!
+                    if newValue == DoriLocale.secondaryLocale {
+                        DoriLocale.secondaryLocale = oldValue
+                        secondaryLocale = DoriLocale.secondaryLocale
                     }
-                    DoriLocale.primaryLocale = localeFromStringDict[primaryLocale] ?? .jp
-                    
-                    primaryLocale = DoriLocale.primaryLocale.rawValue
-                    secondaryLocale = DoriLocale.secondaryLocale.rawValue
+                    DoriLocale.primaryLocale = newValue
                 })
-                Picker(selection: $secondaryLocale, content: {
-                    Text("Home.servers.selection.jp")
-                        .tag("jp")
-                    Text("Home.servers.selection.en")
-                        .tag("en")
-                    Text("Home.servers.selection.cn")
-                        .tag("cn")
-                    Text("Home.servers.selection.tw")
-                        .tag("tw")
-                    Text("Home.servers.selection.kr")
-                        .tag("kr")
-                }, label: {
-                    Text("Settings.servers.secondaryLocale")
-                })
+                
+                LocalePicker($secondaryLocale) {
+                    Text("Settings.locale.secondary-locale")
+                }
                 .onChange(of: secondaryLocale, { oldValue, newValue in
-                    if DoriLocale.primaryLocale == DoriLocale(rawValue: newValue) {
-                        DoriLocale.primaryLocale = DoriLocale(rawValue: oldValue)!
+                    if newValue == DoriLocale.primaryLocale {
+                        DoriLocale.primaryLocale = oldValue
+                        primaryLocale = DoriLocale.primaryLocale
                     }
-                    DoriLocale.secondaryLocale = localeFromStringDict[secondaryLocale] ?? .en
-                    
-                    primaryLocale = DoriLocale.primaryLocale.rawValue
-                    secondaryLocale = DoriLocale.secondaryLocale.rawValue
+                    DoriLocale.secondaryLocale = newValue
                 })
             }
             .onAppear {
-                primaryLocale = DoriLocale.primaryLocale.rawValue
-                secondaryLocale = DoriLocale.secondaryLocale.rawValue
+                primaryLocale = DoriLocale.primaryLocale
+                secondaryLocale = DoriLocale.secondaryLocale
             }
         }
     }

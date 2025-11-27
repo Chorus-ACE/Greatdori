@@ -19,10 +19,24 @@ import SwiftUI
 struct WelcomeView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
-    @State var primaryLocale = DoriLocale.primaryLocale.rawValue
-    @State var secondaryLocale = DoriLocale.secondaryLocale.rawValue
+//    @Environment(\.verticalSizeClass) var sizeClass
+    @State var primaryLocale = DoriLocale.primaryLocale
+    @State var secondaryLocale = DoriLocale.secondaryLocale
     @Binding var showWelcomeScreen: Bool
+    @Binding var licenseIsAgreed: Bool
     @State var isLicenseAgreementPresented = false
+    @State var sheetIsHorizontallyCompact = true
+    @State var agreementPromptHadBeenDisplayed = false
+    @State var agreementAlertIsDisplaying = false
+    let licensePromptAttributedString: AttributedString = {
+        var text = try! AttributedString(markdown: String(localized: "Welcome.agreement-prompt"))
+        for run in text.runs {
+            if run.attributes.link != nil {
+                text[run.range].foregroundColor = .accent
+            }
+        }
+        return text
+    }()
     var body: some View {
         #if os(macOS)
         VStack(alignment: .leading) {
@@ -43,52 +57,29 @@ struct WelcomeView: View {
                 .opacity(0)
             Form {
                 Section(content: {
-                    Picker(selection: $primaryLocale, content: {
-                        Text("Home.servers.selection.jp")
-                            .tag("jp")
-                            .disabled(secondaryLocale == "jp")
-                        Text("Home.servers.selection.en")
-                            .tag("en")
-                            .disabled(secondaryLocale == "en")
-                        Text("Home.servers.selection.cn")
-                            .tag("cn")
-                            .disabled(secondaryLocale == "cn")
-                        Text("Home.servers.selection.tw")
-                            .tag("tw")
-                            .disabled(secondaryLocale == "tw")
-                        Text("Home.servers.selection.kr")
-                            .tag("kr")
-                            .disabled(secondaryLocale == "kr")
-                    }, label: {
-                        Text("Welcome.primaryLocale")
+                    LocalePicker($primaryLocale) {
+                        Text("Welcome.primary-locale")
+                    }
+                    .onChange(of: primaryLocale, { oldValue, newValue in
+                        if newValue == DoriLocale.secondaryLocale {
+                            DoriLocale.secondaryLocale = oldValue
+                            secondaryLocale = DoriLocale.secondaryLocale
+                        }
+                        DoriLocale.primaryLocale = newValue
                     })
-                    .onChange(of: primaryLocale, {
-                        DoriLocale.primaryLocale = localeFromStringDict[primaryLocale] ?? .jp
-                    })
-                    Picker(selection: $secondaryLocale, content: {
-                        Text("Home.servers.selection.jp")
-                            .tag("jp")
-                            .disabled(primaryLocale == "jp")
-                        Text("Home.servers.selection.en")
-                            .tag("en")
-                            .disabled(primaryLocale == "en")
-                        Text("Home.servers.selection.cn")
-                            .tag("cn")
-                            .disabled(primaryLocale == "cn")
-                        Text("Home.servers.selection.tw")
-                            .tag("tw")
-                            .disabled(primaryLocale == "tw")
-                        Text("Home.servers.selection.kr")
-                            .tag("kr")
-                            .disabled(primaryLocale == "kr")
-                    }, label: {
-                        Text("Welcome.secondaryLocale")
-                    })
-                    .onChange(of: secondaryLocale, {
-                        DoriLocale.secondaryLocale = localeFromStringDict[secondaryLocale] ?? .en
+                    
+                    LocalePicker($secondaryLocale) {
+                        Text("Welcome.secondary-locale")
+                    }
+                    .onChange(of: secondaryLocale, { oldValue, newValue in
+                        if newValue == DoriLocale.primaryLocale {
+                            DoriLocale.primaryLocale = oldValue
+                            primaryLocale = DoriLocale.primaryLocale
+                        }
+                        DoriLocale.secondaryLocale = newValue
                     })
                 }, footer: {
-                    Text(try! AttributedString(markdown: String(localized: "Welcome.agreement-prompt")))
+                    Text(licensePromptAttributedString)
                         .environment(\.openURL, OpenURLAction { url in
                             if url.absoluteString == "placeholder://license-agreement" {
                                 isLicenseAgreementPresented = true
@@ -108,13 +99,12 @@ struct WelcomeView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction, content: {
                 Button(action: {
-                    //ANIMATION?
-                    //                    dismiss()
+                    // Animation?
+                    licenseIsAgreed = true
                     showWelcomeScreen = false
                 }, label: {
                     Text("Welcome.agree-done")
                 })
-                //                .background()
             })
             ToolbarItem(placement: .destructiveAction) {
                 Text("Welcome.footnote")
@@ -135,201 +125,203 @@ struct WelcomeView: View {
                     }
             }
         }
-        #else // os(macOS)
+        #else
         NavigationStack {
-            VStack {
-                let configuration: [AppIconWrappingFeatureImageConfiguration] = [
-                    .init(systemName: "person.2.fill",
-                          color: .mint,
-                          size: 28,
-                          offset: .init(width: -40, height: -70)),
-                    .init(systemName: "person.crop.square.on.square.angled.fill",
-                          color: .orange,
-                          size: 28,
-                          offset: .init(width: 40, height: -70)),
-                    .init(systemName: "swatchpalette.fill",
-                          color: .blue,
-                          size: 28,
-                          offset: .init(width: -75, height: 20)),
-                    .init(systemName: "star.hexagon.fill",
-                          color: .green,
-                          size: 28,
-                          offset: .init(width: 80, height: 25)),
-                    .init(systemName: "line.horizontal.star.fill.line.horizontal",
-                          color: .yellow,
-                          size: 28,
-                          offset: .init(width: 0, height: 75)),
-                    .init(systemName: "music.note",
-                          color: .red,
-                          size: 20,
-                          offset: .init(width: 0, height: 140)),
-                    .init(systemName: "music.note.list",
-                          color: .pink,
-                          size: 20,
-                          offset: .init(width: -70, height: 100)),
-                    .init(systemName: "calendar",
-                          color: .cyan,
-                          size: 20,
-                          offset: .init(width: 70, height: 100)),
-                    .init(systemName: "ticket.fill",
-                          color: .indigo,
-                          size: 20,
-                          offset: .init(width: -130, height: 40)),
-                    .init(systemName: "book.fill",
-                          color: .brown,
-                          size: 20,
-                          offset: .init(width: 130, height: 50)),
-                    .init(systemName: "chart.line.uptrend.xyaxis",
-                          color: .blue,
-                          size: 20,
-                          offset: .init(width: -110, height: -40)),
-                    .init(systemName: "apple.classical.pages.fill",
-                          color: .green,
-                          size: 22,
-                          offset: .init(width: 110, height: -40)),
-                    .init(systemName: "books.vertical.fill",
-                          color: .brown,
-                          size: 20,
-                          offset: .init(width: -90, height: -110)),
-                    .init(systemName: "person.and.viewfinder",
-                          color: .mint,
-                          size: 20,
-                          offset: .init(width: 0, height: -120)),
-                    .init(systemName: "folder.fill",
-                          color: .cyan,
-                          size: 20,
-                          offset: .init(width: 90, height: -110))
-                ]
-                ZStack {
-                    Image("MacAppIcon\(colorScheme == .dark ? "Dark" : "")")
-                        .resizable()
-                        .frame(width: 80, height: 80)
-                        .shadow(radius: 6, x: 1, y: 1)
-                    ForEach(configuration, id: \.self) { configuration in
-                        Image(_internalSystemName: configuration.systemName)
-                            .font(.system(size: configuration.size))
-                            .foregroundStyle(
-                                configuration.color,
-                                configuration.color.opacity(0.7),
-                                configuration.color.opacity(0.5)
-                            )
-                            .offset(configuration.offset)
-                    }
-                }
-                .padding(140)
-                Group {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("Welcome to Greatdori!")
-                                .font(.system(size: 20, weight: .bold))
-                            Text("This app brings BanG Dream GBP information together in one place.")
-                                .font(.system(size: 20))
-                                .foregroundStyle(.gray)
-                                .fixedSize(horizontal: false, vertical: true)
-                            VStack {
-                                HStack {
-                                    Text("Welcome.primaryLocale")
-                                    Spacer()
-                                    Picker(selection: $primaryLocale) {
-                                        Text("Home.servers.selection.jp")
-                                            .tag("jp")
-                                            .disabled(secondaryLocale == "jp")
-                                        Text("Home.servers.selection.en")
-                                            .tag("en")
-                                            .disabled(secondaryLocale == "en")
-                                        Text("Home.servers.selection.cn")
-                                            .tag("cn")
-                                            .disabled(secondaryLocale == "cn")
-                                        Text("Home.servers.selection.tw")
-                                            .tag("tw")
-                                            .disabled(secondaryLocale == "tw")
-                                        Text("Home.servers.selection.kr")
-                                            .tag("kr")
-                                            .disabled(secondaryLocale == "kr")
-                                    } label: {
-                                        EmptyView()
-                                    }
-                                    .labelsHidden()
-                                    .onChange(of: primaryLocale) {
-                                        DoriLocale.primaryLocale = localeFromStringDict[primaryLocale] ?? .jp
-                                    }
+            ZStack {
+                ScrollView {
+                    LazyVStack {
+                        // MARK: Pentagonal View
+                        ZStack {
+                            Image("MacAppIcon\(colorScheme == .dark ? "Dark" : "")")
+                                .resizable()
+                                .frame(width: 80, height: 80)
+                                .shadow(radius: 6, x: 1, y: 1)
+                            ForEach(configuration, id: \.self) { configuration in
+                                Image(_internalSystemName: configuration.systemName)
+                                    .font(.system(size: configuration.size))
+                                    .foregroundStyle(
+                                        configuration.color,
+                                        configuration.color.opacity(0.7),
+                                        configuration.color.opacity(0.5)
+                                    )
+                                    .offset(configuration.offset)
+                            }
+                        }
+                        .padding(.horizontal, 120)
+                        .padding(.top, sheetIsHorizontallyCompact ? 100 : 120)
+                        .padding(.bottom, 140)
+                        
+                        // MARK: Main Text
+                        Group {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("Welcome.title")
+                                        .font(.system(size: 20, weight: .bold))
+                                    Text("This app brings BanG Dream GBP information together in one place.")
+                                        .font(.system(size: 20))
+                                        .foregroundStyle(.gray)
+                                        .fixedSize(horizontal: false, vertical: true)
                                 }
-                                Divider()
-                                    .padding(.vertical, -3)
-                                HStack {
-                                    Text("Welcome.secondaryLocale")
-                                    Spacer()
-                                    Picker(selection: $secondaryLocale) {
-                                        Text("Home.servers.selection.jp")
-                                            .tag("jp")
-                                            .disabled(primaryLocale == "jp")
-                                        Text("Home.servers.selection.en")
-                                            .tag("en")
-                                            .disabled(primaryLocale == "en")
-                                        Text("Home.servers.selection.cn")
-                                            .tag("cn")
-                                            .disabled(primaryLocale == "cn")
-                                        Text("Home.servers.selection.tw")
-                                            .tag("tw")
-                                            .disabled(primaryLocale == "tw")
-                                        Text("Home.servers.selection.kr")
-                                            .tag("kr")
-                                            .disabled(primaryLocale == "kr")
-                                    } label: {
-                                        EmptyView()
-                                    }
-                                    .labelsHidden()
-                                    .onChange(of: secondaryLocale) {
-                                        DoriLocale.secondaryLocale = localeFromStringDict[secondaryLocale] ?? .en
-                                    }
+                                Spacer()
+                            }
+                        }
+                        .padding(.horizontal)
+                        
+                        
+                        Section(content: {
+                            // MARK: Form
+                            Group {
+                                VStack(spacing: 7) {
+                                    ListItem(title: {
+                                        Text("Welcome.primary-locale")
+                                    }, value: {
+                                        LocalePicker($primaryLocale)
+                                            .onChange(of: primaryLocale, { oldValue, newValue in
+                                                if newValue == DoriLocale.secondaryLocale {
+                                                    DoriLocale.secondaryLocale = oldValue
+                                                    secondaryLocale = DoriLocale.secondaryLocale
+                                                }
+                                                DoriLocale.primaryLocale = newValue
+                                            })
+                                    })
+                                    
+                                    Divider()
+                                    
+                                    ListItem(title: {
+                                        Text("Welcome.secondary-locale")
+                                    }, value: {
+                                        LocalePicker($secondaryLocale)
+                                            .onChange(of: secondaryLocale, { oldValue, newValue in
+                                                if newValue == DoriLocale.primaryLocale {
+                                                    DoriLocale.primaryLocale = oldValue
+                                                    primaryLocale = DoriLocale.primaryLocale
+                                                }
+                                                DoriLocale.secondaryLocale = newValue
+                                            })
+                                    })
                                 }
                             }
                             .padding(.horizontal)
-                            .padding(.vertical, 8)
+                            .padding(.vertical, 10)
                             .background {
                                 RoundedRectangle(cornerRadius: 20)
-                                    .fill(Color(.systemGroupedBackground))
+                                    .fill(colorScheme == .light ? Color(.systemGroupedBackground) : Color(.secondarySystemGroupedBackground))
                             }
-                            Text(try! AttributedString(markdown: String(localized: "Welcome.agreement-prompt")))
-                                .font(.footnote)
-                                .foregroundStyle(.gray)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .environment(\.openURL, OpenURLAction { url in
-                                    if url.absoluteString == "placeholder://license-agreement" {
-                                        isLicenseAgreementPresented = true
-                                        return .handled
-                                    } else {
-                                        return .systemAction
+                        }, footer: {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("Welcome.footnote")
+                                    
+                                    if sheetIsHorizontallyCompact {
+                                        Text(try! AttributedString(markdown: String(localized: "Welcome.agreement-prompt.checkmark")))
+                                            .environment(\.openURL, OpenURLAction { url in
+                                                if url.absoluteString == "placeholder://license-agreement" {
+                                                    isLicenseAgreementPresented = true
+                                                    return .handled
+                                                } else {
+                                                    return .systemAction
+                                                }
+                                            })
+                                            .wrapIf(true) {
+                                                if #available(iOS 18.0, *) {
+                                                    $0.onScrollVisibilityChange(threshold: 0.7) { isVisible in
+                                                        if isVisible {
+                                                            agreementPromptHadBeenDisplayed = true
+                                                        }
+                                                    }
+                                                } else {
+                                                    $0
+                                                }
+                                            }
                                     }
-                                })
-                        }
-                        Spacer()
+                                }
+                                Spacer()
+                            }
+                            .foregroundStyle(.secondary)
+                            .font(.footnote)
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal)
+                        })
+                        
                     }
-                    Spacer()
-                    Button(action: {
-                        showWelcomeScreen = false
-                    }, label: {
-                        HStack {
-                            Spacer()
-                            Text("Welcome.agree-done")
-                                .fontWeight(.semibold)
-                            Spacer()
-                        }
-                        .padding(.vertical, 10)
-                    })
-                    .wrapIf(true) { content in
-                        if #available(iOS 26.0, *) {
-                            content
-                                .buttonStyle(.glassProminent)
-                        } else {
-                            content.buttonStyle(.borderedProminent)
-                        }
-                    }
-                    .buttonBorderShape(.capsule)
+                    .padding()
                 }
-                .padding(.horizontal)
+                
+                if !sheetIsHorizontallyCompact {
+                    // MARK: Confirmation Button
+                    VStack {
+                        Spacer()
+                        Text(try! AttributedString(markdown: String(localized: "Welcome.agreement-prompt")))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        //                            .fixedSize(horizontal: false, vertical: true)
+                            .environment(\.openURL, OpenURLAction { url in
+                                if url.absoluteString == "placeholder://license-agreement" {
+                                    isLicenseAgreementPresented = true
+                                    return .handled
+                                } else {
+                                    return .systemAction
+                                }
+                            })
+                            .multilineTextAlignment(.center)
+                            .onAppear {
+                                agreementPromptHadBeenDisplayed = true
+                            }
+                        
+                        Button(action: {
+                            if agreementPromptHadBeenDisplayed {
+                                licenseIsAgreed = true
+                                showWelcomeScreen = false
+                            } else {
+                                agreementAlertIsDisplaying = true
+                            }
+                        }, label: {
+                            HStack {
+                                Spacer()
+                                Text("Welcome.agree-done")
+                                    .fontWeight(.semibold)
+                                Spacer()
+                            }
+                            .padding(.vertical, 10)
+                        })
+                        .wrapIf(true) { content in
+                            if #available(iOS 26.0, *) {
+                                content
+                                    .buttonStyle(.glassProminent)
+                            } else {
+                                content.buttonStyle(.borderedProminent)
+                            }
+                        }
+                        .buttonBorderShape(.capsule)
+                    }
+                    .padding()
+                }
+                
+                if #unavailable(iOS 18.0) {
+                    Rectangle()
+                        .opacity(0.02)
+                        .frame(width: 10)
+                        .onAppear {
+                            agreementPromptHadBeenDisplayed = true
+                        }
+                }
             }
-            .padding()
+            .toolbar {
+                if sheetIsHorizontallyCompact {
+                    Button(optionalRole: .confirm, action: {
+                        if agreementPromptHadBeenDisplayed {
+                            licenseIsAgreed = true
+                            showWelcomeScreen = false
+                        } else {
+                            agreementAlertIsDisplaying = true
+                        }
+                    }, label: {
+                        Label("Welcome.agree-done", systemImage: "checkmark")
+                            .foregroundStyle(.white)
+                            .fontWeight(.semibold)
+                    })
+                }
+            }
         }
         .interactiveDismissDisabled()
         .sheet(isPresented: $isLicenseAgreementPresented) {
@@ -346,7 +338,29 @@ struct WelcomeView: View {
                     }
             }
         }
-        #endif // os(macOS)
+        .alert("Welcome.agreement-sheet.title", isPresented: $agreementAlertIsDisplaying, actions: {
+            Button(action: {
+                licenseIsAgreed = true
+                showWelcomeScreen = false
+            }, label: {
+                Text("Welcome.agreement-sheet.agree")
+            })
+            .keyboardShortcut(.defaultAction)
+            Button(role: .cancel, action: {}, label: {
+                Text("Welcome.agreement-sheet.cancel")
+            })
+            Button(action: {
+                isLicenseAgreementPresented = true
+            }, label: {
+                Text("Welcome.agreement-sheet.check-license")
+            })
+        }, message: {
+            Text("Welcome.agreement-sheet.message")
+        })
+        .onFrameChange { geometry in
+            sheetIsHorizontallyCompact = geometry.size.height < 750
+        }
+        #endif
     }
 }
 
@@ -356,3 +370,66 @@ private struct AppIconWrappingFeatureImageConfiguration: Hashable {
     let size: CGFloat
     let offset: CGSize
 }
+
+fileprivate let configuration: [AppIconWrappingFeatureImageConfiguration] = [
+    .init(systemName: "person.2.fill",
+          color: .mint,
+          size: 28,
+          offset: .init(width: -40, height: -70)),
+    .init(systemName: "person.crop.square.on.square.angled.fill",
+          color: .orange,
+          size: 28,
+          offset: .init(width: 40, height: -70)),
+    .init(systemName: "swatchpalette.fill",
+          color: .blue,
+          size: 28,
+          offset: .init(width: -75, height: 20)),
+    .init(systemName: "star.hexagon.fill",
+          color: .green,
+          size: 28,
+          offset: .init(width: 80, height: 25)),
+    .init(systemName: "line.horizontal.star.fill.line.horizontal",
+          color: .yellow,
+          size: 28,
+          offset: .init(width: 0, height: 75)),
+    .init(systemName: "music.note",
+          color: .red,
+          size: 20,
+          offset: .init(width: 0, height: 140)),
+    .init(systemName: "music.note.list",
+          color: .pink,
+          size: 20,
+          offset: .init(width: -70, height: 100)),
+    .init(systemName: "calendar",
+          color: .cyan,
+          size: 20,
+          offset: .init(width: 70, height: 100)),
+    .init(systemName: "ticket.fill",
+          color: .indigo,
+          size: 20,
+          offset: .init(width: -130, height: 40)),
+    .init(systemName: "book.fill",
+          color: .brown,
+          size: 20,
+          offset: .init(width: 130, height: 50)),
+    .init(systemName: "chart.line.uptrend.xyaxis",
+          color: .green,
+          size: 20,
+          offset: .init(width: -110, height: -40)),
+    .init(systemName: "apple.classical.pages.fill",
+          color: .red,
+          size: 22,
+          offset: .init(width: 110, height: -40)),
+    .init(systemName: "books.vertical.fill",
+          color: .brown,
+          size: 20,
+          offset: .init(width: -90, height: -110)),
+    .init(systemName: "person.and.viewfinder",
+          color: .mint,
+          size: 20,
+          offset: .init(width: 0, height: -120)),
+    .init(systemName: "folder.fill",
+          color: .cyan,
+          size: 20,
+          offset: .init(width: 90, height: -110))
+    ]

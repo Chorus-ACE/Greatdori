@@ -26,6 +26,9 @@ struct StoryDetailView: View {
     var unsafeAssociatedID: String // WTF --@WindowsMEMZ
     var unsafeSecondaryAssociatedID: String?
     @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
+//    @AppStorage("ISVBannerIsShowing") var ISVBannerIsShowing = true
+    @AppStorage("ISVHadChosenOption") var ISVHadChosenOption = false
+    @State var isvLayoutSelectionSheetIsDisplaying = false
     @State var asset: _DoriAPI.Misc.StoryAsset?
     @State var transcript: [_DoriAPI.Misc.StoryAsset.Transcript]?
     @State var audioPlayer = AVPlayer()
@@ -203,6 +206,20 @@ struct StoryDetailView: View {
             }
             #endif
         }
+        .onAppear {
+            if !ISVHadChosenOption {
+                isvLayoutSelectionSheetIsDisplaying = true
+            }
+            isvLayoutSelectionSheetIsDisplaying = false // MARK: !!!
+        }
+        .sheet(isPresented: $isvLayoutSelectionSheetIsDisplaying, onDismiss: {
+            if !ISVHadChosenOption {
+                isvLayoutSelectionSheetIsDisplaying = true
+            }
+        }) {
+            ISVLayoutPickerSheet()
+                .interactiveDismissDisabled()
+        }
     }
     
     func loadTranscript() async {
@@ -265,7 +282,7 @@ struct StoryDetailView: View {
             }
         }()
         if let asset {
-            Menu(String("Debug"), systemImage: "ant.fill") {
+            Menu(String("Debug"), systemImage: "ant") {
                 Section {
                     Button(String("Dump IR"), systemImage: "text.word.spacing") {
                         let downloadBase = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
@@ -324,6 +341,45 @@ struct StoryDetailView: View {
     }
 }
 
+struct ISVLayoutPickerSheet: View {
+    @AppStorage("ISVHadChosenOption") var ISVHadChosenOption = false
+    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
+    @State var selection = "N"
+    var body: some View {
+        NavigationStack {
+            VStack {
+                Text("Story-viewer.layout-test-sheet.title")
+                    .font(.largeTitle)
+                    .bold()
+                //            Text()
+                Text("Story-viewer.layout-test-sheet.body")
+                
+                HStack {
+                    Text(verbatim: "1")
+                    Text(verbatim: "2")
+                }
+                Spacer()
+                #if os(iOS)
+                Button(action: {
+                    
+                }, label: {
+                    Text(verbatim: "3")
+                })
+                #endif
+            }
+            .padding()
+            .toolbar {
+                #if os(macOS)
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(action: {
+                        submit()
+                    }, label: {
+                        Text("Story-viewer.layout-test-sheet.done")
+                    })
+                    .disabled(selection == "N")
+                }
+                #endif
+            }
 extension _DoriAPI.Misc.StoryAsset.Transcript.Talk {
     var personGroupType: PersonGroupType {
         if characterName == "一同"
@@ -341,6 +397,9 @@ extension _DoriAPI.Misc.StoryAsset.Transcript.Talk {
         return .single
     }
     
+    private func submit() {
+        isvAlwaysFullScreen = selection == "F"
+        ISVHadChosenOption = true
     enum PersonGroupType {
         case single
         case multiple

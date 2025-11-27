@@ -188,7 +188,7 @@ struct CustomGroupBox<Content: View>: View {
                 } else {
                     ZStack {
                         RoundedRectangle(cornerRadius: cornerRadius)
-                        #if !os(macOS)
+                        #if os(iOS)
                             .foregroundStyle(Color(.secondarySystemGroupedBackground))
                         #else
                             .foregroundStyle(Color(NSColor.quaternarySystemFill))
@@ -603,6 +603,39 @@ struct LayoutPicker<T: Hashable>: View {
 //     LayoutPicker(selection: $layout, options: [("Localized String Key", "symbol", value)])
 // }
 //```
+
+// MARK: LocalePicker
+struct LocalePicker<L: View>: View {
+    @Binding var locale: DoriLocale
+    var label: (() -> L)?
+    init(_ locale: Binding<DoriLocale>, label: @escaping () -> L) {
+        self._locale = locale
+        self.label = label
+    }
+    
+    init(_ locale: Binding<DoriLocale>) where L == EmptyView {
+        self._locale = locale
+        self.label = nil
+    }
+    
+    var body: some View {
+        Picker(selection: $locale, content: {
+            ForEach(DoriLocale.allCases, id: \.self) { item in
+                Text(item.rawValue.uppercased())
+                    .tag(item)
+            }
+        }, label: {
+            if let label {
+                label()
+            } else {
+                EmptyView()
+            }
+        })
+        .wrapIf(label == nil) {
+            $0.labelsHidden()
+        }
+    }
+}
 
 
 // MARK: MultilingualText

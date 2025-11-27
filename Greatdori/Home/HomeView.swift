@@ -18,8 +18,6 @@ import Combine
 import SDWebImageSwiftUI
 
 let loadingAnimationDuration = 0.1
-let localeFromStringDict: [String: DoriLocale] = ["jp": .jp, "cn": .cn, "tw": .tw, "en": .en, "kr": .kr]
-//let localeToStringDict: [DoriAPI.Locale: String] = [.jp: "JP", .en: "EN", .tw: "TW", .cn: "CN", .kr: "KR"]
 
 private let _homeNavigationSubject = PassthroughSubject<NavigationPage?, Never>()
 @_transparent
@@ -53,13 +51,13 @@ struct HomeView: View {
                             VStack {
                                 HomeNewsView()
                                 CustomGroupBox { HomeBirthdayView() }
-                                HomeEventsView(locale: localeFromStringDict[homeEventServer4] ?? .jp)
+                                HomeEventsView(locale: DoriLocale(rawValue: homeEventServer4) ?? .jp)
                                 Spacer()
                             }
                             VStack {
-                                HomeEventsView(locale: localeFromStringDict[homeEventServer1] ?? .jp)
-                                HomeEventsView(locale: localeFromStringDict[homeEventServer2] ?? .jp)
-                                HomeEventsView(locale: localeFromStringDict[homeEventServer3] ?? .jp)
+                                HomeEventsView(locale: DoriLocale(rawValue: homeEventServer1) ?? .jp)
+                                HomeEventsView(locale: DoriLocale(rawValue: homeEventServer2) ?? .jp)
+                                HomeEventsView(locale: DoriLocale(rawValue: homeEventServer3) ?? .jp)
                                 Spacer()
                             }
                         }
@@ -71,10 +69,10 @@ struct HomeView: View {
                         HomeBannersView()
                         HomeNewsView()
                         CustomGroupBox { HomeBirthdayView() }
-                        HomeEventsView(locale: localeFromStringDict[homeEventServer1] ?? .jp)
-                        HomeEventsView(locale: localeFromStringDict[homeEventServer2] ?? .jp)
-                        HomeEventsView(locale: localeFromStringDict[homeEventServer3] ?? .jp)
-                        HomeEventsView(locale: localeFromStringDict[homeEventServer4] ?? .jp)
+                        HomeEventsView(locale: DoriLocale(rawValue: homeEventServer1) ?? .jp)
+                        HomeEventsView(locale: DoriLocale(rawValue: homeEventServer2) ?? .jp)
+                        HomeEventsView(locale: DoriLocale(rawValue: homeEventServer3) ?? .jp)
+                        HomeEventsView(locale: DoriLocale(rawValue: homeEventServer4) ?? .jp)
                     }
                     .padding(.horizontal)
                     .opacity(!useCompactVariant ? 0 : 1)

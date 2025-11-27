@@ -37,6 +37,8 @@ struct ContentView: View {
     @State var showWelcomeScreen = false
     @State var showPreCacheAlert = false
     @State var showCrashAlert = false
+    @State var licenseIsAgreed = false
+    @State var forceAskLicenseAgreement = false
     
     var body: some View {
         if mainAppShouldBeDisplayed {
@@ -175,7 +177,9 @@ struct ContentView: View {
                     isFirstLaunch = !isFirstLaunchResettable
                 }
 #if !DORIKIT_ENABLE_PRECACHE
-                showPreCacheAlert = true
+                if !isFirstLaunch {
+                    showPreCacheAlert = true
+                }
 #endif
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     startUpSucceeded = true
@@ -186,9 +190,14 @@ struct ContentView: View {
                     AppFlag.set(false, forKey: "DEBUG")
                 }
             }
-            .sheet(isPresented: $showWelcomeScreen, content: {
-                WelcomeView(showWelcomeScreen: $showWelcomeScreen)
-            })
+            .sheet(isPresented: $showWelcomeScreen, onDismiss: {
+                if !licenseIsAgreed {
+                    forceAskLicenseAgreement = true
+                    showWelcomeScreen = true
+                }
+            }) {
+                WelcomeView(showWelcomeScreen: $showWelcomeScreen, licenseIsAgreed: $licenseIsAgreed)
+            }
             .alert("Home.banner.no-pre-cahce.title", isPresented: $showPreCacheAlert, actions: {
             }, message: {
                 Text("Home.banner.no-pre-cahce.subtitle")

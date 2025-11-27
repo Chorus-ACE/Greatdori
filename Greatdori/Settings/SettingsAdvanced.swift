@@ -128,36 +128,7 @@ struct SettingsAdvancedUISection: View {
             Toggle(isOn: .init { customGroupBoxVersion != 2 } set: { customGroupBoxVersion = $0 ? 1 : 2 }) {
                 Text("Settings.advanced.ui.legacy-custom-group-box")
             }
-            if isvStyleTestFlag > 0 { // See the initializer in AppDelegate
-                Toggle(isOn: .init {
-                    isvStyleTestFlag == 1
-                    ? !isvAlwaysFullScreen : isvAlwaysFullScreen
-                } set: {
-                    isvStyleTestFlag == 1
-                    ? (isvAlwaysFullScreen = !$0)
-                    : (isvAlwaysFullScreen = $0)
-                }) {
-                    if isvStyleTestFlag == 1 {
-                        Text("非全屏时显示故事播放器")
-                    } else { // == 2
-                        Text("仅全屏显示故事播放器")
-                    }
-                }
-                .onChange(of: isvAlwaysFullScreen) {
-                    Task {
-                        await submitStats(
-                            key: "ISVPreferAlwaysFullScreen",
-                            action: isvAlwaysFullScreen
-                        )
-                    }
-                    Task {
-                        await submitStats(
-                            key: "ISVPreferPreviewable",
-                            action: !isvAlwaysFullScreen
-                        )
-                    }
-                }
-            }
+            SettingsAdvancedISVABTestView()
         } header: {
             Text("Settings.advanced.ui")
         }
@@ -172,6 +143,42 @@ func resetAllAdvancedSettings(showBannerAtHome: Bool = true) {
         }
         if showBannerAtHome {
             UserDefaults.standard.set(true, forKey: "AdvancedSettingsHaveReset")
+        }
+    }
+}
+
+struct SettingsAdvancedISVABTestView: View {
+    @AppStorage("ISVStyleTestFlag") var isvStyleTestFlag = 0
+    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
+    var body: some View {
+        if isvStyleTestFlag > 0 { // See the initializer in AppDelegate
+            Picker("Settings.advanced.ui.isv", selection: $isvAlwaysFullScreen) {
+                if isvStyleTestFlag == 2 {
+                    Text("Settings.advanced.ui.isv.always-full-screen")
+                        .tag(true)
+                    Text("Settings.advanced.ui.isv.resizable")
+                        .tag(false)
+                } else {
+                    Text("Settings.advanced.ui.isv.resizable")
+                        .tag(false)
+                    Text("Settings.advanced.ui.isv.always-full-screen")
+                        .tag(true)
+                }
+            }
+            .onChange(of: isvAlwaysFullScreen) {
+                Task {
+                    await submitStats(
+                        key: "ISVPreferAlwaysFullScreen",
+                        action: isvAlwaysFullScreen
+                    )
+                }
+                Task {
+                    await submitStats(
+                        key: "ISVPreferPreviewable",
+                        action: !isvAlwaysFullScreen
+                    )
+                }
+            }
         }
     }
 }

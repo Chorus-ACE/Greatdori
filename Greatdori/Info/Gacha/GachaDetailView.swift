@@ -378,13 +378,7 @@ struct GachaDetailPossibilityView: View {
                             ListItem(title: {
                                 Text("Gacha.possibility.locale")
                             }, value: {
-                                Picker("", selection: $locale, content: {
-                                    ForEach(DoriLocale.allCases, id: \.self) { item in
-                                        Text(item.rawValue.uppercased())
-                                            .tag(item)
-                                    }
-                                })
-                                .labelsHidden()
+                                LocalePicker($locale)
                             })
                             
                             Divider()
