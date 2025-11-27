@@ -24,7 +24,7 @@ struct SongDetailMatchView: View {
         Group {
             if let songMatches,
                let matchResult = songMatches.first(where: { $0.key == song.id })?.value,
-               case let .some(results) = matchResult {
+               case let .some(results) = matchResult, !results.isEmpty {
                 LazyVStack(pinnedViews: .sectionHeaders) {
                     Section {
                         ForEach(results, id: \.self) { result in
