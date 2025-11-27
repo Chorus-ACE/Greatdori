@@ -26,6 +26,8 @@ struct EventDetailView: View {
             EventDetailOverviewView(information: information)
             DetailsGachasSection(gachas: information.gacha, applyLocaleFilter: false)
             DetailsSongsSection(songs: information.songs)
+            EventDetailGoalsView(information: information)
+            EventDetailTeamView(information: information)
             DetailArtsSection {
                 ArtsTab("Event.arts.banner", ratio: 3) {
                     for locale in DoriLocale.allCases {
@@ -423,6 +425,117 @@ struct EventDetailOverviewView: View {
                     cardsArraySeperated[i].insert(nil, at: 0)
                 }
             }
+        }
+    }
+}
+
+struct EventDetailGoalsView: View {
+    var information: ExtendedEvent
+    var body: some View {
+        if let missions = information.event.liveTryMissions,
+           let missionDetails = information.event.liveTryMissionDetails,
+           let missionTypeSeqs = information.event.liveTryMissionTypeSequences {
+            VStack {
+                let typedMissions = missions.reduce(into: [Event.LiveTryMissionType: [Event.LiveTryMission]]()) {
+                    $0.updateValue(($0[$1.value.missionType] ?? []) + [$1.value], forKey: $1.value.missionType)
+                }.mapValues {
+                    $0.sorted {
+                        ($0.missionDifficultyType == $1.missionDifficultyType
+                        && $0.level < $1.level)
+                        || $0.missionDifficultyType.rawValue > $1.missionDifficultyType.rawValue
+                    }
+                }
+                ForEach(typedMissions.sorted {
+                    (missionTypeSeqs[$0.key] ?? 0)
+                    < (missionTypeSeqs[$1.key] ?? 0)
+                }, id: \.key) { type, missions in
+                    SingleTypeGoalsView(
+                        type: type,
+                        missions: missions,
+                        missionDetails: missionDetails
+                    )
+                }
+            }
+            .frame(maxWidth: infoContentMaxWidth)
+        }
+    }
+    
+    private struct SingleTypeGoalsView: View {
+        var type: Event.LiveTryMissionType
+        var missions: [Event.LiveTryMission]
+        var missionDetails: [Int: Event.LiveTryMissionDetail]
+        @State private var isExpanded = false
+        var body: some View {
+            CustomGroupBox {
+                VStack {
+                    HStack {
+                        Text(type.localizedString)
+                        Spacer()
+                        Image(systemName: "chevron.forward")
+                            .foregroundStyle(.secondary)
+                            .rotationEffect(.init(degrees: isExpanded ? 90 : 0))
+                            .font(isMACOS ? .body : .caption)
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        isExpanded.toggle()
+                    }
+                    
+                    if isExpanded {
+                        ForEach(Array(missions.enumerated()), id: \.element.missionID) { index, mission in
+                            if let detail = missionDetails[mission.missionID] {
+                                ListItem {
+                                    Text("等级 \(mission.level)\(mission.missionDifficultyType == .extra ? " EX" : "")")
+                                } value: {
+                                    MultilingualText(detail.description)
+                                }
+                                if index != missions.count - 1 {
+                                    Divider()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct EventDetailTeamView: View {
+    var information: ExtendedEvent
+    var body: some View {
+        if let teams = information.event.teamList, teams.count >= 2 {
+            CustomGroupBox {
+                HStack {
+                    Spacer()
+                    VStack {
+                        Text(teams[0].themeTitle)
+                            .font(.title3)
+                            .bold()
+                            .multilineTextAlignment(.center)
+                        HStack {
+                            VStack {
+                                WebImage(url: teams[0].iconImageURL(with: information.event))
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 100)
+                                Text(teams[0].teamName)
+                            }
+                            Text(verbatim: "vs")
+                                .padding(.horizontal, 20)
+                            VStack {
+                                WebImage(url: teams[1].iconImageURL(with: information.event))
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 100)
+                                Text(teams[1].teamName)
+                            }
+                        }
+                    }
+                    Spacer()
+                }
+            }
+            .frame(maxWidth: infoContentMaxWidth)
         }
     }
 }
