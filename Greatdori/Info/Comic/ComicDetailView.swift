@@ -167,6 +167,7 @@ struct ComicDetailComicView: View {
                 }).onFailure { _ in
                     comicLoadingHadFailed = true
                 }
+                .imageContextMenu([.init(url: information.imageURL(in: locale, allowsFallback: false) ?? .init(filePath: "/"))])
                 .frame(maxWidth: infoContentMaxWidth)
                 .onChange(of: locale) {
                     comicLoadingHadFailed = false
