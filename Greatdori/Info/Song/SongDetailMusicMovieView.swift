@@ -16,7 +16,7 @@ import DoriKit
 import SwiftUI
 
 struct SongDetailMusicMovieView: View {
-    let musicVideos: [String: _DoriAPI.Songs.MusicVideoMetadata]?
+    let musicVideos: [String: _DoriAPI.Songs.Song.MusicVideoMetadata]?
     @State var selectedMV: String? = nil
     var body: some View {
         if let musicVideos, !musicVideos.isEmpty {

@@ -334,16 +334,9 @@ extension StoryViewerView {
                                     )
                                 }) {
                                     VStack(alignment: .leading) {
-                                        Group {
-                                            switch episode.episodeType {
-                                            case .standard:
-                                                Text("故事")
-                                            case .memorial:
-                                                Text("纪念故事")
-                                            }
-                                        }
-                                        .font(.system(size: 14))
-                                        .opacity(0.6)
+                                        Text(episode.episodeType.localizedString)
+                                            .font(.system(size: 14))
+                                            .opacity(0.6)
                                         Text(episode.title.forPreferredLocale() ?? "")
                                     }
                                 }
