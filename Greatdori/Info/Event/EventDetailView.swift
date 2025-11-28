@@ -24,7 +24,7 @@ struct EventDetailView: View {
     var body: some View {
         DetailViewBase(previewList: allEvents, initialID: id) { information in
             EventDetailOverviewView(information: information)
-            DetailsGachasSection(gachas: information.gacha, applyLocaleFilter: false)
+            DetailsGachasSection(gachas: information.gacha, applyLocaleFilter: true)
             DetailsSongsSection(songs: information.songs)
             EventDetailGoalsView(information: information)
             EventDetailTeamView(information: information)
@@ -435,28 +435,40 @@ struct EventDetailGoalsView: View {
         if let missions = information.event.liveTryMissions,
            let missionDetails = information.event.liveTryMissionDetails,
            let missionTypeSeqs = information.event.liveTryMissionTypeSequences {
-            VStack {
-                let typedMissions = missions.reduce(into: [Event.LiveTryMissionType: [Event.LiveTryMission]]()) {
-                    $0.updateValue(($0[$1.value.missionType] ?? []) + [$1.value], forKey: $1.value.missionType)
-                }.mapValues {
-                    $0.sorted {
-                        ($0.missionDifficultyType == $1.missionDifficultyType
-                        && $0.level < $1.level)
-                        || $0.missionDifficultyType.rawValue > $1.missionDifficultyType.rawValue
+            LazyVStack(pinnedViews: .sectionHeaders) {
+                Section(content: {
+                    VStack {
+                        let typedMissions = missions.reduce(into: [Event.LiveTryMissionType: [Event.LiveTryMission]]()) {
+                            $0.updateValue(($0[$1.value.missionType] ?? []) + [$1.value], forKey: $1.value.missionType)
+                        }.mapValues {
+                            $0.sorted {
+                                ($0.missionDifficultyType == $1.missionDifficultyType
+                                 && $0.level < $1.level)
+                                || $0.missionDifficultyType.rawValue > $1.missionDifficultyType.rawValue
+                            }
+                        }
+                        ForEach(typedMissions.sorted {
+                            (missionTypeSeqs[$0.key] ?? 0)
+                            < (missionTypeSeqs[$1.key] ?? 0)
+                        }, id: \.key) { type, missions in
+                            SingleTypeGoalsView(
+                                type: type,
+                                missions: missions,
+                                missionDetails: missionDetails
+                            )
+                        }
                     }
-                }
-                ForEach(typedMissions.sorted {
-                    (missionTypeSeqs[$0.key] ?? 0)
-                    < (missionTypeSeqs[$1.key] ?? 0)
-                }, id: \.key) { type, missions in
-                    SingleTypeGoalsView(
-                        type: type,
-                        missions: missions,
-                        missionDetails: missionDetails
-                    )
-                }
+                    .frame(maxWidth: infoContentMaxWidth)
+                }, header: {
+                    HStack {
+                        Text("Event.goals")
+                            .font(.title2)
+                            .bold()
+                        Spacer()
+                    }
+                    .frame(maxWidth: 615)
+                })
             }
-            .frame(maxWidth: infoContentMaxWidth)
         }
     }
     
@@ -470,6 +482,7 @@ struct EventDetailGoalsView: View {
                 VStack {
                     HStack {
                         Text(type.localizedString)
+                            .bold()
                         Spacer()
                         Image(systemName: "chevron.forward")
                             .foregroundStyle(.secondary)
@@ -478,19 +491,19 @@ struct EventDetailGoalsView: View {
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        isExpanded.toggle()
+                        withAnimation {
+                            isExpanded.toggle()
+                        }
                     }
                     
                     if isExpanded {
                         ForEach(Array(missions.enumerated()), id: \.element.missionID) { index, mission in
                             if let detail = missionDetails[mission.missionID] {
+                                Divider()
                                 ListItem {
-                                    Text("等级 \(mission.level)\(mission.missionDifficultyType == .extra ? " EX" : "")")
+                                    Text("Event.goals.level.\(mission.level).\(mission.missionDifficultyType == .extra ? " EX" : "")")
                                 } value: {
-                                    MultilingualText(detail.description)
-                                }
-                                if index != missions.count - 1 {
-                                    Divider()
+                                    MultilingualText(detail.description.map({ $0?.replacing(#/\[[0-9A-Fa-f]{3,6}\]|\[-\]/#, with: "") }))
                                 }
                             }
                         }

@@ -19,24 +19,17 @@ import SwiftUI
 struct WelcomeView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
-//    @Environment(\.verticalSizeClass) var sizeClass
+    @AppStorage("isInitializationRequired") var isInitializationRequired = true
+    @AppStorage("isFirstLaunchResettable") var isFirstLaunchResettable = true
+    
+    @Binding var showWelcomeScreen: Bool
+    
     @State var primaryLocale = DoriLocale.primaryLocale
     @State var secondaryLocale = DoriLocale.secondaryLocale
-    @Binding var showWelcomeScreen: Bool
-    @Binding var licenseIsAgreed: Bool
     @State var isLicenseAgreementPresented = false
     @State var sheetIsHorizontallyCompact = true
     @State var agreementPromptHadBeenDisplayed = false
     @State var agreementAlertIsDisplaying = false
-    let licensePromptAttributedString: AttributedString = {
-        var text = try! AttributedString(markdown: String(localized: "Welcome.agreement-prompt"))
-        for run in text.runs {
-            if run.attributes.link != nil {
-                text[run.range].foregroundColor = .accent
-            }
-        }
-        return text
-    }()
     var body: some View {
         #if os(macOS)
         VStack(alignment: .leading) {
@@ -79,15 +72,7 @@ struct WelcomeView: View {
                         DoriLocale.secondaryLocale = newValue
                     })
                 }, footer: {
-                    Text(licensePromptAttributedString)
-                        .environment(\.openURL, OpenURLAction { url in
-                            if url.absoluteString == "placeholder://license-agreement" {
-                                isLicenseAgreementPresented = true
-                                return .handled
-                            } else {
-                                return .systemAction
-                            }
-                        })
+                    WelcomeViewAgreementPrompt(isLicenseAgreementPresented: $isLicenseAgreementPresented)
                 })
             }
             .formStyle(.grouped)
@@ -99,9 +84,7 @@ struct WelcomeView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction, content: {
                 Button(action: {
-                    // Animation?
-                    licenseIsAgreed = true
-                    showWelcomeScreen = false
+                    proceed(ignoreDisplayingCondition: true)
                 }, label: {
                     Text("Welcome.agree-done")
                 })
@@ -157,7 +140,7 @@ struct WelcomeView: View {
                                 VStack(alignment: .leading) {
                                     Text("Welcome.title")
                                         .font(.system(size: 20, weight: .bold))
-                                    Text("This app brings BanG Dream GBP information together in one place.")
+                                    Text("Welcome.message")
                                         .font(.system(size: 20))
                                         .foregroundStyle(.gray)
                                         .fixedSize(horizontal: false, vertical: true)
@@ -213,15 +196,7 @@ struct WelcomeView: View {
                                     Text("Welcome.footnote")
                                     
                                     if sheetIsHorizontallyCompact {
-                                        Text(try! AttributedString(markdown: String(localized: "Welcome.agreement-prompt.checkmark")))
-                                            .environment(\.openURL, OpenURLAction { url in
-                                                if url.absoluteString == "placeholder://license-agreement" {
-                                                    isLicenseAgreementPresented = true
-                                                    return .handled
-                                                } else {
-                                                    return .systemAction
-                                                }
-                                            })
+                                        WelcomeViewAgreementPrompt(isLicenseAgreementPresented: $isLicenseAgreementPresented, isCheckmarkButton: true)
                                             .wrapIf(true) {
                                                 if #available(iOS 18.0, *) {
                                                     $0.onScrollVisibilityChange(threshold: 0.7) { isVisible in
@@ -251,30 +226,15 @@ struct WelcomeView: View {
                     // MARK: Confirmation Button
                     VStack {
                         Spacer()
-                        Text(try! AttributedString(markdown: String(localized: "Welcome.agreement-prompt")))
+                        WelcomeViewAgreementPrompt(isLicenseAgreementPresented: $isLicenseAgreementPresented)
                             .font(.footnote)
                             .foregroundStyle(.secondary)
-                        //                            .fixedSize(horizontal: false, vertical: true)
-                            .environment(\.openURL, OpenURLAction { url in
-                                if url.absoluteString == "placeholder://license-agreement" {
-                                    isLicenseAgreementPresented = true
-                                    return .handled
-                                } else {
-                                    return .systemAction
-                                }
-                            })
                             .multilineTextAlignment(.center)
                             .onAppear {
                                 agreementPromptHadBeenDisplayed = true
                             }
-                        
                         Button(action: {
-                            if agreementPromptHadBeenDisplayed {
-                                licenseIsAgreed = true
-                                showWelcomeScreen = false
-                            } else {
-                                agreementAlertIsDisplaying = true
-                            }
+                            proceed()
                         }, label: {
                             HStack {
                                 Spacer()
@@ -309,12 +269,7 @@ struct WelcomeView: View {
             .toolbar {
                 if sheetIsHorizontallyCompact {
                     Button(optionalRole: .confirm, action: {
-                        if agreementPromptHadBeenDisplayed {
-                            licenseIsAgreed = true
-                            showWelcomeScreen = false
-                        } else {
-                            agreementAlertIsDisplaying = true
-                        }
+                        proceed()
                     }, label: {
                         Label("Welcome.agree-done", systemImage: "checkmark")
                             .foregroundStyle(.white)
@@ -340,8 +295,7 @@ struct WelcomeView: View {
         }
         .alert("Welcome.agreement-sheet.title", isPresented: $agreementAlertIsDisplaying, actions: {
             Button(action: {
-                licenseIsAgreed = true
-                showWelcomeScreen = false
+                proceed(ignoreDisplayingCondition: true)
             }, label: {
                 Text("Welcome.agreement-sheet.agree")
             })
@@ -361,6 +315,48 @@ struct WelcomeView: View {
             sheetIsHorizontallyCompact = geometry.size.height < 750
         }
         #endif
+    }
+    
+    func proceed(ignoreDisplayingCondition: Bool = false) {
+        if agreementPromptHadBeenDisplayed || ignoreDisplayingCondition {
+            isInitializationRequired = !isFirstLaunchResettable
+            showWelcomeScreen = false
+        } else {
+            agreementAlertIsDisplaying = true
+        }
+    }
+    
+    private struct WelcomeViewAgreementPrompt: View {
+        @Binding var isLicenseAgreementPresented: Bool
+        var isCheckmarkButton: Bool = false
+        
+        var body: some View {
+            Text(getActiveAttributeString(isCheckmarkButton: isCheckmarkButton))
+//                .font(.footnote)
+//                .foregroundStyle(.secondary)
+                .environment(\.openURL, OpenURLAction { url in
+                    if url.absoluteString == "placeholder://license-agreement" {
+                        isLicenseAgreementPresented = true
+                        return .handled
+                    } else {
+                        return .systemAction
+                    }
+                })
+//                .multilineTextAlignment(.center)
+//                .onAppear {
+//                    agreementPromptHadBeenDisplayed = true
+//                }
+        }
+        
+        func getActiveAttributeString(isCheckmarkButton: Bool) -> AttributedString {
+            var text = try! AttributedString(markdown: String(localized: self.isCheckmarkButton ? "Welcome.agreement-prompt.checkmark" : "Welcome.agreement-prompt"))
+            for run in text.runs {
+                if run.attributes.link != nil {
+                    text[run.range].foregroundColor = .accent
+                }
+            }
+            return text
+        }
     }
 }
 
@@ -396,8 +392,8 @@ fileprivate let configuration: [AppIconWrappingFeatureImageConfiguration] = [
           color: .red,
           size: 20,
           offset: .init(width: 0, height: 140)),
-    .init(systemName: "music.note.list",
-          color: .pink,
+    .init(systemName: "flag.2.crossed.fill",
+          color: .green,
           size: 20,
           offset: .init(width: -70, height: 100)),
     .init(systemName: "calendar",

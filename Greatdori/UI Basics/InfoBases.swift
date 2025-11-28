@@ -571,10 +571,11 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
     
     init(
         elements: [Element],
+        showLocalePicker: Bool = false,
         @ViewBuilder eachContent: @escaping (Element) -> Content
     ) {
         self.localizedElements = .init(forEveryLocale: elements)
-        self.showLocalePicker = false
+        self.showLocalePicker = showLocalePicker
         self.makeEachContent = eachContent
     }
     init(
@@ -583,7 +584,7 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
         @ViewBuilder eachContent: @escaping (Element) -> Content
     ) {
         self.localizedElements = elements
-        self.showLocalePicker = false
+        self.showLocalePicker = true
         self.makeEachContent = eachContent
     }
     

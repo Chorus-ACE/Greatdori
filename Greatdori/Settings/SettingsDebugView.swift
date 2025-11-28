@@ -34,7 +34,7 @@ struct SettingsDebugView: View {
     }
     
     struct SettingsDebugControlsView: View {
-        @AppStorage("isFirstLaunch") var isFirstLaunch = true
+        @AppStorage("isInitializationRequired") var isInitializationRequired = true
         @AppStorage("isFirstLaunchResettable") var isFirstLaunchResettable = true
         @AppStorage("startUpSucceeded") var startUpSucceeded = true
         @AppStorage("EnableRulerOverlay") var enableRulerOverlay = false
@@ -43,8 +43,8 @@ struct SettingsDebugView: View {
         
         var body: some View {
             Group {
-                Toggle(isOn: $isFirstLaunch, label: {
-                    Text(verbatim: "isFirstLaunch")
+                Toggle(isOn: $isInitializationRequired, label: {
+                    Text(verbatim: "isInitializationRequired")
                         .fontDesign(.monospaced)
                 })
                 Toggle(isOn: $isFirstLaunchResettable, label: {
@@ -115,6 +115,7 @@ struct SettingsDebugView: View {
                 })
                 ListItem(title: {
                     Text(verbatim: "ISV A/B Test")
+                        .bold(false)
                 }, value: {
                     Group {
                         switch isvStyleTestFlag {

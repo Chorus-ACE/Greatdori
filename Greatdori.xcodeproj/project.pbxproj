@@ -877,7 +877,7 @@
 				8C6B8FC32E75372000452D7B /* Localization */,
 				E942C37E2E8B625C00F24974 /* Methods */,
 				E90769D42E546D5B00C9871C /* UI Basics */,
-				E90769CC2E546D5500C9871C /* Home */,
+				E90769CC2E546D5500C9871C /* News */,
 				8C889D9A2EA1257700FBF01D /* Community */,
 				E98BE10F2E7E8C5E00B4C8A8 /* Info */,
 				E9A126FD2E8CB62700BBD39E /* Tools */,
@@ -1211,20 +1211,20 @@
 			path = LoginCampaign;
 			sourceTree = "<group>";
 		};
-		E90769CC2E546D5500C9871C /* Home */ = {
+		E90769CC2E546D5500C9871C /* News */ = {
 			isa = PBXGroup;
 			children = (
-				E90769CA2E546D5500C9871C /* HomeView.swift */,
 				E90769CB2E546D5500C9871C /* NewsView.swift */,
 				E92401602E993B94003BF482 /* NewsDetailsView.swift */,
 			);
-			path = Home;
+			path = News;
 			sourceTree = "<group>";
 		};
 		E90769D42E546D5B00C9871C /* UI Basics */ = {
 			isa = PBXGroup;
 			children = (
 				E90769CF2E546D5B00C9871C /* ContentView.swift */,
+				E90769CA2E546D5500C9871C /* HomeView.swift */,
 				E949A5602EAA00C8007441A6 /* WelcomeView.swift */,
 				E90769D02E546D5B00C9871C /* CornerstoneView.swift */,
 				E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */,

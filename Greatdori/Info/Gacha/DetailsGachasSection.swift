@@ -43,7 +43,7 @@ struct DetailsGachasSection: View {
     }
     
     var body: some View {
-        DetailSectionBase(elements: sourcePreference == 0 ? gachasFromList : gachasFromSources) { item in
+        DetailSectionBase(elements: sourcePreference == 0 ? gachasFromList : gachasFromSources, showLocalePicker: applyLocaleFilter) { item in
             if sourcePreference == 0 {
                 NavigationLink(destination: {
                     GachaDetailView(id: item.id)

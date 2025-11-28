@@ -27,7 +27,7 @@ struct ContentView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.scenePhase) var scenePhase
     @Environment(\.platform) var platform
-    @AppStorage("isFirstLaunch") var isFirstLaunch = true
+    @AppStorage("isInitializationRequired") var isInitializationRequired = true
     @AppStorage("isFirstLaunchResettable") var isFirstLaunchResettable = true
     @AppStorage("startUpSucceeded") var startUpSucceeded = true
     @AppStorage("lastDebugPassword") var lastDebugPassword = ""
@@ -37,8 +37,6 @@ struct ContentView: View {
     @State var showWelcomeScreen = false
     @State var showPreCacheAlert = false
     @State var showCrashAlert = false
-    @State var licenseIsAgreed = false
-    @State var forceAskLicenseAgreement = false
     
     var body: some View {
         if mainAppShouldBeDisplayed {
@@ -172,9 +170,8 @@ struct ContentView: View {
                 }
             }
             .onAppear {
-                if isFirstLaunch {
+                if isInitializationRequired {
                     showWelcomeScreen = true
-                    isFirstLaunch = !isFirstLaunchResettable
                 }
 #if !DORIKIT_ENABLE_PRECACHE
                 if !isFirstLaunch {
@@ -191,12 +188,11 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showWelcomeScreen, onDismiss: {
-                if !licenseIsAgreed {
-                    forceAskLicenseAgreement = true
+                if !isInitializationRequired {
                     showWelcomeScreen = true
                 }
             }) {
-                WelcomeView(showWelcomeScreen: $showWelcomeScreen, licenseIsAgreed: $licenseIsAgreed)
+                WelcomeView(showWelcomeScreen: $showWelcomeScreen)
             }
             .alert("Home.banner.no-pre-cahce.title", isPresented: $showPreCacheAlert, actions: {
             }, message: {

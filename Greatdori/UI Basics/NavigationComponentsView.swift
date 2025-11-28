@@ -58,6 +58,7 @@ import SwiftUI
         tabValue: .songs,
         destination: {SongSearchView()}
     ),
+    /*
     InfoDestinationItem(
         title: "App.info.song-meta",
         symbol: "music.note.list",
@@ -65,6 +66,7 @@ import SwiftUI
         tabValue: .songMeta,
         destination: {GachaSearchView()}
     ),
+     */
     InfoDestinationItem(
         title: "App.info.login-campaign",
         shortenedTitle: "App.info.login-campaign.abbr",
