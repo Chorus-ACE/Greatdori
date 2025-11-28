@@ -21,7 +21,6 @@ on: # FIXME: Change to nightly build after debugging
     paths:
       - '.github/workflows/nightly-build.yml'
 
-
 jobs:
   build:
     name: Build & Archive
@@ -32,6 +31,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
       - name: Remove runner local related libs
         run: brew remove --ignore-dependencies libssh2
       - name: Update checkout
@@ -65,7 +66,7 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
       - name: Archive
-        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -archivePath ./Greatdori.xcarchive -destination "generic/platform=${{ matrix.destination }}" archive CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=B57D8PP775
+        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -archivePath ./Greatdori.xcarchive -destination "generic/platform=${{ matrix.destination }}" archive CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=B57D8PP775 CURRENT_PROJECT_VERSION=$(git rev-list --count HEAD)
       - name: Prepare archive result
         run: tar -czvf Greatdori.xcarchive.tar.gz ./Greatdori.xcarchive
       - name: Upload archive result
@@ -88,8 +89,6 @@ jobs:
         with:
           name: Greatdori-${{ matrix.destination }}.xcarchive.tar.gz
           path: ./
-      - name: Debug print # FIXME
-        run: ls
       - name: Retrieve App archive
         run: tar -zxvf ./Greatdori.xcarchive.tar.gz
       - name: Install Apple certificate and provisioning profile
@@ -152,8 +151,6 @@ jobs:
           ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
           ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
         run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./export-option.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES -allowProvisioningUpdates -authenticationKeyIssuerID $ASCAPI_ISSUER_ID -authenticationKeyID $ASCAPI_KEY_ID -authenticationKeyPath ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
-      - name: Debug print # FIXME
-        run: ls
       - name: Upload IPA file
         uses: actions/upload-artifact@v4.6.2
         with:
