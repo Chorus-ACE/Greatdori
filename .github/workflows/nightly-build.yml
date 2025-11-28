@@ -65,11 +65,13 @@ jobs:
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
       - name: Archive
         run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -archivePath ./Greatdori.xcarchive -destination "generic/platform=${{ matrix.destination }}" archive CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=B57D8PP775
+      - name: Prepare archive result
+        run: tar -cvf Greatdori.xcarchive.tar ./Greatdori.xcarchive
       - name: Upload archive result
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: Greatdori-${{ matrix.destination }}.xcarchive
-          path: ./Greatdori.xcarchive
+          name: Greatdori-${{ matrix.destination }}.xcarchive.tar
+          path: ./Greatdori.xcarchive.tar
           if-no-files-found: error
   export:
     name: Export Archive
@@ -83,8 +85,10 @@ jobs:
       - name: Download App archive
         uses: actions/download-artifact@v6.0.0
         with:
-          name: Greatdori-${{ matrix.destination }}.xcarchive
-          path: ./Greatdori.xcarchive
+          name: Greatdori-${{ matrix.destination }}.xcarchive.tar
+          path: ./Greatdori.xcarchive.tar
+      - name: Retrieve App archive
+        run: tar -xvf ./Greatdori.xcarchive.tar
       - name: Install Apple certificate and provisioning profile
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
