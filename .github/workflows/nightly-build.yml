@@ -21,6 +21,7 @@ on: # FIXME: Change to nightly build after debugging
     paths:
       - '.github/workflows/nightly-build.yml'
 
+
 jobs:
   build:
     name: Build & Archive
