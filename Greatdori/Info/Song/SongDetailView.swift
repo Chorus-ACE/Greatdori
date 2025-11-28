@@ -25,6 +25,7 @@ struct SongDetailView: View {
         DetailViewBase(previewList: allSongs, initialID: id) { information in
             SongDetailOverviewView(information: information.song)
             SongDetailGameplayView(information: information)
+            SongDetailMusicMovieView(musicVideos: information.song.musicVideos)
             DetailsEventsSection(events: information.events)
             SongDetailMatchView(song: information.song, songMatches: $songMatches)
             DetailArtsSection {

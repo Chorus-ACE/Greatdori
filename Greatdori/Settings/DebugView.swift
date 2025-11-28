@@ -566,27 +566,6 @@ struct DebugRulerOverlay: View {
     }
 }
 
-struct DebugPlaygroundView: View {
-    @AppStorage("DebugStoryBuilderCodeString") var codeString = ""
-    @State var isShowing = true
-    var body: some View {
-        VStack {
-            Text(verbatim: "CustomGroupBox Animation")
-                .font(.largeTitle)
-            CustomGroupBox(showGroupBox: isShowing) {
-                WebImage(url: URL(string: "https://greatdori.com/anon.png")!)
-                    .resizable()
-            }
-            .frame(width: 240, height: 240)
-            .animation(.spring(duration: 0.3, bounce: 0.2), value: isShowing)
-            .padding(.vertical)
-            Toggle(String("Show"), isOn: $isShowing)
-                .toggleStyle(.switch)
-        }
-        .padding()
-    }
-}
-
 struct DebugStorageView: View {
     @State var storages: [String: Any] = [:]
     @State var storagesKeys: [String] = []

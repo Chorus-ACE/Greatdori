@@ -47,6 +47,7 @@ struct ContentView: View {
                         Tab("App.home", systemImage: "house", value: .home) {
                             HomeView()
                         }
+                        
                         Tab("App.community", systemImage: "at", value: .community) {
                             CommunityView()
                         }
@@ -128,7 +129,7 @@ struct ContentView: View {
                         NavigationSplitView {
                             List(selection: $selection) {
                                 Label("App.home", systemImage: "house").tag(AppSection.home)
-                                Label("App.community", systemImage: "at").tag(AppSection.community)
+//                                Label("App.community", systemImage: "at").tag(AppSection.community)
                                 
                                 Section("App.info", content: {
                                     ForEach(0..<allInfoDestinationItems.count, id: \.self) { itemIndex in
@@ -204,7 +205,7 @@ struct ContentView: View {
                 // Crash View pretended to be the same as loading view below.
                 ProgressView()
                     .onAppear {
-                        os_log("CRASH VIEW HAD BEEN ENTERED")
+                        unsafe os_log("CRASH VIEW HAD BEEN ENTERED")
 //                        if AppFlag.DEBUG {
 //                            showCrashAlert = true
 //                        } else {

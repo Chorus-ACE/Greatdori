@@ -24,7 +24,7 @@ fileprivate let bandLogoScaleFactor: CGFloat = 1.2
 fileprivate let charVisualImageCornerRadius: CGFloat = 10
 
 
-//MARK: CharacterDetailView
+// MARK: CharacterDetailView
 struct CharacterDetailView: View {
     private let randomCardScalingFactor: CGFloat = 1
     var id: Int
@@ -200,7 +200,7 @@ struct CharacterDetailView: View {
 }
 
 
-//MARK: CharacterDetailOverviewView
+// MARK: CharacterDetailOverviewView
 struct CharacterDetailOverviewView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     let information: ExtendedCharacter
@@ -214,9 +214,9 @@ struct CharacterDetailOverviewView: View {
         CustomGroupBox(cornerRadius: 20) {
             VStack {
                 Group {
-                    //MARK: Info
+                    // MARK: Info
                     Group {
-                        //MARK: Name
+                        // MARK: Name
                         Group {
                             ListItem(title: {
                                 Text("Character.name")
@@ -228,7 +228,7 @@ struct CharacterDetailOverviewView: View {
                         }
                         
                         if !(information.character.nickname.jp ?? "").isEmpty {
-                            //MARK: Nickname
+                            // MARK: Nickname
                             Group {
                                 ListItem(title: {
                                     Text("Character.nickname")
@@ -241,7 +241,7 @@ struct CharacterDetailOverviewView: View {
                         }
                         
                         if let profile = information.character.profile {
-                            //MARK: Character Voice
+                            // MARK: Character Voice
                             Group {
                                 ListItem(title: {
                                     Text("Character.character-voice")
@@ -254,7 +254,7 @@ struct CharacterDetailOverviewView: View {
                         }
                         
                         if let color = information.character.color {
-                            //MARK: Color
+                            // MARK: Color
                             Group {
                                 ListItem(title: {
                                     Text("Character.color")
@@ -272,7 +272,7 @@ struct CharacterDetailOverviewView: View {
                         }
                         
                         if let bandID = information.character.bandID {
-                            //MARK: Band
+                            // MARK: Band
                             Group {
                                 ListItem(title: {
                                     Text("Character.band")
@@ -292,7 +292,7 @@ struct CharacterDetailOverviewView: View {
                         }
                         
                         if let profile = information.character.profile {
-                            //MARK: Role
+                            // MARK: Role
                             Group {
                                 ListItem(title: {
                                     Text("Character.role")
@@ -303,7 +303,7 @@ struct CharacterDetailOverviewView: View {
                                 Divider()
                             }
                             
-                            //MARK: Role
+                            // MARK: Role
                             Group {
                                 ListItem(title: {
                                     Text("Character.birthday")
@@ -314,7 +314,7 @@ struct CharacterDetailOverviewView: View {
                                 Divider()
                             }
                             
-                            //MARK: Constellation
+                            // MARK: Constellation
                             Group {
                                 ListItem(title: {
                                     Text("Character.constellation")
@@ -325,18 +325,18 @@ struct CharacterDetailOverviewView: View {
                                 Divider()
                             }
                             
-                            //MARK: Height
+                            // MARK: Height
                             Group {
                                 ListItem(title: {
                                     Text("Character.height")
                                         .bold()
                                 }, value: {
-                                    Text(verbatim: "\(profile.height) cm")
+                                    Text(Measurement(value: Double(profile.height), unit: UnitLength.centimeters), format: .measurement(width: .narrow, usage: .personHeight))
                                 })
                                 Divider()
                             }
                             
-                            //MARK: School
+                            // MARK: School
                             Group {
                                 ListItem(title: {
                                     Text("Character.school")
@@ -347,7 +347,7 @@ struct CharacterDetailOverviewView: View {
                                 Divider()
                             }
                             
-                            //MARK: Favorite Food
+                            // MARK: Favorite Food
                             Group {
                                 ListItem(title: {
                                     Text("Character.year-class")
@@ -364,7 +364,7 @@ struct CharacterDetailOverviewView: View {
                                 Divider()
                             }
                             
-                            //MARK: Favorite Food
+                            // MARK: Favorite Food
                             Group {
                                 ListItem(title: {
                                     Text("Character.favorite-food")
@@ -375,7 +375,7 @@ struct CharacterDetailOverviewView: View {
                                 Divider()
                             }
                             
-                            //MARK: Disliked Food
+                            // MARK: Disliked Food
                             Group {
                                 ListItem(title: {
                                     Text("Character.disliked-food")
@@ -386,7 +386,7 @@ struct CharacterDetailOverviewView: View {
                                 Divider()
                             }
                             
-                            //MARK: Hobby
+                            // MARK: Hobby
                             Group {
                                 ListItem(title: {
                                     Text("Character.hobby")
@@ -397,7 +397,7 @@ struct CharacterDetailOverviewView: View {
                                 Divider()
                             }
                             
-                            //MARK: Introduction
+                            // MARK: Introduction
                             Group {
                                 ListItem(displayMode: .basedOnUISizeClass, title: {
                                     Text("Character.introduction")
@@ -410,7 +410,7 @@ struct CharacterDetailOverviewView: View {
                         }
                         
                         
-                        //MARK: ID
+                        // MARK: ID
                         Group {
                             ListItem(title: {
                                 Text("ID")

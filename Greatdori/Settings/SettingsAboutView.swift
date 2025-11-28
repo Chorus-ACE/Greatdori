@@ -164,7 +164,7 @@ struct SettingsAboutDetailListView: View {
         .buttonStyle(.plain)
         SettingsDocumentButton(document: "Privacy", preferNavigationLink: true) {
             HStack {
-                Text("Greatdori! and Privacy")
+                Text("Settings.about.privacy-policy")
                 Spacer()
                 Image(systemName: "chevron.forward")
                     .foregroundStyle(.tertiary)
