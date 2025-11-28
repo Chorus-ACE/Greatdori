@@ -89,7 +89,7 @@ jobs:
           name: Greatdori-${{ matrix.destination }}.xcarchive.tar
           path: ./Greatdori.xcarchive.tar
       - name: Retrieve App archive
-        run: tar -xzf ./Greatdori.xcarchive.tar
+        run: tar -xf ./Greatdori.xcarchive.tar
       - name: Install Apple certificate and provisioning profile
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
