@@ -99,7 +99,7 @@ struct DetailsEventsSection: View {
                     }
                 }
             }
-            if let localEvent = event?.forLocale(locale) {
+            if let localEvent = event?.forLocale(locale), !eventsFromSources.contains(localEvent) {
                 eventsFromSources.insert(localEvent, at: 0)
             }
         }
