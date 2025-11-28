@@ -28,6 +28,7 @@ struct EventDetailView: View {
             DetailsSongsSection(songs: information.songs)
             EventDetailGoalsView(information: information)
             EventDetailTeamView(information: information)
+            EventDetailStoriesView(information: information)
             DetailArtsSection {
                 ArtsTab("Event.arts.banner", ratio: 3) {
                     for locale in DoriLocale.allCases {
@@ -546,6 +547,37 @@ struct EventDetailTeamView: View {
                         }
                     }
                     Spacer()
+                }
+            }
+            .frame(maxWidth: infoContentMaxWidth)
+        }
+    }
+}
+
+struct EventDetailStoriesView: View {
+    var information: ExtendedEvent
+    @State private var locale = DoriLocale.primaryLocale
+    var body: some View {
+        if !information.event.stories.isEmpty {
+            LazyVStack(pinnedViews: .sectionHeaders) {
+                Section {
+                    ForEach(Array(information.event.stories.enumerated()), id: \.element.scenarioID) { index, story in
+                        StoryCardView(
+                            story: .init(story),
+                            type: .event,
+                            locale: locale,
+                            unsafeAssociatedID: String(information.event.id),
+                            unsafeSecondaryAssociatedID: String(index)
+                        )
+                    }
+                } header: {
+                    HStack {
+                        Text("故事")
+                            .font(.title2)
+                            .bold()
+                        DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
+                        Spacer()
+                    }
                 }
             }
             .frame(maxWidth: infoContentMaxWidth)
