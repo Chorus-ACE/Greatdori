@@ -453,3 +453,24 @@ private struct ScrollDisablePopoverModifier: ViewModifier {
 extension EnvironmentValues {
     @Entry var disablePopover: Bool = false
 }
+
+extension View {
+    func _variadic<V: View>(@ViewBuilder process: @escaping (_VariadicView.Children) -> V) -> some View {
+        modifier(VariadicModifier(process: process))
+    }
+}
+private struct VariadicModifier<V: View>: ViewModifier {
+    var process: (_VariadicView.Children) -> V
+    func body(content: Content) -> some View {
+        _VariadicView.Tree(Root(process: process)) {
+            content
+        }
+    }
+    
+    private struct Root<Result: View>: _VariadicView_MultiViewRoot {
+        var process: (_VariadicView.Children) -> Result
+        func body(children: _VariadicView.Children) -> some View {
+            process(children)
+        }
+    }
+}

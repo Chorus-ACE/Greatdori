@@ -390,3 +390,17 @@ extension View {
         environment(\.regularInfoImageSizeFactor, sizeFactor)
     }
 }
+
+extension View {
+    func insert<V: View>(@ViewBuilder content: @escaping () -> V) -> some View {
+        self._variadic { children in
+            if let c = children.first {
+                c
+                ForEach(children.dropFirst(1)) { child in
+                    content()
+                    child
+                }
+            }
+        }
+    }
+}
