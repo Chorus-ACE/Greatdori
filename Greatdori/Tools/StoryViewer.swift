@@ -544,13 +544,16 @@ struct StoryCardView: View {
             CustomGroupBox(cornerRadius: 20) {
                 HStack {
                     VStack(alignment: .leading) {
-                        if !["standard", "memorial"].contains(caption) {
+                        if ![CardEpisode.EpisodeType.animation.localizedString,
+                             CardEpisode.EpisodeType.standard.localizedString,
+                             CardEpisode.EpisodeType.memorial.localizedString
+                        ].contains(caption) {
                             Text(verbatim: "\(caption)\(getLocalizedColon(forLocale: locale))\(title)")
                                 .font(.headline)
                             Text(synopsis)
                                 .foregroundStyle(.gray)
                         } else {
-                            Text(caption == "memorial" ? "Story-viewer.card.memorial" : "Story-viewer.card.standard")
+                            Text(caption)
                             Text(title)
                                 .bold()
                                 .font(.title3)
