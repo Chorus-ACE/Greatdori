@@ -87,7 +87,7 @@ jobs:
         uses: actions/download-artifact@v6.0.0
         with:
           name: Greatdori-${{ matrix.destination }}.xcarchive.tar.gz
-          path: ./Greatdori.xcarchive.tar.gz
+          path: ./
       - name: Debug print # FIXME
         run: ls
       - name: Retrieve App archive
