@@ -27,7 +27,7 @@ struct EventDetailView: View {
             DetailsGachasSection(gachas: information.gacha, applyLocaleFilter: true)
             DetailsSongsSection(songs: information.songs)
             EventDetailGoalsView(information: information)
-            EventDetailTeamView(information: information)
+            EventDetailTeamsView(information: information)
             EventDetailStoriesView(information: information)
             DetailArtsSection {
                 ArtsTab("Event.arts.banner", ratio: 3) {
