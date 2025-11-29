@@ -25,7 +25,7 @@ struct GachaSearchView: View {
                 LazyVStack(spacing: layout ? nil : 15) {
                     let gachas = elements.chunked(into: 2)
                     ForEach(gachas, id: \.self) { gachaGroup in
-                        HStack(spacing: layout ? nil : 0) {
+                        HStack {
                             Spacer(minLength: 0)
                             ForEach(gachaGroup) { gacha in
                                 eachContent(gacha)

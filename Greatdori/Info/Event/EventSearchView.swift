@@ -27,7 +27,7 @@ struct EventSearchView: View {
                 LazyVStack(spacing: showDetails ? nil : 15) {
                     let events = elements.chunked(into: 2)
                     ForEach(events, id: \.self) { eventGroup in
-                        HStack(spacing: showDetails ? nil : 0) {
+                        HStack {
                             Spacer(minLength: 0)
                             ForEach(eventGroup) { event in
                                 eachContent(event)
