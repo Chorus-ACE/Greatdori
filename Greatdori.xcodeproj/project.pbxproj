@@ -60,6 +60,7 @@
 		8C3592F32ED9A9D8009E41AD /* Privacy_EN.md in Resources */ = {isa = PBXBuildFile; fileRef = 8C3592F02ED9A9D8009E41AD /* Privacy_EN.md */; };
 		8C3592F52ED9AA9F009E41AD /* Privacy_JA.md in Resources */ = {isa = PBXBuildFile; fileRef = 8C3592F42ED9AA9F009E41AD /* Privacy_JA.md */; };
 		8C3592F72ED9AAEE009E41AD /* Privacy_ZH-Hant.md in Resources */ = {isa = PBXBuildFile; fileRef = 8C3592F62ED9AAEE009E41AD /* Privacy_ZH-Hant.md */; };
+		8C3593062EDAD617009E41AD /* EventDetailStageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3593052EDAD60F009E41AD /* EventDetailStageView.swift */; };
 		8C3D4E7C2EA7AABE0034E831 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 8C3D4E7B2EA7AABE0034E831 /* SwiftyJSON */; };
 		8C3DFB0E2EAF6B8D0004E1F5 /* CharacterSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB0D2EAF6B880004E1F5 /* CharacterSelector.swift */; };
 		8C3DFB102EAF84BB0004E1F5 /* CostumeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB0F2EAF84B30004E1F5 /* CostumeSelector.swift */; };
@@ -528,6 +529,7 @@
 		8C3592F12ED9A9D8009E41AD /* Privacy_ZH-Hans.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Privacy_ZH-Hans.md"; sourceTree = "<group>"; };
 		8C3592F42ED9AA9F009E41AD /* Privacy_JA.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Privacy_JA.md; sourceTree = "<group>"; };
 		8C3592F62ED9AAEE009E41AD /* Privacy_ZH-Hant.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Privacy_ZH-Hant.md"; sourceTree = "<group>"; };
+		8C3593052EDAD60F009E41AD /* EventDetailStageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailStageView.swift; sourceTree = "<group>"; };
 		8C3DFB0D2EAF6B880004E1F5 /* CharacterSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSelector.swift; sourceTree = "<group>"; };
 		8C3DFB0F2EAF84B30004E1F5 /* CostumeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostumeSelector.swift; sourceTree = "<group>"; };
 		8C3DFB1F2EAFA1610004E1F5 /* URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLHandler.swift; sourceTree = "<group>"; };
@@ -1331,6 +1333,7 @@
 				E942192B2E8AA6E300F24974 /* EventDetailView.swift */,
 				E91ABF452ED97BE30043CCE7 /* EventDetailGoalsView.swift */,
 				E91ABF472ED97C240043CCE7 /* EventDetailTeamsView.swift */,
+				8C3593052EDAD60F009E41AD /* EventDetailStageView.swift */,
 				E942192E2E8AA72700F24974 /* DetailEventsSection.swift */,
 				8C2BD6452E92503800D003D1 /* EventSelector.swift */,
 			);
@@ -1908,6 +1911,7 @@
 				8C480C042EC60D0000A8AE70 /* ZeileProjectConfig.swift in Sources */,
 				E94218FA2E8AA3B000F24974 /* CardPreviewImage.swift in Sources */,
 				E94219072E8AA48A00F24974 /* ComicDetailView.swift in Sources */,
+				8C3593062EDAD617009E41AD /* EventDetailStageView.swift in Sources */,
 				8CEA20C52EAB6362009D41C5 /* SongDetailMatchView.swift in Sources */,
 				E91ABF462ED97BF00043CCE7 /* EventDetailGoalsView.swift in Sources */,
 				E91787152EC95C7300C33779 /* SettingsDocument.swift in Sources */,

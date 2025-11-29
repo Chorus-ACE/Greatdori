@@ -826,6 +826,17 @@ struct MultilingualTextForCountdown: View {
     @State var primaryDisplayLocale: DoriLocale?
     @State var showCopyMessage = false
     
+    init(
+        startDate: LocalizedData<Date>,
+        endDate: LocalizedData<Date>,
+        aggregateEndDate: LocalizedData<Date>? = nil,
+        distributionStartDate: LocalizedData<Date>? = nil
+    ) {
+        self.startDate = startDate
+        self.endDate = endDate
+        self.aggregateEndDate = aggregateEndDate
+        self.distributionStartDate = distributionStartDate
+    }
     init(_ source: Event) {
         self.startDate = source.startAt
         self.endDate = source.endAt
@@ -838,6 +849,7 @@ struct MultilingualTextForCountdown: View {
         self.aggregateEndDate = nil
         self.distributionStartDate = nil
     }
+    
     var body: some View {
         Group {
 #if !os(macOS)
