@@ -22,9 +22,27 @@ on: # FIXME: Change to nightly build after debugging
       - '.github/workflows/nightly-build.yml'
 
 jobs:
+  check:
+    name: Check for New Commits
+    runs-on: ubuntu-latest
+    outputs:
+      HAS_NEW_COMMITS: ${{ steps.check.outputs.HAS_NEW_COMMITS }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
+      - name: Check
+        id: check
+        run: |
+          COUNT=$(git rev-list --count HEAD --since="24 hours ago")
+          echo "HAS_NEW_COMMITS=$COUNT" >> "$GITHUB_OUTPUT"
   build:
     name: Build & Archive
     runs-on: macos-26
+    needs:
+      - check
+    if: ${{ needs.check.outputs.HAS_NEW_COMMITS != 0 }}
     strategy:
       matrix:
         destination: ["macOS", "iOS"]
@@ -301,3 +319,67 @@ jobs:
         with:
           name: Greatdori!-Notarized.app.tar.gz
           path: ./Greatdori!.app.tar.gz
+  generate-installer:
+    name: Generate macOS Installer
+    runs-on: macos-26
+    needs:
+      - notarize
+    steps:
+      - name: Download notarized App
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: Greatdori!-Notarized.app.tar.gz
+          path: ./
+      - name: Retrieve notarized App
+        run: tar -zxvf ./Greatdori!.app.tar.gz
+      - name: Install Apple certificate
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.DEVID_INSTALLER_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+      - name: Generate installer
+        run: productbuild --sign 'Developer ID Installer' --component ./Greatdori!.app /Applications ./Greatdori!.pkg
+      - name: Upload installer
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: Greatdori!-Installer-Intermediate.pkg
+          path: ./Greatdori!.pkg
+  notarize-installer:
+    name: Notarize macOS Installer
+    runs-on: macos-26
+    needs:
+      - generate-installer
+    steps:
+      - name: Download installer
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: Greatdori!-Installer-Intermediate.pkg
+          path: ./
+      - name: Prepare API Key
+        env:
+          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+          ASCAPI_KEY: ${{ secrets.ASCAPI_KEY }}
+        run: |
+          mkdir ~/.private_keys
+          echo "$ASCAPI_KEY" >> ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
+      - name: Submit for notarization
+        env:
+          ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
+          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+        run: xcrun notarytool submit ./Greatdori!.pkg --issuer $ASCAPI_ISSUER_ID --key-id $ASCAPI_KEY_ID --key ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8 --team-id B57D8PP775 --wait --timeout 2h
+      - name: Staple ticket
+        run: xcrun stapler staple ./Greatdori!.pkg
+      - name: Upload notarized installer
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: Greatdori!-Installer-Notarized.pkg
+          path: ./Greatdori!.pkg
