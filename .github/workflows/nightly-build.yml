@@ -197,16 +197,22 @@ jobs:
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.DEVID_CERTIFICATE_BASE64 }}
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+          DEVID_APP_PROFILE_BASE64: ${{ secrets.DEVID_APP_PROFILE_BASE64 }}
+          DEVID_BGASSET_PROFILE_BASE64: ${{ secrets.DEVID_BGASSET_PROFILE_BASE64 }}
+          DEVID_WIDGETS_PROFILE_BASE64: ${{ secrets.DEVID_WIDGETS_PROFILE_BASE64 }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
           # create variables
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          APP_PROFILE_PATH=$RUNNER_TEMP/Greatdori_app_GitHub_actions_devid.provisionprofile
+          BGASSET_PROFILE_PATH=$RUNNER_TEMP/Greatdori_bgasset_GitHub_actions_devid.provisionprofile
+          WIDGETS_PROFILE_PATH=$RUNNER_TEMP/Greatdori_widgets_GitHub_actions_devid.provisionprofile
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
           # import certificate and provisioning profile from secrets
           echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+          echo -n "$DEVID_APP_PROFILE_BASE64" | base64 --decode -o $APP_PROFILE_PATH
+          echo -n "$DEVID_BGASSET_PROFILE_BASE64" | base64 --decode -o $BGASSET_PROFILE_PATH
+          echo -n "$DEVID_WIDGETS_PROFILE_BASE64" | base64 --decode -o $WIDGETS_PROFILE_PATH
           # create temporary keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
@@ -216,7 +222,9 @@ jobs:
           security list-keychain -d user -s $KEYCHAIN_PATH
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $APP_PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $BGASSET_PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $WIDGETS_PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles
       - name: Prepare export option
         run: |
           cat <<EOF > export-option.plist
@@ -228,25 +236,26 @@ jobs:
             <string>export</string>
             <key>method</key>
             <string>developer-id</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.memz233.Greatdori</key>
+              <string>Greatdori! app GitHub actions devid</string>
+              <key>com.memz233.Greatdori.Background-Assets</key>
+              <string>Greatdori! bgasset GitHub actions devid</string>
+              <key>com.memz233.Greatdori.Widgets</key>
+              <string>Greatdori! widgets GitHub actions devid</string>
+            </dict>
+            <key>signingCertificate</key>
+            <string>06EFAE3588897BD8F7688C23B0D839AB42A8BC07</string>
             <key>signingStyle</key>
-            <string>automatic</string>
+            <string>manual</string>
             <key>teamID</key>
             <string>B57D8PP775</string>
           </dict>
           </plist>
           EOF
-      - name: Prepare API Key
-        env:
-          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
-          ASCAPI_KEY: ${{ secrets.ASCAPI_KEY }}
-        run: |
-          mkdir ~/.private_keys
-          echo "$ASCAPI_KEY" >> ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
       - name: Export App
-        env:
-          ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
-          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
-        run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./export-option.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES -allowProvisioningUpdates -authenticationKeyIssuerID $ASCAPI_ISSUER_ID -authenticationKeyID $ASCAPI_KEY_ID -authenticationKeyPath ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
+        run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./export-option.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES
       - name: Prepare App result
         run: tar -czvf Greatdori!.app.tar.gz ./Greatdori!.app
       - name: Upload App
