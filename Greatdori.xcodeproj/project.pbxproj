@@ -6,25 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		8C7855CE2E491E23000EA06E /* Greatdori Installer */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 8C7855CF2E491E24000EA06E /* Build configuration list for PBXAggregateTarget "Greatdori Installer" */;
-			buildPhases = (
-				8C7855D72E4927B7000EA06E /* Remove Framework in Main Bundle */,
-				8C7855D82E492965000EA06E /* Re-Sign Main Bundle */,
-				8C7855D42E491E7E000EA06E /* Build Installer */,
-			);
-			dependencies = (
-				8C7855D62E4925BB000EA06E /* PBXTargetDependency */,
-			);
-			name = "Greatdori Installer";
-			packageProductDependencies = (
-			);
-			productName = "Greatdori Installer";
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		8C08B8BD2E73DC8F00447B05 /* CalendarEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C08B8BC2E73DC8B00447B05 /* CalendarEvents.swift */; };
 		8C0C996B2E296A4600549B5C /* Greatdori Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8C0C996A2E296A4600549B5C /* Greatdori Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -331,13 +312,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8C6C0EC82E422F8F00D1FB0A;
 			remoteInfo = "Greatdori WidgetsExtension";
-		};
-		8C7855D52E4925BB000EA06E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C0C99552E296A4400549B5C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8C0C995C2E296A4400549B5C;
-			remoteInfo = Greatdori;
 		};
 		8C902F992EA3AD4200202812 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1674,9 +1648,6 @@
 					8C6C0EC82E422F8F00D1FB0A = {
 						CreatedOnToolsVersion = 26.0;
 					};
-					8C7855CE2E491E23000EA06E = {
-						CreatedOnToolsVersion = 26.0;
-					};
 					8C902F922EA3AD4200202812 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
@@ -1727,7 +1698,6 @@
 				8C0C99692E296A4600549B5C /* Greatdori Watch App */,
 				8CB4D4B92E449CC80085D57A /* Greatdori Watch Widgets */,
 				8CB4D4782E445F700085D57A /* BuiltinCardCollections */,
-				8C7855CE2E491E23000EA06E /* Greatdori Installer */,
 				8CB4D4922E4461450085D57A /* CardCollectionGen */,
 				8C3FA2482E4B9EBF001526F2 /* GreatLyrics */,
 			);
@@ -1815,66 +1785,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		8C7855D42E491E7E000EA06E /* Build Installer */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Build Installer";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "productbuild --sign 'Developer ID Installer: Yuxuan Chen' --component \"$BUILT_PRODUCTS_DIR/Greatdori.app\" /Applications --component \"$BUILT_PRODUCTS_DIR/DoriKit.framework\" /Library/Frameworks --component \"$BUILT_PRODUCTS_DIR/BuiltinCardCollections.framework\" /Library/Frameworks \"$BUILT_PRODUCTS_DIR/Greatdori!-$CONFIGURATION-osx.pkg\"\n";
-		};
-		8C7855D72E4927B7000EA06E /* Remove Framework in Main Bundle */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Remove Framework in Main Bundle";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "rm -rf \"$BUILT_PRODUCTS_DIR/Greatdori.app/Contents/Frameworks/\"\n";
-		};
-		8C7855D82E492965000EA06E /* Re-Sign Main Bundle */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Re-Sign Main Bundle";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/bin/codesign --force --sign 'Apple Development: Yuxuan Chen' -o runtime --entitlements \"$CONFIGURATION_TEMP_DIR/Greatdori.build/Greatdori.app.xcent\" --timestamp\\=none --generate-entitlement-der \"$BUILT_PRODUCTS_DIR/Greatdori.app\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8C0C99592E296A4400549B5C /* Sources */ = {
@@ -2133,11 +2043,6 @@
 			isa = PBXTargetDependency;
 			target = 8C6C0EC82E422F8F00D1FB0A /* Greatdori Widgets */;
 			targetProxy = 8C6C0ED82E422F9100D1FB0A /* PBXContainerItemProxy */;
-		};
-		8C7855D62E4925BB000EA06E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8C0C995C2E296A4400549B5C /* Greatdori */;
-			targetProxy = 8C7855D52E4925BB000EA06E /* PBXContainerItemProxy */;
 		};
 		8C902F9A2EA3AD4200202812 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3229,46 +3134,6 @@
 			};
 			name = RelWithoutPreCache;
 		};
-		8C7855D02E491E24000EA06E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = B57D8PP775;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		8C7855D12E491E24000EA06E /* DebWithoutPreCache */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = B57D8PP775;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = DebWithoutPreCache;
-		};
-		8C7855D22E491E24000EA06E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = B57D8PP775;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		8C7855D32E491E24000EA06E /* RelWithoutPreCache */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = B57D8PP775;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = RelWithoutPreCache;
-		};
 		8C902F9D2EA3AD4200202812 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3957,17 +3822,6 @@
 				8C6C0EDE2E422F9100D1FB0A /* DebWithoutPreCache */,
 				8C6C0EDF2E422F9100D1FB0A /* Release */,
 				8C6C0EE02E422F9100D1FB0A /* RelWithoutPreCache */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8C7855CF2E491E24000EA06E /* Build configuration list for PBXAggregateTarget "Greatdori Installer" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8C7855D02E491E24000EA06E /* Debug */,
-				8C7855D12E491E24000EA06E /* DebWithoutPreCache */,
-				8C7855D22E491E24000EA06E /* Release */,
-				8C7855D32E491E24000EA06E /* RelWithoutPreCache */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

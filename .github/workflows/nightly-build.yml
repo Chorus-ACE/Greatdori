@@ -84,7 +84,7 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
       - name: Archive
-        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -archivePath ./Greatdori.xcarchive -destination "generic/platform=${{ matrix.destination }}" archive CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=B57D8PP775 CURRENT_PROJECT_VERSION=$(git rev-list --count HEAD)
+        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -archivePath ./Greatdori.xcarchive -destination "generic/platform=${{ matrix.destination }}" -quiet archive CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=B57D8PP775 CURRENT_PROJECT_VERSION=$(git rev-list --count HEAD)
       - name: Prepare archive result
         run: tar -czvf Greatdori.xcarchive.tar.gz ./Greatdori.xcarchive
       - name: Upload archive result
