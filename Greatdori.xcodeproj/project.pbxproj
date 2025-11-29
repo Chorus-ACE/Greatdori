@@ -2423,6 +2423,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Greatdori!";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = Privacy.usage.calendar;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Privacy.photo-library.add-only.description";
@@ -2492,6 +2493,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Greatdori!";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = Privacy.usage.calendar;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Privacy.photo-library.add-only.description";
@@ -2627,6 +2629,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Greatdori!";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = Privacy.usage.calendar;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Privacy.photo-library.add-only.description";
@@ -2791,6 +2794,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Greatdori!";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = Privacy.usage.calendar;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Privacy.photo-library.add-only.description";

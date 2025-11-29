@@ -28,7 +28,7 @@ struct EventDetailView: View {
             DetailsSongsSection(songs: information.songs)
             EventDetailStageView(information: information)
             EventDetailGoalsView(information: information)
-//            EventDetailTeamsView(information: information)
+            EventDetailTeamsView(information: information)
             EventDetailStoriesView(information: information)
             DetailArtsSection {
                 ArtsTab("Event.arts.banner", ratio: 3) {
