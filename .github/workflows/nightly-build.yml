@@ -383,3 +383,48 @@ jobs:
         with:
           name: Greatdori!-Installer-Notarized.pkg
           path: ./Greatdori!.pkg
+
+  deploy-web:
+    name: Deploy to Server
+    runs-on: macos-26
+    needs:
+      - notarize-installer
+      - export
+    steps:
+      - name: Download installer
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: Greatdori!-Installer-Notarized.pkg
+          path: ./
+      - name: Download IPA
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: Greatdori!.ipa
+      - name: Deploy installer
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY }}
+          AWS_DEFAULT_REGION: 'auto'
+          AWS_EC2_METADATA_DISABLED: 'true'
+          ENDPOINT_URL: ${{ secrets.R2_ENDPOINT }}
+        run: aws s3 cp ./Greatdori!.pkg s3://greatdori-assets/Greatdori!-Nightly.pkg --endpoint-url "$ENDPOINT_URL"
+      - name: Deploy IPA
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY }}
+          AWS_DEFAULT_REGION: 'auto'
+          AWS_EC2_METADATA_DISABLED: 'true'
+          ENDPOINT_URL: ${{ secrets.R2_ENDPOINT }}
+        run: aws s3 cp ./Greatdori!.ipa s3://greatdori-assets/Greatdori!-Nightly.ipa --endpoint-url "$ENDPOINT_URL"
+      - name: Create date
+        run: |
+          DATE=$(date +"%Y/%m/%d")
+          "$DATE" > date.txt
+      - name: Deploy update date
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY }}
+          AWS_DEFAULT_REGION: 'auto'
+          AWS_EC2_METADATA_DISABLED: 'true'
+          ENDPOINT_URL: ${{ secrets.R2_ENDPOINT }}
+        run: aws s3 cp ./date.txt s3://greatdori-assets/NightlyUpdateDate.txt --endpoint-url "$ENDPOINT_URL"
