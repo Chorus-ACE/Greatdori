@@ -117,6 +117,72 @@ struct CompactToggle: View {
     }
 }
 
+#Preview {
+    ExtendedConstraints {
+        VStack {
+            CustomGroupBox {
+                VStack {
+                        ListItem(title: {
+                            Text("Character.name")
+                                .bold()
+                        }, value: {
+                            Text(verbatim: "Hikawa Sayo")
+                        })
+                        Divider()
+                        
+                        ListItem(title: {
+                            Text("Character.character-voice")
+                                .bold()
+                        }, value: {
+                            Text(verbatim: "Kudo Haruka")
+                        })
+                        Divider()
+                        
+                        ListItem(title: {
+                            Text("Character.color")
+                                .bold()
+                        }, value: {
+                            Text("#00AABB")
+                                .fontDesign(.monospaced)
+                            RoundedRectangle(cornerRadius: 7)
+                                .frame(width: 30, height: 30)
+                                .foregroundStyle(Color(red: 00/255, green: 170/255, blue: 187/255))
+                        })
+                        Divider()
+                    
+                            ListItem(title: {
+                                Text("Character.role")
+                                    .bold()
+                            }, value: {
+                                Text(verbatim: "Guitarist")
+                            })
+                            Divider()
+                            
+                            ListItem(title: {
+                                Text("Character.birthday")
+                                    .bold()
+                            }, value: {
+                                Text(verbatim: "March 20")
+                            })
+                            Divider()
+                      
+                            ListItem(title: {
+                                Text("Character.height")
+                                    .bold()
+                            }, value: {
+                                Text(verbatim: "155cm")
+                            })
+                }
+            }
+            CustomGroupBox {
+                HomeBirthdayView()
+            }
+        }
+        .frame(maxHeight: 150)
+        .padding()
+    }
+}
+
 
 // MARK: CustomGroupBox
 struct CustomGroupBox<Content: View>: View {

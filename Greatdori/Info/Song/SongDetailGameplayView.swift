@@ -91,6 +91,19 @@ struct SongDetailGameplayView: View {
                             Divider()
                         }
                         
+                        if let specialReleaseDate = information.song.difficulty[.special]?.publishedAt {
+                            // MARK: Release Date
+                            Group {
+                                ListItem(title: {
+                                    Text("Song.gameplay.release-date-special")
+                                        .bold()
+                                }, value: {
+                                    MultilingualText(specialReleaseDate.map{dateFormatter.string(for: $0)}, showLocaleKey: true)
+                                })
+                                Divider()
+                            }
+                        }
+                        
                         if !information.song.closedAt.map({$0?.corrected()}).isEmpty {
                             // MARK: Close Date
                             Group {
@@ -98,7 +111,7 @@ struct SongDetailGameplayView: View {
                                     Text("Song.gameplay.close-date")
                                         .bold()
                                 }, value: {
-                                    MultilingualText(information.song.closedAt.map{dateFormatter.string(for: $0)}, showLocaleKey: true)
+                                    MultilingualText(information.song.closedAt.map{ $0?.corrected() == nil ? String(localized: "Date.unavailable") :  dateFormatter.string(for: $0)}, showLocaleKey: true)
                                 })
                                 Divider()
                             }

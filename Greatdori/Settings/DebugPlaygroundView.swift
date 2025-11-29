@@ -17,19 +17,35 @@ import SwiftUI
 
 struct DebugPlaygroundView: View {
     var body: some View {
-        Button(action: {
-            Task {
-                let allSongs = await Song.all()
-                guard let allSongs else { fatalError() }
-                
-                for song in allSongs {
-                    if (song.musicVideos?.keys.count ?? 0) > 1 {
-                        print("#\(song.id) - \(song.title.forPreferredLocale())")
+        ScrollView {
+            VStack(alignment: .center) {
+                Button(action: {
+                    Task {
+                        print("Start")
+                        let allSongs = await Song.all()
+                        guard let allSongs else { fatalError() }
+                        
+                        for previewSong in allSongs {
+                            var song = await Song(id: previewSong.id)
+                            
+                            guard let song else { fatalError() }
+                            for (_, value) in song.musicVideos ?? [:] {
+                                for endDate in value.endAt.compactMap({ $0 }) {
+                                    if endDate.timeIntervalSince1970 < 3786879600 {
+                                        print("#\(song.id) \(song.title)")
+                                    }
+                                }
+                            }
+                        }
+                        
+                        print("Done")
                     }
-                }
+                }, label: {
+                    Text(verbatim: "1")
+                })
             }
-        }, label: {
-            Text(verbatim: "1")
-        })
+        }
     }
 }
+
+//extension _DoriAPI.Songs.Song.MusicVideoMetadata: Sequence {}
