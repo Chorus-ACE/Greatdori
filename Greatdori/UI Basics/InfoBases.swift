@@ -76,7 +76,7 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
                 ScrollView {
                     HStack {
                         Spacer(minLength: 0)
-                        VStack(spacing: 40) {
+                        LazyVStack(spacing: 40, pinnedViews: .sectionHeaders) {
                             makeContent(information)
                         }
                         .padding()
@@ -627,7 +627,6 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
                 .frame(maxWidth: 615)
             }
         }
-        .fixedSize(horizontal: false, vertical: true)
     }
 }
 

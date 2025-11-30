@@ -22,7 +22,7 @@ struct EventDetailTeamsView: View {
     var body: some View {
         if let teams = information.event.teamList, teams.count >= 2 {
             LazyVStack(pinnedViews: .sectionHeaders) {
-                Section(content: {
+                Section {
                     CustomGroupBox {
                         HStack {
                             Spacer()
@@ -54,7 +54,7 @@ struct EventDetailTeamsView: View {
                         }
                     }
                     .frame(maxWidth: infoContentMaxWidth)
-                }, header: {
+                } header: {
                     HStack {
                         Text("Event.teams")
                             .font(.title2)
@@ -62,7 +62,7 @@ struct EventDetailTeamsView: View {
                         Spacer()
                     }
                     .frame(maxWidth: 615)
-                })
+                }
             }
             .textSelection(.enabled)
         }

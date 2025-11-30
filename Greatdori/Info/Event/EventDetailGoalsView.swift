@@ -23,7 +23,7 @@ struct EventDetailGoalsView: View {
            let missionDetails = information.event.liveTryMissionDetails,
            let missionTypeSeqs = information.event.liveTryMissionTypeSequences {
             LazyVStack(pinnedViews: .sectionHeaders) {
-                Section(content: {
+                Section {
                     VStack {
                         let typedMissions = missions.reduce(into: [Event.LiveTryMissionType: [Event.LiveTryMission]]()) {
                             $0.updateValue(($0[$1.value.missionType] ?? []) + [$1.value], forKey: $1.value.missionType)
@@ -46,7 +46,7 @@ struct EventDetailGoalsView: View {
                         }
                     }
                     .frame(maxWidth: infoContentMaxWidth)
-                }, header: {
+                } header: {
                     HStack {
                         Text("Event.goals")
                             .font(.title2)
@@ -54,7 +54,7 @@ struct EventDetailGoalsView: View {
                         Spacer()
                     }
                     .frame(maxWidth: 615)
-                })
+                }
             }
         }
     }
