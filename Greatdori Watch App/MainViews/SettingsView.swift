@@ -57,7 +57,7 @@ private struct AboutView: View {
         List {
             Section {
                 Button(action: {
-                    let url = URL(string: "https://github.com/WindowsMEMZ/Greatdori")!
+                    let url = URL(string: "https://github.com/Greatdori/Greatdori")!
                     let session = ASWebAuthenticationSession(url: url, callbackURLScheme: nil) { _, _ in }
                     session.prefersEphemeralWebBrowserSession = true
                     session.start()

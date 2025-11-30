@@ -139,9 +139,10 @@ struct SettingsAboutDetailIconView: View {
 }
 
 struct SettingsAboutDetailListView: View {
+    @Environment(\.locale) private var locale
     var body: some View {
         Text(verbatim: "Licensed under Apache License 2.0")
-        Link(destination: URL(string: "https://github.com/Greatdori")!, label: {
+        Link(destination: URL(string: "https://github.com/Greatdori")!) {
             HStack {
                 Text("Settings.about.github")
                 Spacer()
@@ -149,7 +150,17 @@ struct SettingsAboutDetailListView: View {
                     .foregroundStyle(.secondary)
             }
             .contentShape(Rectangle())
-        })
+        }
+        .foregroundStyle(.primary)
+        Link(destination: URL(string: "https://github.com/Greatdori/Greatdori/issues")!) {
+            HStack {
+                Text("Settings.about.report-a-problem")
+                Spacer()
+                Image(systemName: "arrow.up.forward.app")
+                    .foregroundStyle(.secondary)
+            }
+            .contentShape(Rectangle())
+        }
         .foregroundStyle(.primary)
         SettingsDocumentButton(document: "T&C", preferNavigationLink: true) {
             HStack {
@@ -178,6 +189,18 @@ struct SettingsAboutDetailListView: View {
         }, label: {
             Text("Settings.about.acknowledgements")
         })
+        if locale.identifier == "zh-CN" {
+            Link(destination: URL(string: "https://beian.miit.gov.cn")!) {
+                HStack {
+                    Text(verbatim: "蜀ICP备2025125473号-17A")
+                    Spacer()
+                    Image(systemName: "arrow.up.forward.app")
+                        .foregroundStyle(.secondary)
+                }
+                .contentShape(Rectangle())
+            }
+            .foregroundStyle(.primary)
+        }
     }
 }
 
