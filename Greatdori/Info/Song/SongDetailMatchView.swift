@@ -53,7 +53,7 @@ struct SongDetailMatchView: View {
                                             VStack(alignment: .leading) {
                                                 Text(result.title ?? "")
                                                 Group {
-                                                    Text(result.artist ?? "") + Text(" · ") + Text(result.appleMusicURL != nil ? "Song.shazam.apple-music" : "Song.shazam.shazam")
+                                                    Text(result.artist ?? "") + Text(verbatim: " · ") + Text(result.appleMusicURL != nil ? "Song.shazam.apple-music" : "Song.shazam.shazam")
                                                 }
                                                 .foregroundStyle(.secondary)
                                             }

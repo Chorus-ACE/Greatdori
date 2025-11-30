@@ -192,7 +192,7 @@ private struct AssetListView: View {
                         .contextMenu {
                             Section {
                                 if item.type == .file, let path = currentPath {
-                                    Button("下载", systemImage: "arrow.down.circle") {
+                                    Button("Asset-explorer.download", systemImage: "arrow.down.circle") {
                                         downloadItem(item, withPath: path)
                                     }
                                 }
@@ -206,7 +206,7 @@ private struct AssetListView: View {
                         .environment(\.defaultMinListRowHeight, 5)
                         .padding(.horizontal, 10)
                 }
-                .navigationTitle(currentPath?.componments.last ?? String(localized: "数据包浏览器"))
+                .navigationTitle(currentPath?.componments.last ?? String(localized: "Asset-explorer"))
                 #if !os(macOS)
                 .navigationBarTitleDisplayMode(.inline)
                 #endif
@@ -777,7 +777,7 @@ private struct AssetTextViewer: View {
                             }
                     } else {
                         ExtendedConstraints {
-                            ContentUnavailableView("载入文本时出错", systemImage: "exclamationmark.triangle.fill", description: Text("轻触以重试"))
+                            ContentUnavailableView("Asset-explorer.text.failure", systemImage: "exclamationmark.triangle.fill", description: Text("Asset-explorer.text.failure.description"))
                         }
                         .onTapGesture {
                             isFailedToLoad = false

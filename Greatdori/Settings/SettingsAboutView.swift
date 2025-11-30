@@ -189,14 +189,14 @@ struct SettingsAboutAcknowledgementsView: View {
                     SettingsAboutAcknowledgementItem(type: .package, item: item)
                 }
             } header: {
-                Text("Packages")
+                Text("Settings.about.acknowledgements.packages")
             }
             Section {
                 ForEach(codeSnippetsAck, id: \.self) { item in
                     SettingsAboutAcknowledgementItem(type: .codeSnippet, item: item)
                 }
             } header: {
-                Text("Code Snippets")
+                Text("Settings.about.acknowledgements.code-snippets")
             } footer: {
                 Text("Settings.about.acknowledgements.footer")
             }

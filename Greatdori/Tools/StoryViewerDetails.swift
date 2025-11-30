@@ -347,6 +347,7 @@ struct ISVLayoutPickerSheet: View {
     @State var selection = "N"
     var body: some View {
         NavigationStack {
+            /*
             VStack {
                 Text("Story-viewer.layout-test-sheet.title")
                     .font(.largeTitle)
@@ -367,6 +368,8 @@ struct ISVLayoutPickerSheet: View {
                 })
 #endif
             }
+             */
+            EmptyView()
             .padding()
             .toolbar {
 #if os(macOS)
@@ -374,7 +377,7 @@ struct ISVLayoutPickerSheet: View {
                     Button(action: {
                         submit()
                     }, label: {
-                        Text("Story-viewer.layout-test-sheet.done")
+                        Text(verbatim: "Story-viewer.layout-test-sheet.done")
                     })
                     .disabled(selection == "N")
                 }

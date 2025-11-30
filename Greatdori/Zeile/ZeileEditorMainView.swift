@@ -43,11 +43,11 @@ struct ZeileEditorMainView: View {
                     ZeileEditorStatusBar(document: document, widthAvailable: editorWidth)
                 }
                 ToolbarItemGroup(placement: .primaryAction) {
-                    Button("Stop", systemImage: "stop.fill") {
+                    Button("Zeile.stop", systemImage: "stop.fill") {
                         sharedState.removeRunningWindow()
                     }
                     .disabled(sharedState.runningWindowID == nil)
-                    Button("Run", systemImage: "play.fill") {
+                    Button("Zeile.run", systemImage: "play.fill") {
                         Task {
                             await zeileProductRun(project: document, with: sharedState)
                         }

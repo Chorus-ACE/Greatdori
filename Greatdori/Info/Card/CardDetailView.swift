@@ -167,7 +167,7 @@ struct CardDetailStoriesView: View {
                     }
                 } header: {
                     HStack {
-                        Text("故事")
+                        Text("Card.story")
                             .font(.title2)
                             .bold()
                         DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)

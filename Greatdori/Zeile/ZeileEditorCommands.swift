@@ -113,7 +113,7 @@ struct ZeileEditorCommands: Commands {
                         }
                     }
                     .keyboardShortcut("B", modifiers: .command)
-                    Button("Clean Build Folder", systemImage: "bubbles.and.sparkles") {
+                    Button("Zeile.command.product.clean-build-folder", systemImage: "bubbles.and.sparkles") {
                         Task {
                             await zeileProductCleanBuildFolder(
                                 project: project,
@@ -122,7 +122,7 @@ struct ZeileEditorCommands: Commands {
                         }
                     }
                     .keyboardShortcut("K", modifiers: [.command, .shift])
-                    Button("Clear All Issues", systemImage: "xmark.circle") {
+                    Button("Zeile.command.product.clear-all-issues", systemImage: "xmark.circle") {
                         sharedState.diagnostics.removeAll()
                     }
                     Button("Zeile.command.product.stop", systemImage: "stop.fill") {
@@ -132,7 +132,7 @@ struct ZeileEditorCommands: Commands {
                     .keyboardShortcut(".", modifiers: .command)
                 }
                 Section {
-                    Button("Build Textual IR", systemImage: "gearshape.fill") {
+                    Button("Zeile.command.product.build.textual-ir", systemImage: "gearshape.fill") {
                         Task {
                             if await zeileProductBuild(
                                 project: project,
@@ -148,7 +148,7 @@ struct ZeileEditorCommands: Commands {
                             }
                         }
                     }
-                    Button("Build for Bestdori!", systemImage: "ellipsis.curlybraces") {
+                    Button("Zeile.command.product.build.bestdori", systemImage: "ellipsis.curlybraces") {
                         Task {
                             if await zeileProductBuild(
                                 project: project,
@@ -167,13 +167,13 @@ struct ZeileEditorCommands: Commands {
                 }
                 #if os(macOS)
                 Section {
-                    Button("Show Build Folder in Finder", systemImage: "folder") {
+                    Button("Zeile.command.product.show-build-folder", systemImage: "folder") {
                         NSWorkspace.shared.selectFile(
                             nil,
                             inFileViewerRootedAtPath: _buildFolder(for: project).path
                         )
                     }
-                    Button("Copy Build Folder Path", systemImage: "document.on.document") {
+                    Button("Zeile.command.product.copy-build-folder-path", systemImage: "document.on.document") {
                         NSWorkspace.shared.selectFile(
                             nil,
                             inFileViewerRootedAtPath: _buildFolder(for: project).path

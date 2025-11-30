@@ -172,7 +172,7 @@ private struct SidebarCodeListView: View {
             }
             .contextMenu {
                 Section {
-                    Button("New Code File", systemImage: "document.badge.plus") {
+                    Button("Zeile.file.new", systemImage: "document.badge.plus") {
                         var _newFileIndex = 0
                         var newFileName: String {
                             if _newFileIndex > 0 {
@@ -196,13 +196,13 @@ private struct SidebarCodeListView: View {
                     }
                 }
                 Section {
-                    Button("Rename", systemImage: "pencil.line") {
+                    Button("Zeile.file.rename", systemImage: "pencil.line") {
                         isRenaming = true
                     }
                 }
                 if project.configuration.codePhases.count > 1 {
                     Section {
-                        Button("Delete", systemImage: "trash", role: .destructive) {
+                        Button("Zeile.file.delete", systemImage: "trash", role: .destructive) {
                             if let wrapper = project.codeFileWrapper(name: name) {
                                 project.configuration.codePhases.removeAll {
                                     $0 == name
@@ -249,9 +249,9 @@ private struct SidebarAssetListView: View {
             } else {
                 ExtendedConstraints {
                     ContentUnavailableView(
-                        "No Assets",
+                        "Zeile.asset.none",
                         systemImage: "folder.fill",
-                        description: Text("Drag files here to add")
+                        description: Text("Zeile.asset.drag-to-add")
                     )
                 }
             }
@@ -326,12 +326,12 @@ private struct SidebarAssetListView: View {
             .buttonStyle(.plain)
             .contextMenu {
                 Section {
-                    Button("Rename", systemImage: "pencil.line") {
+                    Button("Zeile.asset.rename", systemImage: "pencil.line") {
                         isRenaming = true
                     }
                 }
                 Section {
-                    Button("Delete", systemImage: "trash", role: .destructive) {
+                    Button("Zeile.asset.delete", systemImage: "trash", role: .destructive) {
                         project.assetFolderWrapper.removeFileWrapper(wrapper)
                     }
                 }
@@ -375,7 +375,7 @@ private struct SidebarDiagnosticListView: View {
             .scrollContentBackground(.hidden)
         } else {
             ExtendedConstraints {
-                ContentUnavailableView("No Diagnostics", systemImage: "stethoscope")
+                ContentUnavailableView("Zeile.diagnostic.none", systemImage: "stethoscope")
             }
         }
     }

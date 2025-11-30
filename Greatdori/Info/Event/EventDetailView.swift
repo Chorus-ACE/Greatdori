@@ -413,7 +413,7 @@ struct EventDetailStoriesView: View {
                     }
                 } header: {
                     HStack {
-                        Text("故事")
+                        Text("Event.story")
                             .font(.title2)
                             .bold()
                         DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)

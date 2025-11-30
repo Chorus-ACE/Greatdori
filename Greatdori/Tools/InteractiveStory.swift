@@ -352,7 +352,7 @@ struct InteractiveStoryView: View {
     var actionMenu: some View {
         Menu {
             Section {
-                Button(isAutoPlaying ? "取消自动" : "自动", systemImage: isAutoPlaying ? "play.slash" : "play") {
+                Button(isAutoPlaying ? "Story-viewer.menu.auto.cancel" : "Story-viewer.menu.auto", systemImage: isAutoPlaying ? "play.slash" : "play") {
                     isAutoPlaying.toggle()
                     if isAutoPlaying {
                         next()
@@ -360,7 +360,7 @@ struct InteractiveStoryView: View {
                         autoPlayTimer?.invalidate()
                     }
                 }
-                Button("全屏自动播放", systemImage: "pano.badge.play") {
+                Button("Story-viewer.menu.full-screen", systemImage: "pano.badge.play") {
                     isAutoPlaying = true
                     uiIsHiding = true
                     next()
@@ -379,19 +379,19 @@ struct InteractiveStoryView: View {
 //                    }
                 }, label: {
                     if fastForwardTimer == nil {
-                        Label("快进", systemImage: "forward")
+                        Label("Story-viewer.menu.fast-forward", systemImage: "forward")
                     } else {
-                        Label("取消快进", image: "custom.forward.slash")
+                        Label("Story-viewer.menu.fast-forward.cancel", image: "custom.forward.slash")
                     }
                 })
-                Button("记录", systemImage: "text.document") {
+                Button("Story-viewer.menu.backlog", systemImage: "text.document") {
                     backlogIsPresenting = true
                 }
                 .disabled(currentTalk == nil)
-                Button("不显示", systemImage: "xmark") {
+                Button("Story-viewer.menu.hide", systemImage: "xmark") {
                     uiIsHiding = true
                 }
-                Button("退出", systemImage: "escape", role: .destructive) {
+                Button("Story-viewer.menu.quit", systemImage: "escape", role: .destructive) {
                     exitViewer()
                 }
                 .foregroundStyle(.red)

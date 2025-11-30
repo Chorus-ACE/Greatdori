@@ -14,6 +14,7 @@
 
 import AVKit
 import DoriKit
+import SDWebImageSwiftUI
 import SwiftUI
 
 struct SongDetailMusicMovieView: View {
@@ -28,6 +29,18 @@ struct SongDetailMusicMovieView: View {
                 Section(content: {
                     VStack {
                         if let mv = musicVideos[selectedMV ?? ""] {
+                            WebImage(url: mv.thumbImageURL(in: DoriLocale.primaryLocale)) { image in
+                                image
+                                    .antialiased(true)
+                                    .resizable()
+                                    .scaledToFit()
+                            } placeholder: {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(getPlaceholderColor())
+                            }
+                            .interpolation(.high)
+                            .frame(width: 256, height: 144)
+                            
                             CustomGroupBox {
                                 VStack {
                                     Group {
@@ -86,13 +99,14 @@ struct SongDetailMusicMovieView: View {
                                             .labelsHidden()
                                             .toggleStyle(.switch)
                                     })
-                                    Divider()
-                                    ListItem(title: {
-                                        Text(verbatim: "musicStartDelay")
-                                    }, value: {
-                                        Text("\(mv.musicStartDelay)")
-                                    })
                                 }
+                            }
+                            
+                            if let videoURL = mv.videoURL(highQuality: highQuality, in: locale, allowsFallback: false) {
+                                VideoPlayer(player: AVPlayer(url: videoURL))
+                                    .aspectRatio(30/17, contentMode: .fit)
+                            } else {
+                                DetailUnavailableView(title: "Song.music-video.unavailable", symbol: PreviewSong.symbol)
                             }
                         }
                     }
