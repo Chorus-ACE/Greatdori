@@ -123,13 +123,16 @@ struct CardDetailOverviewView: View {
                 .showsLocaleKey()
             DetailInfoItem("ID", text: "\(String(information.id))")
         } head: {
-            CardCoverImage(information.card, band: information.band)
-                .wrapIf(sizeClass == .regular) { content in
-                    content
-                        .frame(maxWidth: 480*cardCoverScalingFactor, maxHeight: 320*cardCoverScalingFactor)
-                } else: { content in
-                    content
-                }
+            VStack {
+                CardCoverImage(information.card, band: information.band)
+                    .wrapIf(sizeClass == .regular) { content in
+                        content
+                            .frame(maxWidth: 480*cardCoverScalingFactor, maxHeight: 320*cardCoverScalingFactor)
+                    } else: { content in
+                        content
+                    }
+                CompactAudioPlayer(url: information.card.gachaVoiceURL)
+            }
         }
         .task {
             // Load skills asynchronously once when the view appears
