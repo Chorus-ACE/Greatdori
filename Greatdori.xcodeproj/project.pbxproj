@@ -45,6 +45,8 @@
 		8C3593152EDC1B9B009E41AD /* GachaDetailConsumptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3593142EDC1B91009E41AD /* GachaDetailConsumptionView.swift */; };
 		8C3593172EDC26B2009E41AD /* EventDetailRotationMusicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3593162EDC26AB009E41AD /* EventDetailRotationMusicView.swift */; };
 		8C3593192EDC30BB009E41AD /* CompactAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3593182EDC30B5009E41AD /* CompactAudioPlayer.swift */; };
+		8C35931B2EDC41B4009E41AD /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8C35931A2EDC41B4009E41AD /* Alamofire */; };
+		8C35931D2EDC41B7009E41AD /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 8C35931C2EDC41B7009E41AD /* SwiftyJSON */; };
 		8C3D4E7C2EA7AABE0034E831 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 8C3D4E7B2EA7AABE0034E831 /* SwiftyJSON */; };
 		8C3DFB0E2EAF6B8D0004E1F5 /* CharacterSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB0D2EAF6B880004E1F5 /* CharacterSelector.swift */; };
 		8C3DFB102EAF84BB0004E1F5 /* CostumeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3DFB0F2EAF84B30004E1F5 /* CostumeSelector.swift */; };
@@ -767,6 +769,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C35931D2EDC41B7009E41AD /* SwiftyJSON in Frameworks */,
+				8C35931B2EDC41B4009E41AD /* Alamofire in Frameworks */,
 				8CB4D4862E445F800085D57A /* BuiltinCardCollections.framework in Frameworks */,
 				8C923D802E30488E003AFC0A /* SDWebImageSVGCoder in Frameworks */,
 				8C923D7D2E304882003AFC0A /* SDWebImageSwiftUI in Frameworks */,
@@ -1508,6 +1512,8 @@
 			packageProductDependencies = (
 				8C923D7C2E304882003AFC0A /* SDWebImageSwiftUI */,
 				8C923D7F2E30488E003AFC0A /* SDWebImageSVGCoder */,
+				8C35931A2EDC41B4009E41AD /* Alamofire */,
+				8C35931C2EDC41B7009E41AD /* SwiftyJSON */,
 			);
 			productName = "Greatdori Watch App";
 			productReference = 8C0C996A2E296A4600549B5C /* Greatdori Watch App.app */;
@@ -3964,6 +3970,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8C923D7B2E304882003AFC0A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		8C35931A2EDC41B4009E41AD /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C0C99AC2E296F2D00549B5C /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		8C35931C2EDC41B7009E41AD /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C0C99AF2E296F3900549B5C /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
 		};
 		8C3D4E7B2EA7AABE0034E831 /* SwiftyJSON */ = {
 			isa = XCSwiftPackageProductDependency;
