@@ -28,6 +28,7 @@ struct GachaDetailView: View {
             DetailsEventsSection(events: information.events, applyLocaleFilter: true)
             GachaDetailCardsView(information: information)
             GachaDetailPossibilityView(information: information)
+            GachaDetailConsumptionView(information: information)
             DetailArtsSection {
                 ArtsTab("Gacha.arts.banner", ratio: 3) {
                     for locale in DoriLocale.allCases {
