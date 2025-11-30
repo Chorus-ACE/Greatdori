@@ -1386,13 +1386,13 @@ struct WrappingHStack<Content: View>: View {
     var body: some View {
         LazyVGrid(
             columns: [.init(.adaptive(minimum: contentWidth, maximum: contentWidth), spacing: columnSpacing)],
-            alignment: alignment == .leading ? .trailing : alignment == .trailing ? .leading : alignment,
+            alignment: alignment != .trailing ? alignment : alignment == .leading ? .trailing : alignment == .trailing ? .leading : alignment,
             spacing: rowSpacing
         ) {
             makeContent()
-                .environment(\.layoutDirection, layoutDirection == .leftToRight ? .leftToRight : .rightToLeft)
+                .environment(\.layoutDirection, alignment != .trailing ? layoutDirection : layoutDirection == .leftToRight ? .leftToRight : .rightToLeft)
         }
-        .environment(\.layoutDirection, layoutDirection == .leftToRight ? .rightToLeft : .leftToRight)
+        .environment(\.layoutDirection, alignment != .trailing ? layoutDirection : layoutDirection == .leftToRight ? .rightToLeft : .leftToRight)
     }
 }
 

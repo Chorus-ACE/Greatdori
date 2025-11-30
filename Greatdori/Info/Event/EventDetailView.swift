@@ -26,6 +26,7 @@ struct EventDetailView: View {
             EventDetailOverviewView(information: information)
             DetailsGachasSection(gachas: information.gacha, applyLocaleFilter: true)
             DetailsSongsSection(songs: information.songs)
+            EventDetailRotationMusicView(information: information)
             EventDetailStageView(information: information)
             EventDetailGoalsView(information: information)
             EventDetailTeamsView(information: information)
