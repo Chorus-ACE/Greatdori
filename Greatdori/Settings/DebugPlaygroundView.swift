@@ -14,32 +14,14 @@
 
 import DoriKit
 import SwiftUI
+import UserNotifications
 
 struct DebugPlaygroundView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .center) {
                 Button(action: {
-                    Task {
-                        print("Start")
-                        let allSongs = await Song.all()
-                        guard let allSongs else { fatalError() }
-                        
-                        for previewSong in allSongs {
-                            var song = await Song(id: previewSong.id)
-                            
-                            guard let song else { fatalError() }
-                            for (_, value) in song.musicVideos ?? [:] {
-                                for endDate in value.endAt.compactMap({ $0 }) {
-                                    if endDate.timeIntervalSince1970 < 3786879600 {
-                                        print("#\(song.id) \(song.title)")
-                                    }
-                                }
-                            }
-                        }
-                        
-                        print("Done")
-                    }
+                    scheduleLocalNotification()
                 }, label: {
                     Text(verbatim: "1")
                 })
@@ -49,3 +31,26 @@ struct DebugPlaygroundView: View {
 }
 
 //extension _DoriAPI.Songs.Song.MusicVideoMetadata: Sequence {}
+
+func scheduleLocalNotification() {
+    let content = UNMutableNotificationContent()
+    content.title = "交差点、ふたつ星が笑って"
+    content.body = "Is Starting Today"
+    content.sound = .default
+    content.interruptionLevel = .active
+
+    // 5 秒后触发
+    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+
+    let request = UNNotificationRequest(
+        identifier: "local_5s_notification",
+        content: content,
+        trigger: trigger
+    )
+
+    UNUserNotificationCenter.current().add(request) { error in
+        if let error = error {
+            print("Schedule error: \(error)")
+        }
+    }
+}

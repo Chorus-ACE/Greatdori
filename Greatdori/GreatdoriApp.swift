@@ -17,6 +17,7 @@ import DoriKit
 import SDWebImage
 import SDWebImageSVGCoder
 import SwiftUI
+import UserNotifications
 @_spi(Advanced) import SwiftUIIntrospect
 #if os(iOS)
 import UIKit
@@ -37,6 +38,10 @@ let isMACOS = false
 // MARK: GreatdoriApp (@main)
 @main
 struct GreatdoriApp: App {
+    init() {
+            UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
+        }
+    
     #if os(macOS)
     @NSApplicationDelegateAdaptor var appDelegate: AppDelegate
     #else
@@ -290,5 +295,18 @@ private func initializeISV_ABTest() {
                 UserDefaults.standard.set(true, forKey: "ISVTestInitialSubmit")
             }
         }
+    }
+}
+
+@MainActor
+class NotificationDelegate: NSObject, @MainActor UNUserNotificationCenterDelegate {
+    static let shared = NotificationDelegate()
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound])
     }
 }

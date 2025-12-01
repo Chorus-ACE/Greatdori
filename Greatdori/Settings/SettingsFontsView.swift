@@ -20,7 +20,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 let fontManagerSampleText: [DoriLocale: String] = [.jp: "あなたの輝きが道を照らす", .en: "Your Spark Will Light the Way", .tw: "你的光芒照耀漫漫長路", .cn: "你的光芒会照亮前行之路", .kr: "당신의 반짝임이 길을 밝힌다"]
-let storyViewerDefaultFont: [DoriLocale: String] = [.jp: "Noto Sans JP", .en: "Noto Sans JP", .tw: "Noto Sans TC", .cn: "Noto Sans SC", .kr: ".AppleSystemUIFont"]
+let storyViewerDefaultFont: [DoriLocale: String] = [.jp: ".AppleSystemUIFont", .en: ".AppleSystemUIFont", .tw: ".AppleSystemUIFont", .cn: ".AppleSystemUIFont", .kr: ".AppleSystemUIFont"]
 
 struct SettingsFontsView: View {
     var body: some View {
