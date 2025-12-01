@@ -1246,6 +1246,17 @@
 			path = "UI Basics";
 			sourceTree = "<group>";
 		};
+		E92F02A12EDC430A00CB341F /* StoryViewer */ = {
+			isa = PBXGroup;
+			children = (
+				8C2BB9B32E92AF3700D003D1 /* StoryViewer.swift */,
+				E960D3372EB64CDC00EA6A5E /* StoryViewerDetails.swift */,
+				8C2B64012E940B2100D003D1 /* InteractiveStory.swift */,
+				E955A0F82EBF08D200795C9D /* ISVDialogBox.swift */,
+			);
+			path = StoryViewer;
+			sourceTree = "<group>";
+		};
 		E94218F32E8AA35B00F24974 /* Character */ = {
 			isa = PBXGroup;
 			children = (
@@ -1408,10 +1419,7 @@
 			children = (
 				E9A126FB2E8CB61900BBD39E /* EventTracker.swift */,
 				8CD28FEF2E9F6C6900831458 /* ChartSimulator.swift */,
-				8C2BB9B32E92AF3700D003D1 /* StoryViewer.swift */,
-				E960D3372EB64CDC00EA6A5E /* StoryViewerDetails.swift */,
-				8C2B64012E940B2100D003D1 /* InteractiveStory.swift */,
-				E955A0F82EBF08D200795C9D /* ISVDialogBox.swift */,
+				E92F02A12EDC430A00CB341F /* StoryViewer */,
 				E99B57642EC1E7DD0045EFC9 /* Station.swift */,
 				E949D28D2E93D9F100E50D3F /* Live2DViewer.swift */,
 				8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */,

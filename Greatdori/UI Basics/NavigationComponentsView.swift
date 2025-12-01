@@ -128,7 +128,7 @@ import SwiftUI
     ),
     ToolDestinationItem(
         title: "App.tools.zeile-editor",
-        symbol: "triangle",
+        symbol: "hammer",
         tabValue: .zeileEditor,
         destination: {ZeileWelcomeView()}
     )
