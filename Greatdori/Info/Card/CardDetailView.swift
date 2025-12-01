@@ -12,7 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-
+import AVKit
 import SwiftUI
 import DoriKit
 import SDWebImageSwiftUI
@@ -131,7 +131,12 @@ struct CardDetailOverviewView: View {
                     } else: { content in
                         content
                     }
-                CompactAudioPlayer(url: information.card.gachaVoiceURL)
+                if let url = information.card.animationVideoURL {
+                    VideoPlayer(player: .init(url: url))
+                        .aspectRatio(4 / 3, contentMode: .fit)
+                } else {
+                    CompactAudioPlayer(url: information.card.gachaVoiceURL)
+                }
             }
         }
         .task {
