@@ -48,6 +48,7 @@ struct StoryDetailView: View {
                                     StoryDetailInteractiveStoryEntryView(
                                         title: title,
                                         scenarioID: scenarioID,
+                                        voiceAssetBundleName: voiceAssetBundleName,
                                         type: type,
                                         locale: locale,
                                         unsafeAssociatedID: unsafeAssociatedID,

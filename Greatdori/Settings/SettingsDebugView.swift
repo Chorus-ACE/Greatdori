@@ -129,6 +129,15 @@ struct SettingsDebugView: View {
                     }
                     .foregroundStyle(.secondary)
                 })
+                if let token = UserDefaults.standard.data(forKey: "RemoteNotifDeviceToken") {
+                    ListItem {
+                        Text(verbatim: "Remote Notification Token")
+                            .bold(false)
+                    } value: {
+                        Text(token.map { unsafe String(format: "%02hhx", $0) }.joined())
+                            .textSelection(.enabled)
+                    }
+                }
             }
         }
     }
