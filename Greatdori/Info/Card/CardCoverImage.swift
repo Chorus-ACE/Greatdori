@@ -106,7 +106,9 @@ struct CardCoverImage: View {
                                     }
                                     .resizable()
                                     .onFailure { _ in
-                                        isNormalImageUnavailable = true
+                                        DispatchQueue.main.async {
+                                            isNormalImageUnavailable = true
+                                        }
                                     }
                                     .interpolation(.high)
                                     .antialiased(true)
@@ -252,7 +254,7 @@ struct CardCoverImage: View {
         }
         .cornerRadius(cardCornerRadius)
         .imageContextMenu([
-            .init(url: normalBackgroundImageURL, description: "Image.card.normal"),
+            isNormalImageUnavailable ? nil : .init(url: normalBackgroundImageURL, description: "Image.card.normal"),
             trainedBackgroundImageURL != nil ? .init(url: trainedBackgroundImageURL!, description: "Image.card.trained") : nil
         ].compactMap { $0 }) {
             if showNavigationHints {

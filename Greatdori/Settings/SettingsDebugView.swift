@@ -24,13 +24,13 @@ struct SettingsDebugView: View {
         }, header: {
             Text("Settings.debug")
         })
-#else
+        #else
         Section {
             SettingsDebugControlsView()
                 .fontDesign(.monospaced)
         }
         .navigationTitle("Settings.debug")
-#endif
+        #endif
     }
     
     struct SettingsDebugControlsView: View {

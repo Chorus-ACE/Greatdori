@@ -110,7 +110,7 @@ struct _ImageContextMenuModifier<V: View>: ViewModifier {
                                 NSPasteboard.general.clearContents()
                                 NSPasteboard.general.setData(data, forType: .png)
 #else
-                                UIPasteboard.general.image = .init(data: data)!
+                                UIPasteboard.general.image = .init(data: data)
 #endif
                             }
                         }
