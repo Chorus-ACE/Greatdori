@@ -218,6 +218,37 @@ struct HomeNewsView: View {
                 }
             }
         }
+        .accessibilityLabel("""
+        Latest \(totalNewsNumber) news: \({
+            if let news {
+                var result = ""
+                for news in news.prefix(totalNewsNumber) {
+                    result += "\(news.locale?.rawValue ?? "") \(String(localized: newsItemTypeLocalizedString[news.type]!)) \(news.subject) "
+                    let timeDesc = switch news.timeMark {
+                    case .willStartAfter(let interval):
+                        String(localized: "News.time-mark.will-start-after.\(interval)")
+                    case .willEndAfter(let interval):
+                        String(localized: "News.time-mark.will-end-after.\(interval)")
+                    case .willEndToday:
+                        String(localized: "News.time-mark.will-end-today")
+                    case .hasEnded:
+                        String(localized: "News.time-mark.has-ended")
+                    case .hasPublished:
+                        String(localized: "News.time-mark.has-published")
+                    case .willStartToday:
+                        String(localized: "News.time-mark.will-start-today")
+                    @unknown default: ""
+                    }
+                    result += timeDesc
+                    result += "; "
+                }
+                return result
+            } else {
+                return "loading."
+            }
+        }())
+        """)
+        .accessibilityHint("Double tap to show the full news list")
     }
 }
 
@@ -358,6 +389,8 @@ struct HomeBirthdayView: View {
                                     }
                                 })
                                 .buttonStyle(.plain)
+                                .accessibilityLabel(birthdays[i].characterName.forPreferredLocale() ?? "")
+                                .accessibilityValue(formatter.string(from: birthdays[i].birthday))
                                 Rectangle()
                                     .opacity(0)
                                     .frame(width: 2, height: 2)
@@ -505,6 +538,8 @@ struct HomeEventsView: View {
                 })
             }
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Event")
     }
 }
 

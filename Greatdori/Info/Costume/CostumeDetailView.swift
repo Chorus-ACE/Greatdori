@@ -51,6 +51,11 @@ struct CostumeDetailOverviewView: View {
                 .buttonStyle(.plain)
                 .frame(width: 350, height: 350)
                 .padding(.bottom, -10)
+                .accessibilityLabel("""
+                Live2D of character \(information.character.characterName.forPreferredLocale() ?? ""). \
+                Wearing costume named "\(information.costume.description.forPreferredLocale() ?? "")". 
+                """)
+                .accessibilityHint("Double tap to show the Live2D details.")
                 
                 // MARK: Info
                 CustomGroupBox(cornerRadius: 20) {

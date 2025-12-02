@@ -81,6 +81,12 @@ struct CardInfo: View {
             }
             self.cardCharacterName = DoriCache.preCache.characterDetails[previewCard.characterID]?.characterName
         }
+        .accessibilityElement()
+        .accessibilityLabel("""
+        \(previewCard.prefix.forPreferredLocale() ?? ""). \
+        Card of \(cardCharacterName?.forPreferredLocale() ?? String(localized: "Character.unknown")). \
+        \(previewCard.type.localizedString). \(previewCard.attribute.selectorText).
+        """)
     }
 }
 

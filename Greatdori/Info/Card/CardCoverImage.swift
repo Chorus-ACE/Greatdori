@@ -30,7 +30,7 @@ struct CardCoverImage: View {
     private var cardTitle: LocalizedData<String>
     private var characterID: Int
     private var displayType: CardImageDisplayType
-    @State var cardCharacterName: LocalizedData<String>?
+    var cardCharacterName: LocalizedData<String>?
     @State var showCardDetailView: Bool = false
     //    @State var cardDestinationID: Int = 0
     
@@ -47,6 +47,7 @@ struct CardCoverImage: View {
         self.cardTitle = card.prefix
         self.characterID = card.characterID
         self.displayType = displayType
+        self.cardCharacterName = DoriCache.preCache.characterDetails[characterID]?.characterName
     }
     //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 104)
     init(_ card: Card, band: Band?, showNavigationHints: Bool = true, displayType: CardImageDisplayType = .both) {
@@ -61,6 +62,7 @@ struct CardCoverImage: View {
         self.cardTitle = card.prefix
         self.characterID = card.characterID
         self.displayType = displayType
+        self.cardCharacterName = DoriCache.preCache.characterDetails[characterID]?.characterName
     }
     //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 113)
     
@@ -253,6 +255,11 @@ struct CardCoverImage: View {
             .aspectRatio(expectedCardRatio, contentMode: .fit)
         }
         .cornerRadius(cardCornerRadius)
+        .accessibilityElement()
+        .accessibilityLabel("""
+        Card of \(cardCharacterName?.forPreferredLocale() ?? ""). \
+        \(attribute.selectorText). \(rarity) stars.
+        """)
         .imageContextMenu([
             isNormalImageUnavailable ? nil : .init(url: normalBackgroundImageURL, description: "Image.card.normal"),
             trainedBackgroundImageURL != nil ? .init(url: trainedBackgroundImageURL!, description: "Image.card.trained") : nil
@@ -292,9 +299,6 @@ struct CardCoverImage: View {
                     .disabled(cardTitle.forPreferredLocale() == nil ||  cardCharacterName?.forPreferredLocale() == nil)
                 }
             }
-        }
-        .onAppear {
-            self.cardCharacterName = DoriCache.preCache.characterDetails[characterID]?.characterName
         }
         .navigationDestination(isPresented: $showCardDetailView, destination: {
             CardDetailView(id: cardID)

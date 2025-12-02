@@ -171,6 +171,8 @@ struct EventDetailOverviewView: View {
                                                     .antialiased(true)
                                                     .resizable()
                                                     .frame(width: imageButtonSize, height: imageButtonSize)
+                                                    .accessibilityElement()
+                                                    .accessibilityLabel(attribute.attribute.selectorText)
                                                 Text(verbatim: "+\(attribute.percent)%")
                                             }
                                         }
@@ -227,6 +229,7 @@ struct EventDetailOverviewView: View {
                                                     .resizable()
                                                     .frame(width: imageButtonSize, height: imageButtonSize)
                                             })
+                                            .accessibilityLabel(eventCharacterNameDict[value.characterID]?.forPreferredLocale() ?? "")
                                         } else {
                                             Rectangle()
                                                 .opacity(0)

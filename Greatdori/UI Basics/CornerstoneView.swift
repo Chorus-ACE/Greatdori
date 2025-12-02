@@ -562,6 +562,7 @@ struct FilterAndSorterPicker: View {
                 }
         })
         .animation(.easeInOut(duration: 0.2), value: filterIsFiltering)
+        .accessibilityLabel("Filter.\(filterIsFiltering ? " Filtered" : "")")
         SorterPickerView(sorter: $sorter, allOptions: sorterKeywords, sortingItemsHaveEndingDate: hasEndingDate)
 #endif
     }
@@ -747,7 +748,6 @@ struct MultilingualText: View {
                         copyStringToClipboard(localeValue)
                         print(shownLocaleValueDict)
                         lastCopiedLocaleValue = shownLocaleValueDict[localeValue]
-                        print()
                         showCopyMessage = true
                     }, label: {
                         Text(localeValue)
@@ -756,6 +756,7 @@ struct MultilingualText: View {
                             .textSelection(.enabled)
                             .typesettingLanguage(.explicit((shownLocaleValueDict[localeValue]?.nsLocale().language) ?? Locale.current.language))
                     })
+                    .accessibilityHint("Double tap to copy the text to pasteboard.")
                 }
             }, label: {
                 ZStack(alignment: .trailing, content: {
@@ -801,6 +802,7 @@ struct MultilingualText: View {
                 }
 #endif
         }
+        .accessibilityHint("Double tap to view the information in different locales.")
     }
     struct MultilingualTextInternalLabel: View {
         let source: LocalizedData<String>

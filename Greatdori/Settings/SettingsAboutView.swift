@@ -88,6 +88,7 @@ struct SettingsAboutDetailIconView: View {
             Image("MacAppIcon\(colorScheme == .dark ? "Dark" : "")")
                 .resizable()
                 .frame(width: appIconSideLength, height: appIconSideLength)
+                .accessibilityLabel("Greatdori app icon")
             Text(verbatim: "Greatdori!")
                 .bold()
                 .font(.largeTitle)
@@ -264,6 +265,7 @@ struct SettingsAboutAcknowledgementsView: View {
                         .textSelection(.enabled)
                 }
             }
+            .accessibilityElement(children: .combine)
         }
         
         enum ItemType {
