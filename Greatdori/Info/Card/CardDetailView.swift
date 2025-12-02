@@ -137,9 +137,7 @@ struct CardDetailOverviewView: View {
                     }
                 if let url = information.card.animationVideoURL {
                     VideoPlayer(player: .init(url: url))
-                        .aspectRatio(4 / 3, contentMode: .fit)
-                } else {
-                    CompactAudioPlayer(url: information.card.gachaVoiceURL)
+                        .aspectRatio(4/3, contentMode: .fit)
                 }
             }
         }

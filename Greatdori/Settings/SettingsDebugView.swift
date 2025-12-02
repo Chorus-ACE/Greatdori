@@ -135,8 +135,16 @@ struct SettingsDebugView: View {
                             .bold(false)
                     } value: {
                         Text(token.map { unsafe String(format: "%02hhx", $0) }.joined())
+                            .fontDesign(.monospaced)
                             .textSelection(.enabled)
                     }
+                }
+                ListItem {
+                    Text(verbatim: "App Store")
+                        .bold(false)
+                } value: {
+                    Text(verbatim: isComplyingWithAppStore ? "Yes" : "No")
+                        .foregroundStyle(.secondary)
                 }
             }
         }
