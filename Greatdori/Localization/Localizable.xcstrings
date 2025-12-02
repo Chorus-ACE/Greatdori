@@ -76,6 +76,9 @@
     "+%lld%%" : {
       "shouldTranslate" : false
     },
+    "Accessibility.card.title-%@" : {
+
+    },
     "AnyWindow" : {
       "localizations" : {
         "en" : {
@@ -842,16 +845,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "MyGO!!!!! 收藏集"
-          }
-        }
-      }
-    },
-    "Card of %@. %@. %lld stars." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Card of %1$@. %2$@. %3$lld stars."
           }
         }
       }

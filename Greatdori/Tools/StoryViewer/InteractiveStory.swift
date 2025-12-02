@@ -1,4 +1,4 @@
-//===---*- Greatdori! -*---------------------------------------------------===//
+     //===---*- Greatdori! -*---------------------------------------------------===//
 //
 // InteractiveStoryView.swift
 //
@@ -308,6 +308,13 @@ struct InteractiveStoryView: View {
                 }
             }
         }
+        #if os(macOS)
+        .toolbar {
+            ToolbarItem {
+                actionMenu
+            }
+        }
+        #endif
         .onAppear {
             if backgroundImageURL != nil {
                 return
@@ -747,6 +754,7 @@ struct InteractiveStoryView: View {
     }
     #endif // os(macOS)
 }
+
 private struct LayoutState: Equatable {
     var characterID: Int
     var position: StoryIR.StepAction.Position
@@ -927,45 +935,45 @@ struct ShakeScreenModifier: ViewModifier {
     @Binding var shakeDuration: Double
     @State private var shakeTimer: Timer?
     @State private var shakingOffset = CGSize(width: 0, height: 0)
-    #if os(macOS)
-    @State private var currentWindow: NSWindow?
-    #endif
+//    #if os(macOS)
+//    @State private var currentWindow: NSWindow?
+//    #endif
     func body(content: Content) -> some View {
         content
-        #if os(macOS)
-            .introspect(.window, on: .macOS(.v14...)) { window in
-                DispatchQueue.main.async {
-                    currentWindow = window
-                }
-            }
-        #else
+//        #if os(macOS)
+//            .introspect(.window, on: .macOS(.v14...)) { window in
+//                DispatchQueue.main.async {
+//                    currentWindow = window
+//                }
+//            }
+//        #else
             .offset(shakingOffset)
-        #endif
+//        #endif
             .onChange(of: shakeDuration) {
                 if shakeDuration > 0 {
                     let startTime = CFAbsoluteTimeGetCurrent()
-                    #if os(macOS)
-                    let startFrame = currentWindow?.frame
-                    #endif
+//                    #if os(macOS)
+//                    let startFrame = currentWindow?.frame
+//                    #endif
                     shakeTimer = .scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
                         DispatchQueue.main.async {
                             if _fastPath(CFAbsoluteTimeGetCurrent() - startTime < shakeDuration) {
-                                #if os(macOS)
-                                if let startFrame {
-                                    currentWindow?.setFrameOrigin(.init(x: startFrame.origin.x + .random(in: -5...5), y: startFrame.origin.y + .random(in: -5...5)))
-                                }
-                                #else
+//                                #if os(macOS)
+//                                if let startFrame {
+//                                    currentWindow?.setFrameOrigin(.init(x: startFrame.origin.x + .random(in: -5...5), y: startFrame.origin.y + .random(in: -5...5)))
+//                                }
+//                                #else
                                 shakingOffset = .init(width: .random(in: -5...5), height: .random(in: -5...5))
-                                #endif
+//                                #endif
                             } else {
                                 shakeTimer?.invalidate()
-                                #if os(macOS)
-                                if let startFrame {
-                                    currentWindow?.setFrameOrigin(startFrame.origin)
-                                }
-                                #else
+//                                #if os(macOS)
+//                                if let startFrame {
+//                                    currentWindow?.setFrameOrigin(startFrame.origin)
+//                                }
+//                                #else
                                 shakingOffset = .init(width: 0, height: 0)
-                                #endif
+//                                #endif
                                 shakeDuration = 0
                             }
                         }

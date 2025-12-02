@@ -19,52 +19,29 @@ import SwiftUI
 
 // MARK: CardCoverImage
 struct CardCoverImage: View {
-    private var normalBackgroundImageURL: URL
-    private var trainedBackgroundImageURL: URL?
-    private var cardType: CardType
-    private var attribute: Attribute
-    private var rarity: Int
-    private var bandIconImageURL: URL?
-    private var showNavigationHints: Bool
-    private var cardID: Int
-    private var cardTitle: LocalizedData<String>
-    private var characterID: Int
+    private var card: PreviewCard
+    private var band: Band?
     private var displayType: CardImageDisplayType
-    var cardCharacterName: LocalizedData<String>?
-    @State var showCardDetailView: Bool = false
-    //    @State var cardDestinationID: Int = 0
+    private var characterName: LocalizedData<String>?
+    private var showNavigationHints: Bool
     
-    //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 104)
+    @State var showCardDetailView: Bool = false
     init(_ card: PreviewCard, band: Band?, showNavigationHints: Bool = true, displayType: CardImageDisplayType = .both) {
-        self.normalBackgroundImageURL = card.coverNormalImageURL
-        self.trainedBackgroundImageURL = card.coverAfterTrainingImageURL
-        self.cardType = card.type
-        self.attribute = card.attribute
-        self.rarity = card.rarity
-        self.bandIconImageURL = band?.iconImageURL
+        self.card = card
+        self.band = band
+        
         self.showNavigationHints = showNavigationHints
-        self.cardID = card.id
-        self.cardTitle = card.prefix
-        self.characterID = card.characterID
         self.displayType = displayType
-        self.cardCharacterName = DoriCache.preCache.characterDetails[characterID]?.characterName
+        self.characterName = DoriCache.preCache.characterDetails[card.characterID]?.characterName
     }
-    //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 104)
     init(_ card: Card, band: Band?, showNavigationHints: Bool = true, displayType: CardImageDisplayType = .both) {
-        self.normalBackgroundImageURL = card.coverNormalImageURL
-        self.trainedBackgroundImageURL = card.coverAfterTrainingImageURL
-        self.cardType = card.type
-        self.attribute = card.attribute
-        self.rarity = card.rarity
-        self.bandIconImageURL = band?.iconImageURL
+        self.card = PreviewCard(card)
+        self.band = band
+        
         self.showNavigationHints = showNavigationHints
-        self.cardID = card.id
-        self.cardTitle = card.prefix
-        self.characterID = card.characterID
         self.displayType = displayType
-        self.cardCharacterName = DoriCache.preCache.characterDetails[characterID]?.characterName
+        self.characterName = DoriCache.preCache.characterDetails[card.characterID]?.characterName
     }
-    //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 113)
     
     private let cardCornerRadius: CGFloat = 10
     private let standardCardWidth: CGFloat = 480
@@ -81,11 +58,11 @@ struct CardCoverImage: View {
         ZStack {
             // MARK: Border
             Group {
-                if rarity != 1 {
-                    Image("CardBorder\(rarity)")
+                if card.rarity != 1 {
+                    Image("CardBorder\(card.rarity)")
                         .resizable()
                 } else {
-                    Image("CardBorder\(rarity)\(attribute.rawValue.prefix(1).uppercased() + attribute.rawValue.dropFirst())")
+                    Image("CardBorder\(card.rarity)\(card.attribute.rawValue.prefix(1).uppercased() + card.attribute.rawValue.dropFirst())")
                         .resizable()
                 }
             }
@@ -96,11 +73,11 @@ struct CardCoverImage: View {
                 // MARK: Card Content
                 GeometryReader { proxy in
                     Group {
-                        if let trainedBackgroundImageURL, displayType != .normalOnly {
+                        if let cardCoverAfterTrainingImageURL = card.coverAfterTrainingImageURL, displayType != .normalOnly {
                             if displayType == .both && !isNormalImageUnavailable {
                                 // Both
                                 HStack(spacing: 0) {
-                                    WebImage(url: normalBackgroundImageURL) { image in
+                                    WebImage(url: card.coverNormalImageURL) { image in
                                         image
                                     } placeholder: {
                                         RoundedRectangle(cornerRadius: 0)
@@ -141,7 +118,7 @@ struct CardCoverImage: View {
                                     }
                                     .contentShape(Rectangle())
                                     
-                                    WebImage(url: trainedBackgroundImageURL) { image in
+                                    WebImage(url: cardCoverAfterTrainingImageURL) { image in
                                         image
                                     } placeholder: {
                                         RoundedRectangle(cornerRadius: 0)
@@ -179,7 +156,7 @@ struct CardCoverImage: View {
                                 }
                                 .allowsHitTesting(true)
                             } else {
-                                WebImage(url: trainedBackgroundImageURL) { image in
+                                WebImage(url: cardCoverAfterTrainingImageURL) { image in
                                     image
                                 } placeholder: {
                                     RoundedRectangle(cornerRadius: cardCornerRadius)
@@ -190,7 +167,7 @@ struct CardCoverImage: View {
                                 .antialiased(true)
                             }
                         } else {
-                            WebImage(url: normalBackgroundImageURL) { image in
+                            WebImage(url: card.coverNormalImageURL) { image in
                                 image
                             } placeholder: {
                                 RoundedRectangle(cornerRadius: cardCornerRadius)
@@ -209,29 +186,26 @@ struct CardCoverImage: View {
                 }
             }
             
+            
             // The Image may not be in expected ratio. Gosh.
             // Why the heck will the image has a different ratio with the border???
             // --@ThreeManager785
             
             // MARK: Visualized Card Information
-            // This includes information like `attributes` and `rarity`.
+            // This includes information like `card.attributes` and `card.rarity`.
             GeometryReader { proxy in
                 VStack {
                     HStack {
-                        if let bandIconImageURL {
-                            WebImage(url: bandIconImageURL)
+                        if let band {
+                            WebImage(url: band.iconImageURL)
                                 .resizable()
                                 .interpolation(.high)
                                 .antialiased(true)
-                            //51:480 = ?:currentWidth
-                            //? = currentWidth*51/480
-                            
                                 .frame(width: 51/standardCardWidth*proxy.size.width, height: 51/standardCardHeight*proxy.size.height, alignment: .topLeading)
                                 .offset(x: proxy.size.width*0.005, y: proxy.size.height*0.01)
-                            //                    Spacer()
                         }
                         Spacer()
-                        WebImage(url: attribute.iconImageURL)
+                        WebImage(url: card.attribute.iconImageURL)
                             .resizable()
                             .interpolation(.high)
                             .antialiased(true)
@@ -241,11 +215,11 @@ struct CardCoverImage: View {
                     Spacer()
                     HStack {
                         VStack(alignment: .leading, spacing: 0) {
-                            ForEach(1...rarity, id: \.self) { _ in
-                                Image(rarity >= 3 ? .trainedStar : .star)
+                            ForEach(1...card.rarity, id: \.self) { _ in
+                                Image(card.rarity >= 3 ? .trainedStar : .star)
                                     .resizable()
                                     .frame(width: 40/standardCardWidth*proxy.size.width, height: 40/standardCardHeight*proxy.size.height, alignment: .topLeading)
-                                    .padding(.top, CGFloat(-rarity))
+                                    .padding(.top, CGFloat(-card.rarity))
                             }
                         }
                         Spacer()
@@ -253,29 +227,27 @@ struct CardCoverImage: View {
                 }
             }
             .aspectRatio(expectedCardRatio, contentMode: .fit)
+             
         }
         .cornerRadius(cardCornerRadius)
         .accessibilityElement()
-        .accessibilityLabel("""
-        Card of \(cardCharacterName?.forPreferredLocale() ?? ""). \
-        \(attribute.selectorText). \(rarity) stars.
-        """)
+        .accessibilityLabel("Accessibility.card.title-\(card.prefix.forPreferredLocale())")
         .imageContextMenu([
-            isNormalImageUnavailable ? nil : .init(url: normalBackgroundImageURL, description: "Image.card.normal"),
-            trainedBackgroundImageURL != nil ? .init(url: trainedBackgroundImageURL!, description: "Image.card.trained") : nil
+            isNormalImageUnavailable ? nil : .init(url: card.coverNormalImageURL, description: "Image.card.normal"),
+            card.coverAfterTrainingImageURL != nil ? .init(url: card.coverAfterTrainingImageURL!, description: "Image.card.trained") : nil
         ].compactMap { $0 }) {
             if showNavigationHints {
                 VStack {
                     Button(action: {
-                        // cardNavigationDestinationID = cardID
+                        // cardNavigationDestinationID = card.id
                         showCardDetailView = true
                     }, label: {
 #if os(iOS)
-                        if let title = cardTitle.forPreferredLocale(), let character = cardCharacterName?.forPreferredLocale() {
+                        if let title = card.prefix.forPreferredLocale(), let character = characterName?.forPreferredLocale() {
                             Group {
                                 Text(title)
                                 Group {
-                                    Text("\(character)") + Text("Typography.bold-dot-seperater").bold() +  Text(cardType.localizedString)
+                                    Text("\(character)") + Text("Typography.bold-dot-seperater").bold() +  Text(card.type.localizedString)
                                 }
                                 .font(.caption)
                             }
@@ -288,7 +260,7 @@ struct CardCoverImage: View {
                             .redacted(reason: .placeholder)
                         }
 #else
-                        if let title = cardTitle.forPreferredLocale() {
+                        if let title = card.prefix.forPreferredLocale() {
                             Label(title, systemImage: "info.circle")
                         } else {
                             Text(verbatim: "Lorem ipsum dolor")
@@ -296,14 +268,14 @@ struct CardCoverImage: View {
                         }
 #endif
                     })
-                    .disabled(cardTitle.forPreferredLocale() == nil ||  cardCharacterName?.forPreferredLocale() == nil)
+                    .disabled(card.prefix.forPreferredLocale() == nil ||  characterName?.forPreferredLocale() == nil)
                 }
             }
         }
         .navigationDestination(isPresented: $showCardDetailView, destination: {
-            CardDetailView(id: cardID)
+            CardDetailView(id: card.id)
         })
-        .onChange(of: cardID) {
+        .onChange(of: card.id) {
             isNormalImageUnavailable = false
         }
     }
