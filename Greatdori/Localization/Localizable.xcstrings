@@ -97,6 +97,12 @@
             "state" : "translated",
             "value" : "社区"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "社群"
+          }
         }
       }
     },
@@ -112,6 +118,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "主页"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主頁"
           }
         }
       }
@@ -129,6 +141,12 @@
             "state" : "translated",
             "value" : "信息"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "資訊"
+          }
         }
       }
     },
@@ -141,6 +159,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卡牌"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "卡牌"
@@ -161,6 +185,12 @@
             "state" : "translated",
             "value" : "角色"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色"
+          }
         }
       }
     },
@@ -176,6 +206,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "漫画"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "漫畫"
           }
         }
       }
@@ -193,6 +229,12 @@
             "state" : "translated",
             "value" : "服装"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服裝"
+          }
         }
       }
     },
@@ -209,6 +251,12 @@
             "state" : "translated",
             "value" : "活动"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活動"
+          }
         }
       }
     },
@@ -221,6 +269,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "招募"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "招募"
@@ -243,6 +297,12 @@
             "state" : "translated",
             "value" : "登录奖励"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登入獎勵"
+          }
         }
       }
     },
@@ -261,6 +321,12 @@
             "state" : "translated",
             "value" : "登录奖励"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登入獎勵"
+          }
         }
       }
     },
@@ -276,6 +342,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自选券"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自選券"
           }
         }
       }
@@ -293,6 +365,12 @@
             "state" : "translated",
             "value" : "歌曲Meta"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "歌曲 Meta"
+          }
         }
       }
     },
@@ -305,6 +383,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "歌曲"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "歌曲"
@@ -325,6 +409,12 @@
             "state" : "translated",
             "value" : "设置"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定"
+          }
         }
       }
     },
@@ -337,6 +427,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "工具"
@@ -357,6 +453,12 @@
             "state" : "translated",
             "value" : "数据包浏览器"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "遊戲資料庫"
+          }
         }
       }
     },
@@ -374,6 +476,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "谱面与模拟器"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "譜面模擬器"
           }
         }
       }
@@ -393,6 +501,12 @@
             "state" : "translated",
             "value" : "活动追踪器"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活動Pt&排名追蹤器"
+          }
         }
       }
     },
@@ -410,6 +524,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Live2D浏览器"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live2D瀏覽器"
           }
         }
       }
@@ -429,6 +549,12 @@
             "state" : "translated",
             "value" : "协力查找"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "協力查找"
+          }
         }
       }
     },
@@ -446,6 +572,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "故事浏览器"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "故事瀏覽器"
           }
         }
       }
@@ -481,6 +613,12 @@
             "state" : "translated",
             "value" : "数据包浏览器"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "遊戲資料庫"
+          }
         }
       }
     },
@@ -497,6 +635,12 @@
             "state" : "translated",
             "value" : "下载"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下載"
+          }
         }
       }
     },
@@ -512,6 +656,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未能加载文本"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法載入文本"
           }
         }
       }
@@ -553,6 +703,24 @@
               }
             }
           }
+        },
+        "zh-Hant" : {
+          "variations" : {
+            "device" : {
+              "mac" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "載入文本時出錯，點選以重試。"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "載入文本時出錯，輕觸以重試。"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -571,6 +739,12 @@
             "state" : "translated",
             "value" : "乐队信息不可用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "樂團信息不可用"
+          }
         }
       }
     },
@@ -587,6 +761,12 @@
             "state" : "translated",
             "value" : "%@的生日"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@的生日"
+          }
         }
       }
     },
@@ -599,6 +779,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GBP生日"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "GBP生日"
@@ -620,6 +806,12 @@
             "state" : "translated",
             "value" : "Greatdori! 精选集"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Greatdori! 收藏集"
+          }
         }
       }
     },
@@ -637,6 +829,12 @@
             "state" : "translated",
             "value" : "MyGO!!!!! 精选集"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyGO!!!!! 收藏集"
+          }
         }
       }
     },
@@ -651,6 +849,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完整"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "完整"
@@ -673,6 +877,12 @@
             "state" : "translated",
             "value" : "LIVE服装"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色LIVE服裝"
+          }
         }
       }
     },
@@ -690,6 +900,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "特训前"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "特訓前"
           }
         }
       }
@@ -709,6 +925,12 @@
             "state" : "translated",
             "value" : "缩略图"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縮圖"
+          }
         }
       }
     },
@@ -726,6 +948,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "特训后"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "特訓後"
           }
         }
       }
@@ -745,6 +973,12 @@
             "state" : "translated",
             "value" : "无背景"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無背景"
+          }
         }
       }
     },
@@ -760,6 +994,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "属性"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屬性"
           }
         }
       }
@@ -777,6 +1017,12 @@
             "state" : "translated",
             "value" : "乐队"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "樂團"
+          }
         }
       }
     },
@@ -789,6 +1035,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "角色"
@@ -821,6 +1073,18 @@
             "state" : "translated",
             "value" : "%lld张卡牌"
           }
+        },
+        "zh-Hant" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld 張卡片"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -837,6 +1101,12 @@
             "state" : "translated",
             "value" : "招募语"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轉蛋語句"
+          }
         }
       }
     },
@@ -849,6 +1119,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "稀有度"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "稀有度"
@@ -869,6 +1145,12 @@
             "state" : "translated",
             "value" : "发布日期"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "實裝日期"
+          }
         }
       }
     },
@@ -881,6 +1163,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "技能"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "技能"
@@ -901,6 +1189,12 @@
             "state" : "translated",
             "value" : "数据"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卡片狀態"
+          }
         }
       }
     },
@@ -916,6 +1210,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自定"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自訂"
           }
         }
       }
@@ -933,6 +1233,12 @@
             "state" : "translated",
             "value" : "持续时间"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "持續時間"
+          }
         }
       }
     },
@@ -945,6 +1251,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "效果"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "效果"
@@ -965,6 +1277,12 @@
             "state" : "translated",
             "value" : "故事"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卡片故事"
+          }
         }
       }
     },
@@ -977,6 +1295,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完整效果"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "完整效果"
@@ -997,6 +1321,12 @@
             "state" : "translated",
             "value" : "等级"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等級"
+          }
         }
       }
     },
@@ -1013,6 +1343,12 @@
             "state" : "translated",
             "value" : "星光等级"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Master Rank"
+          }
         }
       }
     },
@@ -1025,6 +1361,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "最大"
@@ -1045,6 +1387,12 @@
             "state" : "translated",
             "value" : "最小"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最小"
+          }
         }
       }
     },
@@ -1057,6 +1405,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名字"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "名字"
@@ -1077,6 +1431,12 @@
             "state" : "translated",
             "value" : "演出"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PERFORMANCE"
+          }
         }
       }
     },
@@ -1089,6 +1449,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "技能"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "技能"
@@ -1109,6 +1475,12 @@
             "state" : "translated",
             "value" : "技巧"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TECHNIQUE"
+          }
         }
       }
     },
@@ -1124,6 +1496,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "综合"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "總合"
           }
         }
       }
@@ -1141,6 +1519,12 @@
             "state" : "translated",
             "value" : "特训"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "特訓後"
+          }
         }
       }
     },
@@ -1156,6 +1540,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "形象"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VISUAL"
           }
         }
       }
@@ -1173,6 +1563,12 @@
             "state" : "translated",
             "value" : "故事"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卡片故事"
+          }
         }
       }
     },
@@ -1188,6 +1584,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "标题"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標題"
           }
         }
       }
@@ -1205,6 +1607,12 @@
             "state" : "translated",
             "value" : "种类"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "類型"
+          }
         }
       }
     },
@@ -1221,6 +1629,12 @@
             "state" : "translated",
             "value" : "卡牌"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卡片"
+          }
         }
       }
     },
@@ -1233,6 +1647,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "角色"
@@ -1252,6 +1672,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "乐团"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "樂團"
           }
         }
       }
@@ -1281,6 +1707,18 @@
             "state" : "translated",
             "value" : "%lld个乐团"
           }
+        },
+        "zh-Hant" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld 個樂團"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -1293,6 +1731,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生日"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "生日"
@@ -1313,6 +1757,12 @@
             "state" : "translated",
             "value" : "配音"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CV"
+          }
         }
       }
     },
@@ -1329,6 +1779,12 @@
             "state" : "translated",
             "value" : "颜色"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "代表色"
+          }
         }
       }
     },
@@ -1341,6 +1797,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "星座"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "星座"
@@ -1361,6 +1823,12 @@
             "state" : "translated",
             "value" : "讨厌的食物"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "討厭的食物"
+          }
         }
       }
     },
@@ -1377,6 +1845,12 @@
             "state" : "translated",
             "value" : "喜欢的食物"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "喜歡的食物"
+          }
         }
       }
     },
@@ -1389,6 +1863,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "身高"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "身高"
@@ -1409,6 +1889,12 @@
             "state" : "translated",
             "value" : "爱好"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "興趣"
+          }
         }
       }
     },
@@ -1425,6 +1911,12 @@
             "state" : "translated",
             "value" : "介绍"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "介紹"
+          }
         }
       }
     },
@@ -1437,6 +1929,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名字"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "名字"
@@ -1457,6 +1955,12 @@
             "state" : "translated",
             "value" : "昵称"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暱稱"
+          }
         }
       }
     },
@@ -1472,6 +1976,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "随机卡面"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隨機卡片"
           }
         }
       }
@@ -1489,6 +1999,12 @@
             "state" : "translated",
             "value" : "位置"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "擔任"
+          }
         }
       }
     },
@@ -1504,6 +2020,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "学校"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "學校"
           }
         }
       }
@@ -1521,6 +2043,12 @@
             "state" : "translated",
             "value" : "角色搜索不可用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色搜索不可用"
+          }
         }
       }
     },
@@ -1533,6 +2061,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色信息不可用"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "角色信息不可用"
@@ -1555,6 +2089,12 @@
             "state" : "translated",
             "value" : "角色信息不可用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色信息不可用"
+          }
         }
       }
     },
@@ -1571,6 +2111,12 @@
             "state" : "translated",
             "value" : "年 - 班"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "年 - 班"
+          }
         }
       }
     },
@@ -1583,6 +2129,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "其他"
@@ -1605,6 +2157,12 @@
             "state" : "translated",
             "value" : "谱面与模拟器"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "譜面模擬器"
+          }
         }
       }
     },
@@ -1621,6 +2179,12 @@
             "state" : "translated",
             "value" : "谱面"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "譜面"
+          }
         }
       }
     },
@@ -1636,6 +2200,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "难度"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "難度"
           }
         }
       }
@@ -1655,6 +2225,12 @@
             "state" : "translated",
             "value" : "模拟器"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模擬器"
+          }
         }
       }
     },
@@ -1672,6 +2248,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "下载"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下載"
           }
         }
       }
@@ -1691,6 +2273,12 @@
             "state" : "translated",
             "value" : "模拟器需要额外资源（38MB）以启动。"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要額外資源(38MB)以使用模擬器"
+          }
         }
       }
     },
@@ -1705,6 +2293,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "歌曲"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "歌曲"
@@ -1727,6 +2321,12 @@
             "state" : "translated",
             "value" : "精选集"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收藏集"
+          }
         }
       }
     },
@@ -1744,6 +2344,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "漫画"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "漫畫"
           }
         }
       }
@@ -1763,6 +2369,12 @@
             "state" : "translated",
             "value" : "缩略图"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縮圖"
+          }
         }
       }
     },
@@ -1777,6 +2389,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "角色"
@@ -1796,6 +2414,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "漫画"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "漫畫"
           }
         }
       }
@@ -1831,6 +2455,18 @@
               }
             }
           }
+        },
+        "zh-Hant" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld 個漫畫"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -1848,6 +2484,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "副标题"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "副標題"
           }
         }
       }
@@ -1867,6 +2509,12 @@
             "state" : "translated",
             "value" : "标题"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標題"
+          }
         }
       }
     },
@@ -1884,6 +2532,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "类型"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "類型"
           }
         }
       }
@@ -1903,6 +2557,12 @@
             "state" : "translated",
             "value" : "社区"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "社群"
+          }
         }
       }
     },
@@ -1920,6 +2580,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "点赞"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點贊"
           }
         }
       }
@@ -1939,6 +2605,12 @@
             "state" : "translated",
             "value" : "取消点赞"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消點贊"
+          }
         }
       }
     },
@@ -1956,6 +2628,12 @@
             "state" : "translated",
             "value" : "卡牌%lld"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卡片%lld"
+          }
         }
       }
     },
@@ -1969,6 +2647,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色%lld"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "角色%lld"
@@ -1991,6 +2675,12 @@
             "state" : "translated",
             "value" : "未知"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知"
+          }
         }
       }
     },
@@ -2006,6 +2696,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "评论：%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "評論：%@"
           }
         }
       }
@@ -2025,6 +2721,12 @@
             "state" : "translated",
             "value" : "回复：%@"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回復：%@"
+          }
         }
       }
     },
@@ -2043,6 +2745,12 @@
             "state" : "translated",
             "value" : "社区不可用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "社群不可用"
+          }
         }
       }
     },
@@ -2057,6 +2765,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@信息不可用"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@信息不可用"
@@ -2079,6 +2793,12 @@
             "state" : "translated",
             "value" : "图标"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縮圖"
+          }
         }
       }
     },
@@ -2095,6 +2815,12 @@
             "state" : "translated",
             "value" : "乐团"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "樂團"
+          }
         }
       }
     },
@@ -2107,6 +2833,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "角色"
@@ -2139,6 +2871,18 @@
             "state" : "translated",
             "value" : "%lld个服装"
           }
+        },
+        "zh-Hant" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld 個服裝"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -2154,6 +2898,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "服装获取"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "獲取條件"
           }
         }
       }
@@ -2171,6 +2921,12 @@
             "state" : "translated",
             "value" : "发布日期"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "實裝日期"
+          }
         }
       }
     },
@@ -2186,6 +2942,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "标题"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標題"
           }
         }
       }
@@ -2203,6 +2965,12 @@
             "state" : "translated",
             "value" : "已完结 (%@)"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已完結 (%@)"
+          }
         }
       }
     },
@@ -2218,6 +2986,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "结束于%1$@ (%2$@)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束 %1$@ (%2$@)"
           }
         }
       }
@@ -2235,6 +3009,12 @@
             "state" : "translated",
             "value" : "发布于%1$@ (%2$@)"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "實裝 %1$@ (%2$@)"
+          }
         }
       }
     },
@@ -2250,6 +3030,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已发布 (%@)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已實裝 (%@)"
           }
         }
       }
@@ -2267,6 +3053,12 @@
             "state" : "translated",
             "value" : "结果公布于%1$@ (%2$@)"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結果公布 %1$@ (%2$@)"
+          }
         }
       }
     },
@@ -2282,6 +3074,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "奖励颁发于%1$@ (%2$@)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "獎勵頒發 %1$@ (%2$@)"
           }
         }
       }
@@ -2299,6 +3097,12 @@
             "state" : "translated",
             "value" : "开始于%1$@ (%2$@)"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始 %1$@ (%2$@)"
+          }
         }
       }
     },
@@ -2314,6 +3118,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "不可用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N/A"
           }
         }
       }
@@ -2331,6 +3141,12 @@
             "state" : "translated",
             "value" : "不进行操作并继续"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不進行操作並繼續"
+          }
         }
       }
     },
@@ -2346,6 +3162,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无效化缓存并继续"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無效化快取並繼續"
           }
         }
       }
@@ -2363,6 +3185,12 @@
             "state" : "translated",
             "value" : "上次启动Greatdori!时发生了意外。Release版本不会显示此消息。"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Greatdori! 在上一次啟動中出現了問題。Release 版本不會顯示本消息。"
+          }
         }
       }
     },
@@ -2378,6 +3206,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[DEBUG] 上次未能正常启动"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[DEBUG] 上次啟動出現問題"
           }
         }
       }
@@ -2395,6 +3229,12 @@
             "state" : "translated",
             "value" : "下一个项目"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一項"
+          }
         }
       }
     },
@@ -2410,6 +3250,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "上一个项目"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上一項"
           }
         }
       }
@@ -2429,6 +3275,12 @@
             "state" : "translated",
             "value" : "图片"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圖片"
+          }
         }
       }
     },
@@ -2445,6 +3297,12 @@
             "state" : "translated",
             "value" : "关闭"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "關閉"
+          }
         }
       }
     },
@@ -2457,6 +3315,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分享…"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "分享…"
@@ -2479,6 +3343,12 @@
             "state" : "translated",
             "value" : "图片不可用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圖片不可用"
+          }
         }
       }
     },
@@ -2494,6 +3364,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "获得于%lld活动PT"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Pt取得"
           }
         }
       }
@@ -2511,6 +3387,12 @@
             "state" : "translated",
             "value" : "%@概率"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 概率"
+          }
         }
       }
     },
@@ -2526,6 +3408,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "全部显示 (%lld)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示全部"
           }
         }
       }
@@ -2543,6 +3431,12 @@
             "state" : "translated",
             "value" : "更少内容"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示更少"
+          }
         }
       }
     },
@@ -2559,6 +3453,12 @@
             "state" : "translated",
             "value" : "活动间发布"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活動期間實裝"
+          }
         }
       }
     },
@@ -2573,6 +3473,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@不可用"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@不可用"
@@ -2593,6 +3499,12 @@
             "state" : "translated",
             "value" : "完成"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成"
+          }
         }
       }
     },
@@ -2608,6 +3520,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "活动追踪器"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活動pt&排名追蹤器"
           }
         }
       }
@@ -2625,6 +3543,12 @@
             "state" : "translated",
             "value" : "目前分数线"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新分數線"
+          }
         }
       }
     },
@@ -2641,6 +3565,12 @@
             "state" : "translated",
             "value" : "数据"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "數據"
+          }
         }
       }
     },
@@ -2653,6 +3583,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日期"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "日期"
@@ -2673,6 +3609,12 @@
             "state" : "translated",
             "value" : "EP"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EP"
+          }
         }
       }
     },
@@ -2689,6 +3631,12 @@
             "state" : "translated",
             "value" : "活动"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活動"
+          }
         }
       }
     },
@@ -2701,6 +3649,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "信息不可用"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "信息不可用"
@@ -2721,6 +3675,12 @@
             "state" : "translated",
             "value" : "更新时间"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後更新"
+          }
         }
       }
     },
@@ -2733,6 +3693,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@前"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@前"
@@ -2753,6 +3719,12 @@
             "state" : "translated",
             "value" : "最新分数线"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新分數線"
+          }
         }
       }
     },
@@ -2768,6 +3740,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "当前活动"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "當前活動"
           }
         }
       }
@@ -2785,6 +3763,12 @@
             "state" : "translated",
             "value" : "最新预测"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新預測"
+          }
         }
       }
     },
@@ -2800,6 +3784,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "服务器"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "伺服器"
           }
         }
       }
@@ -2817,6 +3807,12 @@
             "state" : "translated",
             "value" : "名称"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名字"
+          }
         }
       }
     },
@@ -2832,6 +3828,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "分数"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分數"
           }
         }
       }
@@ -2849,6 +3851,12 @@
             "state" : "translated",
             "value" : "预测最终分数线"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "預測分數線"
+          }
         }
       }
     },
@@ -2864,6 +3872,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld分"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Pts"
           }
         }
       }
@@ -2881,6 +3895,12 @@
             "state" : "translated",
             "value" : "状态"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "狀態"
+          }
         }
       }
     },
@@ -2896,6 +3916,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未开始"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未開始"
           }
         }
       }
@@ -2913,6 +3939,12 @@
             "state" : "translated",
             "value" : "%lld%% 完成率"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活動已進行%lld%%"
+          }
         }
       }
     },
@@ -2928,6 +3960,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "结束于%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束 %@"
           }
         }
       }
@@ -2945,6 +3983,12 @@
             "state" : "translated",
             "value" : "已结束"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已結束"
+          }
         }
       }
     },
@@ -2957,6 +4001,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "排名"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "排名"
@@ -2977,6 +4027,12 @@
             "state" : "translated",
             "value" : "类型"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "類型"
+          }
         }
       }
     },
@@ -2994,6 +4050,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "缩略图"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縮圖"
           }
         }
       }
@@ -3013,6 +4075,12 @@
             "state" : "translated",
             "value" : "活动主页面"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主畫面"
+          }
         }
       }
     },
@@ -3027,6 +4095,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "背景"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "背景"
@@ -3049,6 +4123,12 @@
             "state" : "translated",
             "value" : "角色"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色"
+          }
         }
       }
     },
@@ -3063,6 +4143,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logo"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Logo"
@@ -3083,6 +4169,12 @@
             "state" : "translated",
             "value" : "属性"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屬性"
+          }
         }
       }
     },
@@ -3099,6 +4191,12 @@
             "state" : "translated",
             "value" : "卡牌"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卡片"
+          }
         }
       }
     },
@@ -3111,6 +4209,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "角色"
@@ -3143,6 +4247,18 @@
             "state" : "translated",
             "value" : "%lld个活动"
           }
+        },
+        "zh-Hant" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld 個活動"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -3159,6 +4275,12 @@
             "state" : "translated",
             "value" : "倒计时"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "倒數"
+          }
         }
       }
     },
@@ -3174,6 +4296,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "结束日期"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束日期"
           }
         }
       }
@@ -3193,6 +4321,12 @@
             "state" : "translated",
             "value" : "目标"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標"
+          }
         }
       }
     },
@@ -3211,6 +4345,12 @@
             "state" : "translated",
             "value" : "等级 %lld%@"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等級 %lld%@"
+          }
         }
       }
     },
@@ -3226,6 +4366,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "参数"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "參數"
           }
         }
       }
@@ -3243,6 +4389,12 @@
             "state" : "translated",
             "value" : "演出"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PERFORMANCE"
+          }
         }
       }
     },
@@ -3258,6 +4410,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "技巧"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TECHNIQUE"
           }
         }
       }
@@ -3275,6 +4433,12 @@
             "state" : "translated",
             "value" : "形象"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VISUAL"
+          }
         }
       }
     },
@@ -3291,12 +4455,26 @@
             "state" : "translated",
             "value" : "奖励"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "獎勵"
+          }
         }
       }
     },
     "Event.rotation-music" : {
       "comment" : "The title of the section that lists the music of an event.",
-      "isCommentAutoGenerated" : true
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "輪換歌曲"
+          }
+        }
+      }
     },
     "Event.start-date" : {
       "localizations" : {
@@ -3311,6 +4489,12 @@
             "state" : "translated",
             "value" : "开始日期"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始日期"
+          }
         }
       }
     },
@@ -3323,6 +4507,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "故事"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "故事"
@@ -3345,6 +4535,12 @@
             "state" : "translated",
             "value" : "队伍"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "團隊"
+          }
         }
       }
     },
@@ -3360,6 +4556,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "标题"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標題"
           }
         }
       }
@@ -3377,6 +4579,12 @@
             "state" : "translated",
             "value" : "类型"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "類型"
+          }
         }
       }
     },
@@ -3392,6 +4600,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "结束于%1$@ %2$@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束 %1$@ %2$@"
           }
         }
       }
@@ -3409,6 +4623,12 @@
             "state" : "translated",
             "value" : "已结束 %@"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已完成 %@"
+          }
         }
       }
     },
@@ -3424,6 +4644,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "开始于%1$@ %2$@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始 %1$@ %2$@"
           }
         }
       }
@@ -3441,6 +4667,12 @@
             "state" : "translated",
             "value" : "未开始 %@"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未開始 %@"
+          }
         }
       }
     },
@@ -3456,6 +4688,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "筛选"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "篩選"
           }
         }
       }
@@ -3473,6 +4711,12 @@
             "state" : "translated",
             "value" : "还原到默认选项"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還原到初始選項"
+          }
         }
       }
     },
@@ -3489,6 +4733,12 @@
             "state" : "translated",
             "value" : "包含全部"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部已選取"
+          }
         }
       }
     },
@@ -3501,6 +4751,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "全部"
@@ -3521,6 +4777,12 @@
             "state" : "translated",
             "value" : "包含任意"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任意已選取"
+          }
         }
       }
     },
@@ -3533,6 +4795,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任意"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "任意"
@@ -3553,6 +4821,12 @@
             "state" : "translated",
             "value" : "任意"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任意"
+          }
         }
       }
     },
@@ -3568,6 +4842,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "横幅和标题"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "橫幅和標題"
           }
         }
       }
@@ -3585,6 +4865,12 @@
             "state" : "translated",
             "value" : "仅横幅"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "僅橫幅"
+          }
         }
       }
     },
@@ -3600,6 +4886,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "画廊"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "畫廊"
           }
         }
       }
@@ -3617,6 +4909,12 @@
             "state" : "translated",
             "value" : "图标"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圖標"
+          }
         }
       }
     },
@@ -3629,6 +4927,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列表"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "列表"
@@ -3651,6 +4955,12 @@
             "state" : "translated",
             "value" : "招募缩略图"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "橫幅"
+          }
         }
       }
     },
@@ -3668,6 +4978,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "图标"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logo"
           }
         }
       }
@@ -3687,6 +5003,12 @@
             "state" : "translated",
             "value" : "PickUp"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "機率加倍卡片"
+          }
         }
       }
     },
@@ -3704,6 +5026,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "卡牌"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卡片"
           }
         }
       }
@@ -3723,6 +5051,12 @@
             "state" : "translated",
             "value" : "折叠"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "折疊"
+          }
         }
       }
     },
@@ -3738,6 +5072,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "展开全部(%lld)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "展開全部 (%lld)"
           }
         }
       }
@@ -3757,6 +5097,12 @@
             "state" : "translated",
             "value" : "显示特训后图"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示特訓後畫面"
+          }
         }
       }
     },
@@ -3773,12 +5119,26 @@
             "state" : "translated",
             "value" : "结束日期"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束日期"
+          }
         }
       }
     },
     "Gacha.consumption" : {
       "comment" : "The title of the section that lists the consumption details of a gacha.",
-      "isCommentAutoGenerated" : true
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消費方式"
+          }
+        }
+      }
     },
     "Gacha.count.%lld" : {
       "localizations" : {
@@ -3792,6 +5152,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld个招募"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 個轉蛋"
           }
         }
       }
@@ -3809,6 +5175,12 @@
             "state" : "translated",
             "value" : "倒计时"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "倒數"
+          }
         }
       }
     },
@@ -3825,6 +5197,12 @@
             "state" : "translated",
             "value" : "说明"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "說明"
+          }
         }
       }
     },
@@ -3839,6 +5217,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "概率"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "概率"
@@ -3861,6 +5245,12 @@
             "state" : "translated",
             "value" : "计算"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "計算"
+          }
         }
       }
     },
@@ -3878,6 +5268,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "达到目标概率所需的抽卡次数"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所需要的抽卡數"
           }
         }
       }
@@ -3897,6 +5293,12 @@
             "state" : "translated",
             "value" : "目标抽卡次数的概率结果"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "達到目標獎概率"
+          }
         }
       }
     },
@@ -3914,6 +5316,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "卡牌"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卡片"
           }
         }
       }
@@ -3933,6 +5341,12 @@
             "state" : "translated",
             "value" : "在计算概率时遇到错误。(错误%lld)"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "計算概率時出錯 (錯誤 %lld)"
+          }
         }
       }
     },
@@ -3950,6 +5364,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "选择一张卡以计算概率。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選擇一張卡片以計算概率"
           }
         }
       }
@@ -3969,6 +5389,12 @@
             "state" : "translated",
             "value" : "地区"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "伺服器"
+          }
         }
       }
     },
@@ -3986,6 +5412,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "抽卡次数"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "抽卡數"
           }
         }
       }
@@ -4192,6 +5624,12 @@
             "state" : "translated",
             "value" : "生日"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生日"
+          }
         }
       }
     },
@@ -4207,6 +5645,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "生日快乐🎉"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生日快樂 🎉"
           }
         }
       }
