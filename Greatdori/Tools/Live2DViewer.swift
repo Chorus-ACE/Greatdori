@@ -232,24 +232,40 @@ struct Live2DDetailView: View {
         .inspector(isPresented: $isInspectorPresented) {
             Form {
                 Section {
-                    Picker("Live2D.detail.motion", selection: $currentMotion) {
-                        Text("Live2D.detail.motion.none").tag(Optional<Live2DMotion>.none)
+                    Picker(selection: $currentMotion, content: {
                         ForEach(motions, id: \.self) { motion in
                             Text(motion.name).tag(motion)
                         }
-                    }
+                    }, label: {
+                        Text("Live2D.detail.motion")
+                    }, optionalCurrentValueLabel: {
+                        Text(currentMotion?.name ?? String(localized: "Live2D.detail.motion.none"))
+                    })
+//                    .onChange(of: motions, initial: true, {
+//                        if !motions.isEmpty {
+//                            currentMotion = motions.first(where: { $0.name == "idle01" })
+//                        }
+//                    })
                     .onAppear {
                         isInspectorVisible = true
                     }
                     .onDisappear {
                         isInspectorVisible = false
                     }
-                    Picker("Live2D.detail.expression", selection: $currentExpression) {
-                        Text("Live2D.detail.expression.none").tag(Optional<Live2DExpression>.none)
+                    Picker(selection: $currentExpression, content: {
                         ForEach(expressions, id: \.self) { expression in
                             Text(expression.name).tag(expression)
                         }
-                    }
+                    }, label: {
+                        Text("Live2D.detail.expression")
+                    }, optionalCurrentValueLabel: {
+                        Text(currentExpression?.name ?? String(localized: "Live2D.detail.expression.none"))
+                    })
+                    .onChange(of: expressions, initial: true, {
+                        if !expressions.isEmpty {
+                            currentExpression = expressions.first(where: { $0.name == "default" })
+                        }
+                    })
                     Toggle("Live2D.detail.sway", isOn: $isSwayEnabled)
                     Toggle("Live2D.detail.breath", isOn: $isBreathEnabled)
                     Toggle("Live2D.detail.blink", isOn: $isEyeBlinkEnabled)

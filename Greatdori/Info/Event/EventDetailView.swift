@@ -26,7 +26,9 @@ struct EventDetailView: View {
             EventDetailOverviewView(information: information)
             DetailsGachasSection(gachas: information.gacha, applyLocaleFilter: true)
             DetailsSongsSection(songs: information.songs)
-            EventDetailRotationMusicView(information: information)
+                .appendingView {
+                    EventDetailRotationMusicView(information: information)
+                }
             EventDetailStageView(information: information)
             EventDetailGoalsView(information: information)
             EventDetailTeamsView(information: information)
@@ -40,6 +42,7 @@ struct EventDetailView: View {
                         if let url = information.event.homeBannerImageURL(in: locale, allowsFallback: false) {
                             ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url)
                         }
+ 
                     }
                 }
                 ArtsTab("Event.arts.logo", ratio: 450/200) {
@@ -110,6 +113,11 @@ struct EventDetailOverviewView: View {
                             .opacity(0)
                             .frame(height: 2)
                     }
+                    
+//                    CustomGroupBox(cornerRadius: 3417) {
+////                        Text("\(information.event.bgm)")
+//                        CompactAudioPlayer(url: information.event.bgm)
+//                    }
                     
                     //MARK: Info
                     CustomGroupBox(cornerRadius: 20) {

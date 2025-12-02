@@ -20,58 +20,69 @@ struct EventDetailRotationMusicView: View {
     var information: ExtendedEvent
     @State private var musics: [_DoriAPI.Events.RotationMusic]?
     @State private var songList: [PreviewSong]?
+    @State var isExpanded = false
     var body: some View {
         if information.event.eventType == .festival {
-            LazyVStack(pinnedViews: .sectionHeaders) {
+//            LazyVStack {
                 Section {
                     CustomGroupBox {
                         LazyVStack {
-                            if let musics, let songList {
-                                ForEach(musics.map { IdentifiableRotationMusic(music: $0) }.grouped(), id: \.self) { musics in
-                                    HStack {
-                                        WrappingHStack(alignment: .leading, contentWidth: 50) {
-                                            ForEach(musics) { music in
-                                                if let song = songList.first(where: { $0.id == music.music.musicID }) {
-                                                    NavigationLink(destination: { SongDetailView(id: song.id) }) {
-                                                        WebImage(url: song.jacketImageURL)
-                                                            .resizable()
+                            HStack {
+                                Text("Event.songs.rotation-music")
+                                    .bold()
+                                Spacer()
+                                Image(systemName: "chevron.forward")
+                                    .foregroundStyle(.secondary)
+                                    .rotationEffect(.init(degrees: isExpanded ? 90 : 0))
+                                    .font(isMACOS ? .body : .caption)
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                withAnimation {
+                                    isExpanded.toggle()
+                                }
+                            }
+                            
+                            if isExpanded {
+                                if let musics, let songList {
+                                    ForEach(musics.map { IdentifiableRotationMusic(music: $0) }.grouped(), id: \.self) { musics in
+                                        HStack {
+                                            WrappingHStack(alignment: .leading, contentWidth: 50) {
+                                                ForEach(musics) { music in
+                                                    if let song = songList.first(where: { $0.id == music.music.musicID }) {
+                                                        NavigationLink(destination: { SongDetailView(id: song.id) }) {
+                                                            WebImage(url: song.jacketImageURL)
+                                                                .resizable()
+                                                        }
+                                                        .buttonStyle(.plain)
+                                                        .frame(width: 50, height: 50)
                                                     }
-                                                    .buttonStyle(.plain)
-                                                    .frame(width: 50, height: 50)
                                                 }
                                             }
+                                            Spacer(minLength: 0)
+                                            MultilingualTextForCountdown(
+                                                startDate: .init(_jp: musics.first!.music.startAt, en: nil, tw: nil, cn: nil, kr: nil),
+                                                endDate: .init(_jp: musics.first!.music.endAt, en: nil, tw: nil, cn: nil, kr: nil)
+                                            )
                                         }
-                                        Spacer(minLength: 0)
-                                        MultilingualTextForCountdown(
-                                            startDate: .init(_jp: musics.first!.music.startAt, en: nil, tw: nil, cn: nil, kr: nil),
-                                            endDate: .init(_jp: musics.first!.music.endAt, en: nil, tw: nil, cn: nil, kr: nil)
-                                        )
                                     }
-                                }
-                                .insert {
-                                    Divider()
-                                }
-                            } else {
-                                HStack {
-                                    Spacer()
-                                    ProgressView()
-                                        .controlSize(.large)
-                                    Spacer()
+                                    .insert {
+                                        Divider()
+                                    }
+                                } else {
+                                    HStack {
+                                        Spacer()
+                                        ProgressView()
+                                            .controlSize(.large)
+                                        Spacer()
+                                    }
                                 }
                             }
                         }
                     }
                     .frame(maxWidth: infoContentMaxWidth)
-                } header: {
-                    HStack {
-                        Text("Event.rotation-music")
-                            .font(.title2)
-                            .bold()
-                        Spacer()
-                    }
-                    .frame(maxWidth: 615)
                 }
-            }
+//            }
             .task {
                 withDoriCache(id: "EventFestivalRotationMusic_\(information.event.id)") {
                     await _DoriAPI.Events.festivalRotationMusics(of: information.event.id)

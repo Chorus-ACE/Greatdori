@@ -62,7 +62,7 @@ struct SongDetailOverviewView: View {
     var body: some View {
         VStack {
             Group {
-                //                // MARK: Title Image
+                // MARK: Title Image
                 Group {
                     Rectangle()
                         .opacity(0)
@@ -82,6 +82,13 @@ struct SongDetailOverviewView: View {
                         .opacity(0)
                         .frame(height: 2)
                 }
+                
+#if !APP_STORE
+                CustomGroupBox(cornerRadius: 3417) {
+                    CompactAudioPlayer(url: information.soundURL)
+                }
+#endif
+                
                 // MARK: Info
                 CustomGroupBox(cornerRadius: 20) {
                     LazyVStack {

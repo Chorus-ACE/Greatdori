@@ -18,10 +18,12 @@ import SwiftUI
 
 struct CompactAudioPlayer: View {
     var url: URL
+    var showPlayButtonOnly: Bool
     @State private var player: AVPlayer
     
-    init(url: URL) {
+    init(url: URL, showPlayButtonOnly: Bool = false) {
         self.url = url
+        self.showPlayButtonOnly = showPlayButtonOnly
         self._player = .init(initialValue: .init(url: url))
     }
     
@@ -32,7 +34,7 @@ struct CompactAudioPlayer: View {
     @State private var isTimeEditing = false
     
     var body: some View {
-        CustomGroupBox(cornerRadius: 114514) {
+//        CustomGroupBox(cornerRadius: 3417) {
             HStack {
                 Button(action: {
                     if isPlaying {
@@ -46,15 +48,18 @@ struct CompactAudioPlayer: View {
                 }, label: {
                     Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                 })
-                Text(verbatim: "\(formatTime(currentTime)) / \(formatTime(duration))")
-                Slider(value: $currentTime, in: 0...duration) { isEditing in
-                    if !isEditing {
-                        player.seek(to: .init(seconds: currentTime, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                .buttonStyle(.plain)
+                if !showPlayButtonOnly {
+                    Text(verbatim: "\(formatTime(currentTime)) / \(formatTime(duration))")
+                    Slider(value: $currentTime, in: 0...duration) { isEditing in
+                        if !isEditing {
+                            player.seek(to: .init(seconds: currentTime, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                        }
+                        isTimeEditing = isEditing
                     }
-                    isTimeEditing = isEditing
                 }
             }
-        }
+//        }
         .onAppear {
             timeUpdateTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
                 DispatchQueue.main.async {

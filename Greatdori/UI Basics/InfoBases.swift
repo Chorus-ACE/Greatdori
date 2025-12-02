@@ -591,14 +591,21 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
     @State private var locale = DoriLocale.primaryLocale
     @State private var showAll = false
     
+    @Environment(\.appendingView) private var appendingView
+    
     var body: some View {
         LazyVStack(pinnedViews: .sectionHeaders) {
             Section {
                 Group {
-                    if let elements = localizedElements.forLocale(locale), !elements.isEmpty {
-                        ForEach((showAll ? elements : Array(elements.prefix(3))), id: \.self) { item in
-                            makeEachContent(item)
-                                .buttonStyle(.plain)
+                    if localizedElements.forLocale(locale)?.isEmpty ?? true || appendingView != nil {
+                        if let elements = localizedElements.forLocale(locale) {
+                            ForEach((showAll ? elements : Array(elements.prefix(3))), id: \.self) { item in
+                                makeEachContent(item)
+                                    .buttonStyle(.plain)
+                            }
+                        }
+                        if let appendingView {
+                            appendingView()
                         }
                     } else {
                         DetailUnavailableView(title: "Details.unavailable.\(Element.singularName)", symbol: Element.symbol)
@@ -748,5 +755,28 @@ struct DetailInfoBuilder {
     
     static func buildArray(_ components: [[DetailInfoItem]]) -> [DetailInfoItem] {
         components.flatMap { $0 }
+    }
+}
+
+
+extension EnvironmentValues {
+    @Entry var appendingView: (() -> AnyView)? = nil
+}
+
+struct AppendingViewModifier<Content: View>: ViewModifier {
+    let builder: () -> Content
+
+    func body(content: Self.Content) -> some View {
+        content.environment(\.appendingView) {
+            AnyView(builder())
+        }
+    }
+}
+
+extension View {
+    func appendingView<Content: View>(
+        @ViewBuilder _ builder: @escaping () -> Content
+    ) -> some View {
+        modifier(AppendingViewModifier(builder: builder))
     }
 }

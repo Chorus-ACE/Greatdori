@@ -16,6 +16,7 @@ import AVKit
 import SwiftUI
 import DoriKit
 import SDWebImageSwiftUI
+import SwiftUI
 
 
 // MARK: CardDetailView
@@ -117,7 +118,10 @@ struct CardDetailOverviewView: View {
                 DetailInfoItem("Card.skill", text: skill.maximumDescription)
             }
             if !information.card.gachaText.isValueEmpty {
-                DetailInfoItem("Card.gacha-quote", text: information.card.gachaText)
+                DetailInfoItem("Card.gacha-quote") {
+                    MultilingualText(information.card.gachaText)
+                    CompactAudioPlayer(url: information.card.gachaVoiceURL, showPlayButtonOnly: true)
+                }
             }
             DetailInfoItem("Card.release-date", date: information.card.releasedAt)
                 .showsLocaleKey()
@@ -146,44 +150,6 @@ struct CardDetailOverviewView: View {
                     allSkills = fetched
                 }
             }
-        }
-    }
-}
-
-struct CardDetailStoriesView: View {
-    var information: ExtendedCard
-    @State private var locale = DoriLocale.primaryLocale
-    var body: some View {
-        if !information.card.episodes.isEmpty {
-            LazyVStack(pinnedViews: .sectionHeaders) {
-                Section {
-                    ForEach(Array(information.card.episodes.enumerated()), id: \.element.id) { index, story in
-                        if let title = story.title.forLocale(locale) {
-                            StoryCardView(
-                                story: CustomStory(
-                                    scenarioID: story.scenarioID,
-                                    caption: story.episodeType.localizedString,
-                                    title: title,
-                                    synopsis: "",
-                                    voiceAssetBundleName: nil
-                                ),
-                                type: .event,
-                                locale: locale,
-                                unsafeAssociatedID: information.card.resourceSetName
-                            )
-                        }
-                    }
-                } header: {
-                    HStack {
-                        Text("Card.story")
-                            .font(.title2)
-                            .bold()
-                        DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
-                        Spacer()
-                    }
-                }
-            }
-            .frame(maxWidth: infoContentMaxWidth)
         }
     }
 }

@@ -299,5 +299,8 @@ struct CardCoverImage: View {
         .navigationDestination(isPresented: $showCardDetailView, destination: {
             CardDetailView(id: cardID)
         })
+        .onChange(of: cardID) {
+            isNormalImageUnavailable = false
+        }
     }
 }

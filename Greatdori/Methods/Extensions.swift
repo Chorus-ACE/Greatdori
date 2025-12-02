@@ -338,6 +338,19 @@ public extension View {
         }
     }
     
+    // MARK: insert
+    func insert<V: View>(@ViewBuilder content: @escaping () -> V) -> some View {
+        self._variadic { children in
+            if let c = children.first {
+                c
+                ForEach(children.dropFirst(1)) { child in
+                    content()
+                    child
+                }
+            }
+        }
+    }
+    
     // MARK: inverseMask
     func inverseMask<Mask: View>(
         @ViewBuilder _ mask: () -> Mask,
@@ -363,6 +376,7 @@ public extension View {
         )
     }
     
+    //MARK: onChange
     @_disfavoredOverload
     func onChange<each V: Equatable>(
         of value: repeat each V,
@@ -377,6 +391,10 @@ public extension View {
             result = AnyView(result.onAppear { action() })
         }
         return result
+    }
+    
+    func regularInfoImageSizeFactor(_ sizeFactor: CGFloat) -> some View {
+        environment(\.regularInfoImageSizeFactor, sizeFactor)
     }
     
     // MARK: wrapIf
@@ -411,21 +429,4 @@ extension EnvironmentValues {
     @Entry var regularInfoImageSizeFactor: CGFloat = 1
 }
 extension View {
-    func regularInfoImageSizeFactor(_ sizeFactor: CGFloat) -> some View {
-        environment(\.regularInfoImageSizeFactor, sizeFactor)
-    }
-}
-
-extension View {
-    func insert<V: View>(@ViewBuilder content: @escaping () -> V) -> some View {
-        self._variadic { children in
-            if let c = children.first {
-                c
-                ForEach(children.dropFirst(1)) { child in
-                    content()
-                    child
-                }
-            }
-        }
-    }
 }

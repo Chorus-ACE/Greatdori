@@ -27,7 +27,7 @@ struct SettingsPermissionsView: View {
 #if os(iOS)
             Section(content: {
                 SettingsPermissionsNotificationNews()
-                SettingsPermissionsCalendarBirthdays()
+//                SettingsPermissionsCalendarBirthdays()
             }, header: {
                 Text("Settings.permissions")
             }, footer: {
@@ -53,7 +53,7 @@ struct SettingsPermissionsView: View {
             Group {
                 Section {
                     SettingsPermissionsNotificationNews()
-                    SettingsPermissionsCalendarBirthdays()
+//                    SettingsPermissionsCalendarBirthdays()
                 }
                 Section(content: {
                     Button(action: {
@@ -79,12 +79,12 @@ struct SettingsPermissionsView: View {
             let notificationIsAuthorized = notificationStatus.authorizationStatus == .authorized
             let notificationIsRejected = notificationStatus.authorizationStatus == .denied
             
-            let calendarStatus = EKEventStore.authorizationStatus(for: .event)
-            let calendarIsAuthorized = calendarStatus == .fullAccess
-            let calendarIsRejected = calendarStatus == .denied
+//            let calendarStatus = EKEventStore.authorizationStatus(for: .event)
+//            let calendarIsAuthorized = calendarStatus == .fullAccess
+//            let calendarIsRejected = calendarStatus == .denied
             
-            permissionNotGiven = !notificationIsAuthorized || !calendarIsAuthorized
-            permissionRejected = notificationIsRejected || calendarIsRejected
+            permissionNotGiven = !notificationIsAuthorized
+            permissionRejected = notificationIsRejected
         }
         
     }

@@ -18,32 +18,51 @@ import SwiftUI
 struct EventDetailStageView: View {
     var information: ExtendedEvent
     @State private var stages: [_DoriAPI.Events.FestivalStage]?
+    @State var isExpanded = false
     var body: some View {
         if information.event.eventType == .festival {
             LazyVStack(pinnedViews: .sectionHeaders) {
                 Section {
                     CustomGroupBox {
                         VStack {
-                            if let stages {
-                                ForEach(stages.map { IdentifiableStage(stage: $0) }) { stage in
-                                    ListItem {
-                                        Text(stage.stage.type.localizedString)
-                                    } value: {
-                                        MultilingualTextForCountdown(
-                                            startDate: .init(_jp: stage.stage.startAt, en: nil, tw: nil, cn: nil, kr: nil),
-                                            endDate: .init(_jp: stage.stage.endAt, en: nil, tw: nil, cn: nil, kr: nil)
-                                        )
+                            HStack {
+                                Text("Event.stages")
+                                    .bold()
+                                Spacer()
+                                Image(systemName: "chevron.forward")
+                                    .foregroundStyle(.secondary)
+                                    .rotationEffect(.init(degrees: isExpanded ? 90 : 0))
+                                    .font(isMACOS ? .body : .caption)
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                withAnimation {
+                                    isExpanded.toggle()
+                                }
+                            }
+                            
+                            if isExpanded {
+                                if let stages {
+                                    ForEach(stages.map { IdentifiableStage(stage: $0) }) { stage in
+                                        ListItem {
+                                            Text(stage.stage.type.localizedString)
+                                        } value: {
+                                            MultilingualTextForCountdown(
+                                                startDate: .init(_jp: stage.stage.startAt, en: nil, tw: nil, cn: nil, kr: nil),
+                                                endDate: .init(_jp: stage.stage.endAt, en: nil, tw: nil, cn: nil, kr: nil)
+                                            )
+                                        }
                                     }
-                                }
-                                .insert {
-                                    Divider()
-                                }
-                            } else {
-                                HStack {
-                                    Spacer()
-                                    ProgressView()
-                                        .controlSize(.large)
-                                    Spacer()
+                                    .insert {
+                                        Divider()
+                                    }
+                                } else {
+                                    HStack {
+                                        Spacer()
+                                        ProgressView()
+                                            .controlSize(.large)
+                                        Spacer()
+                                    }
                                 }
                             }
                         }
@@ -51,7 +70,7 @@ struct EventDetailStageView: View {
                     .frame(maxWidth: infoContentMaxWidth)
                 } header: {
                     HStack {
-                        Text("Event.teams")
+                        Text("Event.stages")
                             .font(.title2)
                             .bold()
                         Spacer()
