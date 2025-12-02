@@ -597,7 +597,7 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
         LazyVStack(pinnedViews: .sectionHeaders) {
             Section {
                 Group {
-                    if localizedElements.forLocale(locale)?.isEmpty ?? true || appendingView != nil {
+                    if !(localizedElements.forLocale(locale)?.isEmpty ?? true) || appendingView != nil {
                         if let elements = localizedElements.forLocale(locale) {
                             ForEach((showAll ? elements : Array(elements.prefix(3))), id: \.self) { item in
                                 makeEachContent(item)

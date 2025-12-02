@@ -24,10 +24,10 @@ struct GachaDetailConsumptionView: View {
                 CustomGroupBox {
                     VStack {
                         Table(information.gacha.paymentMethods) {
-                            TableColumn("抽卡的数量") { paymentMethod in
-                                Text("\(paymentMethod.count)次抽卡")
+                            TableColumn("Gacha.costs.type") { paymentMethod in
+                                Text("Gacha.costs.type.plays.\(paymentMethod.count)")
                             }
-                            TableColumn("消耗星石") { paymentMethod in
+                            TableColumn("Gacha.costs.costs") { paymentMethod in
                                 HStack {
                                     WebImage(url: paymentMethod.paymentMethod.iconImageURL)
                                         .resizable()
@@ -35,19 +35,20 @@ struct GachaDetailConsumptionView: View {
                                     Text(verbatim: "\(paymentMethod.paymentMethod.localizedString) x\(paymentMethod.count)")
                                 }
                             }
-                            TableColumn("备注") { paymentMethod in
+                            TableColumn("Gacha.costs.note") { paymentMethod in
                                 if paymentMethod.behavior != .normal {
-                                    Text(verbatim: "\(paymentMethod.behavior.localizedString)" + (paymentMethod.maxSpinLimit != nil ? ", " + String(localized: "最多\(paymentMethod.maxSpinLimit!)次") : ""))
+                                    Text(verbatim: "\(paymentMethod.behavior.localizedString)" + (paymentMethod.maxSpinLimit != nil ? ", " + String(localized: "Gacha.costs.note.maximum.\(paymentMethod.maxSpinLimit!)") : ""))
                                 }
                             }
                         }
-                        .frame(height: 200)
+                        .scrollDisabled(true)
+                        .frame(height: 30*CGFloat(information.gacha.paymentMethods.count + 1))
                     }
                 }
                 .frame(maxWidth: infoContentMaxWidth)
             } header: {
                 HStack {
-                    Text("Gacha.consumption")
+                    Text("Gacha.costs")
                         .font(.title2)
                         .bold()
                     Spacer()

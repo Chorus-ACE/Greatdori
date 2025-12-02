@@ -103,7 +103,7 @@ struct Live2DViewerView: View {
                                 }, label: {
                                     CustomGroupBox {
                                         ExtendedConstraints {
-                                            Text("Live2d-viewer.year\(costume.seasonType.components(separatedBy: "_").last ?? "").\(costume.seasonCostumeType.localizedString)")
+                                            Text("Live2d-viewer.year.\(costume.seasonType.components(separatedBy: "_").last ?? "").\(costume.seasonCostumeType.localizedString)")
                                         }
                                         .padding()
                                     }

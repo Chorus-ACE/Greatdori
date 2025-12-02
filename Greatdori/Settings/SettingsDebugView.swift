@@ -137,6 +137,7 @@ struct SettingsDebugView: View {
                         Text(token.map { unsafe String(format: "%02hhx", $0) }.joined())
                             .fontDesign(.monospaced)
                             .textSelection(.enabled)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 ListItem {
