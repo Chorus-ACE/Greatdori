@@ -593,31 +593,39 @@ struct InteractiveStoryView: View {
         case .showBlackCover(duration: let duration):
             withAnimation(.linear(duration: duration)) {
                 blackCoverIsShowing = true
-            } completion: {
-                Self.performingActionCount.count -= 1
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
                 whiteCoverIsDisplaying = false
             }
+            Task {
+                try? await Task.sleep(for: .seconds(duration))
+                Self.performingActionCount.count -= 1
+            }
         case .hideBlackCover(duration: let duration):
             withAnimation(.linear(duration: duration)) {
                 blackCoverIsShowing = false
-            } completion: {
+            }
+            Task {
+                try? await Task.sleep(for: .seconds(duration))
                 Self.performingActionCount.count -= 1
             }
         case .showWhiteCover(duration: let duration):
             withAnimation(.linear(duration: duration)) {
                 whiteCoverIsDisplaying = true
-            } completion: {
-                Self.performingActionCount.count -= 1
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
                 blackCoverIsShowing = false
             }
+            Task {
+                try? await Task.sleep(for: .seconds(duration))
+                Self.performingActionCount.count -= 1
+            }
         case .hideWhiteCover(duration: let duration):
             withAnimation(.linear(duration: duration)) {
                 whiteCoverIsDisplaying = false
-            } completion: {
+            }
+            Task {
+                try? await Task.sleep(for: .seconds(duration))
                 Self.performingActionCount.count -= 1
             }
         case .shakeScreen(duration: let duration):
