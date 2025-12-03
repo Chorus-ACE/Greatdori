@@ -14,12 +14,9 @@
 
 name: Nightly Build
 
-on: # FIXME: Change to nightly build after debugging
-  push:
-    branches:
-      - 'main'
-    paths:
-      - '.github/workflows/nightly-build.yml'
+on:
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   check:
@@ -209,7 +206,7 @@ jobs:
         env:
           DELIVERY_UUID: ${{ steps.upload.outputs.DELIVERY_UUID }}
         run: |
-          JWT=$(/Applications/Xcode.app/Contents/SharedFrameworks/ContentDelivery.framework/Resources/altool --generate-jwt --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --p8-file-path ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8)
+          JWT=$(/Applications/Xcode.app/Contents/SharedFrameworks/ContentDelivery.framework/Resources/altool --generate-jwt --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --p8-file-path ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8 2>&1 >/dev/null)
           curl -H "Authorization: Bearer $JWT" -H 'Content-Type: application/json' "https://api.appstoreconnect.apple.com/v1/builds/$DELIVERY_UUID/relationships/betaGroups" -X POST -d '{"data": [{"type": "betaGroups", "id": "00bd1037-12b7-441e-a963-a30ba9d100a1"}]}'
           curl -H "Authorization: Bearer $JWT" -H 'Content-Type: application/json' "https://api.appstoreconnect.apple.com/v1/betaAppReviewSubmissions" -X POST -d '{"data": {"type": "betaAppReviewSubmissions", "relationships": {"build": {"data": {"type": "builds", "id": "'"$DELIVERY_UUID"'"}}}}}'
   export-notarize:
