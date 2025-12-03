@@ -15,7 +15,7 @@
 import DoriKit
 import SwiftUI
 
-struct InteractiveStoryDialogBoxView: View {
+struct ISVDialogBoxView: View {
     var data: TalkData
     var locale: DoriLocale
     var isDelaying: Bool

@@ -56,136 +56,7 @@ struct CardCoverImage: View {
     @State var isHovering: Bool = false
     var body: some View {
         ZStack {
-            // MARK: Border
-            Group {
-                if card.rarity != 1 {
-                    Image("CardBorder\(card.rarity)")
-                        .resizable()
-                } else {
-                    Image("CardBorder\(card.rarity)\(card.attribute.rawValue.prefix(1).uppercased() + card.attribute.rawValue.dropFirst())")
-                        .resizable()
-                }
-            }
-            .aspectRatio(expectedCardRatio, contentMode: .fit)
-            .clipped()
-            .allowsHitTesting(false)
-            .background {
-                // MARK: Card Content
-                GeometryReader { proxy in
-                    Group {
-                        if let cardCoverAfterTrainingImageURL = card.coverAfterTrainingImageURL, displayType != .normalOnly {
-                            if displayType == .both && !isNormalImageUnavailable {
-                                // Both
-                                HStack(spacing: 0) {
-                                    WebImage(url: card.coverNormalImageURL) { image in
-                                        image
-                                    } placeholder: {
-                                        RoundedRectangle(cornerRadius: 0)
-                                            .fill(getPlaceholderColor())
-                                    }
-                                    .resizable()
-                                    .onFailure { _ in
-                                        DispatchQueue.main.async {
-                                            isNormalImageUnavailable = true
-                                        }
-                                    }
-                                    .interpolation(.high)
-                                    .antialiased(true)
-                                    .scaledToFill()
-                                    .frame(width: proxy.size.width * CGFloat(normalCardIsOnHover ? 0.75 : (trainedCardIsOnHover ? 0.25 : 0.5)))
-                                    .clipped()
-                                    #if !os(macOS)
-                                    .onTapGesture {
-                                        withAnimation(cardFocusSwitchingAnimation) {
-                                            if !normalCardIsOnHover {
-                                                normalCardIsOnHover = true
-                                                trainedCardIsOnHover = false
-                                            } else {
-                                                normalCardIsOnHover = false
-                                            }
-                                        }
-                                    }
-                                    #endif
-                                    .onHover { isHovering in
-                                        withAnimation(cardFocusSwitchingAnimation) {
-                                            if isHovering {
-                                                normalCardIsOnHover = true
-                                                trainedCardIsOnHover = false
-                                            } else {
-                                                normalCardIsOnHover = false
-                                            }
-                                        }
-                                    }
-                                    .contentShape(Rectangle())
-                                    
-                                    WebImage(url: cardCoverAfterTrainingImageURL) { image in
-                                        image
-                                    } placeholder: {
-                                        RoundedRectangle(cornerRadius: 0)
-                                            .fill(getPlaceholderColor())
-                                    }
-                                    .resizable()
-                                    .interpolation(.high)
-                                    .antialiased(true)
-                                    .scaledToFill()
-                                    .frame(width: proxy.size.width * CGFloat(trainedCardIsOnHover ? 0.75 : (normalCardIsOnHover ? 0.25 : 0.5)))
-                                    .clipped()
-                                    #if !os(macOS)
-                                    .onTapGesture {
-                                        withAnimation(cardFocusSwitchingAnimation) {
-                                            if !trainedCardIsOnHover {
-                                                normalCardIsOnHover = false
-                                                trainedCardIsOnHover = true
-                                            } else {
-                                                trainedCardIsOnHover = false
-                                            }
-                                        }
-                                    }
-                                    #endif
-                                    .onHover { isHovering in
-                                        withAnimation(cardFocusSwitchingAnimation) {
-                                            if isHovering {
-                                                normalCardIsOnHover = false
-                                                trainedCardIsOnHover = true
-                                            } else {
-                                                trainedCardIsOnHover = false
-                                            }
-                                        }
-                                    }
-                                    .contentShape(Rectangle())
-                                }
-                                .allowsHitTesting(true)
-                            } else {
-                                WebImage(url: cardCoverAfterTrainingImageURL) { image in
-                                    image
-                                } placeholder: {
-                                    RoundedRectangle(cornerRadius: cardCornerRadius)
-                                        .fill(getPlaceholderColor())
-                                }
-                                .resizable()
-                                .interpolation(.high)
-                                .antialiased(true)
-                            }
-                        } else {
-                            WebImage(url: card.coverNormalImageURL) { image in
-                                image
-                            } placeholder: {
-                                RoundedRectangle(cornerRadius: cardCornerRadius)
-                                    .fill(getPlaceholderColor())
-                            }
-                            .resizable()
-                            .interpolation(.high)
-                            .antialiased(true)
-                        }
-                    }
-                    .cornerRadius(cardCornerRadius)
-                    .scaledToFill()
-                    .frame(width: proxy.size.width, height: proxy.size.height)
-                    .clipped()
-                    //                    .scaleEffect(0.97)
-                }
-            }
-            
+            CardCoverImageBorder(card, band: band, showNavigationHints: showNavigationHints, displayType: displayType)
             
             // The Image may not be in expected ratio. Gosh.
             // Why the heck will the image has a different ratio with the border???
@@ -227,11 +98,14 @@ struct CardCoverImage: View {
                 }
             }
             .aspectRatio(expectedCardRatio, contentMode: .fit)
-             
         }
         .cornerRadius(cardCornerRadius)
-        .accessibilityElement()
-        .accessibilityLabel("Accessibility.card.title-\(card.prefix.forPreferredLocale())")
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Accessibility.card.title-\(card.prefix.forPreferredLocale() ?? "").char-\(characterName?.forPreferredLocale() ?? "")")
+        .accessibilityCustomContent("Accessibility.card.rarity", "\(card.rarity)")
+        .accessibilityCustomContent("Accessibility.card.attribute", card.attribute.selectorText)
+        .accessibilityCustomContent("Accessibility.card.band", band?.bandName.forPreferredLocale() ?? "")
+        .accessibilityCustomContent("Accessibility.card.type", card.type.selectorText)
         .imageContextMenu([
             isNormalImageUnavailable ? nil : .init(url: card.coverNormalImageURL, description: "Image.card.normal"),
             card.coverAfterTrainingImageURL != nil ? .init(url: card.coverAfterTrainingImageURL!, description: "Image.card.trained") : nil
@@ -277,6 +151,168 @@ struct CardCoverImage: View {
         })
         .onChange(of: card.id) {
             isNormalImageUnavailable = false
+        }
+    }
+}
+
+// MARK: CardCoverImageBorder
+struct CardCoverImageBorder: View {
+    private var card: PreviewCard
+    private var band: Band?
+    private var displayType: CardImageDisplayType
+    private var characterName: LocalizedData<String>?
+    private var showNavigationHints: Bool
+    
+    @State var showCardDetailView: Bool = false
+    init(_ card: PreviewCard, band: Band?, showNavigationHints: Bool = true, displayType: CardImageDisplayType = .both) {
+        self.card = card
+        self.band = band
+        
+        self.showNavigationHints = showNavigationHints
+        self.displayType = displayType
+        self.characterName = DoriCache.preCache.characterDetails[card.characterID]?.characterName
+    }
+    
+    private let cardCornerRadius: CGFloat = 10
+    private let standardCardWidth: CGFloat = 480
+    private let standardCardHeight: CGFloat = 320
+    private let expectedCardRatio: CGFloat = 480/320
+    private let cardFocusSwitchingAnimation: Animation = .easeOut(duration: 0.15)
+    
+    @State var normalCardIsOnHover = false
+    @State var trainedCardIsOnHover = false
+    @State var isNormalImageUnavailable = false
+    
+    @State var isHovering: Bool = false
+    var body: some View {
+        // MARK: Border
+        Group {
+            if card.rarity != 1 {
+                Image("CardBorder\(card.rarity)")
+                    .resizable()
+            } else {
+                Image("CardBorder\(card.rarity)\(card.attribute.rawValue.prefix(1).uppercased() + card.attribute.rawValue.dropFirst())")
+                    .resizable()
+            }
+        }
+        .aspectRatio(expectedCardRatio, contentMode: .fit)
+        .clipped()
+        .allowsHitTesting(false)
+        .background {
+            // MARK: Card Content
+            GeometryReader { proxy in
+                Group {
+                    if let cardCoverAfterTrainingImageURL = card.coverAfterTrainingImageURL, displayType != .normalOnly {
+                        if displayType == .both && !isNormalImageUnavailable {
+                            // Both
+                            HStack(spacing: 0) {
+                                WebImage(url: card.coverNormalImageURL) { image in
+                                    image
+                                } placeholder: {
+                                    RoundedRectangle(cornerRadius: 0)
+                                        .fill(getPlaceholderColor())
+                                }
+                                .resizable()
+                                .onFailure { _ in
+                                    DispatchQueue.main.async {
+                                        isNormalImageUnavailable = true
+                                    }
+                                }
+                                .interpolation(.high)
+                                .antialiased(true)
+                                .scaledToFill()
+                                .frame(width: proxy.size.width * CGFloat(normalCardIsOnHover ? 0.75 : (trainedCardIsOnHover ? 0.25 : 0.5)))
+                                .clipped()
+#if !os(macOS)
+                                .onTapGesture {
+                                    withAnimation(cardFocusSwitchingAnimation) {
+                                        if !normalCardIsOnHover {
+                                            normalCardIsOnHover = true
+                                            trainedCardIsOnHover = false
+                                        } else {
+                                            normalCardIsOnHover = false
+                                        }
+                                    }
+                                }
+#endif
+                                .onHover { isHovering in
+                                    withAnimation(cardFocusSwitchingAnimation) {
+                                        if isHovering {
+                                            normalCardIsOnHover = true
+                                            trainedCardIsOnHover = false
+                                        } else {
+                                            normalCardIsOnHover = false
+                                        }
+                                    }
+                                }
+                                .contentShape(Rectangle())
+                                
+                                WebImage(url: cardCoverAfterTrainingImageURL) { image in
+                                    image
+                                } placeholder: {
+                                    RoundedRectangle(cornerRadius: 0)
+                                        .fill(getPlaceholderColor())
+                                }
+                                .resizable()
+                                .interpolation(.high)
+                                .antialiased(true)
+                                .scaledToFill()
+                                .frame(width: proxy.size.width * CGFloat(trainedCardIsOnHover ? 0.75 : (normalCardIsOnHover ? 0.25 : 0.5)))
+                                .clipped()
+#if !os(macOS)
+                                .onTapGesture {
+                                    withAnimation(cardFocusSwitchingAnimation) {
+                                        if !trainedCardIsOnHover {
+                                            normalCardIsOnHover = false
+                                            trainedCardIsOnHover = true
+                                        } else {
+                                            trainedCardIsOnHover = false
+                                        }
+                                    }
+                                }
+#endif
+                                .onHover { isHovering in
+                                    withAnimation(cardFocusSwitchingAnimation) {
+                                        if isHovering {
+                                            normalCardIsOnHover = false
+                                            trainedCardIsOnHover = true
+                                        } else {
+                                            trainedCardIsOnHover = false
+                                        }
+                                    }
+                                }
+                                .contentShape(Rectangle())
+                            }
+                            .allowsHitTesting(true)
+                        } else {
+                            WebImage(url: cardCoverAfterTrainingImageURL) { image in
+                                image
+                            } placeholder: {
+                                RoundedRectangle(cornerRadius: cardCornerRadius)
+                                    .fill(getPlaceholderColor())
+                            }
+                            .resizable()
+                            .interpolation(.high)
+                            .antialiased(true)
+                        }
+                    } else {
+                        WebImage(url: card.coverNormalImageURL) { image in
+                            image
+                        } placeholder: {
+                            RoundedRectangle(cornerRadius: cardCornerRadius)
+                                .fill(getPlaceholderColor())
+                        }
+                        .resizable()
+                        .interpolation(.high)
+                        .antialiased(true)
+                    }
+                }
+                .cornerRadius(cardCornerRadius)
+                .scaledToFill()
+                .frame(width: proxy.size.width, height: proxy.size.height)
+                .clipped()
+                //                    .scaleEffect(0.97)
+            }
         }
     }
 }

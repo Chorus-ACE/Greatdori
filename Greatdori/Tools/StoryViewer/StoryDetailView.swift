@@ -111,16 +111,21 @@ struct StoryDetailView: View {
                                                                             .resizable()
                                                                             .frame(width: 20, height: 20)
                                                                     } else {
-                                                                        Image(systemName: "person.crop.circle.fill")
+                                                                        Image(systemName: "person.crop.circle")
+                                                                            .bold()
                                                                     }
                                                                 case .multiple:
                                                                     Image(systemName: "person.3.fill")
+                                                                        .bold()
                                                                 case .unknown:
-                                                                    Image(systemName: "person.crop.circle.badge.questionmark.fill")
+                                                                    Image(systemName: "person.crop.circle.badge.questionmark")
+                                                                        .bold()
                                                                 }
                                                                 Text(talk.characterName)
                                                                     .font(.headline)
                                                             }
+                                                            .accessibilityElement(children: .combine)
+                                                            .accessibilityLabel(talk.characterName)
                                                             Text(talk.text)
                                                                 .font(.body)
                                                                 .multilineTextAlignment(.leading)
@@ -391,7 +396,6 @@ struct ISVLayoutPickerSheet: View {
         ISVHadChosenOption = true
     }
 }
-
 
 extension _DoriAPI.Misc.StoryAsset.Transcript.Talk {
     var personGroupType: PersonGroupType {

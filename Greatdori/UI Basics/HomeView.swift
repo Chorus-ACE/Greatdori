@@ -248,7 +248,6 @@ struct HomeNewsView: View {
             }
         }())
         """)
-        .accessibilityHint("Double tap to show the full news list")
     }
 }
 
@@ -539,7 +538,6 @@ struct HomeEventsView: View {
             }
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Event")
     }
 }
 

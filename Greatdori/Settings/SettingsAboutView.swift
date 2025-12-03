@@ -85,10 +85,9 @@ struct SettingsAboutDetailIconView: View {
     let appIconSideLength: CGFloat = isMACOS ? 80 : 100
     var body: some View {
         VStack {
-            Image("MacAppIcon\(colorScheme == .dark ? "Dark" : "")")
+            Image(decorative: "MacAppIcon\(colorScheme == .dark ? "Dark" : "")")
                 .resizable()
                 .frame(width: appIconSideLength, height: appIconSideLength)
-                .accessibilityLabel("Greatdori app icon")
             Text(verbatim: "Greatdori!")
                 .bold()
                 .font(.largeTitle)

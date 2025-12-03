@@ -55,7 +55,6 @@ struct CostumeDetailOverviewView: View {
                 Live2D of character \(information.character.characterName.forPreferredLocale() ?? ""). \
                 Wearing costume named "\(information.costume.description.forPreferredLocale() ?? "")". 
                 """)
-                .accessibilityHint("Double tap to show the Live2D details.")
                 
                 // MARK: Info
                 CustomGroupBox(cornerRadius: 20) {

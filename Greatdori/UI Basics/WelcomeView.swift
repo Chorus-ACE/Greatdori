@@ -429,3 +429,14 @@ fileprivate let configuration: [AppIconWrappingFeatureImageConfiguration] = [
           size: 20,
           offset: .init(width: 90, height: -110))
     ]
+
+struct WelcomeCapsuleText: View {
+    var text: any StringProtocol
+    var body: some View {
+        ZStack {
+            Capsule()
+            Text(text)
+                .padding()
+        }
+    }
+}
