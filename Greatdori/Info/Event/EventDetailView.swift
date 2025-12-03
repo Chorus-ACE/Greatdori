@@ -180,67 +180,58 @@ struct EventDetailOverviewView: View {
                                 })
                                 
                                 if let firstKey = eventCharacterPercentageDict.keys.first, let valueArray = eventCharacterPercentageDict[firstKey], eventCharacterPercentageDict.keys.count == 1 {
-                                    ListItemWithWrappingView(title: {
+                                    ListItem {
                                         Text("Event.character")
-                                            .bold()
                                             .fixedSize(horizontal: true, vertical: true)
-                                    }, element: { value in
-                                        #if os(macOS)
-                                        if let value = value {
-                                            NavigationLink(destination: {
-                                                CharacterDetailView(id: value.characterID)
-                                            }, label: {
-                                                WebImage(url: value.iconImageURL)
-                                                    .antialiased(true)
-                                                    .resizable()
-                                                    .frame(width: imageButtonSize, height: imageButtonSize)
-                                            })
-                                            .buttonStyle(.plain)
-                                        } else {
-                                            Rectangle()
-                                                .opacity(0)
-                                                .frame(width: 0, height: 0)
-                                        }
-                                        #else
-                                        if let value = value {
-                                            Menu(content: {
-                                                NavigationLink(destination: {
-                                                    CharacterDetailView(id: value.characterID)
-                                                }, label: {
-                                                    HStack {
+                                    } value: {
+                                        HStack {
+                                            WrappingHStack(alignment: .trailing, contentWidth: imageButtonSize) {
+                                                ForEach(valueArray, id: \.self) { value in
+                                                    #if os(macOS)
+                                                    NavigationLink(destination: {
+                                                        CharacterDetailView(id: value.characterID)
+                                                    }, label: {
                                                         WebImage(url: value.iconImageURL)
                                                             .antialiased(true)
                                                             .resizable()
                                                             .frame(width: imageButtonSize, height: imageButtonSize)
-                                                        //                                                Text(char.name)
-                                                        if let name = eventCharacterNameDict[value.characterID]?.forPreferredLocale() {
-                                                            Text(name)
-                                                        } else {
-                                                            Text(verbatim: "Lorum Ipsum")
-                                                                .foregroundStyle(Color(UIColor.placeholderText))
-                                                                .redacted(reason: .placeholder)
-                                                        }
-                                                        //                                                        Spacer()
-                                                    }
-                                                })
-                                            }, label: {
-                                                WebImage(url: value.iconImageURL)
-                                                    .antialiased(true)
-                                                    .resizable()
-                                                    .frame(width: imageButtonSize, height: imageButtonSize)
-                                            })
-                                            .accessibilityLabel(eventCharacterNameDict[value.characterID]?.forPreferredLocale() ?? "")
-                                        } else {
-                                            Rectangle()
-                                                .opacity(0)
-                                                .frame(width: 0, height: 0)
+                                                    })
+                                                    .buttonStyle(.plain)
+                                                    #else
+                                                    Menu(content: {
+                                                        NavigationLink(destination: {
+                                                            CharacterDetailView(id: value.characterID)
+                                                        }, label: {
+                                                            HStack {
+                                                                WebImage(url: value.iconImageURL)
+                                                                    .antialiased(true)
+                                                                    .resizable()
+                                                                    .frame(width: imageButtonSize, height: imageButtonSize)
+                                                                if let name = eventCharacterNameDict[value.characterID]?.forPreferredLocale() {
+                                                                    Text(name)
+                                                                } else {
+                                                                    Text(verbatim: "Lorum Ipsum")
+                                                                        .foregroundStyle(Color(UIColor.placeholderText))
+                                                                        .redacted(reason: .placeholder)
+                                                                }
+                                                            }
+                                                        })
+                                                    }, label: {
+                                                        WebImage(url: value.iconImageURL)
+                                                            .antialiased(true)
+                                                            .resizable()
+                                                            .frame(width: imageButtonSize, height: imageButtonSize)
+                                                    })
+                                                    .accessibilityLabel(eventCharacterNameDict[value.characterID]?.forPreferredLocale() ?? "")
+                                                    #endif
+                                                }
+                                            }
+                                            .layoutPriority(1)
+                                            Text("+\(firstKey)%")
+                                                .lineLimit(1)
+                                                .fixedSize(horizontal: true, vertical: true)
                                         }
-                                        #endif
-                                    }, caption: {
-                                        Text("+\(firstKey)%")
-                                            .lineLimit(1)
-                                            .fixedSize(horizontal: true, vertical: true)
-                                    }, contentArray: valueArray, columnNumbers: 5, elementWidth: imageButtonSize)
+                                    }
                                 } else {
                                     // Fallback to legacy render mode
                                     ListItem(title: {
