@@ -196,7 +196,7 @@ jobs:
           mkdir ~/.private_keys
           echo "$ASCAPI_KEY" >> ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
       - name: Upload to App Store Connect
-        run: xcrun altool --upload-app -f ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }} -t ${{ matrix.destination == 'macOS' && 'macos' || 'ios' }} --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID
+        run: xcrun altool --upload-app -f ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }} -t ${{ matrix.destination == 'macOS' && 'macos' || 'ios' }} --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --output-format json
   
   export-notarize:
     name: Export Archive for Notarization
@@ -419,7 +419,7 @@ jobs:
       - name: Create date
         run: |
           DATE=$(date +"%Y/%m/%d")
-          "$DATE" > date.txt
+          echo "$DATE" > date.txt
       - name: Deploy update date
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
