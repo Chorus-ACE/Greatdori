@@ -91,6 +91,7 @@
     },
     "%@，今天生日" : {
       "comment" : "Accessibility",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -246,6 +247,7 @@
     },
     "%@的%lld星卡牌，%@" : {
       "comment" : "Accessibility",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {

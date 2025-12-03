@@ -217,5 +217,9 @@ struct CardPreviewImage: View {
         .navigationDestination(isPresented: $showCardDetailView, destination: {
             CardDetailView(id: cardNavigationDestinationID)
         })
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Accessibility.card.title-\(cardTitle.forPreferredLocale() ?? "").char-\(cardCharacterName?.forPreferredLocale() ?? "")")
+        .accessibilityCustomContent("Accessibility.card.rarity", "\(rarity)")
+        .accessibilityCustomContent("Accessibility.card.attribute", attribute.selectorText)
     }
 }

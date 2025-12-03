@@ -139,17 +139,18 @@ struct HomeNewsView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         HStack {
-                            if news != nil {
-                                Text("Home.news")
-                                    .font(.title2)
-                                    .bold()
-                            } else {
-                                Text("Home.news")
-                                    .font(.title2)
-                                    .bold()
-                                    .foregroundStyle(getPlaceholderColor())
-                                    .redacted(reason: .placeholder)
+                            Group {
+                                if news != nil {
+                                    Text("Home.news")
+                                } else {
+                                    Text("Home.news")
+                                        .foregroundStyle(getPlaceholderColor())
+                                        .redacted(reason: .placeholder)
+                                }
                             }
+                            .font(.title2)
+                            .bold()
+                            .accessibilityHeading(.h2)
                             Spacer()
                         }
                         Rectangle()
@@ -218,36 +219,36 @@ struct HomeNewsView: View {
                 }
             }
         }
-        .accessibilityLabel("""
-        Latest \(totalNewsNumber) news: \({
-            if let news {
-                var result = ""
-                for news in news.prefix(totalNewsNumber) {
-                    result += "\(news.locale?.rawValue ?? "") \(String(localized: newsItemTypeLocalizedString[news.type]!)) \(news.subject) "
-                    let timeDesc = switch news.timeMark {
-                    case .willStartAfter(let interval):
-                        String(localized: "News.time-mark.will-start-after.\(interval)")
-                    case .willEndAfter(let interval):
-                        String(localized: "News.time-mark.will-end-after.\(interval)")
-                    case .willEndToday:
-                        String(localized: "News.time-mark.will-end-today")
-                    case .hasEnded:
-                        String(localized: "News.time-mark.has-ended")
-                    case .hasPublished:
-                        String(localized: "News.time-mark.has-published")
-                    case .willStartToday:
-                        String(localized: "News.time-mark.will-start-today")
-                    @unknown default: ""
-                    }
-                    result += timeDesc
-                    result += "; "
-                }
-                return result
-            } else {
-                return "loading."
-            }
-        }())
-        """)
+//        .accessibilityLabel("""
+//        Latest \(totalNewsNumber) news: \({
+//            if let news {
+//                var result = ""
+//                for news in news.prefix(totalNewsNumber) {
+//                    result += "\(news.locale?.rawValue ?? "") \(String(localized: newsItemTypeLocalizedString[news.type]!)) \(news.subject) "
+//                    let timeDesc = switch news.timeMark {
+//                    case .willStartAfter(let interval):
+//                        String(localized: "News.time-mark.will-start-after.\(interval)")
+//                    case .willEndAfter(let interval):
+//                        String(localized: "News.time-mark.will-end-after.\(interval)")
+//                    case .willEndToday:
+//                        String(localized: "News.time-mark.will-end-today")
+//                    case .hasEnded:
+//                        String(localized: "News.time-mark.has-ended")
+//                    case .hasPublished:
+//                        String(localized: "News.time-mark.has-published")
+//                    case .willStartToday:
+//                        String(localized: "News.time-mark.will-start-today")
+//                    @unknown default: ""
+//                    }
+//                    result += timeDesc
+//                    result += "; "
+//                }
+//                return result
+//            } else {
+//                return "loading."
+//            }
+//        }())
+//        """)
     }
 }
 

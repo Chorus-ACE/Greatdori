@@ -55,5 +55,6 @@ struct UnavailableView: View {
             Spacer()
         }
         .listRowBackground(Color.clear)
+        .accessibilityElement(children: .combine)
     }
 }

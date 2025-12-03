@@ -222,6 +222,7 @@ struct SummaryViewBase<Image: View, Detail: View>: View {
                 }
             }
         }
+        .accessibilityElement(children: .contain)
     }
 }
 

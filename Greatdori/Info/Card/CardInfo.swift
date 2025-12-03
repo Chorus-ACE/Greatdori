@@ -46,30 +46,35 @@ struct CardInfo: View {
     
     var body: some View {
         SummaryViewBase(layoutType == 1 ? .horizontal : .vertical(), source: previewCard) {
-            if layoutType != 3 {
-                HStack(spacing: 5) {
-                    if isNormalCardAvailable && displayType != .trainedOnly {
-                        CardPreviewImage(previewCard)
+            Group {
+                if layoutType != 3 {
+                    HStack(spacing: 5) {
+                        if isNormalCardAvailable && displayType != .trainedOnly {
+                            CardPreviewImage(previewCard)
+                        }
+                        if previewCard.thumbAfterTrainingImageURL != nil && displayType != .normalOnly {
+                            CardPreviewImage(previewCard, showTrainedVersion: true)
+                        }
                     }
-                    if previewCard.thumbAfterTrainingImageURL != nil && displayType != .normalOnly {
-                        CardPreviewImage(previewCard, showTrainedVersion: true)
+                    .wrapIf(sizeClass == .regular) { content in
+                        content.frame(maxWidth: 200)
                     }
+                } else {
+                    CardCoverImage(previewCard, band: band)
+#if !os(macOS)
+                        .allowsHitTesting(false)
+#endif
                 }
-                .wrapIf(sizeClass == .regular) { content in
-                    content.frame(maxWidth: 200)
-                }
-            } else {
-                CardCoverImage(previewCard, band: band)
-                #if !os(macOS)
-                    .allowsHitTesting(false)
-                #endif
             }
+            .accessibilityHidden(true)
+//            .accessibialityHidden(true)
         } detail: {
             Group {
                 Text(cardCharacterName?.forPreferredLocale() ?? String(localized: "Character.unknown")) + Text("Typography.bold-dot-seperater").bold() + Text(previewCard.type.localizedString)
             }
             .foregroundStyle(.secondary)
             .font(isMACOS ? .body : .caption)
+            .accessibilityLabel(String("\(cardCharacterName?.forPreferredLocale() ?? String(localized: "Character.unknown")), \(previewCard.type.localizedString)"))
         }
         .onAppear {
             if cardCharacterName == nil { // First appear
@@ -81,12 +86,10 @@ struct CardInfo: View {
             }
             self.cardCharacterName = DoriCache.preCache.characterDetails[previewCard.characterID]?.characterName
         }
-        .accessibilityElement()
-        .accessibilityLabel("""
-        \(previewCard.prefix.forPreferredLocale() ?? ""). \
-        Card of \(cardCharacterName?.forPreferredLocale() ?? String(localized: "Character.unknown")). \
-        \(previewCard.type.localizedString). \(previewCard.attribute.selectorText).
-        """)
+        .accessibilityCustomContent("Accessibility.card.rarity", "\(previewCard.rarity)")
+        .accessibilityCustomContent("Accessibility.card.attribute", previewCard.attribute.selectorText)
+        .accessibilityCustomContent("Accessibility.card.band", band?.bandName.forPreferredLocale() ?? "")
+        .accessibilityCustomContent("Accessibility.card.type", previewCard.type.selectorText)
     }
 }
 

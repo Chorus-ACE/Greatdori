@@ -562,6 +562,8 @@ struct FilterAndSorterPicker: View {
                 }
         })
         .animation(.easeInOut(duration: 0.2), value: filterIsFiltering)
+        .accessibilityLabel("Accessibility.filter")
+        .accessibilityValue(filterIsFiltering ? "Accessibility.filter.active" : "Accessibility.filter.not-active")
         SorterPickerView(sorter: $sorter, allOptions: sorterKeywords, sortingItemsHaveEndingDate: hasEndingDate)
 #endif
     }
@@ -646,6 +648,7 @@ struct LayoutPicker<T: Hashable>: View {
                     Image(_internalSystemName: options.first(where: { $0.2 == selection })!.1)
                 })
             }
+            .accessibilityValue(options.first(where: { $0.2 == selection })!.0)
 #else
             Picker("Search.layout", selection: $selection) {
                 ForEach(options, id: \.2) { item in
@@ -755,6 +758,7 @@ struct MultilingualText: View {
                             .textSelection(.enabled)
                             .typesettingLanguage(.explicit((shownLocaleValueDict[localeValue]?.nsLocale().language) ?? Locale.current.language))
                     })
+                    .accessibilityHint("Accessibility.copiable")
                 }
             }, label: {
                 ZStack(alignment: .trailing, content: {
@@ -800,6 +804,9 @@ struct MultilingualText: View {
                 }
 #endif
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(source.forPreferredLocale() ?? "")
+        .accessibilityHint("Accessibility.multilingual")
     }
     struct MultilingualTextInternalLabel: View {
         let source: LocalizedData<String>
@@ -927,6 +934,8 @@ struct MultilingualTextForCountdown: View {
                         }, label: {
                             MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: localeValue)
                         })
+                        .accessibilityAction {}
+                        .accessibilityRemoveTraits(.isButton)
                     }
                 }
             }, label: {
@@ -973,6 +982,17 @@ struct MultilingualTextForCountdown: View {
                 }
             }
         }
+        .accessibilityElement(children: .ignore)
+        .wrapIf(true, in: {
+            if #available(iOS 18.0, macOS 15.0, *) {
+                $0.accessibilityLabel(content: { _ in
+                    MultilingualTextForCountdownInternalLabel(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, allAvailableLocales: allAvailableLocales)
+                })
+            } else {
+                $0
+            }
+        })
+        .accessibilityHint("Accessibility.multilingual")
     }
     struct MultilingualTextForCountdownInternalLabel: View {
         let startDate: LocalizedData<Date>
@@ -1022,9 +1042,6 @@ struct MultilingualTextForCountdown: View {
                 content
                     .textSelection(.disabled)
             })
-            .onAppear {
-//                print(allAvailableLocales)
-            }
         }
     }
     struct MultilingualTextForCountdownInternalNumbersView: View {
@@ -1265,6 +1282,18 @@ struct ListItem<Content1: View, Content2: View>: View {
         .onFrameChange(perform: { geometry in
             totalAvailableWidth = geometry.size.width
         })
+        .accessibilityElement(children: .contain)
+        .accessibilityElement(children: .combine)
+        
+//        .wrapIf(true, in: {
+//            if #available(iOS 18.0, macOS 15.0, *) {
+//                $0.accessibilityLabel(content: { _ in
+//                    title
+//                })
+//            } else {
+//                $0
+//            }
+//        })
     }
 }
 

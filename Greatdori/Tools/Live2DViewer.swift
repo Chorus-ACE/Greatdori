@@ -196,24 +196,24 @@ struct Live2DDetailView: View {
                         Live2DView(costume: costume) {
                             ProgressView()
                         }
-                        .accessibilityElement()
-                        .accessibilityLabel("""
-                        Live2D of character \(PreCache.current.characters.first { $0.id == costume.characterID }?.characterName.forPreferredLocale() ?? ""). \
-                        Wearing costume named "\(costume.description.forPreferredLocale() ?? "")". \
-                        Acting as the \(currentMotion != nil ? "motion named \"\(currentMotion!.name)\"" : "default motion"). \
-                        Emoting as the \(currentExpression != nil ? "expression named \"\(currentExpression!.name)\"" : "default expression").
-                        """)
+//                        .accessibilityElement()
+//                        .accessibilityLabel("""
+//                        Live2D of character \(PreCache.current.characters.first { $0.id == costume.characterID }?.characterName.forPreferredLocale() ?? ""). \
+//                        Wearing costume named "\(costume.description.forPreferredLocale() ?? "")". \
+//                        Acting as the \(currentMotion != nil ? "motion named \"\(currentMotion!.name)\"" : "default motion"). \
+//                        Emoting as the \(currentExpression != nil ? "expression named \"\(currentExpression!.name)\"" : "default expression").
+//                        """)
                     } else if let seasonalCostume {
                         Live2DView(costume: seasonalCostume) {
                             ProgressView()
                         }
-                        .accessibilityElement()
-                        .accessibilityLabel("""
-                        Live2D of character \(PreCache.current.characters.first { $0.id == seasonalCostume.characterID }?.characterName.forPreferredLocale() ?? ""). \
-                        Wearing \(seasonalCostume.seasonCostumeType.localizedString). \
-                        Acting as the \(currentMotion != nil ? "motion named \"\(currentMotion!.name)\"" : "default motion"). \
-                        Emoting as the \(currentExpression != nil ? "expression named \"\(currentExpression!.name)\"" : "default expression").
-                        """)
+//                        .accessibilityElement()
+//                        .accessibilityLabel("""
+//                        Live2D of character \(PreCache.current.characters.first { $0.id == seasonalCostume.characterID }?.characterName.forPreferredLocale() ?? ""). \
+//                        Wearing \(seasonalCostume.seasonCostumeType.localizedString). \
+//                        Acting as the \(currentMotion != nil ? "motion named \"\(currentMotion!.name)\"" : "default motion"). \
+//                        Emoting as the \(currentExpression != nil ? "expression named \"\(currentExpression!.name)\"" : "default expression").
+//                        """)
                     }
                 }
                 .scaledToFit()

@@ -492,78 +492,89 @@ struct SorterPickerView: View {
     var sortingItemsHaveEndingDate = false
     @State var isMenuPresented = false // iOS only
     var body: some View {
+        Group {
 #if os(iOS)
-        Menu(content: {
-            Picker(selection: Binding.init(get: {
-                sorter.keyword
-            }, set: {
-                if $0 == sorter.keyword {
-                    sorter.direction.reverse()
-                } else {
-                    sorter.keyword = $0
-                }
-            }), content: {
-                ForEach(_DoriFrontend.Sorter.Keyword.allCases, id: \.self) { item in
-                    // Super weird fix. Thanks to https://jeffverkoeyen.com/blog/2024/08/16/SwiftUI-Menu-subtitle-shenanigans/ for inspiration.
-                    if allOptions.contains(item) {
-                        Button(action: {}, label: {
-                            Text(item.localizedString(hasEndingDate: sortingItemsHaveEndingDate))
-                                .tag(item)
-                            if sorter.keyword == item {
-                                Text(sorter.localizedDirectionName())
-                            }
-                        })
-                    }
-                }
-            }, label: {
-                EmptyView()
-            })
-            .pickerStyle(.inline)
-            .labelsHidden()
-        }, label: {
-            Label("Sort", systemImage: "arrow.up.arrow.down")
-        })
-        #else
-        Menu(content: {
-            Section {
+            Menu(content: {
                 Picker(selection: Binding.init(get: {
                     sorter.keyword
                 }, set: {
-                    sorter.keyword = $0
+                    if $0 == sorter.keyword {
+                        sorter.direction.reverse()
+                    } else {
+                        sorter.keyword = $0
+                    }
                 }), content: {
                     ForEach(_DoriFrontend.Sorter.Keyword.allCases, id: \.self) { item in
-                        Group {
-                            if allOptions.contains(item) {
+                        // Super weird fix. Thanks to https://jeffverkoeyen.com/blog/2024/08/16/SwiftUI-Menu-subtitle-shenanigans/ for inspiration.
+                        if allOptions.contains(item) {
+                            Button(action: {}, label: {
                                 Text(item.localizedString(hasEndingDate: sortingItemsHaveEndingDate))
+                                    .tag(item)
+                                if sorter.keyword == item {
+                                    Text(sorter.localizedDirectionName())
+                                }
+                            })
+                            .wrapIf(sorter.keyword == item) {
+                                $0
+                                    .accessibilityLabel(String("\(sorter.keyword.localizedString(hasEndingDate: sortingItemsHaveEndingDate)), \(sorter.localizedDirectionName())"))
+//                                    .accessibilityLabel(String("\(sorter.localizedString(hasEndingDate: sortingItemsHaveEndingDate))"))
+                                    .accessibilityHint("Accessibility.sorter.reverse-direction")
                             }
+//                            .accessibilityValue(Text(sorter.localizedDirectionName()), isEnabled: sorter.keyword == item)
+//                            .accessibilityHint("Accessibility.sorter.reverse-direction")
                         }
-                        .tag(item)
                     }
                 }, label: {
                     EmptyView()
                 })
                 .pickerStyle(.inline)
-            }
-            
-            Section {
-                Picker(selection: Binding.init(get: {
-                    sorter.direction
-                }, set: {
-                    sorter.direction = $0
-                }), content: {
-                    Text(sorter.localizedDirectionName(direction: .descending))
-                        .tag(DoriSorter.Direction.descending)
-                    Text(sorter.localizedDirectionName(direction: .ascending))
-                        .tag(DoriSorter.Direction.ascending)
-                }, label: {
-                    EmptyView()
-                })
-                .pickerStyle(.inline)
-            }
-        }, label: {
-            Label("Sort", systemImage: "arrow.up.arrow.down")
-        })
-        .menuIndicator(.hidden)
-        #endif
+                .labelsHidden()
+            }, label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
+            })
+#else
+            Menu(content: {
+                Section {
+                    Picker(selection: Binding.init(get: {
+                        sorter.keyword
+                    }, set: {
+                        sorter.keyword = $0
+                    }), content: {
+                        ForEach(_DoriFrontend.Sorter.Keyword.allCases, id: \.self) { item in
+                            Group {
+                                if allOptions.contains(item) {
+                                    Text(item.localizedString(hasEndingDate: sortingItemsHaveEndingDate))
+                                }
+                            }
+                            .tag(item)
+                        }
+                    }, label: {
+                        EmptyView()
+                    })
+                    .pickerStyle(.inline)
+                }
+                
+                Section {
+                    Picker(selection: Binding.init(get: {
+                        sorter.direction
+                    }, set: {
+                        sorter.direction = $0
+                    }), content: {
+                        Text(sorter.localizedDirectionName(direction: .descending))
+                            .tag(DoriSorter.Direction.descending)
+                        Text(sorter.localizedDirectionName(direction: .ascending))
+                            .tag(DoriSorter.Direction.ascending)
+                    }, label: {
+                        EmptyView()
+                    })
+                    .pickerStyle(.inline)
+                }
+            }, label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
+            })
+            .menuIndicator(.hidden)
+#endif
+        }
+        .accessibilityValue(String("\(sorter.keyword.localizedString(hasEndingDate: sortingItemsHaveEndingDate)), \(sorter.localizedDirectionName())"))
     }
 }

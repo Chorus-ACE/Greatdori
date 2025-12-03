@@ -180,6 +180,7 @@ struct DetailArtsSection: View {
                                                 Spacer(minLength: 0)
                                             }
                                         }
+                                        .accessibilityAddTraits(.isImage)
                                     })
                                     .buttonStyle(.plain)
                                     .imageContextMenu([.init(url: item.url, description: item.title)])

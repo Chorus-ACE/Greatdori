@@ -203,6 +203,10 @@
 		E930F7822EE03CE100E8847F /* ISVLive2DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E930F7812EE03CDF00E8847F /* ISVLive2DView.swift */; };
 		E930F7842EE03D1B00E8847F /* ISVReliance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E930F7832EE03D0E00E8847F /* ISVReliance.swift */; };
 		E930F7862EE03D3200E8847F /* ISVBacklogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E930F7852EE03D2F00E8847F /* ISVBacklogView.swift */; };
+		E930F7A22EE0461600E8847F /* ExternalLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = E930F7A12EE0461000E8847F /* ExternalLinks.swift */; };
+		E930F7A42EE048AF00E8847F /* SongDetailOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E930F7A32EE048AE00E8847F /* SongDetailOverviewView.swift */; };
+		E930F7A62EE0540400E8847F /* EventDetailOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E930F7A52EE053FD00E8847F /* EventDetailOverviewView.swift */; };
+		E930F7A82EE0542900E8847F /* EventDetailStoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E930F7A72EE0542500E8847F /* EventDetailStoriesView.swift */; };
 		E94218F02E8AA2FF00F24974 /* CharacterDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94218EF2E8AA2FB00F24974 /* CharacterDetailView.swift */; };
 		E94218F22E8AA32000F24974 /* CharacterSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94218F12E8AA31D00F24974 /* CharacterSearchView.swift */; };
 		E94218F52E8AA38300F24974 /* CardInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94218F42E8AA38300F24974 /* CardInfo.swift */; };
@@ -670,6 +674,10 @@
 		E930F7812EE03CDF00E8847F /* ISVLive2DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISVLive2DView.swift; sourceTree = "<group>"; };
 		E930F7832EE03D0E00E8847F /* ISVReliance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISVReliance.swift; sourceTree = "<group>"; };
 		E930F7852EE03D2F00E8847F /* ISVBacklogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISVBacklogView.swift; sourceTree = "<group>"; };
+		E930F7A12EE0461000E8847F /* ExternalLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalLinks.swift; sourceTree = "<group>"; };
+		E930F7A32EE048AE00E8847F /* SongDetailOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailOverviewView.swift; sourceTree = "<group>"; };
+		E930F7A52EE053FD00E8847F /* EventDetailOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailOverviewView.swift; sourceTree = "<group>"; };
+		E930F7A72EE0542500E8847F /* EventDetailStoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailStoriesView.swift; sourceTree = "<group>"; };
 		E94218EF2E8AA2FB00F24974 /* CharacterDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDetailView.swift; sourceTree = "<group>"; };
 		E94218F12E8AA31D00F24974 /* CharacterSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSearchView.swift; sourceTree = "<group>"; };
 		E94218F42E8AA38300F24974 /* CardInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardInfo.swift; sourceTree = "<group>"; };
@@ -1252,6 +1260,7 @@
 				8C320FAE2E8BF2A5002D183A /* InfoBases.swift */,
 				8C2BD6432E9248AE00D003D1 /* ItemSelector.swift */,
 				8C3593182EDC30B5009E41AD /* CompactAudioPlayer.swift */,
+				E930F7A12EE0461000E8847F /* ExternalLinks.swift */,
 			);
 			path = "UI Basics";
 			sourceTree = "<group>";
@@ -1313,6 +1322,7 @@
 				E94219102E8AA51500F24974 /* SongInfo.swift */,
 				E94219092E8AA4AE00F24974 /* SongSearchView.swift */,
 				E942190B2E8AA4C200F24974 /* SongDetailView.swift */,
+				E930F7A32EE048AE00E8847F /* SongDetailOverviewView.swift */,
 				8CEA20C42EAB62DA009D41C5 /* SongDetailMatchView.swift */,
 				E942190D2E8AA4D200F24974 /* SongDetailGameplayView.swift */,
 				E9DA971D2ED97FA70047B464 /* SongDetailMusicMovieView.swift */,
@@ -1342,10 +1352,12 @@
 				E94219272E8AA6BA00F24974 /* EventInfoForHome.swift */,
 				E94219292E8AA6C900F24974 /* EventSearchView.swift */,
 				E942192B2E8AA6E300F24974 /* EventDetailView.swift */,
+				E930F7A52EE053FD00E8847F /* EventDetailOverviewView.swift */,
 				E91ABF452ED97BE30043CCE7 /* EventDetailGoalsView.swift */,
 				E91ABF472ED97C240043CCE7 /* EventDetailTeamsView.swift */,
 				8C3593162EDC26AB009E41AD /* EventDetailRotationMusicView.swift */,
 				8C3593052EDAD60F009E41AD /* EventDetailStageView.swift */,
+				E930F7A72EE0542500E8847F /* EventDetailStoriesView.swift */,
 				E942192E2E8AA72700F24974 /* DetailEventsSection.swift */,
 				8C2BD6452E92503800D003D1 /* EventSelector.swift */,
 			);
@@ -1831,6 +1843,7 @@
 			files = (
 				8C320FAF2E8BF2AB002D183A /* InfoBases.swift in Sources */,
 				E94219262E8AA6AD00F24974 /* EventInfo.swift in Sources */,
+				E930F7A42EE048AF00E8847F /* SongDetailOverviewView.swift in Sources */,
 				E94219132E8AA53D00F24974 /* ComicInfo.swift in Sources */,
 				E930F7822EE03CE100E8847F /* ISVLive2DView.swift in Sources */,
 				8C3DFB0E2EAF6B8D0004E1F5 /* CharacterSelector.swift in Sources */,
@@ -1847,13 +1860,16 @@
 				E94219192E8AA58800F24974 /* CostumeSearchView.swift in Sources */,
 				E94218F02E8AA2FF00F24974 /* CharacterDetailView.swift in Sources */,
 				8C3DFB102EAF84BB0004E1F5 /* CostumeSelector.swift in Sources */,
+				E930F7A22EE0461600E8847F /* ExternalLinks.swift in Sources */,
 				8C889D9C2EA1258D00FBF01D /* CommunityView.swift in Sources */,
 				E94218F72E8AA39900F24974 /* CardCoverImage.swift in Sources */,
 				8C3DFB492EB0A0960004E1F5 /* MiracleTicketView.swift in Sources */,
+				E930F7A82EE0542900E8847F /* EventDetailStoriesView.swift in Sources */,
 				E942191E2E8AA5EB00F24974 /* DetailCostumesSection.swift in Sources */,
 				8C08B8BD2E73DC8F00447B05 /* CalendarEvents.swift in Sources */,
 				E94219202E8AA60700F24974 /* DetailsCardsSection.swift in Sources */,
 				E942190A2E8AA4B000F24974 /* SongSearchView.swift in Sources */,
+				E930F7A62EE0540400E8847F /* EventDetailOverviewView.swift in Sources */,
 				E9AF51252EAC634100BB808F /* TypeNames.swift in Sources */,
 				8CB4D4712E4454890085D57A /* CardCollectionManager.swift in Sources */,
 				E942192A2E8AA6CE00F24974 /* EventSearchView.swift in Sources */,

@@ -86,6 +86,7 @@ struct CardDetailOverviewView: View {
                             .clipShape(Circle())
                             .frame(width: imageButtonSize, height: imageButtonSize)
                     }
+                    .accessibilityLabel(information.character.characterName.forPreferredLocale() ?? "")
                 })
             }
             DetailInfoItem("Card.band") {
@@ -113,6 +114,7 @@ struct CardDetailOverviewView: View {
                             .padding(.top, -1)
                     }
                 }
+                .accessibilityLabel("\(information.card.rarity)")
             }
             if let skill = allSkills.first(where: { $0.id == information.card.skillID }) {
                 DetailInfoItem("Card.skill", text: skill.maximumDescription)
