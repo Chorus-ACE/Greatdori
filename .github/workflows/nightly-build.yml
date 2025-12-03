@@ -196,8 +196,22 @@ jobs:
           mkdir ~/.private_keys
           echo "$ASCAPI_KEY" >> ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
       - name: Upload to App Store Connect
-        run: xcrun altool --upload-app -f ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }} -t ${{ matrix.destination == 'macOS' && 'macos' || 'ios' }} --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --output-format json
-  
+        id: upload
+        run: |
+          RESULT=$(xcrun altool --upload-app -f ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }} -t ${{ matrix.destination == 'macOS' && 'macos' || 'ios' }} --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --output-format json)
+          DELIVERY_UUID=$(echo "$RESULT" | awk '/^{/ {p=1} p' | jq -r '.details["delivery-uuid"]')
+          echo "DELIVERY_UUID=$DELIVERY_UUID" >> "$GITHUB_OUTPUT"
+      - name: Wait for processing
+        env:
+          DELIVERY_UUID: ${{ steps.upload.outputs.DELIVERY_UUID }}
+        run: xcrun altool --build-status --delivery-id $DELIVERY_UUID --wait --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --output-format json
+      - name: Add to TestFlight group
+        env:
+          DELIVERY_UUID: ${{ steps.upload.outputs.DELIVERY_UUID }}
+        run: |
+          JWT=$(/Applications/Xcode.app/Contents/SharedFrameworks/ContentDelivery.framework/Resources/altool --generate-jwt --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --p8-file-path ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8)
+          curl -H "Authorization: Bearer $JWT" -H 'Content-Type: application/json' "https://api.appstoreconnect.apple.com/v1/builds/$DELIVERY_UUID/relationships/betaGroups" -X POST -d '{"data": [{"type": "betaGroups", "id": "00bd1037-12b7-441e-a963-a30ba9d100a1"}]}'
+          curl -H "Authorization: Bearer $JWT" -H 'Content-Type: application/json' "https://api.appstoreconnect.apple.com/v1/betaAppReviewSubmissions" -X POST -d '{"data": {"type": "betaAppReviewSubmissions", "relationships": {"build": {"data": {"type": "builds", "id": "'"$DELIVERY_UUID"'"}}}}}'
   export-notarize:
     name: Export Archive for Notarization
     runs-on: macos-26

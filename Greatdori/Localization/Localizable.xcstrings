@@ -12,9 +12,6 @@
       },
       "shouldTranslate" : false
     },
-    "(%@)" : {
-      "shouldTranslate" : false
-    },
     "@%@" : {
       "shouldTranslate" : false
     },
@@ -67,9 +64,6 @@
       },
       "shouldTranslate" : false
     },
-    "%lf" : {
-      "shouldTranslate" : false
-    },
     "%lld" : {
       "shouldTranslate" : false
     },
@@ -80,6 +74,7 @@
 
     },
     "AnyWindow" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4798,6 +4793,7 @@
       }
     },
     "Filter.match-all.all-selected.abbr" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4842,6 +4838,7 @@
       }
     },
     "Filter.match-all.any-selected.abbr" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13242,6 +13239,7 @@
     },
     "Welcome.agreement-prompt" : {
       "comment" : "This is a Markdown text, don’t remove the Markdown syntax.",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
