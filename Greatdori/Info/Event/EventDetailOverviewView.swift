@@ -30,6 +30,9 @@ struct EventDetailOverviewView: View {
     @State var cardsContentRegularWidth: CGFloat = 0 // Fixed
     @State var cardsFixedWidth: CGFloat = 0 //Fixed
     @State var cardsUseCompactLayout = true
+    
+    @State var accessibilityNavigationTargetCard = 0
+    @State var accessibilityNavigationIsActive = false
     var dateFormatter: DateFormatter { let df = DateFormatter(); df.dateStyle = .long; df.timeStyle = .short; return df }
     var body: some View {
         Group {
@@ -123,11 +126,10 @@ struct EventDetailOverviewView: View {
                                                     .antialiased(true)
                                                     .resizable()
                                                     .frame(width: imageButtonSize, height: imageButtonSize)
-//                                                    .accessibilityElement()
-                                                    .accessibilityLabel(attribute.attribute.selectorText)
                                                 Text(verbatim: "+\(attribute.percent)%")
                                             }
                                         }
+                                        .accessibilityLabel(String("\(attribute.attribute.selectorText), +\(attribute.percent)%"))
                                     }
                                 })
                                 
@@ -137,7 +139,7 @@ struct EventDetailOverviewView: View {
                                             .bold()
                                             .fixedSize(horizontal: true, vertical: true)
                                     }, element: { value in
-                                        #if os(macOS)
+#if os(macOS)
                                         if let value = value {
                                             NavigationLink(destination: {
                                                 CharacterDetailView(id: value.characterID)
@@ -153,7 +155,7 @@ struct EventDetailOverviewView: View {
                                                 .opacity(0)
                                                 .frame(width: 0, height: 0)
                                         }
-                                        #else
+#else
                                         if let value = value {
                                             Menu(content: {
                                                 NavigationLink(destination: {
@@ -164,7 +166,6 @@ struct EventDetailOverviewView: View {
                                                             .antialiased(true)
                                                             .resizable()
                                                             .frame(width: imageButtonSize, height: imageButtonSize)
-                                                        //                                                Text(char.name)
                                                         if let name = eventCharacterNameDict[value.characterID]?.forPreferredLocale() {
                                                             Text(name)
                                                         } else {
@@ -172,7 +173,6 @@ struct EventDetailOverviewView: View {
                                                                 .foregroundStyle(Color(UIColor.placeholderText))
                                                                 .redacted(reason: .placeholder)
                                                         }
-                                                        //                                                        Spacer()
                                                     }
                                                 })
                                             }, label: {
@@ -181,18 +181,32 @@ struct EventDetailOverviewView: View {
                                                     .resizable()
                                                     .frame(width: imageButtonSize, height: imageButtonSize)
                                             })
-                                            .accessibilityLabel(eventCharacterNameDict[value.characterID]?.forPreferredLocale() ?? "")
                                         } else {
                                             Rectangle()
                                                 .opacity(0)
                                                 .frame(width: 0, height: 0)
                                         }
-                                        #endif
+#endif
                                     }, caption: {
                                         Text("+\(firstKey)%")
                                             .lineLimit(1)
                                             .fixedSize(horizontal: true, vertical: true)
                                     }, contentArray: valueArray, columnNumbers: 5, elementWidth: imageButtonSize)
+                                    //                                    .accessibilityLabel("Event.character")
+                                    .accessibilityValue("Accessibility.event.character.\(valueArray.count).\("+\(firstKey)%")")
+                                    .accessibilityAction {}
+                                    .accessibilityActions {
+                                        ForEach(valueArray, id: \.self) { item in
+                                            NavigationLink(destination: {
+                                                CharacterDetailView(id: item.characterID)
+                                            }, label: {
+                                                if let name = eventCharacterNameDict[item.characterID]?.forPreferredLocale() {
+                                                    Text(name)
+                                                }
+                                            })
+                                        }
+                                    }
+                                    .accessibilityElement(children: .combine)
                                 } else {
                                     // Fallback to legacy render mode
                                     ListItem(title: {
@@ -243,6 +257,7 @@ struct EventDetailOverviewView: View {
                                             }
                                         }
                                     })
+                                    .accessibilityValue("Accessibility.event.character.\(eventCharacterPercentageDict.keys.count)")
                                 }
                                 
                                 if let paramters = information.event.eventCharacterParameterBonus, paramters.total > 0 {
@@ -288,7 +303,32 @@ struct EventDetailOverviewView: View {
                                                 .buttonStyle(.plain)
                                             }
                                         }
+                                        .accessibilityRepresentation {
+                                            ForEach(cardsArray) { card in
+                                                NavigationLink(destination: {
+                                                    CardDetailView(id: card.id)
+                                                }, label: {
+                                                    CardPreviewImage(card, sideLength: cardThumbnailSideLength, showNavigationHints: true)
+                                                })
+                                                .buttonStyle(.plain)
+                                                .accessibilityAction {}
+                                            }
+                                        }
+                                        .accessibilityActions {
+                                            ForEach(cardsArray) { card in
+                                                NavigationLink(destination: {
+                                                    CardDetailView(id: card.id)
+                                                }, label: {
+                                                    CardPreviewImage(card, sideLength: cardThumbnailSideLength, showNavigationHints: true)
+                                                })
+                                            }
+                                        }
                                     })
+                                    .accessibilityValue("Accessibility.event.card.\(cardsArray.count)")
+                                    .accessibilityAction {}
+                                    
+//.accessibilityElement(children: .combine)
+                                    
                                 }
                                 
                                 if !rewardsArray.isEmpty {
@@ -304,9 +344,20 @@ struct EventDetailOverviewView: View {
                                             })
                                             .contentShape(Rectangle())
                                             .buttonStyle(.plain)
-                                            
                                         }
                                     })
+                                    .accessibilityValue("Accessibility.event.card.\(rewardsArray.count)")
+                                    .accessibilityAction {}
+                                    .accessibilityActions {
+                                        ForEach(rewardsArray) { card in
+                                            NavigationLink(destination: {
+                                                CardDetailView(id: card.id)
+                                            }, label: {
+                                                CardPreviewImage(card, sideLength: cardThumbnailSideLength, showNavigationHints: true)
+                                            })
+                                        }
+                                    }
+                                    .accessibilityElement(children: .combine)
                                 }
                                 
                                 ListItem(title: {

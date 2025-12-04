@@ -218,7 +218,8 @@ struct CardPreviewImage: View {
             CardDetailView(id: cardNavigationDestinationID)
         })
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Accessibility.card.title-\(cardTitle.forPreferredLocale() ?? "").char-\(cardCharacterName?.forPreferredLocale() ?? "")")
+        .accessibilityLabel("Accessibility.card.\(cardTitle.forPreferredLocale() ?? "")")
+        .accessibilityCustomContent("Accessibility.card.character", cardCharacterName?.forPreferredLocale() ?? "", importance: .high)
         .accessibilityCustomContent("Accessibility.card.rarity", "\(rarity)")
         .accessibilityCustomContent("Accessibility.card.attribute", attribute.selectorText)
     }

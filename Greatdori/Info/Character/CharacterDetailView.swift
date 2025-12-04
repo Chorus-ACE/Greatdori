@@ -262,6 +262,7 @@ struct CharacterDetailOverviewView: View {
                                 }, value: {
                                     Text(color.toHex() ?? "")
                                         .fontDesign(.monospaced)
+                                        .speechSpellsOutCharacters()
                                     RoundedRectangle(cornerRadius: 7)
                                     //                                    .aspectRatio(1, contentMode: .fit)
                                         .frame(width: 30, height: 30)

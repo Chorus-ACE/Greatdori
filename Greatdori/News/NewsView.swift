@@ -191,16 +191,16 @@ struct NewsView: View {
 
 //MARK: NewsPreview
 struct NewsPreview: View {
-    var allEvents: [PreviewEvent]?
-    var allGacha: [PreviewGacha]?
-    var allSongs: [PreviewSong]?
     @Environment(\.horizontalSizeClass) var sizeClass
-    @State var imageURL: URL? = nil
     var news: _DoriFrontend.News.ListItem
     var showLocale: Bool = true
     var showDetails: Bool = false
     var showImages: Bool = false
     var dateFormatter = DateFormatter()
+    
+    var allEvents: [PreviewEvent]?
+    var allGacha: [PreviewGacha]?
+    var allSongs: [PreviewSong]?
     init(
         allEvents: [PreviewEvent]?,
         allGacha: [PreviewGacha]?,
@@ -236,49 +236,19 @@ struct NewsPreview: View {
                 }
                 .font(.footnote)
                 .bold()
-                //            .font(.caption)
                 Text(news.subject)
                     .lineLimit(2)
                     .foregroundStyle(.primary)
                     .font(.body)
                     .bold()
+                    .typesettingLanguage(news.locale?.nsLocale().language ?? Locale.current.language, isEnabled: news.locale != nil)
                 
-                Group {
-                    switch news.timeMark {
-                    case .willStartAfter(let interval):
-                        Text("News.time-mark.will-start-after.\(interval)")
-                    case .willEndAfter(let interval):
-                        Text("News.time-mark.will-end-after.\(interval)")
-                    case .willEndToday:
-                        Text("News.time-mark.will-end-today")
-                    case .hasEnded:
-                        Text("News.time-mark.has-ended")
-                    case .hasPublished:
-                        Text("News.time-mark.has-published")
-                    case .willStartToday:
-                        Text("News.time-mark.will-start-today")
-                    @unknown default:
-                        //                    Text("")
-                        EmptyView()
-                    }
-                }
-                .foregroundStyle(.primary)
-                .font(.body)
-                .fontWeight(.light)
+                Text(getTimeMarkString(news.timeMark) ?? "")
+                    .foregroundStyle(.primary)
+                    .font(.body)
+                    .fontWeight(.light)
                 
                 if showDetails {
-                    //                    HStack {
-                    //                        //                    Text("News.author.\(news.author)")
-                    //                        Text(news.author)
-                    //                            .font(.caption)
-                    //                            .bold()
-                    //                        ForEach(0..<news.tags.count, id: \.self) { tagIndex in
-                    //                            Text("#\(news.tags[tagIndex])")
-                    //                                .font(.caption)
-                    //                            //                            .foregroundStyle(.secondary)
-                    //                        }
-                    //                        Spacer()
-                    //                    }
                     getDetailsLineString(author: news.author, tags: news.tags)
                         .foregroundStyle(.secondary)
                         .font(.caption)
@@ -288,68 +258,109 @@ struct NewsPreview: View {
             
             if showImages {
                 if sizeClass == .regular {
-                    Group {
-                        if let imageURL {
-                            WebImage(url: imageURL)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(maxHeight: news.type == .song ? 100 : 75)
-                                .cornerRadius(5)
-                        } else {
-                            Rectangle()
-                                .frame(width: 0, height: 0)
-                                .opacity(0)
-                        }
-                    }
-                    Rectangle()
-                        .frame(width: 0, height: 0)
-                        .opacity(0)
-                        .wrapIf({ if case .event = news.type { true } else { false } }()) { content in
-                            content
-                                .onAppear {
-                                    if let allEvents {
-                                        imageURL = allEvents.first { $0.id == news.relatedID }?.logoImageURL(in: news.locale ?? .jp) ?? nil
-                                    }
-                                }
-                                .onChange(of: allEvents) {
-                                    if imageURL == nil, let allEvents {
-                                        imageURL = allEvents.first { $0.id == news.relatedID }?.logoImageURL(in: news.locale ?? .jp) ?? nil
-                                    }
-                                }
-                        }
-                        .wrapIf({ if case .gacha = news.type { true } else { false } }()) { content in
-                            content
-                                .onAppear {
-                                    if let allGacha {
-                                        imageURL = allGacha.first { $0.id == news.relatedID }?.logoImageURL(in: news.locale ?? .jp) ?? nil
-                                    }
-                                }
-                                .onChange(of: allEvents) {
-                                    if imageURL == nil, let allGacha {
-                                        imageURL = allGacha.first { $0.id == news.relatedID }?.logoImageURL(in: news.locale ?? .jp) ?? nil
-                                    }
-                                }
-                        }
-                        .wrapIf({ if case .song = news.type { true } else { false } }()) { content in
-                            content
-                                .onAppear {
-                                    if let allSongs {
-                                        imageURL = allSongs.first { $0.id == news.relatedID }?.jacketImageURL(in: news.locale ?? .jp) ?? nil
-                                    }
-                                }
-                                .onChange(of: allEvents) {
-                                    if imageURL == nil, let allSongs {
-                                        imageURL = allSongs.first { $0.id == news.relatedID }?.jacketImageURL(in: news.locale ?? .jp) ?? nil
-                                    }
-                                }
-                        }
+                    NewsImageView(news: news, allEvents: allEvents, allGacha: allGacha, allSongs: allSongs)
                 }
             }
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(getAccessibilityLabel(news))
+        .accessibilityCustomContent("Accessibility.news.release-date", dateFormatter.string(from: news.timestamp), importance: .high)
+        .accessibilityCustomContent("Accessibility.news.type", newsItemTypeLocalizedString[news.type]!)
+        .accessibilityCustomContent("Accessibility.news.type", news.locale?.rawValue.uppercased() ?? "")
+        .accessibilityCustomContent("Accessibility.news.tags", news.tags.joined(separator: ", "))
+        .accessibilityCustomContent("Accessibility.news.author", news.author)
     }
     func getDetailsLineString(author: String, tags: [String], separator: String = "  ") -> SwiftUI.Text {
         let tagsCombined = news.tags.map { "#\($0)" }.joined(separator: separator)
         return Text(author).bold() + Text(separator) + Text(tagsCombined)
+    }
+    func getAccessibilityLabel(_ news: _DoriFrontend.News.ListItem) -> Text {
+        return Text(news.subject) + Text(verbatim: " ") + Text(getTimeMarkString(news.timeMark) ?? "") + Text(verbatim: ", \(news.locale?.rawValue ?? "")")
+    }
+}
+
+struct NewsImageView: View {
+    var news: _DoriFrontend.News.ListItem
+    var allEvents: [PreviewEvent]?
+    var allGacha: [PreviewGacha]?
+    var allSongs: [PreviewSong]?
+    
+    @State var imageURL: URL? = nil
+    var body: some View {
+        Group {
+            if let imageURL {
+                WebImage(url: imageURL)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: news.type == .song ? 100 : 75)
+                    .cornerRadius(5)
+            } else {
+                Rectangle()
+                    .frame(width: 0, height: 0)
+                    .opacity(0)
+            }
+        }
+        Rectangle()
+            .frame(width: 0, height: 0)
+            .opacity(0)
+            .wrapIf({ if case .event = news.type { true } else { false } }()) { content in
+                content
+                    .onAppear {
+                        if let allEvents {
+                            imageURL = allEvents.first { $0.id == news.relatedID }?.logoImageURL(in: news.locale ?? .jp) ?? nil
+                        }
+                    }
+                    .onChange(of: allEvents) {
+                        if imageURL == nil, let allEvents {
+                            imageURL = allEvents.first { $0.id == news.relatedID }?.logoImageURL(in: news.locale ?? .jp) ?? nil
+                        }
+                    }
+            }
+            .wrapIf({ if case .gacha = news.type { true } else { false } }()) { content in
+                content
+                    .onAppear {
+                        if let allGacha {
+                            imageURL = allGacha.first { $0.id == news.relatedID }?.logoImageURL(in: news.locale ?? .jp) ?? nil
+                        }
+                    }
+                    .onChange(of: allEvents) {
+                        if imageURL == nil, let allGacha {
+                            imageURL = allGacha.first { $0.id == news.relatedID }?.logoImageURL(in: news.locale ?? .jp) ?? nil
+                        }
+                    }
+            }
+            .wrapIf({ if case .song = news.type { true } else { false } }()) { content in
+                content
+                    .onAppear {
+                        if let allSongs {
+                            imageURL = allSongs.first { $0.id == news.relatedID }?.jacketImageURL(in: news.locale ?? .jp) ?? nil
+                        }
+                    }
+                    .onChange(of: allEvents) {
+                        if imageURL == nil, let allSongs {
+                            imageURL = allSongs.first { $0.id == news.relatedID }?.jacketImageURL(in: news.locale ?? .jp) ?? nil
+                        }
+                    }
+            }
+    }
+}
+
+func getTimeMarkString(_ timeMark: _DoriFrontend.News.ListItem.TimeMark) -> LocalizedStringResource? {
+    switch timeMark {
+    case .willStartAfter(let interval):
+        return "News.time-mark.will-start-after.\(interval)"
+    case .willEndAfter(let interval):
+        return "News.time-mark.will-end-after.\(interval)"
+    case .willEndToday:
+        return "News.time-mark.will-end-today"
+    case .hasEnded:
+        return "News.time-mark.has-ended"
+    case .hasPublished:
+        return "News.time-mark.has-published"
+    case .willStartToday:
+        return "News.time-mark.will-start-today"
+    @unknown default:
+        return nil
     }
 }
 

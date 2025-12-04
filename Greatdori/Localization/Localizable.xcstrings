@@ -58,6 +58,16 @@
     "+%lld%%" : {
       "shouldTranslate" : false
     },
+    "Accessibility.card.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card, %@"
+          }
+        }
+      }
+    },
     "Accessibility.card.attribute" : {
       "localizations" : {
         "en" : {
@@ -78,22 +88,22 @@
         }
       }
     },
+    "Accessibility.card.character" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Character"
+          }
+        }
+      }
+    },
     "Accessibility.card.rarity" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rarity"
-          }
-        }
-      }
-    },
-    "Accessibility.card.title-%@.char-%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Card %1$@, %2$@."
           }
         }
       }
@@ -118,12 +128,88 @@
         }
       }
     },
+    "Accessibility.event.card.%lld" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "total %lld card"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "total %lld cards"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Accessibility.event.character.%lld" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "total %lld character"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "total %lld characters"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Accessibility.event.character.%lld.%@" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "total %lld character, %@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "total %lld characters, %@"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Accessibility.filter" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Filter"
+          }
+        }
+      }
+    },
+    "Accessibility.filter.activated" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected"
           }
         }
       }
@@ -148,12 +234,122 @@
         }
       }
     },
+    "Accessibility.filter.selections-toggle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selection State"
+          }
+        }
+      }
+    },
+    "Accessibility.filter.selections-toggle.hint.deselect-all" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double tap to deselect all."
+          }
+        }
+      }
+    },
+    "Accessibility.filter.selections-toggle.hint.select-all" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double tap to select all."
+          }
+        }
+      }
+    },
+    "Accessibility.filter.selections-toggle.value.all-selected" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All Selected"
+          }
+        }
+      }
+    },
+    "Accessibility.filter.selections-toggle.value.none-selected" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None Selected"
+          }
+        }
+      }
+    },
+    "Accessibility.filter.selections-toggle.value.partially-selected" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partially Selected"
+          }
+        }
+      }
+    },
+    "Accessibility.filter.tap-to-toggle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double tap to toggle."
+          }
+        }
+      }
+    },
     "Accessibility.multilingual" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Multilingual info available."
+            "value" : "Double tap to see multilingual info."
+          }
+        }
+      }
+    },
+    "Accessibility.news.author" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Author"
+          }
+        }
+      }
+    },
+    "Accessibility.news.release-date" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Release Date"
+          }
+        }
+      }
+    },
+    "Accessibility.news.tags" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tags"
+          }
+        }
+      }
+    },
+    "Accessibility.news.type" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
           }
         }
       }

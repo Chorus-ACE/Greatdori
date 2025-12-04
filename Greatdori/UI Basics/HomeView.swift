@@ -132,9 +132,9 @@ struct HomeNewsView: View {
     }
     let totalNewsNumber = 4
     var body: some View {
-        Button(action: {
-            homeNavigate(to: .news)
-        }, label: {
+//        Button(action: {
+//            
+//        }, label: {
             CustomGroupBox {
                 HStack {
                     VStack(alignment: .leading) {
@@ -156,7 +156,6 @@ struct HomeNewsView: View {
                         Rectangle()
                             .frame(height: 1)
                             .opacity(0)
-                            .accessibilityHidden(true)
                         if let news {
                             ForEach(0..<news.prefix(totalNewsNumber).count, id: \.self) { newsIndex in
                                 NewsPreview(allEvents: allEvents, allGacha: allGacha, allSongs: allSongs, news: news[newsIndex])
@@ -188,7 +187,8 @@ struct HomeNewsView: View {
                     Spacer()
                 }
             }
-        })
+            .accessibilityElement(children: .contain)
+//        })
         .animation(.easeInOut(duration: loadingAnimationDuration), value: news?.count)
         .buttonStyle(.plain)
         .foregroundStyle(.primary)
@@ -219,36 +219,9 @@ struct HomeNewsView: View {
                 }
             }
         }
-//        .accessibilityLabel("""
-//        Latest \(totalNewsNumber) news: \({
-//            if let news {
-//                var result = ""
-//                for news in news.prefix(totalNewsNumber) {
-//                    result += "\(news.locale?.rawValue ?? "") \(String(localized: newsItemTypeLocalizedString[news.type]!)) \(news.subject) "
-//                    let timeDesc = switch news.timeMark {
-//                    case .willStartAfter(let interval):
-//                        String(localized: "News.time-mark.will-start-after.\(interval)")
-//                    case .willEndAfter(let interval):
-//                        String(localized: "News.time-mark.will-end-after.\(interval)")
-//                    case .willEndToday:
-//                        String(localized: "News.time-mark.will-end-today")
-//                    case .hasEnded:
-//                        String(localized: "News.time-mark.has-ended")
-//                    case .hasPublished:
-//                        String(localized: "News.time-mark.has-published")
-//                    case .willStartToday:
-//                        String(localized: "News.time-mark.will-start-today")
-//                    @unknown default: ""
-//                    }
-//                    result += timeDesc
-//                    result += "; "
-//                }
-//                return result
-//            } else {
-//                return "loading."
-//            }
-//        }())
-//        """)
+        .onTapGesture {
+            homeNavigate(to: .news)
+        }
     }
 }
 

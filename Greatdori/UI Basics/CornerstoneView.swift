@@ -924,17 +924,15 @@ struct MultilingualTextForCountdown: View {
     
     var body: some View {
         Group {
-#if !os(macOS)
+#if os(iOS)
             Menu(content: {
                 VStack(alignment: .trailing) {
                     ForEach(allAvailableLocales, id: \.self) { localeValue in
                         Button(action: {
-//                            copyStringToClipboard(getCountdownLocalizedString(source, forLocale: localeValue) ?? LocalizedStringResource(""))
                             showCopyMessage = true
                         }, label: {
                             MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: localeValue)
                         })
-                        .accessibilityAction {}
                         .accessibilityRemoveTraits(.isButton)
                     }
                 }
@@ -1365,6 +1363,7 @@ struct ListItemWithWrappingView<Content1: View, Content2: View, Content3: View, 
                         fixedWidth = (CGFloat(contentArray.count)*elementWidth) + titleWidth + captionWidth
                     })
             }
+            .accessibilityElement(children: .contain)
         })
         .onAppear {
             fixedWidth = (CGFloat(contentArray.count)*elementWidth) + titleWidth + captionWidth
@@ -1421,6 +1420,11 @@ struct WrappingHStack<Content: View>: View {
                 .environment(\.layoutDirection, alignment != .trailing ? layoutDirection : layoutDirection == .leftToRight ? .leftToRight : .rightToLeft)
         }
         .environment(\.layoutDirection, alignment != .trailing ? layoutDirection : layoutDirection == .leftToRight ? .rightToLeft : .leftToRight)
+//        .accessibilityRepresentation {
+//            makeContent()
+//        }
+//        .accessibilityAction {}
+//        .accessibilityElement(children: .combine)
     }
 }
 

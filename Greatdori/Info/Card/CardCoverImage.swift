@@ -101,7 +101,8 @@ struct CardCoverImage: View {
         }
         .cornerRadius(cardCornerRadius)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Accessibility.card.title-\(card.prefix.forPreferredLocale() ?? "").char-\(characterName?.forPreferredLocale() ?? "")")
+        .accessibilityLabel("Accessibility.card.\(card.prefix.forPreferredLocale() ?? "")")
+        .accessibilityCustomContent("Accessibility.card.character", Text(characterName?.forPreferredLocale() ?? ""), importance: .high)
         .accessibilityCustomContent("Accessibility.card.rarity", "\(card.rarity)")
         .accessibilityCustomContent("Accessibility.card.attribute", card.attribute.selectorText)
         .accessibilityCustomContent("Accessibility.card.band", band?.bandName.forPreferredLocale() ?? "")
@@ -111,39 +112,7 @@ struct CardCoverImage: View {
             card.coverAfterTrainingImageURL != nil ? .init(url: card.coverAfterTrainingImageURL!, description: "Image.card.trained") : nil
         ].compactMap { $0 }) {
             if showNavigationHints {
-                VStack {
-                    Button(action: {
-                        // cardNavigationDestinationID = card.id
-                        showCardDetailView = true
-                    }, label: {
-#if os(iOS)
-                        if let title = card.prefix.forPreferredLocale(), let character = characterName?.forPreferredLocale() {
-                            Group {
-                                Text(title)
-                                Group {
-                                    Text("\(character)") + Text("Typography.bold-dot-seperater").bold() +  Text(card.type.localizedString)
-                                }
-                                .font(.caption)
-                            }
-                        } else {
-                            Group {
-                                Text(verbatim: "Lorem ipsum dolor")
-                                Text(verbatim: "Lorem ipsum")
-                                    .font(.caption)
-                            }
-                            .redacted(reason: .placeholder)
-                        }
-#else
-                        if let title = card.prefix.forPreferredLocale() {
-                            Label(title, systemImage: "info.circle")
-                        } else {
-                            Text(verbatim: "Lorem ipsum dolor")
-                                .redacted(reason: .placeholder)
-                        }
-#endif
-                    })
-                    .disabled(card.prefix.forPreferredLocale() == nil ||  characterName?.forPreferredLocale() == nil)
-                }
+                CardCoverNavigationHints(showCardDetailView: $showCardDetailView, card: card, characterName: characterName)
             }
         }
         .navigationDestination(isPresented: $showCardDetailView, destination: {
@@ -313,6 +282,48 @@ struct CardCoverImageBorder: View {
                 .clipped()
                 //                    .scaleEffect(0.97)
             }
+        }
+    }
+}
+
+// MARK: CardCoverNavigationHints
+struct CardCoverNavigationHints: View {
+    @Binding var showCardDetailView: Bool
+    var card: PreviewCard
+    var characterName: LocalizedData<String>?
+    var body: some View {
+        VStack {
+            Button(action: {
+                // cardNavigationDestinationID = card.id
+                showCardDetailView = true
+            }, label: {
+#if os(iOS)
+                if let title = card.prefix.forPreferredLocale(), let character = characterName?.forPreferredLocale() {
+                    Group {
+                        Text(title)
+                        Group {
+                            Text("\(character)") + Text("Typography.bold-dot-seperater").bold() +  Text(card.type.localizedString)
+                        }
+                        .font(.caption)
+                    }
+                } else {
+                    Group {
+                        Text(verbatim: "Lorem ipsum dolor")
+                        Text(verbatim: "Lorem ipsum")
+                            .font(.caption)
+                    }
+                    .redacted(reason: .placeholder)
+                }
+#else
+                if let title = card.prefix.forPreferredLocale() {
+                    Label(title, systemImage: "info.circle")
+                } else {
+                    Text(verbatim: "Lorem ipsum dolor")
+                        .redacted(reason: .placeholder)
+                }
+#endif
+            })
+            .disabled(card.prefix.forPreferredLocale() == nil || characterName?.forPreferredLocale() == nil)
         }
     }
 }

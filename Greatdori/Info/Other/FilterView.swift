@@ -78,11 +78,12 @@ struct FilterItemView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if key.selector.type == .multiple {
-                //MARK: Title Part
+                // MARK: Title Part
                 HStack {
                     VStack {
                         Text(key.localizedString)
                             .bold()
+                            .accessibilityHeading(.h2)
                     }
                     if key == .character && allKeys.contains(.characterRequiresMatchAll) {
                         Menu(content: {
@@ -109,6 +110,7 @@ struct FilterItemView: View {
                         .onChange(of: characterRequiresMatchAll, {
                             filter.characterRequiresMatchAll = characterRequiresMatchAll
                         })
+                        .accessibilityLabel(Text(getAttributedStringForMatchAll(isAllSelected: characterRequiresMatchAll)))
                     }
                     Spacer()
                     Button(action: {
@@ -136,22 +138,57 @@ struct FilterItemView: View {
                             let allCases = key.selector.items.map { $0.item.value }
                             if let filterSet = filter[key] as? Set<AnyHashable> {
                                 if key == .band && allKeys.contains(.bandMatchesOthers) {
-                                    CompactToggle(isLit: (filterSet.count == allCases.count && filter.bandMatchesOthers == .includeOthers) ? true : (filterSet.count == 0 && filter.bandMatchesOthers == .excludeOthers ? false : nil))
+                                    let selectionStatus = (filterSet.count == allCases.count && filter.bandMatchesOthers == .includeOthers) ? true : (filterSet.count == 0 && filter.bandMatchesOthers == .excludeOthers ? false : nil)
+                                    CompactToggle(isLit: selectionStatus)
+                                        .accessibilityValue({
+                                            if selectionStatus == true {
+                                                return "Accessibility.filter.selections-toggle.value.all-selected"
+                                            } else if selectionStatus == false {
+                                                return "Accessibility.filter.selections-toggle.value.none-selected"
+                                            } else {
+                                                return "Accessibility.filter.selections-toggle.value.partially-selected"
+                                            }
+                                        }())
+                                        .accessibilityHint({
+                                            if selectionStatus == false {
+                                                return "Accessibility.filter.selections-toggle.hint.select-all"
+                                            } else {
+                                                return "Accessibility.filter.selections-toggle.hint.deselect-all"
+                                            }
+                                        }())
                                 } else {
-                                    CompactToggle(isLit: (filterSet.count == allCases.count) ? true : (filterSet.count == 0 ? false : nil))
+                                    let selectionStatus = (filterSet.count == allCases.count) ? true : (filterSet.count == 0 ? false : nil)
+                                    CompactToggle(isLit: selectionStatus)
+                                        .accessibilityValue({
+                                            if selectionStatus == true {
+                                                return "Accessibility.filter.selections-toggle.value.all-selected"
+                                            } else if selectionStatus == false {
+                                                return "Accessibility.filter.selections-toggle.value.none-selected"
+                                            } else {
+                                                return "Accessibility.filter.selections-toggle.value.partially-selected"
+                                            }
+                                        }())
+                                        .accessibilityHint({
+                                            if selectionStatus == false {
+                                                return "Accessibility.filter.selections-toggle.hint.select-all"
+                                            } else {
+                                                return "Accessibility.filter.selections-toggle.hint.deselect-all"
+                                            }
+                                        }())
                                 }
                             }
                         }
                         .foregroundStyle(.secondary)
+                        .accessibilityLabel("Accessibility.filter.selections-toggle")
                     })
                     .buttonStyle(.plain)
                 }
                 
-                //MARK: Picker Part
+                // MARK: Picker Part
                 // Multiple Selection
                 if key.selector.items.first?.imageURL != nil && key != .server {
                     // `.server` is not expected to use flags in Greatdori!.
-                    //MARK: Image Selection
+                    // MARK: Image Selection
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: filterItemHeight))]/*, spacing: 3*/) {
                         ForEach((key == .band && allKeys.contains(.bandMatchesOthers)) ? key.selector.items + [_DoriFrontend.Filter.Key.bandMatchesOthers.selector.items.first!] : key.selector.items, id: \.self) { item in
                             Group {
@@ -181,6 +218,9 @@ struct FilterItemView: View {
                                         }
                                         .contentShape(Circle())
                                     })
+                                    .wrapIf(((filter[key] as? Set<AnyHashable>)?.contains(item.item.value) == true), in: {
+                                        $0.accessibilityValue("Accessibility.filter.activated")
+                                    })
                                 } else {
                                     Button(action: {
                                         withAnimation(.easeInOut(duration: 0.05)) {
@@ -209,14 +249,18 @@ struct FilterItemView: View {
                                         }
                                         .contentShape(Circle())
                                     })
+                                    .wrapIf(filter.bandMatchesOthers == .includeOthers, in: {
+                                        $0.accessibilityValue("Accessibility.filter.activated")
+                                    })
                                 }
                             }
                             .buttonStyle(.plain)
-                            .accessibilityValue(Text(item.text))
+                            .accessibilityLabel(Text(item.text))
+                            .accessibilityHint("Accessibility.filter.tap-to-toggle")
                         }
                     }
                 } else {
-                    //MARK: Text Selection
+                    // MARK: Text Selection
                     FlowLayout(items: key.selector.items, verticalSpacing: flowLayoutDefaultVerticalSpacing, horizontalSpacing: flowLayoutDefaultHorizontalSpacing) { item in
                         Button(action: {
                             //                                withAnimation(.easeInOut(duration: 0.05)) {
@@ -236,10 +280,14 @@ struct FilterItemView: View {
                             //                                .animation(.easeInOut(duration: 0.05))
                         })
                         .buttonStyle(.plain)
+                        .wrapIf(((filter[key] as? Set<AnyHashable>)?.contains(item.item.value) == true), in: {
+                            $0.accessibilityValue("Accessibility.filter.activated")
+                        })
+                        .accessibilityHint("Accessibility.filter.tap-to-toggle")
                     }
                 }
             } else {
-                //MARK: Single Selection
+                // MARK: Single Selection
                 if key == .skill {
                     Group {
 #if os(iOS)
@@ -318,6 +366,7 @@ struct FilterItemView: View {
                                         filter.level = Int(level)
                                     })
                                     .labelsHidden()
+                                    .accessibilityHidden(true)
                                 }
                                 
                             }
