@@ -22,21 +22,25 @@ struct CardDetailStoriesView: View {
         if !information.card.episodes.isEmpty {
             LazyVStack(pinnedViews: .sectionHeaders) {
                 Section {
-                    ForEach(Array(information.card.episodes.enumerated()), id: \.element.id) { index, story in
-                        if let title = story.title.forLocale(locale) {
-                            StoryCardView(
-                                story: CustomStory(
-                                    scenarioID: story.scenarioID,
-                                    caption: story.episodeType.localizedString,
-                                    title: title,
-                                    synopsis: "",
-                                    voiceAssetBundleName: nil
-                                ),
-                                type: .event,
-                                locale: locale,
-                                unsafeAssociatedID: information.card.resourceSetName
-                            )
+                    if information.card.episodes[0].title.forLocale(locale) != nil {
+                        ForEach(Array(information.card.episodes.enumerated()), id: \.element.id) { index, story in
+                            if let title = story.title.forLocale(locale) {
+                                StoryCardView(
+                                    story: CustomStory(
+                                        scenarioID: story.scenarioID,
+                                        caption: story.episodeType.localizedString,
+                                        title: title,
+                                        synopsis: "",
+                                        voiceAssetBundleName: nil
+                                    ),
+                                    type: .event,
+                                    locale: locale,
+                                    unsafeAssociatedID: information.card.resourceSetName
+                                )
+                            }
                         }
+                    } else {
+                        DetailUnavailableView(title: "Details.unavailable.story", symbol: "books.vertical")
                     }
                 } header: {
                     HStack {

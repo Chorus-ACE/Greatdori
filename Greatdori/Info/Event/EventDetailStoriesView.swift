@@ -23,14 +23,18 @@ struct EventDetailStoriesView: View {
         if !information.event.stories.isEmpty {
             LazyVStack(pinnedViews: .sectionHeaders) {
                 Section {
-                    ForEach(Array(information.event.stories.enumerated()), id: \.element.scenarioID) { index, story in
-                        StoryCardView(
-                            story: .init(story),
-                            type: .event,
-                            locale: locale,
-                            unsafeAssociatedID: String(information.event.id),
-                            unsafeSecondaryAssociatedID: String(index)
-                        )
+                    if information.event.stories[0].caption.forLocale(locale) != nil {
+                        ForEach(Array(information.event.stories.enumerated()), id: \.element.scenarioID) { index, story in
+                            StoryCardView(
+                                story: .init(story),
+                                type: .event,
+                                locale: locale,
+                                unsafeAssociatedID: String(information.event.id),
+                                unsafeSecondaryAssociatedID: String(index)
+                            )
+                        }
+                    } else {
+                        DetailUnavailableView(title: "Details.unavailable.story", symbol: "star.hexagon")
                     }
                 } header: {
                     HStack {
