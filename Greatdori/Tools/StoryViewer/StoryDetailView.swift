@@ -22,7 +22,7 @@ struct StoryDetailView: View {
     var scenarioID: String
     var voiceAssetBundleName: String?
     var type: StoryType
-    var locale: _DoriAPI.Locale
+    @State var locale: _DoriAPI.Locale
     var unsafeAssociatedID: String // WTF --@WindowsMEMZ
     var unsafeSecondaryAssociatedID: String?
     @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
@@ -31,6 +31,7 @@ struct StoryDetailView: View {
     @State var isvLayoutSelectionSheetIsDisplaying = false
     @State var asset: _DoriAPI.Misc.StoryAsset?
     @State var transcript: [_DoriAPI.Misc.StoryAsset.Transcript]?
+    @State var isAssetUnavailable = false
     @State var audioPlayer = AVPlayer()
     @State var interactivePlayerIsInFullScreen = false
     @State var screenWidth: CGFloat = 0
@@ -173,7 +174,12 @@ struct StoryDetailView: View {
                 }
             } else {
                 ExtendedConstraints {
-                    ProgressView()
+                    if !isAssetUnavailable {
+                        ProgressView()
+                            .controlSize(.large)
+                    } else {
+                        ContentUnavailableView("Story.unavailable", systemImage: "books.vertical")
+                    }
                 }
             }
         }
@@ -194,6 +200,14 @@ struct StoryDetailView: View {
                 }, label: {
                     Image(systemName: "triangle")
                 })
+            }
+            ToolbarItem {
+                LocalePicker($locale)
+                    .onChange(of: locale) {
+                        Task {
+                            await loadTranscript()
+                        }
+                    }
             }
             #if os(macOS)
             if AppFlag.DEBUG {
@@ -229,7 +243,10 @@ struct StoryDetailView: View {
     }
     
     func loadTranscript() async {
-        asset = switch type {
+        isAssetUnavailable = false
+        asset = nil
+        transcript = nil
+        let newAsset = switch type {
         case .event:
             await _DoriAPI.Misc.eventStoryAsset(
                 eventID: Int(unsafeAssociatedID)!,
@@ -265,7 +282,12 @@ struct StoryDetailView: View {
                 locale: locale
             )
         }
-        transcript = asset?.transcript
+        if let newAsset {
+            asset = newAsset
+            transcript = newAsset.transcript
+        } else {
+            isAssetUnavailable = true
+        }
     }
     
     #if os(macOS)

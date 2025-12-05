@@ -496,7 +496,13 @@ struct DismissButton<L: View>: View {
 // MARK: ExtendedConstraints
 struct ExtendedConstraints<Content: View>: View {
     var isActive: Bool = true
-    let content: () -> Content
+    var content: () -> Content
+    
+    init(isActive: Bool = true, @ViewBuilder content: @escaping () -> Content) {
+        self.isActive = isActive
+        self.content = content
+    }
+    
     var body: some View {
         if isActive {
             VStack {
