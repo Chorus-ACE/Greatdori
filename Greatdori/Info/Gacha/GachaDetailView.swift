@@ -166,11 +166,11 @@ struct GachaDetailOverviewView: View {
                         
                         // MARK: Spotlight Card
                         if !information.pickupCards.isEmpty {
-                            ListItem(displayMode: .compactOnly, title: {
+                            ListItem {
                                 Text("Gacha.spotlight-card")
                                     .bold()
-                            }, value: {
-                                WrappingHStack(columnSpacing: 3, contentWidth: cardThumbnailSideLength) {
+                            } value: {
+                                WrappingHStack(alignment: .trailing, contentWidth: cardThumbnailSideLength) {
                                     ForEach(information.pickupCards) { card in
                                         NavigationLink(destination: {
                                             CardDetailView(id: card.id)
@@ -180,7 +180,8 @@ struct GachaDetailOverviewView: View {
                                         .buttonStyle(.plain)
                                     }
                                 }
-                            })
+                                .layoutPriority(1)
+                            }
                             Divider()
                         }
                         
