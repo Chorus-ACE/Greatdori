@@ -37,20 +37,22 @@ struct SettingsDocumentButton<L: View>: View {
             SettingsDocumentView(document: document)
         })
         .sheet(isPresented: $sheetIsDisplayed, content: {
-            SettingsDocumentView(document: document)
-                .toolbar {
-#if os(macOS)
-                    ToolbarItem(placement: .cancellationAction) {
-                        DismissButton(label: {
-                            Text("Settings.document.close")
-                        })
+            NavigationStack {
+                SettingsDocumentView(document: document)
+                    .toolbar {
+                        #if os(macOS)
+                        ToolbarItem(placement: .cancellationAction) {
+                            DismissButton {
+                                Text("Settings.document.close")
+                            }
+                        }
+                        #else
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Label("Settings.document.close", systemImage: "xmark")
+                        }
+                        #endif
                     }
-#else
-                    ToolbarItem(placement: .topBarTrailing, content: {
-                        Label("Settings.document.close", systemImage: "xmark")
-                    })
-#endif
-                }
+            }
         })
     }
     
