@@ -19,18 +19,25 @@ import SwiftUI
 
 // MARK: DetailsEventsSection
 struct DetailsEventsSection: View {
-    var events: [PreviewEvent]?
+    var events: LocalizedData<[PreviewEvent]>?
     var event: LocalizedData<PreviewEvent>?
     var sources: LocalizedData<Set<ExtendedCard.Source>>?
     var applyLocaleFilter: Bool = false
     @State var locale: DoriLocale = DoriLocale.primaryLocale
-    @State var eventsFromList: [PreviewEvent] = []
-    @State var eventsFromSources: [PreviewEvent] = []
+    @State var eventsFromList = LocalizedData<[PreviewEvent]>(forEveryLocale: nil)
+    @State var eventsFromSources = LocalizedData<[PreviewEvent]>(forEveryLocale: nil)
     @State var pointsDict: [PreviewEvent: Int] = [:]
     @State var showAll = false
     @State var sourcePreference: Int
     
     init(events: [PreviewEvent], applyLocaleFilter: Bool = false) {
+        self.events = .init(forEveryLocale: events)
+        self.event = nil
+        self.sources = nil
+        self.applyLocaleFilter = applyLocaleFilter
+        self.sourcePreference = 0
+    }
+    init(events: LocalizedData<[PreviewEvent]>, applyLocaleFilter: Bool = false) {
         self.events = events
         self.event = nil
         self.sources = nil
@@ -74,18 +81,18 @@ struct DetailsEventsSection: View {
     }
     
     func handleEvents() {
-        eventsFromList = []
-        eventsFromSources = []
+        eventsFromList = .init(forEveryLocale: nil)
+        eventsFromSources = .init(forEveryLocale: nil)
         pointsDict = [:]
         
         if sourcePreference == 0 {
             if let events {
-                eventsFromList = events.sorted(withDoriSorter: _DoriFrontend.Sorter(keyword: .releaseDate(in: applyLocaleFilter ? locale : .jp)))
-                if applyLocaleFilter {
-                    eventsFromList = eventsFromList.filter{$0.startAt.availableInLocale(locale)}
+                eventsFromList = events.map {
+                    $0?.sorted(withDoriSorter: _DoriFrontend.Sorter(keyword: .releaseDate(in: applyLocaleFilter ? locale : .jp)))
                 }
             }
         } else {
+            var eventsFromSources: [PreviewEvent] = []
             if let sources {
                 for item in Array(sources.forLocale(locale) ?? Set()) {
                     switch item {
@@ -102,14 +109,7 @@ struct DetailsEventsSection: View {
             if let localEvent = event?.forLocale(locale), !eventsFromSources.contains(localEvent) {
                 eventsFromSources.insert(localEvent, at: 0)
             }
-        }
-    }
-    
-    func getEventsCount() -> Int {
-        if sourcePreference == 0 {
-            return eventsFromList.count
-        } else {
-            return eventsFromSources.count
+            self.eventsFromSources = .init(forEveryLocale: eventsFromSources)
         }
     }
 }

@@ -580,12 +580,12 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
         self.makeEachContent = eachContent
     }
     init(
-        _ titleKey: LocalizedStringResource,
         elements: LocalizedData<[Element]>,
+        showLocalePicker: Bool = true,
         @ViewBuilder eachContent: @escaping (Element) -> Content
     ) {
         self.localizedElements = elements
-        self.showLocalePicker = true
+        self.showLocalePicker = showLocalePicker
         self.makeEachContent = eachContent
     }
     
