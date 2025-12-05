@@ -26,8 +26,8 @@ struct EventDetailView: View {
             EventDetailOverviewView(information: information)
             DetailsGachasSection(gachas: information.gacha, applyLocaleFilter: true)
             DetailsSongsSection(songs: information.songs)
-                .appendingView {
-                    EventDetailRotationMusicView(information: information)
+                .wrapIf(information.event.eventType == .festival) {
+                    $0.appendingView { EventDetailRotationMusicView(information: information) }
                 }
             EventDetailStageView(information: information)
             EventDetailGoalsView(information: information)
