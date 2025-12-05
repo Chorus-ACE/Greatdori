@@ -27,7 +27,7 @@ struct SettingsPermissionsView: View {
 #if os(iOS)
             Section(content: {
                 SettingsPermissionsNotificationNews()
-//                SettingsPermissionsCalendarBirthdays()
+                SettingsPermissionsCalendarBirthdays()
             }, header: {
                 Text("Settings.permissions")
             }, footer: {
@@ -53,7 +53,7 @@ struct SettingsPermissionsView: View {
             Group {
                 Section {
                     SettingsPermissionsNotificationNews()
-//                    SettingsPermissionsCalendarBirthdays()
+                    SettingsPermissionsCalendarBirthdays()
                 }
                 Section(content: {
                     Button(action: {
@@ -206,77 +206,10 @@ struct SettingsPermissionsView: View {
     
     struct SettingsPermissionsCalendarBirthdays: View {
         @Environment(\.openURL) var openURL
-        @AppStorage("BirthdaysCalendarID") var birthdaysCalendarID = ""
-        @State var birthdayCalendarIsEnabled = false
-        @State var calendarIsAuthorized = false
-        @State var calendarIsRejected = false
-        @State var errorCode = 0
-        @State var showErrorAlert = false
         var body: some View {
-            Group {
-                    Toggle(isOn: $birthdayCalendarIsEnabled, label: {
-                        Text("Settings.notifications.birthday-calendar")
-                            .foregroundStyle((!calendarIsAuthorized && calendarIsRejected) ? .secondary : .primary)
-                            .onTapGesture {
-                                if (!calendarIsAuthorized && calendarIsRejected) {
-#if os(iOS)
-                                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                                        openURL(url)
-                                    }
-#else
-                                    openURL(.init(string: "x-apple.systempreferences:com.apple.preference.general")!)
-#endif
-                                }
-                            }
-                    })
-                    .onChange(of: birthdayCalendarIsEnabled) {
-                        if birthdayCalendarIsEnabled {
-                            guard calendarIsAuthorized else {
-                                Task {
-                                    do {
-                                        let granted = try await EKEventStore().requestFullAccessToEvents()
-                                        calendarIsAuthorized = granted
-                                        if granted {
-                                            try await updateBirthdayCalendar()
-                                        }
-                                    } catch {
-                                        print(error)
-                                        errorCode = -501
-                                        showErrorAlert = true
-                                        birthdayCalendarIsEnabled = false
-                                    }
-                                }
-                                return
-                            }
-                            Task {
-                                do {
-                                    try await updateBirthdayCalendar()
-                                } catch {
-                                    print(error)
-                                    errorCode = -502
-                                    showErrorAlert = true
-                                    birthdayCalendarIsEnabled = false
-                                }
-                            }
-                        } else {
-                            try? removeBirthdayCalendar()
-                        }
-                    }
-                    .disabled(calendarIsRejected)
+            Button("Settings.notifications.birthday.subscript") {
+                openURL(URL(string: "https://greatdori.com/calendar/BirthdayCalendar_\(DoriLocale.primaryLocale.rawValue).ics")!)
             }
-            .task {
-                let calendarStatus = EKEventStore.authorizationStatus(for: .event)
-                calendarIsAuthorized = calendarStatus == .fullAccess
-                calendarIsRejected = calendarStatus == .denied
-                
-                if calendarIsRejected {
-                    birthdayCalendarIsEnabled = false
-                }
-                birthdayCalendarIsEnabled = !birthdaysCalendarID.isEmpty
-            }
-            .alert("Settings.notifications.calendar.error-alert.title", isPresented: $showErrorAlert, actions: {}, message: {
-                Text("Settings.notifications.calendar.error-alert.message.\(errorCode)")
-            })
         }
     }
 }

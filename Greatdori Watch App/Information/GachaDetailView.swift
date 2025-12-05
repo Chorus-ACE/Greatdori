@@ -68,9 +68,9 @@ struct GachaDetailView: View {
                     InfoTextView("说明", text: information.gacha.description)
                 }
                 .listRowBackground(Color.clear)
-                if !information.events.isEmpty {
+                if information.events.forPreferredLocale()?.isEmpty == false {
                     Section {
-                        FoldableList(information.events.reversed()) { event in
+                        FoldableList((information.events.forPreferredLocale() ?? []).reversed()) { event in
                             NavigationLink(destination: { EventDetailView(id: event.id) }) {
                                 EventCardView(event, inLocale: nil)
                             }
@@ -195,10 +195,11 @@ struct GachaDetailView: View {
         }.onUpdate {
             if let information = $0 {
                 self.information = information
+                let eventURLs = information.events.compactMap { $0?.map(\.bannerImageURL) }.compactMap { $0 }.flatMap { $0 }
                 prefetchImages(
                     information.cardDetails.flatMap(\.value).map(\.thumbNormalImageURL)
                     + information.cardDetails.flatMap(\.value).compactMap(\.thumbAfterTrainingImageURL)
-                    + information.events.map(\.bannerImageURL)
+                    + eventURLs
                     + information.pickupCards.map(\.thumbNormalImageURL)
                     + information.pickupCards.compactMap(\.thumbAfterTrainingImageURL)
                 )
