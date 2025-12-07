@@ -27,8 +27,10 @@ struct NewsWidgets: Widget {
             .systemMedium,
             .systemLarge,
             .systemExtraLarge,
-            .init(rawValue: 4)! // systemExtraLargePortrait
-        ])
+            .init(rawValue: 4) // systemExtraLargePortrait
+                               // We're receiving crash reports here
+                               // on iOS 18.x, so we can't force unwrap it
+        ].compactMap { $0 })
         .configurationDisplayName("Widget.news")
         .description("Widget.news.description")
     }
