@@ -202,6 +202,9 @@ jobs:
         env:
           DELIVERY_UUID: ${{ steps.upload.outputs.DELIVERY_UUID }}
         run: xcrun altool --build-status --delivery-id $DELIVERY_UUID --wait --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --output-format json
+      - name: Wait for another time # I guess we need this because it always
+        if: ${{ matrix.destination == 'macOS' }} # show 'Build is not
+        run: sleep 5m               # assignable' for macOS build.
       - name: Add to TestFlight group
         env:
           DELIVERY_UUID: ${{ steps.upload.outputs.DELIVERY_UUID }}
