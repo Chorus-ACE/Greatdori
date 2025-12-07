@@ -120,7 +120,7 @@ struct WelcomeView: View {
                                 .frame(width: 80, height: 80)
                                 .shadow(radius: 6, x: 1, y: 1)
                             ForEach(configuration, id: \.self) { configuration in
-                                Image(_internalSystemName: configuration.systemName)
+                                Image(fallingSystemName: configuration.systemName)
                                     .font(.system(size: configuration.size))
                                     .foregroundStyle(
                                         configuration.color,
@@ -256,15 +256,6 @@ struct WelcomeView: View {
                     }
                     .padding()
                 }
-                
-                if #unavailable(iOS 18.0) {
-                    Rectangle()
-                        .opacity(0.02)
-                        .frame(width: 10)
-                        .onAppear {
-                            agreementPromptHadBeenDisplayed = true
-                        }
-                }
             }
             .toolbar {
                 if sheetIsHorizontallyCompact {
@@ -365,6 +356,14 @@ private struct AppIconWrappingFeatureImageConfiguration: Hashable {
     let color: Color
     let size: CGFloat
     let offset: CGSize
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(systemName)
+        hasher.combine(color)
+        hasher.combine(size)
+        hasher.combine(offset.width)
+        hasher.combine(offset.height)
+    }
 }
 
 fileprivate let configuration: [AppIconWrappingFeatureImageConfiguration] = [

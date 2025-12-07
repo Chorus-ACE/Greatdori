@@ -552,7 +552,7 @@ struct SettingsWidgetsCollectionDetailsView: View {
                     }
                     showCollectionCodeDialog = false
                 }, label: {
-                    Label("Settings.widgets.collections.code.dialog.copy", systemImage: "document.on.document")
+                    Label("Settings.widgets.collections.code.dialog.copy", systemImage: "doc.on.doc")
                 })
                 .keyboardShortcut(.defaultAction)
                 #if os(iOS)

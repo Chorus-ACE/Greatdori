@@ -428,5 +428,36 @@ extension MutableCollection {
 extension EnvironmentValues {
     @Entry var regularInfoImageSizeFactor: CGFloat = 1
 }
-extension View {
+
+private let systemImageFalling = {
+    // The value means the name that should be fallen back;
+    // `nil` means find it in Asset Catalog
+    var result: [String: String?] = [:]
+    
+    if #unavailable(iOS 18.0, macOS 15.0) {
+        result.updateValue(nil, forKey: "person.crop.square.on.square.angled")
+        result.updateValue(nil, forKey: "person.crop.square.on.square.angled.fill")
+        result.updateValue(nil, forKey: "star.hexagon")
+        result.updateValue(nil, forKey: "star.hexagon.fill")
+        result.updateValue(nil, forKey: "apple.classical.pages")
+        result.updateValue(nil, forKey: "apple.classical.pages.fill")
+        result.updateValue("text.below.photo", forKey: "text.below.rectangle")
+        result.updateValue("persona", forKey: "person.and.viewfinder")
+    }
+    
+    return result
+}()
+
+extension Image {
+    init(fallingSystemName: String) {
+        if let name = systemImageFalling[fallingSystemName] {
+            if let name {
+                self.init(_internalSystemName: name)
+            } else {
+                self.init(fallingSystemName)
+            }
+        } else {
+            self.init(_internalSystemName: fallingSystemName)
+        }
+    }
 }

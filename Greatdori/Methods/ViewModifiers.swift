@@ -95,7 +95,7 @@ struct _ImageContextMenuModifier<V: View>: ViewModifier {
 #endif
                 }
                 Section {
-                    forEachImageInfo("Image.copy.link", systemImage: "document.on.document") { info in
+                    forEachImageInfo("Image.copy.link", systemImage: "doc.on.doc") { info in
 #if os(macOS)
                         NSPasteboard.general.clearContents()
                         NSPasteboard.general.setString(info.url.absoluteString, forType: .string)
@@ -103,7 +103,7 @@ struct _ImageContextMenuModifier<V: View>: ViewModifier {
                         UIPasteboard.general.string = info.url.absoluteString
 #endif
                     }
-                    forEachImageInfo("Image.copy.image", systemImage: "document.on.document") { info in
+                    forEachImageInfo("Image.copy.image", systemImage: "doc.on.doc") { info in
                         Task {
                             if let data = await info.resolvedData() {
 #if os(macOS)

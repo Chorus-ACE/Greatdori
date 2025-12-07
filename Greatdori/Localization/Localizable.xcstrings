@@ -6046,7 +6046,7 @@
       }
     },
     "Greatdori!" : {
-      "shouldTranslate" : false
+
     },
     "Home.banner.crash.subtitle" : {
       "comment" : "A subtitle displayed in the crash banner.",

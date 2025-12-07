@@ -173,7 +173,7 @@ struct ZeileEditorCommands: Commands {
                             inFileViewerRootedAtPath: _buildFolder(for: project).path
                         )
                     }
-                    Button("Zeile.command.product.copy-build-folder-path", systemImage: "document.on.document") {
+                    Button("Zeile.command.product.copy-build-folder-path", systemImage: "doc.on.doc") {
                         NSWorkspace.shared.selectFile(
                             nil,
                             inFileViewerRootedAtPath: _buildFolder(for: project).path

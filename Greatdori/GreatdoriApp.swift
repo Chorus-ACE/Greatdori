@@ -44,8 +44,8 @@ let isComplyingWithAppStore = false
 @main
 struct GreatdoriApp: App {
     init() {
-            UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
-        }
+        UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
+    }
     
     #if os(macOS)
     @NSApplicationDelegateAdaptor var appDelegate: AppDelegate

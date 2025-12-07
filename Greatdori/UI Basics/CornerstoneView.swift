@@ -554,18 +554,30 @@ struct FilterAndSorterPicker: View {
         Button(action: {
             showFilterSheet.toggle()
         }, label: {
-            (filterIsFiltering ? Color.white : .primary)
-                .scaleEffect(2) // a larger value has no side effects because we're using `mask`
-                .mask {
-                    // We use `mask` to prgacha unexpected blink
-                    // while changing `foregroundStyle`.
-                    Image(systemName: "line.3.horizontal.decrease")
-                }
-                .background {
-                    if filterIsFiltering {
-                        Capsule().foregroundStyle(Color.accentColor).scaledToFill().scaleEffect(isMACOS ? 1.1 : 1.65)
+            if #available(iOS 26.0, * /* Keep macOS */) {
+                (filterIsFiltering ? Color.white : .primary)
+                    .scaleEffect(2) // a larger value has no side effects because we're using `mask`
+                    .mask {
+                        // We use `mask` to prgacha unexpected blink
+                        // while changing `foregroundStyle`.
+                        Image(systemName: "line.3.horizontal.decrease")
                     }
-                }
+                    .background {
+                        if filterIsFiltering {
+                            Capsule().foregroundStyle(Color.accentColor).scaledToFill().scaleEffect(isMACOS ? 1.1 : 1.65)
+                        }
+                    }
+            } else {
+                Image(systemName: "line.3.horizontal.decrease")
+                    .foregroundStyle(filterIsFiltering ? Color.white : .blue)
+                    .background {
+                        if filterIsFiltering {
+                            Circle()
+                                .foregroundStyle(Color.accentColor)
+                                .scaleEffect(1.65)
+                        }
+                    }
+            }
         })
         .animation(.easeInOut(duration: 0.2), value: filterIsFiltering)
         .accessibilityLabel("Accessibility.filter")
@@ -640,7 +652,7 @@ struct LayoutPicker<T: Hashable>: View {
                         Label(title: {
                             Text(item.0)
                         }, icon: {
-                            Image(_internalSystemName: item.1)
+                            Image(fallingSystemName: item.1)
                         })
                         .tag(item.2)
                     }
@@ -651,7 +663,7 @@ struct LayoutPicker<T: Hashable>: View {
                 Label(title: {
                     Text("Search.layout")
                 }, icon: {
-                    Image(_internalSystemName: options.first(where: { $0.2 == selection })!.1)
+                    Image(fallingSystemName: options.first(where: { $0.2 == selection })!.1)
                 })
             }
             .accessibilityValue(options.first(where: { $0.2 == selection })!.0)
@@ -661,7 +673,7 @@ struct LayoutPicker<T: Hashable>: View {
                     Label(title: {
                         Text(item.0)
                     }, icon: {
-                        Image(_internalSystemName: item.1)
+                        Image(fallingSystemName: item.1)
                     })
                     .tag(item.2)
                 }
@@ -768,7 +780,7 @@ struct MultilingualText: View {
                 }
             }, label: {
                 ZStack(alignment: .trailing, content: {
-                    Label(lastCopiedLocaleValue == nil ? "Message.copy.success" : "Message.copy.success.locale.\(lastCopiedLocaleValue!.rawValue.uppercased())", systemImage: "document.on.document")
+                    Label(lastCopiedLocaleValue == nil ? "Message.copy.success" : "Message.copy.success.locale.\(lastCopiedLocaleValue!.rawValue.uppercased())", systemImage: "doc.on.doc")
                         .opacity(showCopyMessage ? 1 : 0)
                         .offset(y: 2)
                     MultilingualTextInternalLabel(source: source, showSecondaryText: showSecondaryText, showLocaleKey: showLocaleKey)

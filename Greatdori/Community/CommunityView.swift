@@ -136,7 +136,7 @@ private struct PostSectionView: View {
                             }
                         }
                         Text(post.time.formattedRelatively())
-                        Image(systemName: post.getPostTypeSymbol())
+                        Image(fallingSystemName: post.getPostTypeSymbol())
                     }
                     .foregroundStyle(.gray)
                     .wrapIf(!isMACOS, in: { content in

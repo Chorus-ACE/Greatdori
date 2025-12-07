@@ -356,7 +356,7 @@ struct ImageLookView: View {
                                 UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
                                 didCopied()
                             }
-                            Button("Image.copy.image", systemImage: "document.on.document") {
+                            Button("Image.copy.image", systemImage: "doc.on.doc") {
                                 UIPasteboard.general.image = image
                                 didCopied()
                             }

@@ -177,7 +177,7 @@ struct InfoView: View {
                                 //                    )
                                 HStack {
                                     VStack(alignment: .leading) {
-                                        Image(systemName: allInfoDestinationItems[itemIndex].symbol)
+                                        Image(fallingSystemName: allInfoDestinationItems[itemIndex].symbol)
                                             .font(.largeTitle)
                                         Spacer()
                                         ViewThatFits {
@@ -242,7 +242,7 @@ struct ToolsView: View {
                         Label(title: {
                             Text(allToolsDestinationItems[itemIndex].title)
                         }, icon: {
-                            Image(_internalSystemName: allToolsDestinationItems[itemIndex].symbol)
+                            Image(fallingSystemName: allToolsDestinationItems[itemIndex].symbol)
                         })
                     })
                 }
