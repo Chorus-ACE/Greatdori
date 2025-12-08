@@ -189,7 +189,7 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showWelcomeScreen, onDismiss: {
-                if !isInitializationRequired {
+                if isInitializationRequired {
                     showWelcomeScreen = true
                 }
             }) {
