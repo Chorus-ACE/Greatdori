@@ -310,7 +310,7 @@ struct WelcomeView: View {
     
     func proceed(ignoreDisplayingCondition: Bool = false) {
         if agreementPromptHadBeenDisplayed || ignoreDisplayingCondition {
-            isInitializationRequired = !isFirstLaunchResettable // Expected to be `false`
+            isInitializationRequired = false
             showWelcomeScreen = false
         } else {
             agreementAlertIsDisplaying = true

@@ -171,6 +171,9 @@ struct ContentView: View {
                 }
             }
             .onAppear {
+                if !isFirstLaunchResettable {
+                    isInitializationRequired = true
+                }
                 if isInitializationRequired {
                     showWelcomeScreen = true
                 }
