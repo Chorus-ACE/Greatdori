@@ -408,7 +408,8 @@ struct InteractiveStoryView: View {
                 currentTalk = .init(
                     text: text,
                     characterIDs: characterIDs,
-                    characterNames: characterNames
+                    characterNames: characterNames,
+                    voicePath: voicePath
                 )
                 
                 if let voicePath,
