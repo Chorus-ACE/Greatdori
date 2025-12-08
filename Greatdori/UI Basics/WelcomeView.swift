@@ -19,10 +19,10 @@ import SwiftUI
 struct WelcomeView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
-    @AppStorage("isInitializationRequired") var isInitializationRequired = true
     @AppStorage("isFirstLaunchResettable") var isFirstLaunchResettable = true
     
     @Binding var showWelcomeScreen: Bool
+    @Binding var isSafeExit: Bool
     
     @State var primaryLocale = DoriLocale.primaryLocale
     @State var secondaryLocale = DoriLocale.secondaryLocale
@@ -310,8 +310,8 @@ struct WelcomeView: View {
     
     func proceed(ignoreDisplayingCondition: Bool = false) {
         if agreementPromptHadBeenDisplayed || ignoreDisplayingCondition {
-            isInitializationRequired = false
-            showWelcomeScreen = false
+            isSafeExit = true
+            dismiss()
         } else {
             agreementAlertIsDisplaying = true
         }

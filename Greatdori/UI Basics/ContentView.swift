@@ -35,6 +35,7 @@ struct ContentView: View {
     @State var crashViewShouldBeDisplayed = false
     @State var lastStartUpWasSuccessful = true
     @State var showWelcomeScreen = false
+    @State var welcomeViewHadSafeExited = false
     @State var showPreCacheAlert = false
     @State var showCrashAlert = false
     
@@ -192,11 +193,12 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showWelcomeScreen, onDismiss: {
-                if isInitializationRequired {
+                if !welcomeViewHadSafeExited {
                     showWelcomeScreen = true
                 }
+//                showWelcomeScreen = /*isInitializationRequired*/
             }) {
-                WelcomeView(showWelcomeScreen: $showWelcomeScreen)
+                WelcomeView(showWelcomeScreen: $showWelcomeScreen, isSafeExit: $welcomeViewHadSafeExited)
             }
             .alert("Home.banner.no-pre-cahce.title", isPresented: $showPreCacheAlert, actions: {
             }, message: {
