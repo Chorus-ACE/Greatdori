@@ -50,90 +50,88 @@ struct ComicDetailOverviewView: View {
     let information: Comic
     var dateFormatter: DateFormatter { let df = DateFormatter(); df.dateStyle = .long; df.timeStyle = .short; return df }
     var body: some View {
-        VStack {
-            CustomGroupBox {
-                LazyVStack {
+        CustomGroupBox {
+            LazyVStack {
+                Group {
+                    ListItem {
+                        Text("Comic.title")
+                    } value: {
+                        MultilingualText(information.title)
+                    }
+                    Divider()
+                }
+                
+                Group {
+                    ListItem {
+                        Text("Comic.subtitle")
+                    } value: {
+                        MultilingualText(information.subTitle)
+                    }
+                    Divider()
+                }
+                
+                if let type = information.type {
                     Group {
                         ListItem {
-                            Text("Comic.title")
+                            Text("Comic.type")
                         } value: {
-                            MultilingualText(information.title)
+                            Text(type.localizedString)
                         }
                         Divider()
                     }
-                    
-                    Group {
-                        ListItem {
-                            Text("Comic.subtitle")
-                        } value: {
-                            MultilingualText(information.subTitle)
-                        }
-                        Divider()
-                    }
-                    
-                    if let type = information.type {
-                        Group {
-                            ListItem {
-                                Text("Comic.type")
-                            } value: {
-                                Text(type.localizedString)
-                            }
-                            Divider()
-                        }
-                    }
-                    
-                    // MARK: Release Date
-                    Group {
-                        ListItem {
-                            Text("Comic.character")
-                        } value: {
-                            ForEach(information.characterIDs, id: \.self) { id in
-                                #if os(macOS)
+                }
+                
+                // MARK: Release Date
+                Group {
+                    ListItem {
+                        Text("Comic.character")
+                    } value: {
+                        ForEach(information.characterIDs, id: \.self) { id in
+#if os(macOS)
+                            NavigationLink(destination: {
+                                CharacterDetailView(id: id)
+                            }, label: {
+                                WebImage(url: .init(string: "https://bestdori.com/res/icon/chara_icon_\(id).png"))
+                                    .antialiased(true)
+                                    .resizable()
+                                    .frame(width: imageButtonSize, height: imageButtonSize)
+                            })
+                            .buttonStyle(.plain)
+#else
+                            Menu(content: {
                                 NavigationLink(destination: {
                                     CharacterDetailView(id: id)
                                 }, label: {
-                                    WebImage(url: .init(string: "https://bestdori.com/res/icon/chara_icon_\(id).png"))
-                                        .antialiased(true)
-                                        .resizable()
-                                        .frame(width: imageButtonSize, height: imageButtonSize)
-                                })
-                                .buttonStyle(.plain)
-                                #else
-                                Menu(content: {
-                                    NavigationLink(destination: {
-                                        CharacterDetailView(id: id)
-                                    }, label: {
-                                        HStack {
-                                            WebImage(url: .init(string: "https://bestdori.com/res/icon/chara_icon_\(id).png"))
-                                                .antialiased(true)
-                                                .resizable()
-                                                .frame(width: imageButtonSize, height: imageButtonSize)
-                                            if let name = PreCache.current.characters.first(where: { $0.id == id })?.characterName.forPreferredLocale() {
-                                                Text(name)
-                                            } else {
-                                                Text(verbatim: "Lorum Ipsum")
-                                                    .foregroundStyle(Color(UIColor.placeholderText))
-                                                    .redacted(reason: .placeholder)
-                                            }
+                                    HStack {
+                                        WebImage(url: .init(string: "https://bestdori.com/res/icon/chara_icon_\(id).png"))
+                                            .antialiased(true)
+                                            .resizable()
+                                            .frame(width: imageButtonSize, height: imageButtonSize)
+                                        if let name = PreCache.current.characters.first(where: { $0.id == id })?.characterName.forPreferredLocale() {
+                                            Text(name)
+                                        } else {
+                                            Text(verbatim: "Lorum Ipsum")
+                                                .foregroundStyle(Color(UIColor.placeholderText))
+                                                .redacted(reason: .placeholder)
                                         }
-                                    })
-                                }, label: {
-                                    WebImage(url: .init(string: "https://bestdori.com/res/icon/chara_icon_\(id).png"))
-                                        .antialiased(true)
-                                        .resizable()
-                                        .frame(width: imageButtonSize, height: imageButtonSize)
+                                    }
                                 })
-                                #endif
-                            }
+                            }, label: {
+                                WebImage(url: .init(string: "https://bestdori.com/res/icon/chara_icon_\(id).png"))
+                                    .antialiased(true)
+                                    .resizable()
+                                    .frame(width: imageButtonSize, height: imageButtonSize)
+                            })
+#endif
                         }
-                        Divider()
                     }
-                    
-                    ListItem {
-                        Text("ID")
-                    } value: {
-                        Text("\(String(information.id))")
-                    }
+                    Divider()
+                }
+                
+                ListItem {
+                    Text("ID")
+                } value: {
+                    Text("\(String(information.id))")
                 }
             }
         }
@@ -147,7 +145,7 @@ struct ComicDetailComicView: View {
     @State var comicLoadingHadFailed = false
     var body: some View {
         LazyVStack(pinnedViews: .sectionHeaders) {
-            Section(content: {
+            Section {
                 WebImage(url: information.imageURL(in: locale, allowsFallback: false), content: { image in
                     image
                         .resizable()
@@ -172,7 +170,7 @@ struct ComicDetailComicView: View {
                 .onChange(of: locale) {
                     comicLoadingHadFailed = false
                 }
-            }, header: {
+            } header: {
                 HStack {
                     Text("Comic.comic")
                         .font(.title2)
@@ -181,7 +179,7 @@ struct ComicDetailComicView: View {
                     Spacer()
                 }
                 .frame(maxWidth: 615)
-            })
+            }
         }
     }
 }
