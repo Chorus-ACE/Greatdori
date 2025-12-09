@@ -244,6 +244,7 @@ struct InteractiveStoryView: View {
                 .clipped()
                 .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
         }
+        .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration))
         .onAppear {
             if backgroundImageURL != nil {
                 return
@@ -330,7 +331,6 @@ struct InteractiveStoryView: View {
                 }
             }
         }
-        .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration))
 #if os(macOS)
         .toolbar {
             ToolbarItem {
