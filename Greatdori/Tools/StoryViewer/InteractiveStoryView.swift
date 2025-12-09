@@ -29,6 +29,8 @@ struct InteractiveStoryView: View {
     @TaskLocal nonisolated private static var performingActionCount = ReferenceCountingContainer(valid: false)
     
     @Environment(\.dismiss) private var dismiss
+    @Environment(\._isvIsMuted) private var isMuted
+    @Environment(\._isvIsInFullScreen) private var interactivePlayerIsInFullScreen
     
     @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
     
@@ -38,7 +40,7 @@ struct InteractiveStoryView: View {
     @State private var bgmPlayer = AVQueuePlayer()
     @State private var bgmLooper: AVPlayerLooper!
     @State private var sePlayer = AVPlayer()
-    private var voicePlayer: UnsafeMutablePointer<AVAudioPlayer>
+    private let voicePlayer: UnsafeMutablePointer<AVAudioPlayer>
     @State private var currentSnippetIndex = -1
     @State private var currentTelop: String?
     
@@ -60,24 +62,19 @@ struct InteractiveStoryView: View {
     @State private var fastForwardTimer: Timer?
     @State private var talkShakeDuration = 0.0
     @State private var screenShakeDuration = 0.0
-//    @State private var isMuted: Bool = false
     
     private var fullScreenToggleIsAvailable: Bool
-    @Binding var interactivePlayerIsInFullScreen: Bool
     private var mutingIsAvailable: Bool
-    @Binding var isMuted: Bool
     
     init(_ ir: StoryIR, assetFolder: URL? = nil) {
         self.ir = ir
         self.assetFolder = assetFolder
         self.fullScreenToggleIsAvailable = false
         self.mutingIsAvailable = false
-        self._interactivePlayerIsInFullScreen = .constant(false)
-        self._isMuted = .constant(false)
         unsafe voicePlayer = .allocate(capacity: 1)
         unsafe voicePlayer.initialize(to: .init())
     }
-    init(asset: _DoriAPI.Misc.StoryAsset, voiceBundlePath: String, locale: DoriLocale, interactivePlayerIsInFullScreen: Binding<Bool>, isMuted: Binding<Bool>) {
+    init(asset: _DoriAPI.Misc.StoryAsset, voiceBundlePath: String, locale: DoriLocale) {
         let ir = DoriStoryBuilder.Conversion.zeileIR(
             fromBandori: asset,
             in: locale,
@@ -86,8 +83,6 @@ struct InteractiveStoryView: View {
         self.init(ir)
         self.fullScreenToggleIsAvailable = true
         self.mutingIsAvailable = true
-        self._interactivePlayerIsInFullScreen = interactivePlayerIsInFullScreen
-        self._isMuted = isMuted
     }
     
     var body: some View {
@@ -315,10 +310,10 @@ struct InteractiveStoryView: View {
             next()
             return .handled
         }
-        .onChange(of: isMuted, {
-            bgmPlayer.isMuted = isMuted
+        .onChange(of: isMuted.wrappedValue, {
+            bgmPlayer.isMuted = isMuted.wrappedValue
             //                    bgmLooper.volume = isMuted ? 0 : 1
-            sePlayer.isMuted = isMuted
+            sePlayer.isMuted = isMuted.wrappedValue
 //            unsafe voicePlayer.pointee.setVolume(isMuted ? 0 : 1, fadeDuration: 0.01) <- Super Buggy
         })
         .sheet(isPresented: $backlogIsPresenting) {
@@ -336,10 +331,10 @@ struct InteractiveStoryView: View {
             ToolbarItem {
                 actionMenu
             }
-            if interactivePlayerIsInFullScreen {
+            if interactivePlayerIsInFullScreen.wrappedValue {
                 ToolbarItem(placement: .navigation) {
                     Button(action: {
-                        interactivePlayerIsInFullScreen = false
+                        interactivePlayerIsInFullScreen.wrappedValue = false
                     }, label: {
                         Image(systemName: "xmark")
                     })
@@ -414,9 +409,9 @@ struct InteractiveStoryView: View {
                 // MUTE
                 if mutingIsAvailable {
                     Button(action: {
-                        isMuted.toggle()
+                        isMuted.wrappedValue.toggle()
                     }, label: {
-                        if isMuted {
+                        if isMuted.wrappedValue {
                             Label("Story-viewer.menu.mute.quit", systemImage: "speaker.wave.2")
                         } else {
                             Label("Story-viewer.menu.mute", systemImage: "speaker.slash")
@@ -435,9 +430,9 @@ struct InteractiveStoryView: View {
                 } else {
                     // FULL SCREEN
                     Button(action: {
-                        interactivePlayerIsInFullScreen.toggle()
+                        interactivePlayerIsInFullScreen.wrappedValue.toggle()
                     }, label: {
-                        if interactivePlayerIsInFullScreen {
+                        if interactivePlayerIsInFullScreen.wrappedValue {
                             Label("Story-viewer.menu.full-screen.quit", systemImage: "arrow.up.forward.and.arrow.down.backward")
                         } else {
                             Label("Story-viewer.menu.full-screen.enter", systemImage: "arrow.down.backward.and.arrow.up.forward")
@@ -806,4 +801,17 @@ struct InteractiveStoryView: View {
             unsafe voicePlayer.deallocate()
         }
     }
+}
+
+extension View {
+    func isvIsMuted(_ muted: Binding<Bool>) -> some View {
+        environment(\._isvIsMuted, muted)
+    }
+    func isvIsInFullScreen(_ fullScreen: Binding<Bool>) -> some View {
+        environment(\._isvIsInFullScreen, fullScreen)
+    }
+}
+extension EnvironmentValues {
+    @Entry fileprivate var _isvIsMuted: Binding<Bool> = .constant(false)
+    @Entry fileprivate var _isvIsInFullScreen: Binding<Bool> = .constant(false)
 }

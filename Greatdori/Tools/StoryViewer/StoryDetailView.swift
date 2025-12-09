@@ -54,13 +54,13 @@ struct StoryDetailView: View {
                                         locale: locale,
                                         unsafeAssociatedID: unsafeAssociatedID,
                                         unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID,
-                                        asset: $asset,
-                                        interactivePlayerIsInFullScreen: $interactivePlayerIsInFullScreen,
-                                        isMuted: $isMuted
+                                        asset: $asset
                                     )
                                     .safeAreaPadding(interactivePlayerIsInFullScreen ? safeAreaInsets : .init())
                                     .aspectRatio(interactivePlayerIsInFullScreen ? screenWidth/screenHeight : 16/10, contentMode: .fit)
                                     .clipped()
+                                    .isvIsMuted($isMuted)
+                                    .isvIsInFullScreen($interactivePlayerIsInFullScreen)
                                 }
                                 .frame(maxWidth: interactivePlayerIsInFullScreen ? nil : infoContentMaxWidth)
                             }
@@ -389,8 +389,6 @@ struct StoryDetailView: View {
         var unsafeAssociatedID: String // WTF
         var unsafeSecondaryAssociatedID: String?
         @Binding var asset: _DoriAPI.Misc.StoryAsset?
-        @Binding var interactivePlayerIsInFullScreen: Bool
-        @Binding var isMuted: Bool
         var body: some View {
             if let asset {
                 InteractiveStoryView(asset: asset, voiceBundlePath: {
@@ -408,7 +406,7 @@ struct StoryDetailView: View {
                     case .afterLive:
                         "\(locale.rawValue)/sound/voice/scenario/afterlivetalk/group\(Int(floor(Double(unsafeAssociatedID)! / 100)))"
                     }
-                }(), locale: locale, interactivePlayerIsInFullScreen: $interactivePlayerIsInFullScreen, isMuted: $isMuted)
+                }(), locale: locale)
             } else {
                 ProgressView()
             }
