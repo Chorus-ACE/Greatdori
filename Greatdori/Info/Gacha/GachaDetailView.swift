@@ -54,6 +54,7 @@ struct GachaDetailView: View {
                     }
                 }
             }
+            ExternalLinksSection(links: [ExternalLink(name: "External-link.bestdori", url: URL(string: "https://bestdori.com/info/gacha/\(id)")!)])
         } switcherDestination: {
             GachaSearchView()
         }

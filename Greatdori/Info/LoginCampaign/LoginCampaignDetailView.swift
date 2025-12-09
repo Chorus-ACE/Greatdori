@@ -33,6 +33,7 @@ struct LoginCampaignDetailView: View {
                     }
                 }
             }
+            ExternalLinksSection(links: [ExternalLink(name: "External-link.bestdori", url: URL(string: "https://bestdori.com/info/logincampaigns/\(id)")!)])
         } switcherDestination: {
             LoginCampaignSearchView()
         }

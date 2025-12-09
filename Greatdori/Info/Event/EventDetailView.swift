@@ -58,7 +58,7 @@ struct EventDetailView: View {
                 }
             }
             
-            ExternalLinksSection(links: [ExternalLink(name: "External-link.bestdori", url: URL(string: "https://bestdori.com/info/events/\(information.event.id)")!)])
+            ExternalLinksSection(links: [ExternalLink(name: "External-link.bestdori", url: URL(string: "https://bestdori.com/info/events/\(id)")!)])
         } switcherDestination: {
             EventSearchView()
         }

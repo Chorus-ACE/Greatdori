@@ -49,7 +49,7 @@ struct SongDetailOverviewView: View {
                 
 #if !APP_STORE
                 CustomGroupBox(cornerRadius: 3417) {
-                    CompactAudioPlayer(url: information.soundURL)
+                    CompactAudioPlayer(url: information.soundURL, mediaInfo: (information.title.forPreferredLocale(), DoriCache.preCache.bands.first(where: { $0.id == information.bandID })?.bandName.forPreferredLocale(), information.jacketImageURL))
                 }
 #endif
                 

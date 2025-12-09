@@ -37,7 +37,7 @@ struct SongDetailView: View {
                     }
                 }
             }
-            ExternalLinksSection(links: [ExternalLink(name: "External-link.bestdori", url: URL(string: "https://bestdori.com/info/songs/\(information.song.id)")!)])
+            ExternalLinksSection(links: [ExternalLink(name: "External-link.bestdori", url: URL(string: "https://bestdori.com/info/songs/\(id)")!)])
         } switcherDestination: {
             SongSearchView()
         }

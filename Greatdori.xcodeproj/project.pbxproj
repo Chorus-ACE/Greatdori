@@ -255,6 +255,11 @@
 		E949D28E2E93D9F800E50D3F /* Live2DViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E949D28D2E93D9F100E50D3F /* Live2DViewer.swift */; };
 		E955A0F92EBF08D800795C9D /* ISVDialogBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955A0F82EBF08D200795C9D /* ISVDialogBox.swift */; };
 		E960D3382EB64CE600EA6A5E /* StoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E960D3372EB64CDC00EA6A5E /* StoryDetailView.swift */; };
+		E97810952EE82BF2000AD397 /* ComicDetailOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97810942EE82BF1000AD397 /* ComicDetailOverviewView.swift */; };
+		E97810972EE82C06000AD397 /* ComicDetailComicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97810962EE82C05000AD397 /* ComicDetailComicView.swift */; };
+		E97810992EE82C8F000AD397 /* CostumeDetailOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97810982EE82C8E000AD397 /* CostumeDetailOverviewView.swift */; };
+		E978109B2EE835FC000AD397 /* CardDetailOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E978109A2EE835FA000AD397 /* CardDetailOverviewView.swift */; };
+		E978109D2EE83616000AD397 /* CharacterDetailOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E978109C2EE83615000AD397 /* CharacterDetailOverviewView.swift */; };
 		E97888C62E8A79EA00ABD33E /* QuickLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97888C52E8A79E500ABD33E /* QuickLook.swift */; };
 		E97C5B882E8E9A50004858A3 /* SettingsWidgetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97C5B872E8E9A4A004858A3 /* SettingsWidgetsView.swift */; };
 		E98B8B532E7E922A00B4C8A8 /* NavigationComponentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */; };
@@ -726,6 +731,11 @@
 		E955A0F62EBDF9C300795C9D /* FontSuggestions_EN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = FontSuggestions_EN.md; sourceTree = "<group>"; };
 		E955A0F82EBF08D200795C9D /* ISVDialogBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISVDialogBox.swift; sourceTree = "<group>"; };
 		E960D3372EB64CDC00EA6A5E /* StoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryDetailView.swift; sourceTree = "<group>"; };
+		E97810942EE82BF1000AD397 /* ComicDetailOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicDetailOverviewView.swift; sourceTree = "<group>"; };
+		E97810962EE82C05000AD397 /* ComicDetailComicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicDetailComicView.swift; sourceTree = "<group>"; };
+		E97810982EE82C8E000AD397 /* CostumeDetailOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostumeDetailOverviewView.swift; sourceTree = "<group>"; };
+		E978109A2EE835FA000AD397 /* CardDetailOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailOverviewView.swift; sourceTree = "<group>"; };
+		E978109C2EE83615000AD397 /* CharacterDetailOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDetailOverviewView.swift; sourceTree = "<group>"; };
 		E97888C52E8A79E500ABD33E /* QuickLook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLook.swift; sourceTree = "<group>"; };
 		E97C5B872E8E9A4A004858A3 /* SettingsWidgetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWidgetsView.swift; sourceTree = "<group>"; };
 		E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationComponentsView.swift; sourceTree = "<group>"; };
@@ -1282,9 +1292,10 @@
 		E94218F32E8AA35B00F24974 /* Character */ = {
 			isa = PBXGroup;
 			children = (
-				E94218EF2E8AA2FB00F24974 /* CharacterDetailView.swift */,
 				E94218F12E8AA31D00F24974 /* CharacterSearchView.swift */,
 				8C3DFB0D2EAF6B880004E1F5 /* CharacterSelector.swift */,
+				E94218EF2E8AA2FB00F24974 /* CharacterDetailView.swift */,
+				E978109C2EE83615000AD397 /* CharacterDetailOverviewView.swift */,
 			);
 			path = Character;
 			sourceTree = "<group>";
@@ -1297,6 +1308,7 @@
 				E94218F62E8AA39500F24974 /* CardCoverImage.swift */,
 				E94218FD2E8AA3FE00F24974 /* CardSearchView.swift */,
 				E94218FF2E8AA40E00F24974 /* CardDetailView.swift */,
+				E978109A2EE835FA000AD397 /* CardDetailOverviewView.swift */,
 				E94219012E8AA43000F24974 /* CardDetailStatsView.swift */,
 				E9F87E062EDEA8F40015427F /* CardDetailStoriesView.swift */,
 				E9F87E082EDEAD000015427F /* CardDetailGachaVoicePlayer.swift */,
@@ -1312,6 +1324,8 @@
 				E94219122E8AA53B00F24974 /* ComicInfo.swift */,
 				E94219042E8AA47000F24974 /* ComicSearchView.swift */,
 				E94219062E8AA48700F24974 /* ComicDetailView.swift */,
+				E97810942EE82BF1000AD397 /* ComicDetailOverviewView.swift */,
+				E97810962EE82C05000AD397 /* ComicDetailComicView.swift */,
 			);
 			path = Comic;
 			sourceTree = "<group>";
@@ -1339,6 +1353,7 @@
 				E94219162E8AA57900F24974 /* CostumeInfo.swift */,
 				E94219182E8AA58400F24974 /* CostumeSearchView.swift */,
 				E942191A2E8AA59600F24974 /* CostumeDetailView.swift */,
+				E97810982EE82C8E000AD397 /* CostumeDetailOverviewView.swift */,
 				E942191D2E8AA5E900F24974 /* DetailCostumesSection.swift */,
 				8C3DFB0F2EAF84B30004E1F5 /* CostumeSelector.swift */,
 			);
@@ -1872,6 +1887,7 @@
 				E930F7A62EE0540400E8847F /* EventDetailOverviewView.swift in Sources */,
 				E9AF51252EAC634100BB808F /* TypeNames.swift in Sources */,
 				8CB4D4712E4454890085D57A /* CardCollectionManager.swift in Sources */,
+				E97810992EE82C8F000AD397 /* CostumeDetailOverviewView.swift in Sources */,
 				E942192A2E8AA6CE00F24974 /* EventSearchView.swift in Sources */,
 				8C480C042EC60D0000A8AE70 /* ZeileProjectConfig.swift in Sources */,
 				E94218FA2E8AA3B000F24974 /* CardPreviewImage.swift in Sources */,
@@ -1898,6 +1914,7 @@
 				E90769CD2E546D5500C9871C /* HomeView.swift in Sources */,
 				E90769CE2E546D5500C9871C /* NewsView.swift in Sources */,
 				8C3DFB202EAFA1670004E1F5 /* URLHandler.swift in Sources */,
+				E978109B2EE835FC000AD397 /* CardDetailOverviewView.swift in Sources */,
 				8CC046DC2E6C8F63009FDC13 /* AppFlags.swift in Sources */,
 				E944DCB52ECB253F0005EE55 /* Acknowledgements.swift in Sources */,
 				8C2B64022E940B2800D003D1 /* InteractiveStoryView.swift in Sources */,
@@ -1929,6 +1946,7 @@
 				E9A126FC2E8CB62000BBD39E /* EventTracker.swift in Sources */,
 				8CD28FF22E9F6D5700831458 /* SongSelector.swift in Sources */,
 				8C889DE62EA2367900FBF01D /* StoryViewer.metal in Sources */,
+				E978109D2EE83616000AD397 /* CharacterDetailOverviewView.swift in Sources */,
 				E98B8B532E7E922A00B4C8A8 /* NavigationComponentsView.swift in Sources */,
 				8C480C0E2EC62F5900A8AE70 /* ZeileEditorFileEditView.swift in Sources */,
 				E90769D92E546D5B00C9871C /* SettingsView.swift in Sources */,
@@ -1957,6 +1975,7 @@
 				8C0C99842E296A5500549B5C /* GreatdoriApp.swift in Sources */,
 				8C902FAA2EA4D31900202812 /* UIBasic.metal in Sources */,
 				E99B57652EC1E7DF0045EFC9 /* Station.swift in Sources */,
+				E97810972EE82C06000AD397 /* ComicDetailComicView.swift in Sources */,
 				8C2BD6442E9248B600D003D1 /* ItemSelector.swift in Sources */,
 				E94219312E8AA74B00F24974 /* DetailsGachasSection.swift in Sources */,
 				8C3593152EDC1B9B009E41AD /* GachaDetailConsumptionView.swift in Sources */,
@@ -1965,6 +1984,7 @@
 				E94218F52E8AA38300F24974 /* CardInfo.swift in Sources */,
 				E9076E2F2E8B83A100A9F5AE /* SettingsAdvanced.swift in Sources */,
 				8CD580BC2EA7CE73007A3F49 /* AssetExplorer.swift in Sources */,
+				E97810952EE82BF2000AD397 /* ComicDetailOverviewView.swift in Sources */,
 				E930F7842EE03D1B00E8847F /* ISVReliance.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
