@@ -65,6 +65,12 @@
             "state" : "translated",
             "value" : "Card, %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卡，%@"
+          }
         }
       }
     },
@@ -74,6 +80,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Attribute"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "属性"
           }
         }
       }
@@ -85,6 +97,12 @@
             "state" : "translated",
             "value" : "Band"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "乐队"
+          }
         }
       }
     },
@@ -94,6 +112,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Character"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角色"
           }
         }
       }
@@ -105,6 +129,12 @@
             "state" : "translated",
             "value" : "Rarity"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "稀有度"
+          }
         }
       }
     },
@@ -115,6 +145,12 @@
             "state" : "translated",
             "value" : "Type"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "类型"
+          }
         }
       }
     },
@@ -124,6 +160,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Double tap to copy."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻点两下以拷贝。"
           }
         }
       }
@@ -143,6 +185,18 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "total %lld cards"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "合计%lld张卡牌"
                 }
               }
             }
@@ -169,6 +223,18 @@
               }
             }
           }
+        },
+        "zh-Hans" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "合计%lld个角色"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -191,6 +257,18 @@
               }
             }
           }
+        },
+        "zh-Hans" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "合计%lld个角色，%@"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -200,6 +278,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Filter"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "筛选"
           }
         }
       }
@@ -211,6 +295,12 @@
             "state" : "translated",
             "value" : "Selected"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择"
+          }
         }
       }
     },
@@ -220,6 +310,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Active"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "激活"
           }
         }
       }
@@ -231,6 +327,12 @@
             "state" : "translated",
             "value" : "Not Active"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未激活"
+          }
         }
       }
     },
@@ -240,6 +342,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selection State"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择状态"
           }
         }
       }
@@ -251,6 +359,12 @@
             "state" : "translated",
             "value" : "Double tap to deselect all."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻点两下以取消全选。"
+          }
         }
       }
     },
@@ -260,6 +374,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Double tap to select all."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻点两下以全选。"
           }
         }
       }
@@ -271,6 +391,12 @@
             "state" : "translated",
             "value" : "All Selected"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全选"
+          }
         }
       }
     },
@@ -280,6 +406,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "None Selected"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未选择"
           }
         }
       }
@@ -291,6 +423,12 @@
             "state" : "translated",
             "value" : "Partially Selected"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "部分选择"
+          }
         }
       }
     },
@@ -300,6 +438,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Double tap to toggle."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻点两下以切换。"
           }
         }
       }
@@ -311,6 +455,12 @@
             "state" : "translated",
             "value" : "Double tap to see multilingual info."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻点两下以查看多语言信息。"
+          }
         }
       }
     },
@@ -320,6 +470,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Author"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发布者"
           }
         }
       }
@@ -331,6 +487,12 @@
             "state" : "translated",
             "value" : "Release Date"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发布日期"
+          }
         }
       }
     },
@@ -340,6 +502,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tags"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标签"
           }
         }
       }
@@ -351,6 +519,12 @@
             "state" : "translated",
             "value" : "Type"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "类型"
+          }
         }
       }
     },
@@ -361,22 +535,11 @@
             "state" : "translated",
             "value" : "Double tap to reverse direction."
           }
-        }
-      }
-    },
-    "AnyWindow" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Window"
-          }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "窗口"
+            "value" : "轻点两下以反转方向。"
           }
         }
       }
@@ -3785,7 +3948,21 @@
     },
     "Details.unavailable.story" : {
       "comment" : "Title of a view that indicates that story details are unavailable.",
-      "isCommentAutoGenerated" : true
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Story Unavailable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "故事不可用"
+          }
+        }
+      }
     },
     "Done" : {
       "localizations" : {
@@ -5004,6 +5181,12 @@
             "state" : "translated",
             "value" : "Open in Bestdori!"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在Bestdori!打开"
+          }
         }
       }
     },
@@ -5013,6 +5196,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "External Links"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部链接"
           }
         }
       }
@@ -6046,7 +6235,7 @@
       }
     },
     "Greatdori!" : {
-
+      "shouldTranslate" : false
     },
     "Home.banner.crash.subtitle" : {
       "comment" : "A subtitle displayed in the crash banner.",
@@ -10799,26 +10988,23 @@
         }
       }
     },
-    "Settings.notifications.birthday-calendar" : {
-      "extractionState" : "stale",
+    "Settings.notifications.birthday.subscript" : {
+      "comment" : "A button that opens a calendar with birthdays.",
+      "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add Character Birthdays in Calendar"
+            "value" : "Subscribe to Birthday Calendar"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在日历中添加角色生日"
+            "value" : "订阅生日日历"
           }
         }
       }
-    },
-    "Settings.notifications.birthday.subscript" : {
-      "comment" : "A button that opens a calendar with birthdays.",
-      "isCommentAutoGenerated" : true
     },
     "Settings.notifications.calendar.error-alert.message.%lld" : {
       "comment" : "A message in an alert that appears when there's an error retrieving or modifying the user's calendar. The message changes based on the error code.",
@@ -12662,6 +12848,22 @@
         }
       }
     },
+    "Story-viewer.enter-full-screen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full Screen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全屏"
+          }
+        }
+      }
+    },
     "Story-viewer.error" : {
       "comment" : "A view that indicates that there was an error loading stories. It includes a tap gesture to retry loading them.",
       "isCommentAutoGenerated" : true,
@@ -12796,18 +12998,34 @@
         }
       }
     },
-    "Story-viewer.menu.full-screen" : {
+    "Story-viewer.menu.full-screen.enter" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Auto & Full Screen"
+            "value" : "Full Screen"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "全屏并自动"
+            "value" : "全屏"
+          }
+        }
+      }
+    },
+    "Story-viewer.menu.full-screen.quit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exit Full Screen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出全屏"
           }
         }
       }
@@ -12828,6 +13046,54 @@
         }
       }
     },
+    "Story-viewer.menu.hide-ui-auto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide & Auto"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏UI并全屏"
+          }
+        }
+      }
+    },
+    "Story-viewer.menu.mute" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mute"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "静音"
+          }
+        }
+      }
+    },
+    "Story-viewer.menu.mute.quit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unmute"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消静音"
+          }
+        }
+      }
+    },
     "Story-viewer.menu.quit" : {
       "localizations" : {
         "en" : {
@@ -12840,6 +13106,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "退出"
+          }
+        }
+      }
+    },
+    "Story-viewer.mute" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mute"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "静音"
           }
         }
       }
@@ -13023,7 +13305,20 @@
       }
     },
     "Story.unavailable" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Story Unavailable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "故事不可用"
+          }
+        }
+      }
     },
     "Time-zone.%@.%@.%lld" : {
       "comment" : "A string describing the time difference between two time zones. The first argument is the string “Time-zone.today”, the string “Time-zone.yesterday”, or the string “Time-zone.tomorrow”. The second argument is a plus or minus sign followed by the absolute value of the hour difference.",

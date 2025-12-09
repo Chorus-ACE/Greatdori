@@ -30,6 +30,8 @@ struct InteractiveStoryView: View {
     
     @Environment(\.dismiss) private var dismiss
     
+    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
+    
     @State private var backgroundImageURL: URL?
     @State private var isBackgroundImageNative = true
     
@@ -58,149 +60,168 @@ struct InteractiveStoryView: View {
     @State private var fastForwardTimer: Timer?
     @State private var talkShakeDuration = 0.0
     @State private var screenShakeDuration = 0.0
+//    @State private var isMuted: Bool = false
+    
+    private var fullScreenToggleIsAvailable: Bool
+    @Binding var interactivePlayerIsInFullScreen: Bool
+    private var mutingIsAvailable: Bool
+    @Binding var isMuted: Bool
     
     init(_ ir: StoryIR, assetFolder: URL? = nil) {
         self.ir = ir
         self.assetFolder = assetFolder
-        
+        self.fullScreenToggleIsAvailable = false
+        self.mutingIsAvailable = false
+        self._interactivePlayerIsInFullScreen = .constant(false)
+        self._isMuted = .constant(false)
         unsafe voicePlayer = .allocate(capacity: 1)
         unsafe voicePlayer.initialize(to: .init())
     }
-    init(asset: _DoriAPI.Misc.StoryAsset, voiceBundlePath: String, locale: DoriLocale) {
+    init(asset: _DoriAPI.Misc.StoryAsset, voiceBundlePath: String, locale: DoriLocale, interactivePlayerIsInFullScreen: Binding<Bool>, isMuted: Binding<Bool>) {
         let ir = DoriStoryBuilder.Conversion.zeileIR(
             fromBandori: asset,
             in: locale,
             voiceBundlePath: voiceBundlePath
         )
         self.init(ir)
+        self.fullScreenToggleIsAvailable = true
+        self.mutingIsAvailable = true
+        self._interactivePlayerIsInFullScreen = interactivePlayerIsInFullScreen
+        self._isMuted = isMuted
     }
     
     var body: some View {
         ZStack {
-            // Characters
-            GeometryReader { geometry in
-                ZStack {
-                    ForEach(Array(allDiffLayouts.enumerated()), id: \.element.modelPath) { index, layout in
-                        HStack {
-                            Spacer(minLength: 0)
-                            VStack {
+            // MARK: - Characters
+            Group {
+                GeometryReader { geometry in
+                    ZStack {
+                        ForEach(Array(allDiffLayouts.enumerated()), id: \.element.modelPath) { index, layout in
+                            HStack {
                                 Spacer(minLength: 0)
-                                let offsetX = { () -> CGFloat in
-                                    if let state = showingLayoutIndexs[index] {
-                                        return switch state.position.base {
-                                        case .left: -(geometry.size.width / 4)
-                                        case .leftOutside: -(geometry.size.width / 3)
-                                        case .leftInside: -(geometry.size.width / 6)
-                                        case .center: 0
-                                        case .centerBottom: 0
-                                        case .right: geometry.size.width / 4
-                                        case .rightOutside: geometry.size.width / 3
-                                        case .rightInside: geometry.size.width / 6
-                                        case .leftBottom: -(geometry.size.width / 4)
-                                        case .leftInsideBottom: -(geometry.size.width / 6)
-                                        case .rightBottom: geometry.size.width / 4
-                                        case .rightInsideBottom: geometry.size.width / 6
-                                        @unknown default: 0
+                                VStack {
+                                    Spacer(minLength: 0)
+                                    let offsetX = { () -> CGFloat in
+                                        if let state = showingLayoutIndexs[index] {
+                                            return switch state.position.base {
+                                            case .left: -(geometry.size.width / 4)
+                                            case .leftOutside: -(geometry.size.width / 3)
+                                            case .leftInside: -(geometry.size.width / 6)
+                                            case .center: 0
+                                            case .centerBottom: 0
+                                            case .right: geometry.size.width / 4
+                                            case .rightOutside: geometry.size.width / 3
+                                            case .rightInside: geometry.size.width / 6
+                                            case .leftBottom: -(geometry.size.width / 4)
+                                            case .leftInsideBottom: -(geometry.size.width / 6)
+                                            case .rightBottom: geometry.size.width / 4
+                                            case .rightInsideBottom: geometry.size.width / 6
+                                            @unknown default: 0
+                                            }
+                                        } else {
+                                            return 0
                                         }
-                                    } else {
-                                        return 0
-                                    }
-                                }()
-                                let offsetY = { () -> CGFloat in
-                                    if let state = showingLayoutIndexs[index] {
-                                        return switch state.position.base {
-                                        case .leftBottom,
-                                                .leftInsideBottom,
-                                                .centerBottom,
-                                                .rightBottom,
-                                                .rightInsideBottom: geometry.size.height / 6
-                                        default: 0
+                                    }()
+                                    let offsetY = { () -> CGFloat in
+                                        if let state = showingLayoutIndexs[index] {
+                                            return switch state.position.base {
+                                            case .leftBottom,
+                                                    .leftInsideBottom,
+                                                    .centerBottom,
+                                                    .rightBottom,
+                                                    .rightInsideBottom: geometry.size.height / 6
+                                            default: 0
+                                            }
+                                        } else {
+                                            return 0
                                         }
-                                    } else {
-                                        return 0
-                                    }
-                                }()
-                                unsafe ISVLive2DView(modelPath: layout.modelPath, state: showingLayoutIndexs[index], voicePlayer: voicePlayer, currentSpeckerID: currentTalk?.characterIDs.first ?? -1)
-                                    .frame(width: geometry.size.height, height: geometry.size.height)
-                                    .offset(x: offsetX, y: offsetY)
-                                    .opacity(showingLayoutIndexs[index] != nil ? 1 : 0)
-                                    .environment(\._layoutViewVisible, showingLayoutIndexs[index] != nil)
-                                    .animation(.spring(duration: 0.4, bounce: 0.25), value: showingLayoutIndexs)
+                                    }()
+                                    unsafe ISVLive2DView(modelPath: layout.modelPath, state: showingLayoutIndexs[index], voicePlayer: voicePlayer, currentSpeckerID: currentTalk?.characterIDs.first ?? -1)
+                                        .frame(width: geometry.size.height, height: geometry.size.height)
+                                        .offset(x: offsetX, y: offsetY)
+                                        .opacity(showingLayoutIndexs[index] != nil ? 1 : 0)
+                                        .environment(\._layoutViewVisible, showingLayoutIndexs[index] != nil)
+                                        .animation(.spring(duration: 0.4, bounce: 0.25), value: showingLayoutIndexs)
+                                }
+                                Spacer(minLength: 0)
                             }
-                            Spacer(minLength: 0)
                         }
                     }
                 }
+#if os(iOS)
+                .ignoresSafeArea()
+#endif
             }
-            #if os(iOS)
-            .ignoresSafeArea()
-            #endif
             
-            // Dialog Box
-            if let currentTalk, !uiIsHiding {
-                VStack {
-                    Spacer()
+            // MARK: - Dialog Box
+            Group {
+                if let currentTalk, !uiIsHiding {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            ISVDialogBoxView(
+                                data: currentTalk,
+                                locale: ir.locale,
+                                isDelaying: false,
+                                isAutoPlaying: isAutoPlaying,
+                                isAnimating: $lineIsAnimating,
+                                shakeDuration: $talkShakeDuration
+                            )
+                            .padding(isMACOS ? .all : .horizontal)
+                            Spacer()
+                        }
+                        .padding(.bottom)
+                    }
+                }
+            }
+            
+            // MARK: - Telop
+            Group {
+                if let currentTelop {
+                    ZStack {
+                        Capsule()
+                            .fill(Color.red.opacity(0.7))
+                            .rotationEffect(.degrees(-0.5))
+                            .frame(width: 400, height: 35)
+                        Capsule()
+                            .fill(Color.white)
+                            .rotationEffect(.degrees(0.5))
+                            .frame(width: 380, height: 32)
+                        Text(currentTelop)
+                            .font(.custom(fontName(in: ir.locale), size: 18))
+                            .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
+                    }
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)).combined(with: .opacity))
+                }
+            }
+            
+            // MARK: - Menu
+            Group {
+                if !uiIsHiding && !isMACOS {
                     HStack {
                         Spacer()
-                        ISVDialogBoxView(
-                            data: currentTalk,
-                            locale: ir.locale,
-                            isDelaying: false,
-                            isAutoPlaying: isAutoPlaying,
-                            isAnimating: $lineIsAnimating,
-                            shakeDuration: $talkShakeDuration
-                        )
-                        .padding(isMACOS ? .all : .horizontal)
-                        Spacer()
-                    }
-                    .padding(.bottom)
-                }
-            }
-            
-            // Telop
-            if let currentTelop {
-                ZStack {
-                    Capsule()
-                        .fill(Color.red.opacity(0.7))
-                        .rotationEffect(.degrees(-0.5))
-                        .frame(width: 400, height: 35)
-                    Capsule()
-                        .fill(Color.white)
-                        .rotationEffect(.degrees(0.5))
-                        .frame(width: 380, height: 32)
-                    Text(currentTelop)
-                        .font(.custom(fontName(in: ir.locale), size: 18))
-                        .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
-                }
-                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)).combined(with: .opacity))
-            }
-            
-//            #if os(iOS)
-            // FIXME: Consider removal.
-            /*
-            if !uiIsHiding {
-                HStack {
-                    Spacer()
-                    VStack {
-                        // FIXME: [251031] Glass Style Where?
-                        if #available(iOS 26.0, macOS 26.0, *) {
-                            actionMenu
-                                .buttonStyle(.glass)
-                        } else {
-//                            actionMenu
-//                                .buttonStyle(.bordered)
-//                                .buttonBorderShape(.circle)
+                        VStack {
+                            if #available(iOS 26.0, macOS 26.0, *) {
+                                actionMenu
+//                                    .font(.body)
+                                    .buttonStyle(.glass)
+                                    .buttonBorderShape(.circle)
+//                                    .frame(width: 30, height: 30)
+                            } else {
+                                actionMenu
+                                    .buttonStyle(.bordered)
+                                    .buttonBorderShape(.circle)
+                            }
+                            Spacer()
                         }
-                        Spacer()
+                        //                    .border(.blue)
                     }
-//                    .border(.blue)
+                    .padding(.vertical, 7)
                 }
-                .padding()
             }
-            */
-//            #endif
             
-            // Black & White Covers
+            // MARK: - Black & White Covers
             Group {
                 Rectangle()
                     .fill(Color.white)
@@ -212,6 +233,10 @@ struct InteractiveStoryView: View {
                     .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
             }
         }
+        // MARK: - Modifiers
+        .focusable()
+        .focusEffectDisabled()
+        .frame(minWidth: 300, minHeight: 75)
         .background {
             WebImage(url: backgroundImageURL)
                 .resizable()
@@ -219,59 +244,6 @@ struct InteractiveStoryView: View {
                 .clipped()
                 .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
         }
-        .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration)) //FIXME: Consider Edits
-        .onTapGesture {
-            if uiIsHiding {
-                uiIsHiding = false
-                return
-            }
-            if isAutoPlaying {
-                autoPlayTimer?.invalidate()
-                isAutoPlaying = false
-                return
-            }
-            if lineIsAnimating {
-                lineIsAnimating = false
-                return
-            }
-            next()
-        }
-        .focusable()
-        .focusEffectDisabled()
-        .onKeyPress(keys: [.return, .space], phases: [.down]) { _ in
-            if uiIsHiding {
-                uiIsHiding = false
-                return .handled
-            }
-            if isAutoPlaying {
-                autoPlayTimer?.invalidate()
-                isAutoPlaying = false
-                return .handled
-            }
-            if lineIsAnimating {
-                lineIsAnimating = false
-                return .handled
-            }
-            next()
-            return .handled
-        }
-        .sheet(isPresented: $backlogIsPresenting) {
-            if let talk = currentTalk {
-                NavigationStack {
-                    ISVBacklogView(ir: ir, currentTalk: talk, locale: ir.locale, audios: talkAudios)
-                    #if os(macOS)
-                        .frame(width: 500, height: 350)
-                    #endif
-                }
-            }
-        }
-        #if os(macOS)
-        .toolbar {
-            ToolbarItem {
-                actionMenu
-            }
-        }
-        #endif
         .onAppear {
             if backgroundImageURL != nil {
                 return
@@ -309,27 +281,102 @@ struct InteractiveStoryView: View {
         .onDisappear {
             exitViewer(dismiss: false)
         }
-        .frame(minWidth: 300, minHeight: 75)
+        .onTapGesture {
+            if uiIsHiding {
+                uiIsHiding = false
+                return
+            }
+            if isAutoPlaying {
+                autoPlayTimer?.invalidate()
+                isAutoPlaying = false
+                return
+            }
+            if lineIsAnimating {
+                lineIsAnimating = false
+                return
+            }
+            next()
+        }
+        .onKeyPress(keys: [.return, .space], phases: [.down]) { _ in
+            if uiIsHiding {
+                uiIsHiding = false
+                return .handled
+            }
+            if isAutoPlaying {
+                autoPlayTimer?.invalidate()
+                isAutoPlaying = false
+                return .handled
+            }
+            if lineIsAnimating {
+                lineIsAnimating = false
+                return .handled
+            }
+            next()
+            return .handled
+        }
+        .onChange(of: isMuted, {
+            bgmPlayer.isMuted = isMuted
+            //                    bgmLooper.volume = isMuted ? 0 : 1
+            sePlayer.isMuted = isMuted
+//            unsafe voicePlayer.pointee.setVolume(isMuted ? 0 : 1, fadeDuration: 0.01) <- Super Buggy
+        })
+        .sheet(isPresented: $backlogIsPresenting) {
+            if let talk = currentTalk {
+                NavigationStack {
+                    ISVBacklogView(ir: ir, currentTalk: talk, locale: ir.locale, audios: talkAudios)
+                    #if os(macOS)
+                        .frame(width: 500, height: 350)
+                    #endif
+                }
+            }
+        }
+        .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration))
+#if os(macOS)
+        .toolbar {
+            ToolbarItem {
+                actionMenu
+            }
+            if interactivePlayerIsInFullScreen {
+                ToolbarItem(placement: .navigation) {
+                    Button(action: {
+                        interactivePlayerIsInFullScreen = false
+                    }, label: {
+                        Image(systemName: "xmark")
+                    })
+                }
+            }
+        }
+#endif
     }
     
+    // MARK: - actionMenu
     @ViewBuilder
     var actionMenu: some View {
         Menu {
             Section {
-                Button(isAutoPlaying ? "Story-viewer.menu.auto.cancel" : "Story-viewer.menu.auto", systemImage: isAutoPlaying ? "play.slash" : "play") {
+                // AUTO-PLAY
+                Button(action: {
                     isAutoPlaying.toggle()
                     if isAutoPlaying {
                         next()
                     } else {
                         autoPlayTimer?.invalidate()
                     }
-                }
-                Button("Story-viewer.menu.full-screen", systemImage: "pano.badge.play") {
+                }, label: {
+                    Label(isAutoPlaying ? "Story-viewer.menu.auto.cancel" : "Story-viewer.menu.auto", systemImage: isAutoPlaying ? "play.slash" : "play")
+                })
+                
+                // HIDE & AUTO-PLAY
+                Button(action: {
                     isAutoPlaying = true
                     uiIsHiding = true
                     next()
-                }
+                }, label: {
+                    Label("Story-viewer.menu.hide-ui-auto", systemImage: "pano.badge.play")
+                })
                 .disabled(talkAudios.isEmpty)
+                
+                // FAST FORWARD
                 Button(action: {
                     if fastForwardTimer != nil {
                         fastForwardTimer?.invalidate()
@@ -348,30 +395,72 @@ struct InteractiveStoryView: View {
                         Label("Story-viewer.menu.fast-forward.cancel", image: "custom.forward.slash")
                     }
                 })
-                Button("Story-viewer.menu.backlog", systemImage: "text.document") {
+                
+                // BACKLOG
+                Button(action: {
                     backlogIsPresenting = true
-                }
+                }, label: {
+                    Label("Story-viewer.menu.backlog", systemImage: "text.document")
+                })
                 .disabled(currentTalk == nil)
-                Button("Story-viewer.menu.hide", systemImage: "xmark") {
+                
+                // HIDE UI
+                Button(action: {
                     uiIsHiding = true
+                }, label: {
+                    Label("Story-viewer.menu.hide", systemImage: "xmark")
+                })
+                
+                // MUTE
+                if mutingIsAvailable {
+                    Button(action: {
+                        isMuted.toggle()
+                    }, label: {
+                        if isMuted {
+                            Label("Story-viewer.menu.mute.quit", systemImage: "speaker.wave.2")
+                        } else {
+                            Label("Story-viewer.menu.mute", systemImage: "speaker.slash")
+                        }
+                    })
                 }
-                Button("Story-viewer.menu.quit", systemImage: "escape", role: .destructive) {
-                    exitViewer()
+                
+                if isvAlwaysFullScreen || !fullScreenToggleIsAvailable {
+                    // QUIT
+                    Button(role: .destructive, action: {
+                        exitViewer()
+                    }, label: {
+                        Label("Story-viewer.menu.quit", systemImage: "escape")
+                    })
+                    .foregroundStyle(.red)
+                } else {
+                    // FULL SCREEN
+                    Button(action: {
+                        interactivePlayerIsInFullScreen.toggle()
+                    }, label: {
+                        if interactivePlayerIsInFullScreen {
+                            Label("Story-viewer.menu.full-screen.quit", systemImage: "arrow.up.forward.and.arrow.down.backward")
+                        } else {
+                            Label("Story-viewer.menu.full-screen.enter", systemImage: "arrow.down.backward.and.arrow.up.forward")
+                        }
+                    })
                 }
-                .foregroundStyle(.red)
             }
         } label: {
             Image(systemName: "ellipsis")
-                .font(.title)
-            #if os(iOS)
-                .font(.system(size: 20))
-                .padding(12)
-            #endif
+                .wrapIf(!isMACOS) {
+                    $0.font(.system(size: 20)).padding(5)
+                }
+//                .font(.title)
+//            #if os(iOS)
+//                .font(.system(size: 20))
+//                .padding(12)
+//            #endif
         }
         .menuStyle(.button)
         .menuIndicator(.hidden)
     }
     
+    // MARK: - start
     func start() {
         @safe nonisolated(unsafe) let ir = ir
         detachedReferenceCountedTask { @Sendable in
@@ -380,10 +469,14 @@ struct InteractiveStoryView: View {
             }
         }
     }
+    
+    // MARK: - next
     func next() {
         currentInteractBlockingContinuation?.resume()
         currentInteractBlockingContinuation = nil
     }
+    
+    // MARK: - perform
     func perform(action: StoryIR.StepAction) async {
         Self.performingActionCount.count += 1
         
@@ -682,6 +775,7 @@ struct InteractiveStoryView: View {
         }
     }
     
+    // MARK: - detachedReferenceCountedTask
     func detachedReferenceCountedTask(operation: sending @escaping @isolated(any) () async -> Void) {
         Task.detached {
             await Self.$performingActionCount.withValue(.init()) {
@@ -690,6 +784,7 @@ struct InteractiveStoryView: View {
         }
     }
     
+    // MARK: - exitViewer
     func exitViewer(dismiss doDismiss: Bool = true) {
         // clean up
         autoPlayTimer?.invalidate()
@@ -711,12 +806,4 @@ struct InteractiveStoryView: View {
             unsafe voicePlayer.deallocate()
         }
     }
-    
-    #if os(macOS)
-    func updateTitleBar(for window: NSWindow) {
-        let isFullscreen = window.styleMask.contains(.fullScreen)
-        window.titleVisibility = isFullscreen ? .hidden : .visible
-        window.titlebarAppearsTransparent = isFullscreen
-    }
-    #endif // os(macOS)
 }

@@ -37,6 +37,7 @@ struct StoryDetailView: View {
     @State var screenWidth: CGFloat = 0
     @State var screenHeight: CGFloat = 0
     @State var safeAreaInsets = EdgeInsets()
+    @State var isMuted = false
     var body: some View {
         ZStack {
             if let transcript {
@@ -47,14 +48,15 @@ struct StoryDetailView: View {
                             if !isvAlwaysFullScreen || interactivePlayerIsInFullScreen {
                                 Section {
                                     StoryDetailInteractiveStoryEntryView(
-                                        title: title,
                                         scenarioID: scenarioID,
                                         voiceAssetBundleName: voiceAssetBundleName,
                                         type: type,
                                         locale: locale,
                                         unsafeAssociatedID: unsafeAssociatedID,
                                         unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID,
-                                        asset: $asset
+                                        asset: $asset,
+                                        interactivePlayerIsInFullScreen: $interactivePlayerIsInFullScreen,
+                                        isMuted: $isMuted
                                     )
                                     .safeAreaPadding(interactivePlayerIsInFullScreen ? safeAreaInsets : .init())
                                     .aspectRatio(interactivePlayerIsInFullScreen ? screenWidth/screenHeight : 16/10, contentMode: .fit)
@@ -64,6 +66,30 @@ struct StoryDetailView: View {
                             }
                             if !interactivePlayerIsInFullScreen {
                                 if !isvAlwaysFullScreen {
+                                    HStack {
+                                        Button(action: {
+                                            isMuted.toggle()
+                                        }, label: {
+                                            Label("Story-viewer.mute", systemImage: isMuted ? "speaker.slash" :"speaker.wave.2")
+                                                .foregroundStyle(isMuted ? .red : .primary)
+                                                .labelStyle(.iconOnly)
+                                                .frame(width: 10)
+                                        })
+                                        Button(action: {
+                                            interactivePlayerIsInFullScreen = true
+                                        }, label: {
+                                            Label("Story-viewer.enter-full-screen", systemImage: "arrow.down.backward.and.arrow.up.forward")
+                                        })
+                                        
+                                    }
+                                    .wrapIf(true) {
+                                        if #available(iOS 26.0, macOS 26.0, *) {
+                                            $0.buttonStyle(.glass)
+                                        } else {
+                                            $0.buttonStyle(.bordered)
+                                        }
+                                    }
+                                    .buttonBorderShape(.capsule)
                                     DetailSectionsSpacer(height: 15)
                                 }
                                 
@@ -118,9 +144,11 @@ struct StoryDetailView: View {
                                                                 case .multiple:
                                                                     Image(systemName: "person.3.fill")
                                                                         .bold()
+                                                                        .frame(height: 20)
                                                                 case .unknown:
                                                                     Image(systemName: "person.crop.circle.badge.questionmark")
                                                                         .bold()
+                                                                        .frame(width: 20, height: 20)
                                                                 }
                                                                 Text(talk.characterName)
                                                                     .font(.headline)
@@ -188,34 +216,43 @@ struct StoryDetailView: View {
         .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .navigationBar)
         .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .tabBar)
         #endif
-        .navigationBarBackButtonHidden(interactivePlayerIsInFullScreen && !isMACOS)
+        .navigationBarBackButtonHidden(interactivePlayerIsInFullScreen)
         .withSystemBackground()
         .task {
             await loadTranscript()
         }
         .toolbar {
-            ToolbarItem {
-                Button(action: {
-                    interactivePlayerIsInFullScreen.toggle()
-                }, label: {
-                    Image(systemName: "triangle")
-                })
-            }
-            ToolbarItem {
-                LocalePicker($locale)
+            if !interactivePlayerIsInFullScreen {
+                ToolbarItem {
+                    Menu(content: {
+                        LocalePicker($locale)
+                            .pickerStyle(.inline)
+                    }, label: {
+                        Image(systemName: "globe")
+                    })
                     .onChange(of: locale) {
                         Task {
                             await loadTranscript()
                         }
                     }
+                }
             }
-            #if os(macOS)
+#if os(macOS)
             if AppFlag.DEBUG {
                 ToolbarItem {
                     debugMenu
                 }
             }
-            #endif
+#endif
+            if isvAlwaysFullScreen {
+                ToolbarItem {
+                    Button(action: {
+                        interactivePlayerIsInFullScreen.toggle()
+                    }, label: {
+                        Image(systemName: "arrow.down.backward.and.arrow.up.forward")
+                    })
+                }
+            }
         }
         .onChange(of: interactivePlayerIsInFullScreen) {
             #if os(iOS)
@@ -336,7 +373,6 @@ struct StoryDetailView: View {
     #endif
     
     struct StoryDetailInteractiveStoryEntryView: View {
-        var title: String
         var scenarioID: String
         var voiceAssetBundleName: String?
         var type: StoryType
@@ -344,6 +380,8 @@ struct StoryDetailView: View {
         var unsafeAssociatedID: String // WTF
         var unsafeSecondaryAssociatedID: String?
         @Binding var asset: _DoriAPI.Misc.StoryAsset?
+        @Binding var interactivePlayerIsInFullScreen: Bool
+        @Binding var isMuted: Bool
         var body: some View {
             if let asset {
                 InteractiveStoryView(asset: asset, voiceBundlePath: {
@@ -361,7 +399,7 @@ struct StoryDetailView: View {
                     case .afterLive:
                         "\(locale.rawValue)/sound/voice/scenario/afterlivetalk/group\(Int(floor(Double(unsafeAssociatedID)! / 100)))"
                     }
-                }(), locale: locale)
+                }(), locale: locale, interactivePlayerIsInFullScreen: $interactivePlayerIsInFullScreen, isMuted: $isMuted)
             } else {
                 ProgressView()
             }
