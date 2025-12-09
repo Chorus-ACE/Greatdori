@@ -93,6 +93,12 @@ struct CardDetailOverviewView: View {
                     VideoPlayer(player: .init(url: url))
                         .aspectRatio(4/3, contentMode: .fit)
                 }
+                CustomGroupBox(cornerRadius: 3417) {
+                    if !information.card.gachaText.isValueEmpty {
+                        CompactAudioPlayer(url: information.card.gachaVoiceURL)
+                    }
+                }
+                .frame(maxWidth: infoContentMaxWidth)
             }
         }
         .task {
