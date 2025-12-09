@@ -427,7 +427,7 @@ struct InteractiveStoryView: View {
                 if isvAlwaysFullScreen || !fullScreenToggleIsAvailable {
                     // QUIT
                     Button(role: .destructive, action: {
-                        exitViewer()
+                        dismiss()
                     }, label: {
                         Label("Story-viewer.menu.quit", systemImage: "escape")
                     })
