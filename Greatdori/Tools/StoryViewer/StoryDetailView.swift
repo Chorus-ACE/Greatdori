@@ -73,7 +73,15 @@ struct StoryDetailView: View {
                                             Label("Story-viewer.mute", systemImage: isMuted ? "speaker.slash" :"speaker.wave.2")
                                                 .foregroundStyle(isMuted ? .red : .primary)
                                                 .labelStyle(.iconOnly)
-                                                .frame(width: 10)
+                                                .frame(width: isMACOS ? 10 : 15)
+                                                .wrapIf(true) {
+                                                    if #available(iOS 18.0, macOS 15.0, *) {
+                                                        $0.contentTransition(.symbolEffect(.replace.magic(fallback: .downUp)))
+                                                    } else {
+                                                        $0
+                                                    }
+                                                }
+//                                                .contentTransition(.symbolEffect(.replace.magic(fallback: .downUp.byLayer), options: .nonRepeating))
                                         })
                                         Button(action: {
                                             interactivePlayerIsInFullScreen = true
@@ -107,7 +115,7 @@ struct StoryDetailView: View {
                                             }
                                             .padding(index > 0 && { if case .notation = self.transcript![index - 1] { true } else { false } }() ? .bottom : .vertical)
                                         case .talk(let talk):
-                                            CustomGroupBox {
+                                            CustomGroupBox(cornerRadius: 20) {
                                                 Button(action: {
                                                     if let voiceID = talk.voiceID {
                                                         let url = switch type {
