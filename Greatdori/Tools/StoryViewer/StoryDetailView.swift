@@ -235,6 +235,7 @@ struct StoryDetailView: View {
                             await loadTranscript()
                         }
                     }
+                    .menuIndicator(.hidden)
                 }
             }
 #if os(macOS)
@@ -244,7 +245,7 @@ struct StoryDetailView: View {
                 }
             }
 #endif
-            if isvAlwaysFullScreen {
+            if isvAlwaysFullScreen || !isMACOS {
                 ToolbarItem {
                     Button(action: {
                         interactivePlayerIsInFullScreen.toggle()
