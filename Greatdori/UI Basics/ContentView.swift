@@ -193,10 +193,11 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showWelcomeScreen, onDismiss: {
-                if !welcomeViewHadSafeExited {
+                if welcomeViewHadSafeExited {
+                    isInitializationRequired = false
+                } else {
                     showWelcomeScreen = true
                 }
-//                showWelcomeScreen = /*isInitializationRequired*/
             }) {
                 WelcomeView(showWelcomeScreen: $showWelcomeScreen, isSafeExit: $welcomeViewHadSafeExited)
             }
@@ -204,7 +205,6 @@ struct ContentView: View {
             }, message: {
                 Text("Home.banner.no-pre-cahce.subtitle")
             })
-            
         } else {
             if crashViewShouldBeDisplayed {
                 // Crash View pretended to be the same as loading view below.
