@@ -67,6 +67,11 @@ struct ISVBacklogView: View {
                     dismiss()
                 }, label: {
                     Label("Story-viewer.backlog.dismiss", systemImage: "xmark")
+                        .wrapIf(isMACOS, in: {
+                            $0.labelStyle(.titleOnly)
+                        }, else: {
+                            $0.labelStyle(.iconOnly)
+                        })
                 })
             }
         }

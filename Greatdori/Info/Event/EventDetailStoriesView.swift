@@ -30,7 +30,8 @@ struct EventDetailStoriesView: View {
                                 type: .event,
                                 locale: locale,
                                 unsafeAssociatedID: String(information.event.id),
-                                unsafeSecondaryAssociatedID: String(index)
+                                unsafeSecondaryAssociatedID: String(index),
+                                notes: story.releaseConditions.forLocale(locale)
                             )
                         }
                     } else {

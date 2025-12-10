@@ -33,7 +33,7 @@ struct CardDetailStoriesView: View {
                                         synopsis: "",
                                         voiceAssetBundleName: nil
                                     ),
-                                    type: .event,
+                                    type: .card,
                                     locale: locale,
                                     unsafeAssociatedID: information.card.resourceSetName
                                 )
