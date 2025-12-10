@@ -21,7 +21,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct StoryDetailView: View {
-    var title: String
+    var title: LocalizedData<String>
     var scenarioID: String
     var voiceAssetBundleName: String?
     var type: StoryType
@@ -41,6 +41,44 @@ struct StoryDetailView: View {
     @State var screenHeight: CGFloat = 0
     @State var safeAreaInsets = EdgeInsets()
     @State var isMuted = false
+    
+    init(
+        title: LocalizedData<String>,
+        scenarioID: String,
+        voiceAssetBundleName: String? = nil,
+        type: StoryType,
+        locale: DoriLocale,
+        unsafeAssociatedID: String,
+        unsafeSecondaryAssociatedID: String? = nil
+    ) {
+        self.title = title
+        self.scenarioID = scenarioID
+        self.voiceAssetBundleName = voiceAssetBundleName
+        self.type = type
+        self._locale = .init(initialValue: locale)
+        self.unsafeAssociatedID = unsafeAssociatedID
+        self.unsafeSecondaryAssociatedID = unsafeSecondaryAssociatedID
+    }
+    init(
+        title: String,
+        scenarioID: String,
+        voiceAssetBundleName: String? = nil,
+        type: StoryType,
+        locale: DoriLocale,
+        unsafeAssociatedID: String,
+        unsafeSecondaryAssociatedID: String? = nil
+    ) {
+        self.init(
+            title: .init(forEveryLocale: title),
+            scenarioID: scenarioID,
+            voiceAssetBundleName: voiceAssetBundleName,
+            type: type,
+            locale: locale,
+            unsafeAssociatedID: unsafeAssociatedID,
+            unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID
+        )
+    }
+    
     var body: some View {
         ZStack {
             if let transcript {
@@ -222,7 +260,7 @@ struct StoryDetailView: View {
                 }
             }
         }
-        .navigationTitle(title)
+        .navigationTitle(title.forLocale(locale) ?? String(localized: "Story"))
         #if os(iOS)
         .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .navigationBar)
         .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .tabBar)

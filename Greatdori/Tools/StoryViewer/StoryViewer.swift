@@ -500,7 +500,7 @@ struct StoryCardView: View {
     
     var scenarioID: String
     var caption: String
-    var title: String
+    var title: LocalizedData<String>
     var synopsis: String
     var voiceAssetBundleName: String?
     
@@ -513,7 +513,7 @@ struct StoryCardView: View {
     init(story: _DoriAPI.Story, type: StoryType, locale: _DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil, notes: String? = nil) {
         self.scenarioID = story.scenarioID
         self.caption = story.caption.forLocale(locale) ?? ""
-        self.title = story.title.forLocale(locale) ?? ""
+        self.title = story.title
         self.synopsis = story.synopsis.forLocale(locale) ?? ""
         self.voiceAssetBundleName = story.voiceAssetBundleName
         self.type = type
@@ -534,6 +534,7 @@ struct StoryCardView: View {
         self.unsafeSecondaryAssociatedID = unsafeSecondaryAssociatedID
         self.notes = notes
     }
+    
     var body: some View {
         NavigationLink(destination: {
             StoryDetailView(
@@ -553,7 +554,7 @@ struct StoryCardView: View {
                              CardEpisode.EpisodeType.standard.localizedString,
                              CardEpisode.EpisodeType.memorial.localizedString
                         ].contains(caption) {
-                            Text(verbatim: "\(caption)\(getLocalizedColon(forLocale: locale))\(title)")
+                            Text(verbatim: "\(caption)\(getLocalizedColon(forLocale: locale))\(title.forLocale(locale) ?? "")")
                                 .font(.headline)
                             Text(synopsis)
                                 .foregroundStyle(.secondary)
@@ -565,7 +566,7 @@ struct StoryCardView: View {
                             }
                         } else {
                             Text(caption)
-                            Text(title)
+                            Text(title.forLocale(locale) ?? "")
                                 .bold()
                                 .font(.title3)
                         }
@@ -574,7 +575,6 @@ struct StoryCardView: View {
                     if let notes, sizeClass == .regular {
                         Text(notes)
                             .foregroundStyle(.secondary)
-//                            .font(.caption)
                     }
                 }
             }
@@ -607,7 +607,7 @@ enum StoryType: String, CaseIterable, Hashable {
 public struct CustomStory: Sendable, Identifiable, Hashable, DoriCache.Cacheable, Equatable {
     public var scenarioID: String
     public var caption: String
-    public var title: String
+    public var title: LocalizedData<String>
     public var synopsis: String
     public var voiceAssetBundleName: String?
     
@@ -619,7 +619,16 @@ extension _DoriAPI.Story {
         var result = LocalizedData<CustomStory>()
         for locale in DoriLocale.allCases {
             if self.title.availableInLocale(locale) {
-                result._set(CustomStory(scenarioID: self.scenarioID, caption: self.caption.forLocale(locale) ?? "", title: self.title.forLocale(locale) ?? "", synopsis: self.synopsis.forLocale(locale) ?? "", voiceAssetBundleName: self.voiceAssetBundleName), forLocale: locale)
+                result._set(
+                    CustomStory(
+                        scenarioID: self.scenarioID,
+                        caption: self.caption.forLocale(locale) ?? "",
+                        title: self.title,
+                        synopsis: self.synopsis.forLocale(locale) ?? "",
+                        voiceAssetBundleName: self.voiceAssetBundleName
+                    ),
+                    forLocale: locale
+                )
             }
         }
         return result
@@ -632,7 +641,16 @@ extension Array<_DoriAPI.Story> {
         for story in self {
             for locale in DoriLocale.allCases {
                 if story.title.availableInLocale(locale) {
-                    result._set((result.forLocale(locale) ?? []) + [CustomStory(scenarioID: story.scenarioID, caption: story.caption.forLocale(locale) ?? "", title: story.title.forLocale(locale) ?? "", synopsis: story.synopsis.forLocale(locale) ?? "", voiceAssetBundleName: story.voiceAssetBundleName)], forLocale: locale)
+                    result._set(
+                        (result.forLocale(locale) ?? []) + [CustomStory(
+                            scenarioID: story.scenarioID,
+                            caption: story.caption.forLocale(locale) ?? "",
+                            title: story.title,
+                            synopsis: story.synopsis.forLocale(locale) ?? "",
+                            voiceAssetBundleName: story.voiceAssetBundleName
+                        )],
+                        forLocale: locale
+                    )
                 }
             }
         }
