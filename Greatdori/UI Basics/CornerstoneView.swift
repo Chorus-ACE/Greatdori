@@ -21,6 +21,7 @@
 import DoriKit
 import SwiftUI
 import CoreMotion
+import SDWebImageSwiftUI
 
 // MARK: Constants
 let bannerWidth: CGFloat = isMACOS ? 370 : 420
@@ -386,6 +387,41 @@ struct CustomStack<Content: View>: View {
     }
 }
 
+struct DegreeView: View {
+    var degree: Degree
+    
+    init(_ degree: Degree) {
+        self.degree = degree
+    }
+    
+    @State private var baseSize = CGSize.zero
+    
+    var body: some View {
+        ZStack(alignment: .trailing) {
+            WebImage(url: degree.baseImageURL)
+                .resizable()
+                .scaledToFit()
+                .onFrameChange { geometry in
+                    baseSize = geometry.size
+                }
+            if let url = degree.rankImageURL {
+                WebImage(url: url)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: baseSize.height)
+            }
+            if let url = degree.iconImageURL {
+                HStack {
+                    WebImage(url: url)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: baseSize.height)
+                    Spacer()
+                }
+            }
+        }
+    }
+}
 
 // MARK: DetailsIDSwitcher
 struct DetailsIDSwitcher<Content: View>: View {

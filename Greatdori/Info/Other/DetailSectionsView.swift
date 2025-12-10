@@ -68,7 +68,7 @@ struct DetailUnavailableView: View {
             HStack {
                 Spacer()
                 VStack {
-                    Image(systemName: symbol)
+                    Image(fallingSystemName: symbol)
                         .font(.largeTitle)
                         .padding(.top, 2)
                         .padding(.bottom, 1)

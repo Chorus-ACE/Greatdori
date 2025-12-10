@@ -441,6 +441,7 @@ private let systemImageFalling = {
         result.updateValue(nil, forKey: "star.hexagon.fill")
         result.updateValue(nil, forKey: "apple.classical.pages")
         result.updateValue(nil, forKey: "apple.classical.pages.fill")
+        result.updateValue(nil, forKey: "capsule.on.capsule")
         result.updateValue("text.below.photo", forKey: "text.below.rectangle")
         result.updateValue("persona", forKey: "person.and.viewfinder")
     }
