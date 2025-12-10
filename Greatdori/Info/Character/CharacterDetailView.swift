@@ -36,6 +36,7 @@ struct CharacterDetailView: View {
     @State var information: ExtendedCharacter?
     @State var infoIsAvailable = true
     @State var cardNavigationDestinationID: Int?
+    @State var randomCardBuffer: [PreviewCard] = []
     @State var randomCard: PreviewCard?
     @State var showSubtitle: Bool = false
     @State var randomCardHadUpdatedOnce = false
@@ -59,7 +60,7 @@ struct CharacterDetailView: View {
                                 }
                                 if randomCard != nil && information.band != nil {
                                     Button(action: {
-                                        randomCard = information.randomCard()!
+                                        updateRandomCard()
                                     }, label: {
                                         Label("Character.random-card", systemImage: "arrow.clockwise")
                                     })
@@ -169,7 +170,7 @@ struct CharacterDetailView: View {
             if let information = $0 {
                 self.information = information
                 if !randomCardHadUpdatedOnce {
-                    randomCard = information.randomCard()
+                    updateRandomCard()
                     randomCardHadUpdatedOnce = true
                 }
             } else {
@@ -182,6 +183,73 @@ struct CharacterDetailView: View {
             //                + information.events.map(\.bannerImageURL)
             //                + information.gacha.map(\.bannerImageURL)
             //            )
+        }
+    }
+    
+    func updateRandomCard() {
+        guard let information else { return }
+        
+        var cardList = information.cards
+        
+        // There're some really... really terrible cards
+        // that we decided to exclude them from the randomness.
+        // If you do like these cards, you can set the
+        // `CharacterRandomCardsContainAllCards` flag
+        // to `true` to bring them back.
+        // Note these's no popular “ghost cards” like #947,
+        // they're acceptable and we're happy to get them(???).
+        //
+        // If you don't know these cards before and have gone to see them,
+        // don't forget to see our card collections!
+        // They can bring your good mood back.
+        if !AppFlag.CharacterRandomCardsContainAllCards {
+            let listCopy = cardList
+            cardList.removeAll {
+                (90036...90040).contains($0.id)
+            }
+            if _slowPath(cardList.isEmpty) {
+                cardList = listCopy
+            }
+        }
+        
+        // We use a buffer to preload card images
+        let bufferSize = 5
+        if randomCardBuffer.isEmpty {
+            for _ in 0..<bufferSize {
+                var newCard = cardList.randomElement()!
+                if cardList.count > 1, let lastCard = randomCardBuffer.last {
+                    while newCard == lastCard {
+                        newCard = cardList.randomElement()!
+                    }
+                }
+                randomCardBuffer.append(newCard)
+            }
+            for card in randomCardBuffer {
+                Task.detached {
+                    _ = SDWebImagePrefetcher.shared.prefetchURLs([
+                        card.coverNormalImageURL,
+                        card.coverAfterTrainingImageURL
+                    ].compactMap { $0 })
+                }
+            }
+        }
+        
+        randomCard = randomCardBuffer.removeFirst()
+        
+        var bufferNewCard = cardList.randomElement()!
+        if cardList.count > 1, let lastCard = randomCardBuffer.last {
+            // Make the same card doesn't appear continuously,
+            // if possible.
+            while bufferNewCard == lastCard {
+                bufferNewCard = cardList.randomElement()!
+            }
+        }
+        randomCardBuffer.append(bufferNewCard)
+        Task.detached {
+            _ = SDWebImagePrefetcher.shared.prefetchURLs([
+                bufferNewCard.coverNormalImageURL,
+                bufferNewCard.coverAfterTrainingImageURL
+            ].compactMap { $0 })
         }
     }
 }
