@@ -49,6 +49,9 @@ struct CardDetailStatsView: View {
                                             Stepper("", value: $level, in: Float(card.stat.minimumLevel ?? 1)...Float(card.stat.maximumLevel ?? 60), step: 1)
                                                 .labelsHidden()
                                         })
+                                        .accessibilityElement()
+                                        .accessibilityLabel(Text("Card.stats.level"))
+                                        .accessibilityValue("\(Int(level))")
                                         Slider(value: $level, in: Float(card.stat.minimumLevel ?? 1)...Float(card.stat.maximumLevel ?? 60), step: 1, label: {
                                             Text("")
                                         })
