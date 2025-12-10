@@ -173,23 +173,21 @@ struct InteractiveStoryView: View {
             }
             
             // MARK: - Telop
-            Group {
-                if let currentTelop {
-                    ZStack {
-                        Capsule()
-                            .fill(Color.red.opacity(0.7))
-                            .rotationEffect(.degrees(-0.5))
-                            .frame(width: 400, height: 35)
-                        Capsule()
-                            .fill(Color.white)
-                            .rotationEffect(.degrees(0.5))
-                            .frame(width: 380, height: 32)
-                        Text(currentTelop)
-                            .font(.custom(fontName(in: ir.locale), size: 18))
-                            .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
-                    }
-                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)).combined(with: .opacity))
+            if let currentTelop {
+                ZStack {
+                    Capsule()
+                        .fill(Color.red.opacity(0.7))
+                        .rotationEffect(.degrees(-0.5))
+                        .frame(width: 400, height: 35)
+                    Capsule()
+                        .fill(Color.white)
+                        .rotationEffect(.degrees(0.5))
+                        .frame(width: 380, height: 32)
+                    Text(currentTelop)
+                        .font(.custom(fontName(in: ir.locale), size: 18))
+                        .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
                 }
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)).combined(with: .opacity))
             }
             
             // MARK: - Menu
@@ -547,9 +545,11 @@ struct InteractiveStoryView: View {
             Task {
                 Self.performingActionCount.tappingActionCount += 1
                 
-                withAnimation {
-                    currentTalk = nil
-                    currentTelop = text
+                await MainActor.run {
+                    withAnimation {
+                        currentTalk = nil
+                        currentTelop = text
+                    }
                 }
                 
                 if isAutoPlaying {
