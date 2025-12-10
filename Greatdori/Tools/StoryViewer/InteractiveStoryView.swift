@@ -311,9 +311,9 @@ struct InteractiveStoryView: View {
             next()
             return .handled
         }
-        .onChange(of: isMuted.wrappedValue, {
+        .onChange(of: isMuted.wrappedValue, initial: true, {
+//            print("MUTING PLAYERS")
             bgmPlayer.isMuted = isMuted.wrappedValue
-//                                bgmLooper.volume = isMuted ? 0 : 1
             sePlayer.isMuted = isMuted.wrappedValue
             if let safeVoicePlayer {
                 safeVoicePlayer.volume = isMuted.wrappedValue ? 0 : 1

@@ -279,6 +279,7 @@ struct StoryDetailView: View {
             #if os(iOS)
             if Mute.shared.isMute {
                 isMuted = true
+                print("SILENT MODE: MUTE")
             }
             #endif
             if !ISVHadChosenOption {
