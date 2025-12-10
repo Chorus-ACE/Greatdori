@@ -77,6 +77,7 @@ struct SettingsAboutDetailView: View {
 
 struct SettingsAboutDetailIconView: View {
     @State var showDebugVerificationAlert = false
+    @State var showDebugDeactivateAlert = false
     @State var password = ""
     @State var showDebugUnlockAlert = false
     @AppStorage("lastDebugPassword") var lastDebugPassword = ""
@@ -100,21 +101,24 @@ struct SettingsAboutDetailIconView: View {
             }
             .foregroundStyle(.secondary)
             .font(.title3)
-            .onTapGesture(count: 3, perform: {
-                showDebugVerificationAlert = true
-            })
-            .alert("Settings.debug.activate-alert.title", isPresented: $showDebugVerificationAlert, actions: {
-#if os(iOS)
+            .onTapGesture(count: 3) {
+                if !AppFlag.DEBUG {
+                    showDebugVerificationAlert = true
+                } else {
+                    showDebugDeactivateAlert = true
+                }
+            }
+            .alert("Settings.debug.activate-alert.title", isPresented: $showDebugVerificationAlert) {
+                #if os(iOS)
                 TextField("Settings.debug.activate-alert.prompt", text: $password)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .fontDesign(.monospaced)
-#else
+                #else
                 TextField("Settings.debug.activate-alert.prompt", text: $password)
                     .autocorrectionDisabled()
-                //                        .textInputSuggestions(nil)
                     .fontDesign(.monospaced)
-#endif
+                #endif
                 Button(action: {
                     if password == correctDebugPassword {
                         lastDebugPassword = password
@@ -126,14 +130,32 @@ struct SettingsAboutDetailIconView: View {
                 }, label: {
                     Text("Settings.debug.activate-alert.confirm")
                 })
-                    .keyboardShortcut(.defaultAction)
-                    Button(role: .cancel, action: {}, label: {
-                        Text("Settings.debug.activate-alert.cancel")
-                    })
-                }, message: {
-                    Text("Settings.debug.activate-alert.message")
+                .keyboardShortcut(.defaultAction)
+                Button(role: .cancel, action: {}, label: {
+                    Text("Settings.debug.activate-alert.cancel")
                 })
-                .alert("Settings.debug.activate-alert.succeed", isPresented: $showDebugUnlockAlert, actions: {})
+            } message: {
+                Text("Settings.debug.activate-alert.message")
+            }
+            .alert("Settings.debug.activate-alert.succeed", isPresented: $showDebugUnlockAlert) {}
+//            .alert(String("You are already in debug mode"), isPresented: $showDebugDeactivateAlert) {
+//                Button(String("I didn't say I wouldn't")) {
+//                    AppFlag.set(false, forKey: "DEBUG")
+//                }
+//                .keyboardShortcut(.defaultAction)
+//                Button(String("Not really")) {}
+//            } message: {
+//                Text(verbatim: "Are you not in the mood to deactivate it right now?")
+//            }
+            .alert("Settings.debug.deactivate-alert.title", isPresented: $showDebugDeactivateAlert) {
+                Button("Settings.debug.deactivate-alert.confirm") {
+                    AppFlag.set(false, forKey: "DEBUG")
+                }
+                .keyboardShortcut(.defaultAction)
+                Button("Settings.debug.deactivate-alert.cancel") {}
+            } message: {
+                Text("Settings.debug.deactivate-alert.prompt")
+            }
         }
     }
 }
