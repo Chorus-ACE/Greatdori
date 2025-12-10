@@ -25,10 +25,30 @@ struct EventDetailView: View {
         DetailViewBase(previewList: allEvents, initialID: id) { information in
             EventDetailOverviewView(information: information)
             DetailsGachasSection(gachas: information.gacha, applyLocaleFilter: true)
-            DetailsSongsSection(songs: information.songs)
-                .wrapIf(information.event.eventType == .festival) {
-                    $0.appendingView { EventDetailRotationMusicView(information: information) }
-                }
+            DetailsSongsSection(
+                songs: .init(
+                    _jp: songs(for: .jp, with: information),
+                    en: songs(for: .en, with: information),
+                    tw: songs(for: .tw, with: information),
+                    cn: songs(for: .cn, with: information),
+                    kr: songs(for: .kr, with: information)
+                ),
+                subtitles: {
+                    var result: [Int: LocalizedStringKey] = [:]
+                    for song in information.songs {
+                        result.updateValue("Song.info.released-during-event", forKey: song.id)
+                    }
+                    for locale in DoriLocale.allCases {
+                        information.eventSongs?.forLocale(locale)?.forEach {
+                            result.updateValue("Song.info.event-song", forKey: $0.id)
+                        }
+                    }
+                    return result
+                }()
+            )
+            .wrapIf(information.event.eventType == .festival) {
+                $0.appendingView { EventDetailRotationMusicView(information: information) }
+            }
             EventDetailStageView(information: information)
             EventDetailGoalsView(information: information)
             EventDetailTeamsView(information: information)
@@ -62,5 +82,10 @@ struct EventDetailView: View {
         } switcherDestination: {
             EventSearchView()
         }
+    }
+    
+    private func songs(for locale: DoriLocale, with information: ExtendedEvent) -> [PreviewSong] {
+        Array(Set(information.songs.filter { $0.publishedAt.forLocale(locale) != nil }
+        + (information.eventSongs?.forLocale(locale) ?? [])))
     }
 }

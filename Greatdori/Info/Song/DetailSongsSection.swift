@@ -19,13 +19,21 @@ import SwiftUI
 
 // MARK: DetailsSongsSection
 struct DetailsSongsSection: View {
-    var songs: [PreviewSong]
+    var songs: LocalizedData<[PreviewSong]>
+    var subtitles: [Int /* Song ID */: LocalizedStringKey] = [:]
     var body: some View {
-        DetailSectionBase(elements: songs.sorted(withDoriSorter: DoriSorter(keyword: .releaseDate(in: .jp)))) { item in
+        DetailSectionBase(
+            elements: songs.map {
+                $0?.sorted(withDoriSorter: DoriSorter(
+                    keyword: .releaseDate(in: .jp),
+                    direction: .ascending
+                ))
+            }
+        ) { item in
             NavigationLink(destination: {
                 SongDetailView(id: item.id)
             }, label: {
-                SongInfo(item, layout: .horizontal)
+                SongInfo(item, subtitle: subtitles[item.id], layout: .horizontal)
             })
         }
     }

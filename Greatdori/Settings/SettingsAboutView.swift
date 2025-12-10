@@ -138,15 +138,6 @@ struct SettingsAboutDetailIconView: View {
                 Text("Settings.debug.activate-alert.message")
             }
             .alert("Settings.debug.activate-alert.succeed", isPresented: $showDebugUnlockAlert) {}
-//            .alert(String("You are already in debug mode"), isPresented: $showDebugDeactivateAlert) {
-//                Button(String("I didn't say I wouldn't")) {
-//                    AppFlag.set(false, forKey: "DEBUG")
-//                }
-//                .keyboardShortcut(.defaultAction)
-//                Button(String("Not really")) {}
-//            } message: {
-//                Text(verbatim: "Are you not in the mood to deactivate it right now?")
-//            }
             .alert("Settings.debug.deactivate-alert.title", isPresented: $showDebugDeactivateAlert) {
                 Button("Settings.debug.deactivate-alert.confirm") {
                     AppFlag.set(false, forKey: "DEBUG")
