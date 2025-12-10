@@ -20,9 +20,10 @@ import SwiftUI
 struct ISVLive2DView: View {
     var modelPath: String
     var state: LayoutState?
-    var voicePlayer: UnsafeMutablePointer<AVAudioPlayer>
+//    var voicePlayer: UnsafeMutablePointer<AVAudioPlayer>
     var currentSpeckerID: Int
     @Environment(\._layoutViewVisible) private var isVisible
+    @Environment(\._safeVoicePlayer) private var safeVoicePlayer
     @State private var motions = [Live2DMotion]()
     @State private var expressions = [Live2DExpression]()
     @State private var lipSyncValue = 0.0
@@ -47,13 +48,14 @@ struct ISVLive2DView: View {
                 self.expressions = expressions
             }
             .onChange(of: isVisible) {
-                if isVisible {
+                if isVisible && safeVoicePlayer.wrappedValue != nil {
                     lipSyncTimer = Timer.scheduledTimer(withTimeInterval: 0.04, repeats: true) { _ in
                         DispatchQueue.main.async {
-                            unsafe voicePlayer.pointee.updateMeters()
+//                            unsafe voicePlayer.pointee.updateMeters()
+                            safeVoicePlayer.wrappedValue!.updateMeters()
                             
                             // -160.0...0.0
-                            let power = Double(unsafe voicePlayer.pointee.peakPower(forChannel: 0))
+                            let power = Double(safeVoicePlayer.wrappedValue!.peakPower(forChannel: 0))
                             lipSyncValue = pow(10, power / 20) - 0.3
                         }
                     }
@@ -65,4 +67,13 @@ struct ISVLive2DView: View {
                 lipSyncTimer?.invalidate()
             }
     }
+}
+
+extension View {
+    func safeVoicePlayer(_ safePlayer: Binding<AVAudioPlayer?>) -> some View {
+        environment(\._safeVoicePlayer, safePlayer)
+    }
+}
+extension EnvironmentValues {
+    @Entry var _safeVoicePlayer: Binding<AVAudioPlayer?> = .constant(nil)
 }

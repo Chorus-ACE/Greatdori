@@ -342,6 +342,10 @@ func submitStats(
     key: String,
     action: Bool /* true: +1, false: -1 */
 ) async -> Bool {
+    #if targetEnvironment(simulator)
+    return false
+    #endif
+    
     guard !statsAPIPrivateKey.isEmpty else {
         return false
     }

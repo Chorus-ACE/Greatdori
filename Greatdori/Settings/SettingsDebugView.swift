@@ -57,8 +57,11 @@ struct SettingsDebugView: View {
                 })
                 Toggle(isOn: $enableRulerOverlay, label: {
                     Text(verbatim: "enableRulerOverlay")
-                    
                 })
+                Toggle(isOn: .init(get: { AppFlag.ISV_DEBUG }, set: { AppFlag.set($0, forKey: "ISV_DEBUG") })) {
+                    Text(verbatim: "ISV_DEBUG")
+                }
+                
                 NavigationLink(destination: {
                     DebugBirthdayView()
                 }, label: {

@@ -40,7 +40,7 @@ struct InteractiveStoryView: View {
     @State private var bgmPlayer = AVQueuePlayer()
     @State private var bgmLooper: AVPlayerLooper!
     @State private var sePlayer = AVPlayer()
-    private let voicePlayer: UnsafeMutablePointer<AVAudioPlayer>
+    @State private var safeVoicePlayer: AVAudioPlayer? = nil
     @State private var currentSnippetIndex = -1
     @State private var currentTelop: String?
     
@@ -71,8 +71,8 @@ struct InteractiveStoryView: View {
         self.assetFolder = assetFolder
         self.fullScreenToggleIsAvailable = false
         self.mutingIsAvailable = false
-        unsafe voicePlayer = .allocate(capacity: 1)
-        unsafe voicePlayer.initialize(to: .init())
+//        unsafe voicePlayer = .allocate(capacity: 1)
+//        unsafe voicePlayer.initialize(to: .init())
     }
     init(asset: _DoriAPI.Misc.StoryAsset, voiceBundlePath: String, locale: DoriLocale) {
         let ir = DoriStoryBuilder.Conversion.zeileIR(
@@ -131,7 +131,8 @@ struct InteractiveStoryView: View {
                                             return 0
                                         }
                                     }()
-                                    unsafe ISVLive2DView(modelPath: layout.modelPath, state: showingLayoutIndexs[index], voicePlayer: voicePlayer, currentSpeckerID: currentTalk?.characterIDs.first ?? -1)
+                                    ISVLive2DView(modelPath: layout.modelPath, state: showingLayoutIndexs[index], currentSpeckerID: currentTalk?.characterIDs.first ?? -1)
+                                        .safeVoicePlayer($safeVoicePlayer)
                                         .frame(width: geometry.size.height, height: geometry.size.height)
                                         .offset(x: offsetX, y: offsetY)
                                         .opacity(showingLayoutIndexs[index] != nil ? 1 : 0)
@@ -215,7 +216,6 @@ struct InteractiveStoryView: View {
                     .padding(.vertical, 7)
                 }
             }
-            
             // MARK: - Black & White Covers
             Group {
                 Rectangle()
@@ -312,9 +312,11 @@ struct InteractiveStoryView: View {
         }
         .onChange(of: isMuted.wrappedValue, {
             bgmPlayer.isMuted = isMuted.wrappedValue
-            //                    bgmLooper.volume = isMuted ? 0 : 1
+//                                bgmLooper.volume = isMuted ? 0 : 1
             sePlayer.isMuted = isMuted.wrappedValue
-//            unsafe voicePlayer.pointee.setVolume(isMuted ? 0 : 1, fadeDuration: 0.01) <- Super Buggy
+//            safeVoicePlayer.volume = isMuted ? 0 : 1
+//            unsafe voicePlayer.pointee.volume = isMuted ? 0 : 1
+//            unsafe voicePlayer.pointee.setVolume(isMuted ? 0 : 1, fadeDuration: 0.01) // <- Super Buggy
         })
         .sheet(isPresented: $backlogIsPresenting) {
             if let talk = currentTalk {
@@ -504,15 +506,20 @@ struct InteractiveStoryView: View {
                    let voice = talkAudios[voicePath],
                    let newPlayer = try? AVAudioPlayer(data: voice) {
                     newPlayer.isMeteringEnabled = true
-                    unsafe voicePlayer.pointee = newPlayer
-                    unsafe voicePlayer.pointee.play()
-                    if isAutoPlaying {
-                        autoPlayTimer = .scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
-                            if unsafe !voicePlayer.pointee.isPlaying {
-                                timer.invalidate()
-                                autoPlayTimer = .scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
-                                    DispatchQueue.main.async {
-                                        next()
+                    safeVoicePlayer = newPlayer
+                    if let safeVoicePlayer {
+                        safeVoicePlayer.play()
+                        //                    unsafe voicePlayer.pointee = newPlayer
+                        //                    unsafe voicePlayer.pointee.play()
+                        if isAutoPlaying {
+                            autoPlayTimer = .scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
+                                //                            if unsafe !voicePlayer.pointee.isPlaying {
+                                if !safeVoicePlayer.isPlaying {
+                                    timer.invalidate()
+                                    autoPlayTimer = .scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
+                                        DispatchQueue.main.async {
+                                            next()
+                                        }
                                     }
                                 }
                             }
@@ -525,6 +532,7 @@ struct InteractiveStoryView: View {
                         }
                     }
                 }
+                
                 
                 await withCheckedContinuation { continuation in
                     currentInteractBlockingContinuation = continuation
@@ -632,10 +640,10 @@ struct InteractiveStoryView: View {
             }
         case .horizontalShake(characterID: let characterID):
             Self.performingActionCount.count -= 1
-            break // FIXME
+            break // FIXME: horizontalShake
         case .verticalShake(characterID: let characterID):
             Self.performingActionCount.count -= 1
-            break // FIXME
+            break // FIXME: verticalShake
         case .showBlackCover(duration: let duration):
             withAnimation(.linear(duration: duration)) {
                 blackCoverIsShowing = true
@@ -786,7 +794,8 @@ struct InteractiveStoryView: View {
         fastForwardTimer?.invalidate()
         bgmPlayer.pause()
         sePlayer.pause()
-        unsafe voicePlayer.pointee.stop()
+        safeVoicePlayer?.stop()
+//        unsafe voicePlayer.pointee.stop()
         
         if doDismiss {
             dismiss()
@@ -796,10 +805,10 @@ struct InteractiveStoryView: View {
         setDeviceOrientation(to: .portrait, allowing: .portrait)
         #endif
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-            unsafe voicePlayer.deinitialize(count: 1)
-            unsafe voicePlayer.deallocate()
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+//            unsafe voicePlayer.deinitialize(count: 1)
+//            unsafe voicePlayer.deallocate()
+//        }
     }
 }
 

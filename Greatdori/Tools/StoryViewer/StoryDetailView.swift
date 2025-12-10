@@ -243,11 +243,11 @@ struct StoryDetailView: View {
                             await loadTranscript()
                         }
                     }
-                    .menuIndicator(.hidden)
+//                    .menuIndicator(.hidden)
                 }
             }
 #if os(macOS)
-            if AppFlag.DEBUG {
+            if AppFlag.ISV_DEBUG {
                 ToolbarItem {
                     debugMenu
                 }
