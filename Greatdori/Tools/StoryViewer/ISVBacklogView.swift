@@ -25,40 +25,43 @@ struct ISVBacklogView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     var body: some View {
-        VStack(spacing: 0) {
-            #if os(macOS)
-            HStack {
-                Spacer()
-                Button(action: {
-                    dismiss()
-                }, label: {
-                    Image(systemName: "xmark")
-                        .fontWeight(.semibold)
-                        .padding(8)
-                })
-                .buttonBorderShape(.circle)
-                .wrapIf(true) { content in
-                    if #available(macOS 26.0, *) {
-                        content
-                            .buttonStyle(.glass)
-                    } else {
-                        content
-                            .buttonStyle(.bordered)
-                    }
+        NavigationStack {
+            VStack(spacing: 0) {
+//#if os(macOS)
+//                HStack {
+//                    Spacer()
+//                    Button(action: {
+//                        dismiss()
+//                    }, label: {
+//                        Image(systemName: "xmark")
+//                            .fontWeight(.semibold)
+//                            .padding(8)
+//                    })
+//                    .buttonBorderShape(.circle)
+//                    .wrapIf(true) { content in
+//                        if #available(macOS 26.0, *) {
+//                            content
+//                                .buttonStyle(.glass)
+//                        } else {
+//                            content
+//                                .buttonStyle(.bordered)
+//                        }
+//                    }
+//                    .padding([.top, .trailing], 10)
+//                }
+//                .padding(.bottom, 5)
+//                Divider()
+//                    .padding(.horizontal, -15)
+//#endif
+                ScrollView {
+                    contentView
                 }
-                .padding([.top, .trailing], 10)
-            }
-            .padding(.bottom, 5)
-            Divider()
-                .padding(.horizontal, -15)
-            #endif
-            ScrollView {
-                contentView
             }
         }
-        #if !os(macOS)
+        .navigationTitle("Story-viewer.backlog")
+//        #if os(iOS)
         .toolbar {
-            ToolbarItem {
+            ToolbarItem(placement: .cancellationAction) {
                 Button(action: {
                     dismiss()
                 }, label: {
@@ -66,7 +69,7 @@ struct ISVBacklogView: View {
                 })
             }
         }
-        #endif
+//        #endif
     }
     
     @ViewBuilder

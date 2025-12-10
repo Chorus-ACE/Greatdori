@@ -24,6 +24,36 @@ let acknowledgements: [AcknowledgementItem] = [
         licenseVerbatim: cmarkGfmLicense),
     
     AcknowledgementItem(
+        title: "Cryptor",
+        subtitle: "Apache License 2.0",
+        licenseVerbatim: Apache_License_2_0),
+    
+    AcknowledgementItem(
+        title: "CryptorECC",
+        subtitle: "Apache License 2.0",
+        licenseVerbatim: Apache_License_2_0),
+    
+    AcknowledgementItem(
+        title: "CryptorRSA",
+        subtitle: "Apache License 2.0",
+        licenseVerbatim: Apache_License_2_0),
+    
+    AcknowledgementItem(
+        title: "KituraContracts",
+        subtitle: "Apache License 2.0",
+        licenseVerbatim: Apache_License_2_0),
+    
+    AcknowledgementItem(
+        title: "LoggerAPI",
+        subtitle: "Apache License 2.0 License",
+        licenseVerbatim: Apache_License_2_0),
+    
+    AcknowledgementItem(
+        title: "Mute",
+        subtitle: "MIT License",
+        licenseVerbatim: MIT_License(year: "2017", name: "Akram Hussein <akramhussein@gmail.com>")),
+    
+    AcknowledgementItem(
         title: "NetworkImage",
         subtitle: "MIT License",
         licenseVerbatim: "MIT License\n\n" + MIT_License(year: "2020", name: "Guille Gonzalez")),
@@ -54,6 +84,11 @@ let acknowledgements: [AcknowledgementItem] = [
         licenseVerbatim: MIT_License(year: "2018", name: "Read Evaluate Press, LLC")),
     
     AcknowledgementItem(
+        title: "swift-log",
+        subtitle: "MIT License",
+        licenseVerbatim: Apache_License_2_0),
+    
+    AcknowledgementItem(
         title: "swift-markdown-ui",
         subtitle: "MIT License",
         licenseVerbatim: "The MIT License (MIT)\n\n" + MIT_License(year: "2020", name: "Guillermo Gonzalez")),
@@ -62,6 +97,11 @@ let acknowledgements: [AcknowledgementItem] = [
         title: "swift-syntax",
         subtitle: "Apache License 2.0",
         licenseVerbatim: Apache_License_2_0 + swiftSuffix),
+    
+    AcknowledgementItem(
+        title: "SwiftJWT",
+        subtitle: "Apache License 2.0",
+        licenseVerbatim: Apache_License_2_0),
     
     AcknowledgementItem(
         title: "swiftui-introspect",

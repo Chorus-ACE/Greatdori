@@ -261,6 +261,7 @@
 		E978109B2EE835FC000AD397 /* CardDetailOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E978109A2EE835FA000AD397 /* CardDetailOverviewView.swift */; };
 		E978109D2EE83616000AD397 /* CharacterDetailOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E978109C2EE83615000AD397 /* CharacterDetailOverviewView.swift */; };
 		E978109F2EE86376000AD397 /* ISVActionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E978109E2EE86376000AD397 /* ISVActionMenu.swift */; };
+		E97810BC2EE9486D000AD397 /* Mute in Frameworks */ = {isa = PBXBuildFile; productRef = E97810BB2EE9486D000AD397 /* Mute */; };
 		E97888C62E8A79EA00ABD33E /* QuickLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97888C52E8A79E500ABD33E /* QuickLook.swift */; };
 		E97C5B882E8E9A50004858A3 /* SettingsWidgetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97C5B872E8E9A4A004858A3 /* SettingsWidgetsView.swift */; };
 		E98B8B532E7E922A00B4C8A8 /* NavigationComponentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */; };
@@ -792,6 +793,7 @@
 				E94944E22E92A19600E50D3F /* MarkdownUI in Frameworks */,
 				8C6264EF2E9105D600FF6950 /* SwiftUIIntrospect in Frameworks */,
 				8CE0BBAC2ED2FE1F00E22ED6 /* SwiftJWT in Frameworks */,
+				E97810BC2EE9486D000AD397 /* Mute in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1539,6 +1541,7 @@
 				8CD2A9D12E9F690D00831458 /* Alamofire */,
 				8C3D4E7B2EA7AABE0034E831 /* SwiftyJSON */,
 				8CE0BBAB2ED2FE1F00E22ED6 /* SwiftJWT */,
+				E97810BB2EE9486D000AD397 /* Mute */,
 			);
 			productName = Greatdori;
 			productReference = 8C0C995D2E296A4400549B5C /* Greatdori!.app */;
@@ -1754,6 +1757,7 @@
 				8C8E44F92E5F6867005590F0 /* XCRemoteSwiftPackageReference "swift-syntax" */,
 				E94944E02E92A19600E50D3F /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				8CE0BBAA2ED2FE1E00E22ED6 /* XCRemoteSwiftPackageReference "Swift-JWT" */,
+				E97810BA2EE9486D000AD397 /* XCRemoteSwiftPackageReference "Mute" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8C0C995E2E296A4400549B5C /* Products */;
@@ -4877,6 +4881,14 @@
 				minimumVersion = 2.4.1;
 			};
 		};
+		E97810BA2EE9486D000AD397 /* XCRemoteSwiftPackageReference "Mute" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/akramhussein/Mute";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -4944,6 +4956,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E94944E02E92A19600E50D3F /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
+		};
+		E97810BB2EE9486D000AD397 /* Mute */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E97810BA2EE9486D000AD397 /* XCRemoteSwiftPackageReference "Mute" */;
+			productName = Mute;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
