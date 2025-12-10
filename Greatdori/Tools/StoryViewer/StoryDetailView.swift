@@ -14,7 +14,9 @@
 
 import AVKit
 import DoriKit
+#if os(iOS)
 import Mute
+#endif
 import SwiftUI
 import SDWebImageSwiftUI
 
@@ -274,9 +276,11 @@ struct StoryDetailView: View {
             #endif
         }
         .onAppear {
+            #if os(iOS)
             if Mute.shared.isMute {
                 isMuted = true
             }
+            #endif
             if !ISVHadChosenOption {
                 isvLayoutSelectionSheetIsDisplaying = true
             }

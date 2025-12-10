@@ -46,48 +46,46 @@ struct CompactAudioPlayer: View {
     @State private var timeUpdateTimer: Timer?
     @State private var isTimeEditing = false
     var body: some View {
-//        CustomGroupBox(cornerRadius: 3417) {
-            HStack {
-                Button(action: {
-#if os(iOS)
-                        setupAudioSession()
-#endif
-                    if let mediaInfo {
-                        configureNowPlaying(title: mediaInfo.title, artist: mediaInfo.artist, player: player, artworkURL: mediaInfo.artwork)
-                    }
-                    if isPlaying {
-                        player.pause()
-                    } else {
-                        if duration - currentTime < 0.1 {
-                            player.seek(to: .init(seconds: 0, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
-                        }
-                        player.play()
-                    }
-                }, label: {
-                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                })
-                .buttonStyle(.plain)
-                if !showPlayButtonOnly {
-                    Text(verbatim: "\(formatTime(currentTime)) / \(formatTime(duration))")
-                        .wrapIf(duration == 0) {
-                            $0.redacted(reason: .placeholder)
-                        }
-                    Slider(value: $currentTime, in: 0...duration) { isEditing in
-                        if !isEditing {
-                            player.seek(to: .init(seconds: currentTime, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
-                        }
-                        isTimeEditing = isEditing
-                    }
-                    .wrapIf(true, in: {
-                        if #available(iOS 26.0, macOS 26.0, *) {
-                            $0.sliderThumbVisibility(.hidden)
-                        } else {
-                            $0
-                        }
-                    })
+        //        CustomGroupBox(cornerRadius: 3417) {
+        HStack {
+            Button(action: {
+                setupAudioSession()
+                if let mediaInfo {
+                    configureNowPlaying(title: mediaInfo.title, artist: mediaInfo.artist, player: player, artworkURL: mediaInfo.artwork)
                 }
+                if isPlaying {
+                    player.pause()
+                } else {
+                    if duration - currentTime < 0.1 {
+                        player.seek(to: .init(seconds: 0, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                    }
+                    player.play()
+                }
+            }, label: {
+                Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+            })
+            .buttonStyle(.plain)
+            if !showPlayButtonOnly {
+                Text(verbatim: "\(formatTime(currentTime)) / \(formatTime(duration))")
+                    .wrapIf(duration == 0) {
+                        $0.redacted(reason: .placeholder)
+                    }
+                Slider(value: $currentTime, in: 0...duration) { isEditing in
+                    if !isEditing {
+                        player.seek(to: .init(seconds: currentTime, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                    }
+                    isTimeEditing = isEditing
+                }
+                .wrapIf(true, in: {
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        $0.sliderThumbVisibility(.hidden)
+                    } else {
+                        $0
+                    }
+                })
             }
-//        }
+        }
+        //        }
         .onAppear {
             timeUpdateTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
                 DispatchQueue.main.async {
@@ -123,8 +121,9 @@ struct CompactAudioPlayer: View {
     }
 }
 
-#if os(iOS)
+
 func setupAudioSession() {
+#if os(iOS)
     let session = AVAudioSession.sharedInstance()
     do {
         try session.setCategory(.playback, mode: .default, options: [])
@@ -132,72 +131,9 @@ func setupAudioSession() {
     } catch {
         print("Audio session error: \(error)")
     }
-}
 #endif
-
-/*
-func configureNowPlaying(
-    title: String?,
-    artist: String?,
-    player: AVPlayer,
-    artworkURL: URL?
-) {
-    var info: [String: Any] = [:]
-
-    if let title = title {
-        info[MPMediaItemPropertyTitle] = title
-    }
-
-    if let artist = artist {
-        info[MPMediaItemPropertyArtist] = artist
-    }
-
-    // 不等待封面，先设置基础信息
-    MPNowPlayingInfoCenter.default().nowPlayingInfo = info
-
-    // 配置远程控制（播放 / 暂停）
-    let command = MPRemoteCommandCenter.shared()
-    command.playCommand.addTarget { _ in
-        player.play()
-        return .success
-    }
-    command.pauseCommand.addTarget { _ in
-        player.pause()
-        return .success
-    }
-    command.togglePlayPauseCommand.addTarget { _ in
-        if player.timeControlStatus == .playing {
-            player.pause()
-        } else {
-            player.play()
-        }
-        return .success
-    }
-
-    // 若无封面 URL，则到此结束
-    guard let artworkURL else { return }
-
-    // 下载封面（异步）
-    URLSession.shared.dataTask(with: artworkURL) { data, _, _ in
-        guard let data else { return }
-
-        #if canImport(UIKit)
-        guard let image = PlatformImage(data: data) else { return }
-        #elseif canImport(AppKit)
-        guard let image = PlatformImage(data: data) else { return }
-        #endif
-
-        let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
-
-        DispatchQueue.main.async {
-            var now = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
-            now[MPMediaItemPropertyArtwork] = artwork
-            MPNowPlayingInfoCenter.default().nowPlayingInfo = now
-        }
-
-    }.resume()
 }
-*/
+
 
 func configureNowPlaying(
     title: String?,
