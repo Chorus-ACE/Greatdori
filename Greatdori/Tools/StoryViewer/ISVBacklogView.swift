@@ -22,6 +22,7 @@ struct ISVBacklogView: View {
     var currentTalk: TalkData
     var locale: DoriLocale
     var audios: [String: Data]
+    @State var currentAudioPlayer: AVAudioPlayer? = nil
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     var body: some View {
@@ -65,7 +66,7 @@ struct ISVBacklogView: View {
                 Button(action: {
                     dismiss()
                 }, label: {
-                    Image(systemName: "xmark")
+                    Label("Story-viewer.backlog.dismiss", systemImage: "xmark")
                 })
             }
         }
@@ -84,30 +85,33 @@ struct ISVBacklogView: View {
                 }
                 ForEach(talks[talks.startIndex...talks.firstIndex(of: currentTalk)!], id: \.self) { talk in
                     HStack(alignment: .top) {
-                            Button(action: {
+                        Button(action: {
+                            currentAudioPlayer?.stop()
+                            if let voice = talk.voicePath, let audioData = audios[voice] {
+                                if let player = try? AVAudioPlayer(data: audioData) {
+                                    currentAudioPlayer = player
+                                    setupAudioSession()
+                                    currentAudioPlayer?.play()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+                                        _fixLifetime(player)
+                                    }
+                                }
+                            }
+                        }, label: {
+                            ZStack(alignment: .bottomTrailing) {
+                                WebImage(url: URL(string: "https://bestdori.com/res/icon/chara_icon_\(talk.characterIDs.first ?? -1).png"))
+                                    .resizable()
+                                    .frame(width: 40, height: 40)
                                 if let voice = talk.voicePath, let audioData = audios[voice] {
-                                    if let player = try? AVAudioPlayer(data: audioData) {
-                                        player.play()
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
-                                            _fixLifetime(player)
-                                        }
-                                    }
+                                    Image(systemName: "speaker.wave.3.fill")
+                                        .modifier(StrokeTextModifier(width: 1, color: .white))
+                                        .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
+                                        .shadow(radius: 1)
+                                        .offset(x: 5, y: 5)
                                 }
-                            }, label: {
-                                ZStack(alignment: .bottomTrailing) {
-                                    WebImage(url: URL(string: "https://bestdori.com/res/icon/chara_icon_\(talk.characterIDs.first ?? -1).png"))
-                                        .resizable()
-                                        .frame(width: 40, height: 40)
-                                    if let voice = talk.voicePath, let audioData = audios[voice] {
-                                        Image(systemName: "speaker.wave.3.fill")
-                                            .modifier(StrokeTextModifier(width: 1, color: .white))
-                                            .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
-                                            .shadow(radius: 1)
-                                            .offset(x: 5, y: 5)
-                                    }
-                                }
-                            })
-                            .buttonStyle(.plain)
+                            }
+                        })
+                        .buttonStyle(.plain)
                         VStack(alignment: .leading) {
                             ZStack(alignment: .leading) {
                                 Capsule()

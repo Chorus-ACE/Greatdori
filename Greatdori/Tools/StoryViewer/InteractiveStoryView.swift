@@ -241,6 +241,8 @@ struct InteractiveStoryView: View {
         }
         .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration))
         .onAppear {
+            setupAudioSession()
+            
             if backgroundImageURL != nil {
                 return
             }
