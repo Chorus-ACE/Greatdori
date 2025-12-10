@@ -12,7 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-let acknowledgements: [AcknowledgementItem] = [
+func getAcknowledgements() -> [AcknowledgementItem] {
+    return rawAcknowledgements.filter { item in
+        !((isMACOS && item.notes == "iOS Only") || (isMACOS && item.notes == "macOS Only"))
+    }
+}
+
+let rawAcknowledgements: [AcknowledgementItem] = [
     AcknowledgementItem(
         title: "Alamofire",
         subtitle: "MIT License",
@@ -47,11 +53,12 @@ let acknowledgements: [AcknowledgementItem] = [
         title: "LoggerAPI",
         subtitle: "Apache License 2.0 License",
         licenseVerbatim: Apache_License_2_0),
-    
+
     AcknowledgementItem(
         title: "Mute",
         subtitle: "MIT License",
-        licenseVerbatim: MIT_License(year: "2017", name: "Akram Hussein <akramhussein@gmail.com>")),
+        licenseVerbatim: MIT_License(year: "2017", name: "Akram Hussein <akramhussein@gmail.com>"),
+        notes: "iOS Only"),
     
     AcknowledgementItem(
         title: "NetworkImage",
