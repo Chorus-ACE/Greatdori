@@ -314,9 +314,9 @@ struct InteractiveStoryView: View {
             bgmPlayer.isMuted = isMuted.wrappedValue
 //                                bgmLooper.volume = isMuted ? 0 : 1
             sePlayer.isMuted = isMuted.wrappedValue
-//            safeVoicePlayer.volume = isMuted ? 0 : 1
-//            unsafe voicePlayer.pointee.volume = isMuted ? 0 : 1
-//            unsafe voicePlayer.pointee.setVolume(isMuted ? 0 : 1, fadeDuration: 0.01) // <- Super Buggy
+            if let safeVoicePlayer {
+                safeVoicePlayer.volume = isMuted.wrappedValue ? 0 : 1
+            }
         })
         .sheet(isPresented: $backlogIsPresenting) {
             if let talk = currentTalk {
@@ -508,6 +508,7 @@ struct InteractiveStoryView: View {
                     newPlayer.isMeteringEnabled = true
                     safeVoicePlayer = newPlayer
                     if let safeVoicePlayer {
+                        safeVoicePlayer.volume = isMuted.wrappedValue ? 0 : 1
                         safeVoicePlayer.play()
                         //                    unsafe voicePlayer.pointee = newPlayer
                         //                    unsafe voicePlayer.pointee.play()
