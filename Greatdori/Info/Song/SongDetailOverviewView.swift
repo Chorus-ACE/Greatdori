@@ -21,20 +21,18 @@ struct SongDetailOverviewView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     let information: Song
     
-    let coverSideLengthRegular: CGFloat = 270
-    let coverSideLengthCompact: CGFloat = 180
+    let coverSideLengthRegular: CGFloat = 260
+    let coverSideLengthCompact: CGFloat = 220
     var body: some View {
         VStack {
             Group {
                 // MARK: Title Image
                 Group {
-                    Rectangle()
-                        .opacity(0)
-                        .frame(height: 2)
                     WebImage(url: information.jacketImageURL) { image in
                         image
                             .antialiased(true)
                             .resizable()
+                            .cornerRadius(10)
                             .scaledToFit()
                     } placeholder: {
                         RoundedRectangle(cornerRadius: 10)
@@ -42,16 +40,17 @@ struct SongDetailOverviewView: View {
                     }
                     .interpolation(.high)
                     .frame(width: sizeClass == .regular ? coverSideLengthRegular : coverSideLengthCompact, height: sizeClass == .regular ? coverSideLengthRegular : coverSideLengthCompact)
+                    .shadow(radius: 5, y: 4)
                     Rectangle()
                         .opacity(0)
                         .frame(height: 2)
                 }
                 
-#if !APP_STORE
+                #if !APP_STORE
                 CustomGroupBox(cornerRadius: 3417) {
                     CompactAudioPlayer(url: information.soundURL, mediaInfo: (information.title.forPreferredLocale(), DoriCache.preCache.bands.first(where: { $0.id == information.bandID })?.bandName.forPreferredLocale(), information.jacketImageURL))
                 }
-#endif
+                #endif
                 
                 // MARK: Info
                 CustomGroupBox(cornerRadius: 20) {
