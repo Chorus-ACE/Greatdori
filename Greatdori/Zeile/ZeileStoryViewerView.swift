@@ -83,6 +83,42 @@ struct ZeileStoryViewerView: View {
         .introspect(.window, on: .macOS(.v14...)) { window in
             window.isRestorable = false
         }
+        .toolbar {
+            if let irData, AppFlag.ISV_DEBUG {
+                ToolbarItem {
+                    Menu(content: {
+                        Button(action: {
+                            let downloadBase = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+                            let dst = downloadBase.appending(path: "DumpIR.txt")
+                            let text = DoriStoryBuilder.Conversion.plainText(fromIR: irData)
+                            try? text.write(to: dst, atomically: true, encoding: .utf8)
+                            NSWorkspace.shared.selectFile(
+                                dst.path,
+                                inFileViewerRootedAtPath: ""
+                            )
+                            print(dump(irData))
+                        }, label: {
+                            Label(String("Dump IR"), systemImage: "text.word.spacing")
+                        })
+                        
+                        Button(action: {
+                            let downloadBase = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+                            let dst = downloadBase.appending(path: "Sirius.txt")
+                            let text = DoriStoryBuilder.Conversion.sirius(fromIR: irData)
+                            try? text.write(to: dst, atomically: true, encoding: .utf8)
+                            NSWorkspace.shared.selectFile(
+                                dst.path,
+                                inFileViewerRootedAtPath: ""
+                            )
+                        }, label: {
+                            Label(String("Sirius"), systemImage: "sparkles")
+                        })
+                    }, label: {
+                        Image(systemName: "ant")
+                    })
+                }
+            }
+        }
         #endif
     }
 }

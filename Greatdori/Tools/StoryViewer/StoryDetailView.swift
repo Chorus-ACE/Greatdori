@@ -405,7 +405,7 @@ struct StoryDetailView: View {
         if let asset {
             Menu(String("Debug"), systemImage: "ant") {
                 Section {
-                    Button(String("Dump IR"), systemImage: "text.word.spacing") {
+                    Button(action: {
                         let downloadBase = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
                         let dst = downloadBase.appending(path: "DumpIR.txt")
                         let ir = DoriStoryBuilder.Conversion.zeileIR(
@@ -419,7 +419,49 @@ struct StoryDetailView: View {
                             dst.path,
                             inFileViewerRootedAtPath: ""
                         )
-                    }
+                    }, label: {
+                        Label(String("Dump IR"), systemImage: "text.word.spacing")
+                    })
+                    
+                    Button(action: {
+                        let downloadBase = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+                        let dst = downloadBase.appending(path: "JsonIR.txt")
+                        let ir = DoriStoryBuilder.Conversion.zeileIR(
+                            fromBandori: asset,
+                            in: locale,
+                            voiceBundlePath: voiceBundlePath
+                        )
+                        let text = DoriStoryBuilder.Conversion.bestdoriJSON(fromIR: ir)
+                        if let text {
+                            try? text.write(to: dst, atomically: true, encoding: .utf8)
+                            NSWorkspace.shared.selectFile(
+                                dst.path,
+                                inFileViewerRootedAtPath: ""
+                            )
+                        }
+                    }, label: {
+                        Label(String("JSON IR"), systemImage: "curlybraces")
+                    })
+                    
+                    Button(action: {
+                        let downloadBase = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+                        let dst = downloadBase.appending(path: "Sirius.txt")
+                        let ir = DoriStoryBuilder.Conversion.zeileIR(
+                            fromBandori: asset,
+                            in: locale,
+                            voiceBundlePath: voiceBundlePath
+                        )
+                        let text = DoriStoryBuilder.Conversion.sirius(fromIR: ir)
+//                        if let text {
+                            try? text.write(to: dst, atomically: true, encoding: .utf8)
+                            NSWorkspace.shared.selectFile(
+                                dst.path,
+                                inFileViewerRootedAtPath: ""
+                            )
+//                        }
+                    }, label: {
+                        Label(String("Sirius"), systemImage: "sparkles")
+                    })
                 }
             }
             .menuIndicator(.hidden)

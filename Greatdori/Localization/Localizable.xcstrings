@@ -53,7 +53,7 @@
       "shouldTranslate" : false
     },
     "%f" : {
-
+      "shouldTranslate" : false
     },
     "%lld" : {
       "shouldTranslate" : false
