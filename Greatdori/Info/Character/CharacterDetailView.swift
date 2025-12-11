@@ -191,12 +191,15 @@ struct CharacterDetailView: View {
         
         var cardList = information.cards
         
+        
+        // TL;DR: Removed Card #90036 - #90040 due to their terrible look. --ThreeManager785
+        
         // There're some really... really terrible cards
         // that we decided to exclude them from the randomness.
         // If you do like these cards, you can set the
         // `CharacterRandomCardsContainAllCards` flag
         // to `true` to bring them back.
-        // Note these's no popular “ghost cards” like #947,
+        // Note there's no popular “ghost cards” like #947,
         // they're acceptable and we're happy to get them(???).
         //
         // If you don't know these cards before and have gone to see them,
@@ -213,7 +216,7 @@ struct CharacterDetailView: View {
         }
         
         // We use a buffer to preload card images
-        let bufferSize = 5
+        let bufferSize = 2
         if randomCardBuffer.isEmpty {
             for _ in 0..<bufferSize {
                 var newCard = cardList.randomElement()!

@@ -18,20 +18,30 @@ import SwiftUI
 struct EventDetailDegreesView: View {
     var information: ExtendedEvent
     @State private var locale = DoriLocale.primaryLocale
+    @State var isExpanded = false
     var body: some View {
         LazyVStack(pinnedViews: .sectionHeaders) {
             Section {
                 if information.degrees.first?.baseImageName.forLocale(locale) != nil {
                     CustomGroupBox {
-                        WrappingHStack(contentWidth: 140) {
-                            ForEach(information.degrees) { degree in
-                                DegreeView(degree)
+                        if isExpanded {
+                            WrappingHStack(contentWidth: 140) {
+                                ForEach(information.degrees) { degree in
+                                    DegreeView(degree)
+                                        .frame(width: 140)
+                                }
+                            }
+                        } else {
+                            HStack {
+                                Spacer()
+                                DegreeView(information.degrees.first!)
                                     .frame(width: 140)
+                                Spacer()
                             }
                         }
                     }
                 } else {
-                    DetailUnavailableView(title: "Details.unavailable.degree", symbol: "capsule.on.capsule")
+                    DetailUnavailableView(title: "Details.unavailable.degree", symbol: "medal.star")
                 }
             } header: {
                 HStack {
@@ -40,6 +50,13 @@ struct EventDetailDegreesView: View {
                         .bold()
                     DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
                     Spacer()
+                    Button(action: {
+                        isExpanded.toggle()
+                    }, label: {
+                        Text(isExpanded ? "Details.show-less" : "Details.show-all")
+                            .foregroundStyle(.secondary)
+                    })
+                    .buttonStyle(.plain)
                 }
             }
         }

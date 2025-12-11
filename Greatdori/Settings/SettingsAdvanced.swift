@@ -105,7 +105,6 @@ struct SettingsAdvancedImageSection: View {
                         VStack(alignment: .leading) {
                             Text("Settings.advanced.image.use-super-resolution")
                             Text("Settings.advanced.image.use-super-resolution.description")
-                            
                                 .font(.footnote)
                         }.foregroundStyle(.secondary)
                     }
@@ -128,6 +127,14 @@ struct SettingsAdvancedUISection: View {
             Toggle(isOn: .init { customGroupBoxVersion != 2 } set: { customGroupBoxVersion = $0 ? 1 : 2 }) {
                 Text("Settings.advanced.ui.legacy-custom-group-box")
             }
+            Toggle(isOn: .init(get: { AppFlag.CharacterRandomCardsContainAllCards }, set: { AppFlag.set($0, forKey: "CharacterRandomCardsContainAllCards") }), label: {
+                VStack(alignment: .leading) {
+                    Text("Settings.advanced.ui.random-card-contains-all-card")
+                    Text("Settings.advanced.ui.random-card-contains-all-card.description")
+                        .foregroundStyle(.secondary)
+                        .font(.footnote)
+                }
+            })
             SettingsAdvancedISVABTestView()
         } header: {
             Text("Settings.advanced.ui")

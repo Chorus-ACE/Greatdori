@@ -269,7 +269,7 @@ extension Image {
     }
 }
 
-let systemImageFalling = {
+private let systemImageFalling = {
     // The value means the name that should be fallen back;
     // `nil` means find it in Asset Catalog
     var result: [String: String?] = [:]
@@ -281,6 +281,7 @@ let systemImageFalling = {
         result.updateValue(nil, forKey: "star.hexagon.fill")
         result.updateValue(nil, forKey: "apple.classical.pages")
         result.updateValue(nil, forKey: "apple.classical.pages.fill")
+        result.updateValue(nil, forKey: "capsule.on.capsule")
         result.updateValue("text.below.photo", forKey: "text.below.rectangle")
         result.updateValue("persona", forKey: "person.and.viewfinder")
     }
@@ -460,53 +461,6 @@ public extension View {
             container(self)
         } else {
             elseContainer(self)
-        }
-    }
-}
-
-extension MutableCollection {
-    @_transparent
-    func swappedAt(_ i: Self.Index, _ j: Self.Index) -> Self {
-        var copy = self
-        copy.swapAt(i, j)
-        return copy
-    }
-}
-
-extension EnvironmentValues {
-    @Entry var regularInfoImageSizeFactor: CGFloat = 1
-}
-
-private let systemImageFalling = {
-    // The value means the name that should be fallen back;
-    // `nil` means find it in Asset Catalog
-    var result: [String: String?] = [:]
-    
-    if #unavailable(iOS 18.0, macOS 15.0) {
-        result.updateValue(nil, forKey: "person.crop.square.on.square.angled")
-        result.updateValue(nil, forKey: "person.crop.square.on.square.angled.fill")
-        result.updateValue(nil, forKey: "star.hexagon")
-        result.updateValue(nil, forKey: "star.hexagon.fill")
-        result.updateValue(nil, forKey: "apple.classical.pages")
-        result.updateValue(nil, forKey: "apple.classical.pages.fill")
-        result.updateValue(nil, forKey: "capsule.on.capsule")
-        result.updateValue("text.below.photo", forKey: "text.below.rectangle")
-        result.updateValue("persona", forKey: "person.and.viewfinder")
-    }
-    
-    return result
-}()
-
-extension Image {
-    init(fallingSystemName: String) {
-        if let name = systemImageFalling[fallingSystemName] {
-            if let name {
-                self.init(_internalSystemName: name)
-            } else {
-                self.init(fallingSystemName)
-            }
-        } else {
-            self.init(_internalSystemName: fallingSystemName)
         }
     }
 }

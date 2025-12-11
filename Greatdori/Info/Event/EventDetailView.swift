@@ -36,11 +36,11 @@ struct EventDetailView: View {
                 subtitles: {
                     var result: [Int: LocalizedStringKey] = [:]
                     for song in information.songs {
-                        result.updateValue("Song.info.released-during-event", forKey: song.id)
+                        result.updateValue("Detail.source.released-during-event", forKey: song.id)
                     }
                     for locale in DoriLocale.allCases {
                         information.eventSongs?.forLocale(locale)?.forEach {
-                            result.updateValue("Song.info.event-song", forKey: $0.id)
+                            result.updateValue("Detail.songs.source.event-song", forKey: $0.id)
                         }
                     }
                     return result

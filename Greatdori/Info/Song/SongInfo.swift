@@ -55,16 +55,18 @@ struct SongInfo: View {
             }
             .interpolation(.high)
         } detail: {
-            Text(bandName)
-                .font(isMACOS ? .body : .caption)
-                .wrapIf(bandName == "Lorem Ipsum", in: { content in
+            Group {
+                if let subtitle {
+                    Text(bandName) + Text("Typography.bold-dot-seperater").bold() + Text(subtitle)
+                } else {
                     Text(bandName)
-                        .redacted(reason: .placeholder)
-                })
-            if let subtitle {
-                Text(subtitle)
-                    .font(.caption)
+                }
             }
+            .font(isMACOS ? .body : .caption)
+            .wrapIf(bandName == "Lorem Ipsum", in: { content in
+                Text(bandName)
+                    .redacted(reason: .placeholder)
+            })
             SongDifficultiesIndicator(information.difficulty)
                 .foregroundStyle(.primary)
                 .preferHiddenInCompactLayout()
