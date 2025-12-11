@@ -22,9 +22,8 @@ struct DetailsGachasSection: View {
     var gachas: [PreviewGacha]?
     var sources: LocalizedData<Set<ExtendedCard.Source>>?
     var applyLocaleFilter: Bool = false
-    @State var locale: DoriLocale = DoriLocale.primaryLocale
-    @State var gachasFromList: [PreviewGacha] = []
-    @State var gachasFromSources: [PreviewGacha] = []
+    @State var gachasFromList = LocalizedData<[PreviewGacha]>(forEveryLocale: nil)
+    @State var gachasFromSources = LocalizedData<[PreviewGacha]>(forEveryLocale: nil)
     @State var probabilityDict: [PreviewGacha: Double] = [:]
     @State var showAll = false
     @State var sourcePreference: Int
@@ -64,45 +63,43 @@ struct DetailsGachasSection: View {
         .onAppear {
             handleGachas()
         }
-        .onChange(of: locale) {
-            handleGachas()
-        }
     }
     
     func handleGachas() {
-        gachasFromList = []
-        gachasFromSources = []
+        gachasFromList = .init(forEveryLocale: nil)
+        gachasFromSources = .init(forEveryLocale: nil)
         probabilityDict = [:]
         
         if sourcePreference == 0 {
             if let gachas {
-                gachasFromList = gachas.sorted(withDoriSorter: _DoriFrontend.Sorter(keyword: .releaseDate(in: applyLocaleFilter ? locale : .jp)))
-                if applyLocaleFilter {
-                    gachasFromList = gachasFromList.filter {$0.publishedAt.availableInLocale(locale)}
+                for locale in DoriLocale.allCases {
+                    gachasFromList._set(
+                        gachas
+                            .filter { applyLocaleFilter ? $0.publishedAt.availableInLocale(locale) : true }
+                            .sorted(withDoriSorter: .init(keyword: .releaseDate(in: locale))),
+                        forLocale: locale
+                    )
                 }
             }
         } else {
             if let sources {
-                for item in Array(sources.forLocale(locale) ?? Set()) {
-                    switch item {
-                    case .gacha(let dict):
-                        for (key, value) in dict {
-                            gachasFromSources.append(key)
-                            probabilityDict.updateValue(value, forKey: key)
+                for locale in DoriLocale.allCases {
+                    for item in Array(sources.forLocale(locale) ?? Set()) {
+                        switch item {
+                        case .gacha(let dict):
+                            for (gacha, probability) in dict {
+                                gachasFromSources._set(
+                                    (gachasFromSources.forLocale(locale) ?? []) + [gacha],
+                                    forLocale: locale
+                                )
+                                probabilityDict.updateValue(probability, forKey: gacha)
+                            }
+                            gachasFromSources[_mutating: locale]?.sort(withDoriSorter: .init(keyword: .releaseDate(in: locale)))
+                        default: break
                         }
-                        gachasFromSources = gachasFromSources.sorted(withDoriSorter: DoriSorter(keyword: .releaseDate(in: locale)))
-                    default: break
                     }
                 }
             }
-        }
-    }
-    
-    func getGachasCount() -> Int {
-        if sourcePreference == 0 {
-            return gachasFromList.count
-        } else {
-            return gachasFromSources.count
         }
     }
 }
