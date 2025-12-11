@@ -22,21 +22,30 @@ struct EventDetailDegreesView: View {
     var body: some View {
         LazyVStack(pinnedViews: .sectionHeaders) {
             Section {
-                if information.degrees.first?.baseImageName.forLocale(locale) != nil {
+                if information.degrees.first?.first?.baseImageName.forLocale(locale) != nil {
                     CustomGroupBox {
-                        if isExpanded {
-                            WrappingHStack(contentWidth: 140) {
-                                ForEach(information.degrees) { degree in
-                                    DegreeView(degree)
-                                        .frame(width: 140)
+                        VStack {
+                            if isExpanded {
+                                ForEach(0..<information.degrees.count, id: \.self) { i in
+                                    let degrees = information.degrees[i]
+                                    WrappingHStack(contentWidth: 140) {
+                                        ForEach(degrees) { degree in
+                                            DegreeView(degree)
+                                                .frame(width: 140)
+                                        }
+                                    }
                                 }
-                            }
-                        } else {
-                            HStack {
-                                Spacer()
-                                DegreeView(information.degrees.first!)
-                                    .frame(width: 140)
-                                Spacer()
+                                .insert {
+                                    Spacer()
+                                        .frame(height: 30)
+                                }
+                            } else {
+                                HStack {
+                                    Spacer()
+                                    DegreeView(information.degrees.first!.first!)
+                                        .frame(width: 140)
+                                    Spacer()
+                                }
                             }
                         }
                     }
