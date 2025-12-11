@@ -6,5 +6,4 @@
   
 */
 
-"NSCalendarsUsageDescription" = "允许访问日历以允许Greatdori!管理日程。角色生日以外的日程不会被访问。";
 "Privacy.photo-library.add-only.description" = "Greatdori!需要该权限以添加照片至你的相册。";
