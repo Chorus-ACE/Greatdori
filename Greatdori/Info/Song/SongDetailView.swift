@@ -26,7 +26,7 @@ struct SongDetailView: View {
             SongDetailOverviewView(information: information.song)
             SongDetailGameplayView(information: information)
             SongDetailMusicMovieView(musicVideos: information.song.musicVideos)
-            DetailsEventsSection(events: information.events)
+            DetailsEventsSection(events: information.events, applyLocaleFilter: true)
             SongDetailMatchView(song: information.song, songMatches: $songMatches)
             DetailArtsSection {
                 ArtsTab("Song.arts.cover", ratio: 1) {

@@ -36,6 +36,14 @@ struct DetailsEventsSection: View {
         self.sources = nil
         self.applyLocaleFilter = applyLocaleFilter
         self.sourcePreference = 0
+        
+        if applyLocaleFilter {
+            for locale in DoriLocale.allCases {
+                let filtered = self.events?[locale]?
+                    .filter { $0.startAt.availableInLocale(locale) }
+                self.events?._set(filtered, forLocale: locale)
+            }
+        }
     }
     init(events: LocalizedData<[PreviewEvent]>, applyLocaleFilter: Bool = false) {
         self.events = events
