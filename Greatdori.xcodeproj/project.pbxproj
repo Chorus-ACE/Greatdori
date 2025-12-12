@@ -273,6 +273,7 @@
 		E9AE9E082E909EDF00AAB049 /* SettingsCollectionCardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE9E072E909ED100AAB049 /* SettingsCollectionCardSelector.swift */; };
 		E9AF51252EAC634100BB808F /* TypeNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AF51242EAC633D00BB808F /* TypeNames.swift */; };
 		E9B17BBB2EA5DC430049C92C /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */; };
+		E9BDEFA32EEBE1B2009568F5 /* TranscriptMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDEFA22EEBE193009568F5 /* TranscriptMapping.swift */; };
 		E9CD3A482E58975D00BF5EA9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A472E58975900BF5EA9 /* Extensions.swift */; };
 		E9CD3A4A2E58984400BF5EA9 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A492E58984200BF5EA9 /* Functions.swift */; };
 		E9DA971C2ED97ED90047B464 /* GachaDetailCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA971B2ED97ED90047B464 /* GachaDetailCardsView.swift */; };
@@ -752,6 +753,7 @@
 		E9AEC8C72EBA2EFC00490B75 /* FontSuggestions_ZH-HANS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "FontSuggestions_ZH-HANS.md"; sourceTree = "<group>"; };
 		E9AF51242EAC633D00BB808F /* TypeNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeNames.swift; sourceTree = "<group>"; };
 		E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
+		E9BDEFA22EEBE193009568F5 /* TranscriptMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptMapping.swift; sourceTree = "<group>"; };
 		E9CD3A472E58975900BF5EA9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E9CD3A492E58984200BF5EA9 /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		E9D96AA42E752BE7005E0F2C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -1292,6 +1294,7 @@
 				E955A0F82EBF08D200795C9D /* ISVDialogBox.swift */,
 				E930F7852EE03D2F00E8847F /* ISVBacklogView.swift */,
 				E930F7832EE03D0E00E8847F /* ISVReliance.swift */,
+				E9BDEFA22EEBE193009568F5 /* TranscriptMapping.swift */,
 			);
 			path = StoryViewer;
 			sourceTree = "<group>";
@@ -1879,6 +1882,7 @@
 				E9DA971C2ED97ED90047B464 /* GachaDetailCardsView.swift in Sources */,
 				E92401612E993B9D003BF482 /* NewsDetailsView.swift in Sources */,
 				E99B3D912EC29A700045EFC9 /* SettingsAccountsView.swift in Sources */,
+				E9BDEFA32EEBE1B2009568F5 /* TranscriptMapping.swift in Sources */,
 				E94219022E8AA43300F24974 /* CardDetailStatsView.swift in Sources */,
 				E94219242E8AA67E00F24974 /* DetailArtsView.swift in Sources */,
 				8CD28FF02E9F6C6D00831458 /* ChartSimulator.swift in Sources */,

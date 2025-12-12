@@ -25,16 +25,18 @@ struct StoryDetailView: View {
     var scenarioID: String
     var voiceAssetBundleName: String?
     var type: StoryType
-    @State var locale: _DoriAPI.Locale
     var unsafeAssociatedID: String // WTF --@WindowsMEMZ
     var unsafeSecondaryAssociatedID: String?
-    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
-//    @AppStorage("ISVBannerIsShowing") var ISVBannerIsShowing = true
-    @AppStorage("ISVHadChosenOption") var ISVHadChosenOption = false
     @State var isvLayoutSelectionSheetIsDisplaying = false
+    @State var locale: _DoriAPI.Locale
     @State var asset: _DoriAPI.Misc.StoryAsset?
-    @State var transcript: [_DoriAPI.Misc.StoryAsset.Transcript]?
+    @State var ir: StoryIR?
+    @State var transcript: [NeoTranscript]?
     @State var isAssetUnavailable = false
+    @State var isvCurrentBlockingActionIndex: Int?
+    
+    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
+    @AppStorage("ISVHadChosenOption") var ISVHadChosenOption = false
     @State var audioPlayer = AVPlayer()
     @State var interactivePlayerIsInFullScreen = false
     @State var screenWidth: CGFloat = 0
@@ -86,27 +88,29 @@ struct StoryDetailView: View {
                     HStack {
                         Spacer(minLength: 0)
                         VStack {
+                            // MARK: - ISV
                             if !isvAlwaysFullScreen || interactivePlayerIsInFullScreen {
                                 Section {
-                                    StoryDetailInteractiveStoryEntryView(
-                                        scenarioID: scenarioID,
-                                        voiceAssetBundleName: voiceAssetBundleName,
-                                        type: type,
-                                        locale: locale,
-                                        unsafeAssociatedID: unsafeAssociatedID,
-                                        unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID,
-                                        asset: $asset
-                                    )
+                                    Group {
+                                        if let ir {
+                                            InteractiveStoryView(ir, fullScreenToggleIsAvailable: true, mutingIsAvailable: true)
+                                        } else {
+                                            ProgressView()
+                                        }
+                                    }
                                     .safeAreaPadding(interactivePlayerIsInFullScreen ? safeAreaInsets : .init())
                                     .aspectRatio(interactivePlayerIsInFullScreen ? screenWidth/screenHeight : 16/10, contentMode: .fit)
                                     .clipped()
                                     .isvIsMuted($isMuted)
                                     .isvIsInFullScreen($interactivePlayerIsInFullScreen)
+                                    .isvCurrentBlockingActionIndex($isvCurrentBlockingActionIndex)
                                 }
                                 .frame(maxWidth: interactivePlayerIsInFullScreen ? nil : infoContentMaxWidth)
                             }
+                            
                             if !interactivePlayerIsInFullScreen {
                                 if !isvAlwaysFullScreen {
+                                    // MARK: - Control Bar
                                     HStack {
                                         Button(action: {
                                             isMuted.toggle()
@@ -122,7 +126,7 @@ struct StoryDetailView: View {
                                                         $0
                                                     }
                                                 }
-//                                                .contentTransition(.symbolEffect(.replace.magic(fallback: .downUp.byLayer), options: .nonRepeating))
+                                            //                                                .contentTransition(.symbolEffect(.replace.magic(fallback: .downUp.byLayer), options: .nonRepeating))
                                         })
                                         Button(action: {
                                             interactivePlayerIsInFullScreen = true
@@ -142,23 +146,24 @@ struct StoryDetailView: View {
                                     DetailSectionsSpacer(height: 15)
                                 }
                                 
-                                // Dialog
+                                // MARK: - Transcript
                                 Section {
                                     ForEach(Array(transcript.enumerated()), id: \.element.self) { index, transcript in
-                                        switch transcript {
-                                        case .notation(let content):
+                                        if transcript.isTelop {
                                             HStack {
                                                 Spacer()
-                                                Text(content)
+                                                Text(transcript.text)
                                                     .underline()
                                                     .multilineTextAlignment(.center)
+                                                    .foregroundStyle(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? .accent : .primary)
                                                 Spacer()
                                             }
-                                            .padding(index > 0 && { if case .notation = self.transcript![index - 1] { true } else { false } }() ? .bottom : .vertical)
-                                        case .talk(let talk):
+                                            .padding(index > 0 && self.transcript![index - 1].isTelop ? .bottom : .vertical)
+                                        } else {
                                             CustomGroupBox(cornerRadius: 20) {
                                                 Button(action: {
-                                                    if let voiceID = talk.voiceID {
+                                                    /*
+                                                    if let voiceID = transcript.voiceID {
                                                         let url = switch type {
                                                         case .event:
                                                             "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/eventstory\(unsafeAssociatedID)_\(unsafeSecondaryAssociatedID!)_rip/\(voiceID).mp3"
@@ -176,13 +181,14 @@ struct StoryDetailView: View {
                                                         audioPlayer.replaceCurrentItem(with: .init(url: .init(string: url)!))
                                                         audioPlayer.play()
                                                     }
+                                                     */
                                                 }, label: {
                                                     HStack {
                                                         VStack(alignment: .leading) {
                                                             HStack {
-                                                                switch talk.personGroupType {
+                                                                switch transcript.characterType {
                                                                 case .single:
-                                                                    if let url = talk.characterIconImageURL {
+                                                                    if let url = transcript.characterIconImageURL {
                                                                         WebImage(url: url)
                                                                             .resizable()
                                                                             .frame(width: 20, height: 20)
@@ -199,12 +205,19 @@ struct StoryDetailView: View {
                                                                         .bold()
                                                                         .frame(width: 20, height: 20)
                                                                 }
-                                                                Text(talk.characterName)
+                                                                Text(transcript.characterName ?? "Character.unknown")
                                                                     .font(.headline)
+                                                                Spacer()
+                                                                if AppFlag.ISV_DEBUG {
+                                                                    if let index = transcript.sourceIndex {
+                                                                        Text(verbatim: "#\(index)")
+                                                                            .foregroundStyle(.secondary)
+                                                                    }
+                                                                }
                                                             }
                                                             .accessibilityElement(children: .combine)
-                                                            .accessibilityLabel(talk.characterName)
-                                                            Text(talk.text)
+                                                            .accessibilityLabel(transcript.characterName ?? "Character.unknown")
+                                                            Text(transcript.text)
                                                                 .font(.body)
                                                                 .multilineTextAlignment(.leading)
                                                                 .lineLimit(nil)
@@ -215,7 +228,8 @@ struct StoryDetailView: View {
                                                 })
                                                 .buttonStyle(.borderless)
                                             }
-                                            #if os(macOS)
+                                            .groupBoxStrokeLineWidth(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? 3 : 0)
+#if os(macOS)
                                             .wrapIf(true) { content in
                                                 if #available(macOS 15.0, *) {
                                                     content
@@ -224,9 +238,7 @@ struct StoryDetailView: View {
                                                     content
                                                 }
                                             }
-                                            #endif
-                                        @unknown default:
-                                            EmptyView()
+#endif
                                         }
                                     }
                                 }
@@ -261,14 +273,14 @@ struct StoryDetailView: View {
             }
         }
         .navigationTitle(title.forLocale(locale) ?? String(localized: "Story"))
-        #if os(iOS)
+#if os(iOS)
         .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .navigationBar)
         .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .tabBar)
-        #endif
+#endif
         .navigationBarBackButtonHidden(interactivePlayerIsInFullScreen)
         .withSystemBackground()
         .task {
-            await loadTranscript()
+            await loadAssets()
         }
         .toolbar {
             if !interactivePlayerIsInFullScreen {
@@ -281,10 +293,10 @@ struct StoryDetailView: View {
                     })
                     .onChange(of: locale) {
                         Task {
-                            await loadTranscript()
+                            await loadAssets()
                         }
                     }
-//                    .menuIndicator(.hidden)
+                    //                    .menuIndicator(.hidden)
                 }
             }
 #if os(macOS)
@@ -305,21 +317,21 @@ struct StoryDetailView: View {
             }
         }
         .onChange(of: interactivePlayerIsInFullScreen) {
-            #if os(iOS)
+#if os(iOS)
             if interactivePlayerIsInFullScreen {
                 setDeviceOrientation(to: .landscape, allowing: [.landscapeLeft, .landscapeRight])
             } else {
                 setDeviceOrientation(to: .portrait, allowing: .portrait)
             }
-            #endif
+#endif
         }
         .onAppear {
-            #if os(iOS)
+#if os(iOS)
             if Mute.shared.isMute {
                 isMuted = true
                 print("SILENT MODE: MUTE")
             }
-            #endif
+#endif
             if !ISVHadChosenOption {
                 isvLayoutSelectionSheetIsDisplaying = true
             }
@@ -335,10 +347,12 @@ struct StoryDetailView: View {
         }
     }
     
-    func loadTranscript() async {
+    
+    func loadAssets() async {
         isAssetUnavailable = false
         asset = nil
         transcript = nil
+        
         let newAsset = switch type {
         case .event:
             await _DoriAPI.Misc.eventStoryAsset(
@@ -377,13 +391,35 @@ struct StoryDetailView: View {
         }
         if let newAsset {
             asset = newAsset
-            transcript = newAsset.transcript
+            ir = getIR(scenarioID: scenarioID, voiceAssetBundleName: voiceAssetBundleName, type: type, locale: locale, unsafeAssociatedID: unsafeAssociatedID, unsafeSecondaryAssociatedID: unsafeSecondaryAssociatedID, asset: newAsset)
+            if let ir {
+                transcript = DoriStoryBuilder.Conversion.neoTranscript(fromIR: ir)
+            }
         } else {
             isAssetUnavailable = true
         }
     }
     
-    #if os(macOS)
+    func getIR(scenarioID: String, voiceAssetBundleName: String?, type: StoryType, locale: DoriLocale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String?, asset: _DoriAPI.Misc.StoryAsset) -> StoryIR {
+        let voiceBundlePath = {
+            switch type {
+            case .event:
+                "\(locale.rawValue)/sound/voice/scenario/eventstory\(unsafeAssociatedID)_\(unsafeSecondaryAssociatedID!)"
+            case .main:
+                "\(locale.rawValue)/sound/voice/scenario/mainstory\(unsafeAssociatedID)"
+            case .band:
+                "\(locale.rawValue)/sound/voice/scenario/\(voiceAssetBundleName!)"
+            case .card:
+                "\(locale.rawValue)/sound/voice/scenario/resourceset/\(unsafeAssociatedID)"
+            case .actionSet:
+                "\(locale.rawValue)/sound/voice/scenario/actionset/actionset\(Int(floor(Double(unsafeAssociatedID)! / 200) * 10))"
+            case .afterLive:
+                "\(locale.rawValue)/sound/voice/scenario/afterlivetalk/group\(Int(floor(Double(unsafeAssociatedID)! / 100)))"
+            }
+        }()
+        return DoriStoryBuilder.Conversion.zeileIR(fromBandori: asset, in: locale, voiceBundlePath: voiceBundlePath)
+    }
+#if os(macOS)
     @ViewBuilder
     private var debugMenu: some View {
         let voiceBundlePath = {
@@ -452,13 +488,13 @@ struct StoryDetailView: View {
                             voiceBundlePath: voiceBundlePath
                         )
                         let text = DoriStoryBuilder.Conversion.sirius(fromIR: ir)
-//                        if let text {
-                            try? text.write(to: dst, atomically: true, encoding: .utf8)
-                            NSWorkspace.shared.selectFile(
-                                dst.path,
-                                inFileViewerRootedAtPath: ""
-                            )
-//                        }
+                        //                        if let text {
+                        try? text.write(to: dst, atomically: true, encoding: .utf8)
+                        NSWorkspace.shared.selectFile(
+                            dst.path,
+                            inFileViewerRootedAtPath: ""
+                        )
+                        //                        }
                     }, label: {
                         Label(String("Sirius"), systemImage: "sparkles")
                     })
@@ -468,40 +504,43 @@ struct StoryDetailView: View {
             .menuStyle(.button)
         }
     }
-    #endif
+#endif
     
-    struct StoryDetailInteractiveStoryEntryView: View {
-        var scenarioID: String
-        var voiceAssetBundleName: String?
-        var type: StoryType
-        var locale: _DoriAPI.Locale
-        var unsafeAssociatedID: String // WTF
-        var unsafeSecondaryAssociatedID: String?
-        @Binding var asset: _DoriAPI.Misc.StoryAsset?
-        var body: some View {
-            if let asset {
-                InteractiveStoryView(asset: asset, voiceBundlePath: {
-                    switch type {
-                    case .event:
-                        "\(locale.rawValue)/sound/voice/scenario/eventstory\(unsafeAssociatedID)_\(unsafeSecondaryAssociatedID!)"
-                    case .main:
-                        "\(locale.rawValue)/sound/voice/scenario/mainstory\(unsafeAssociatedID)"
-                    case .band:
-                        "\(locale.rawValue)/sound/voice/scenario/\(voiceAssetBundleName!)"
-                    case .card:
-                        "\(locale.rawValue)/sound/voice/scenario/resourceset/\(unsafeAssociatedID)"
-                    case .actionSet:
-                        "\(locale.rawValue)/sound/voice/scenario/actionset/actionset\(Int(floor(Double(unsafeAssociatedID)! / 200) * 10))"
-                    case .afterLive:
-                        "\(locale.rawValue)/sound/voice/scenario/afterlivetalk/group\(Int(floor(Double(unsafeAssociatedID)! / 100)))"
-                    }
-                }(), locale: locale)
-            } else {
-                ProgressView()
-            }
-        }
-    }
+    /*
+     struct StoryDetailInteractiveStoryEntryView: View {
+     var scenarioID: String
+     var voiceAssetBundleName: String?
+     var type: StoryType
+     var locale: _DoriAPI.Locale
+     var unsafeAssociatedID: String // WTF
+     var unsafeSecondaryAssociatedID: String?
+     @Binding var asset: _DoriAPI.Misc.StoryAsset?
+     var body: some View {
+     if let asset {
+     InteractiveStoryView(asset: asset, voiceBundlePath: {
+     switch type {
+     case .event:
+     "\(locale.rawValue)/sound/voice/scenario/eventstory\(unsafeAssociatedID)_\(unsafeSecondaryAssociatedID!)"
+     case .main:
+     "\(locale.rawValue)/sound/voice/scenario/mainstory\(unsafeAssociatedID)"
+     case .band:
+     "\(locale.rawValue)/sound/voice/scenario/\(voiceAssetBundleName!)"
+     case .card:
+     "\(locale.rawValue)/sound/voice/scenario/resourceset/\(unsafeAssociatedID)"
+     case .actionSet:
+     "\(locale.rawValue)/sound/voice/scenario/actionset/actionset\(Int(floor(Double(unsafeAssociatedID)! / 200) * 10))"
+     case .afterLive:
+     "\(locale.rawValue)/sound/voice/scenario/afterlivetalk/group\(Int(floor(Double(unsafeAssociatedID)! / 100)))"
+     }
+     }(), locale: locale)
+     } else {
+     ProgressView()
+     }
+     }
+     }
+     */
 }
+
 
 struct ISVLayoutPickerSheet: View {
     @AppStorage("ISVHadChosenOption") var ISVHadChosenOption = false
@@ -550,39 +589,5 @@ struct ISVLayoutPickerSheet: View {
     private func submit() {
         isvAlwaysFullScreen = selection == "F"
         ISVHadChosenOption = true
-    }
-}
-
-extension _DoriAPI.Misc.StoryAsset.Transcript.Talk {
-    var personGroupType: PersonGroupType {
-        if characterName == "一同"
-            || characterName == "全员"
-            || characterName == "全員"
-            || characterName == "All"
-            || characterName.middleContains("・")
-            || characterName.middleContains("と")
-            || characterName.middleContains("&") {
-            return .multiple
-        } else if characterName == "???" || characterName == "？？？" {
-            return .unknown
-        }
-        
-        return .single
-    }
-    
-    enum PersonGroupType {
-        case single
-        case multiple
-        case unknown
-    }
-}
-
-extension String {
-    fileprivate func middleContains(_ other: some StringProtocol) -> Bool {
-        if _fastPath(self.count > 2) {
-            self.dropFirst().dropLast().contains(other)
-        } else {
-            false
-        }
     }
 }

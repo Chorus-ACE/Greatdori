@@ -31,6 +31,7 @@ struct InteractiveStoryView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\._isvIsMuted) private var isMuted
     @Environment(\._isvIsInFullScreen) private var interactivePlayerIsInFullScreen
+    @Environment(\._isvCurrentBlockingActionIndex) private var currentBlockingActionIndex
     
     @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
     
@@ -66,11 +67,11 @@ struct InteractiveStoryView: View {
     private var fullScreenToggleIsAvailable: Bool
     private var mutingIsAvailable: Bool
     
-    init(_ ir: StoryIR, assetFolder: URL? = nil) {
+    init(_ ir: StoryIR, assetFolder: URL? = nil, fullScreenToggleIsAvailable: Bool = false, mutingIsAvailable: Bool = false) {
         self.ir = ir
         self.assetFolder = assetFolder
-        self.fullScreenToggleIsAvailable = false
-        self.mutingIsAvailable = false
+        self.fullScreenToggleIsAvailable = fullScreenToggleIsAvailable
+        self.mutingIsAvailable = mutingIsAvailable
 //        unsafe voicePlayer = .allocate(capacity: 1)
 //        unsafe voicePlayer.initialize(to: .init())
     }
@@ -310,7 +311,6 @@ struct InteractiveStoryView: View {
             return .handled
         }
         .onChange(of: isMuted.wrappedValue, initial: true, {
-//            print("MUTING PLAYERS")
             bgmPlayer.isMuted = isMuted.wrappedValue
             sePlayer.isMuted = isMuted.wrappedValue
             if let safeVoicePlayer {
@@ -460,20 +460,21 @@ struct InteractiveStoryView: View {
     func start() {
         @safe nonisolated(unsafe) let ir = ir
         detachedReferenceCountedTask { @Sendable in
-            for action in ir.actions {
-                await perform(action: action)
+            for (index,action) in ir.actions.enumerated() {
+                await perform(action: action, actionSeriesIndex: index)
             }
         }
     }
     
     // MARK: - next
     func next() {
+        currentBlockingActionIndex.wrappedValue = nil
         currentInteractBlockingContinuation?.resume()
         currentInteractBlockingContinuation = nil
     }
     
     // MARK: - perform
-    func perform(action: StoryIR.StepAction) async {
+    func perform(action: StoryIR.StepAction, actionSeriesIndex: Int? = nil) async {
         Self.performingActionCount.count += 1
         
         if currentTelop != nil {
@@ -535,6 +536,7 @@ struct InteractiveStoryView: View {
                 
                 
                 await withCheckedContinuation { continuation in
+                    currentBlockingActionIndex.wrappedValue = actionSeriesIndex
                     currentInteractBlockingContinuation = continuation
                 }
                 
@@ -561,6 +563,7 @@ struct InteractiveStoryView: View {
                 }
                 
                 await withCheckedContinuation { continuation in
+                    currentBlockingActionIndex.wrappedValue = actionSeriesIndex
                     currentInteractBlockingContinuation = continuation
                 }
                 
@@ -821,8 +824,12 @@ extension View {
     func isvIsInFullScreen(_ fullScreen: Binding<Bool>) -> some View {
         environment(\._isvIsInFullScreen, fullScreen)
     }
+    func isvCurrentBlockingActionIndex(_ index: Binding<Int?>) -> some View {
+        environment(\._isvCurrentBlockingActionIndex, index)
+    }
 }
 extension EnvironmentValues {
     @Entry fileprivate var _isvIsMuted: Binding<Bool> = .constant(false)
     @Entry fileprivate var _isvIsInFullScreen: Binding<Bool> = .constant(false)
+    @Entry fileprivate var _isvCurrentBlockingActionIndex: Binding<Int?> = .constant(nil)
 }
