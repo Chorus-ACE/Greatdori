@@ -48,15 +48,16 @@ struct ISVLive2DView: View {
                 self.expressions = expressions
             }
             .onChange(of: isVisible) {
-                if isVisible && safeVoicePlayer.wrappedValue != nil {
+                if isVisible {
                     lipSyncTimer = Timer.scheduledTimer(withTimeInterval: 0.04, repeats: true) { _ in
                         DispatchQueue.main.async {
-//                            unsafe voicePlayer.pointee.updateMeters()
-                            safeVoicePlayer.wrappedValue!.updateMeters()
-                            
-                            // -160.0...0.0
-                            let power = Double(safeVoicePlayer.wrappedValue!.peakPower(forChannel: 0))
-                            lipSyncValue = pow(10, power / 20) - 0.3
+                            if _fastPath(safeVoicePlayer.wrappedValue != nil) {
+                                safeVoicePlayer.wrappedValue!.updateMeters()
+                                
+                                // -160.0...0.0
+                                let power = Double(safeVoicePlayer.wrappedValue!.peakPower(forChannel: 0))
+                                lipSyncValue = pow(10, power / 20) - 0.3
+                            }
                         }
                     }
                 } else {

@@ -534,7 +534,6 @@ struct InteractiveStoryView: View {
                     }
                 }
                 
-                
                 await withCheckedContinuation { continuation in
                     currentBlockingActionIndex.wrappedValue = actionSeriesIndex
                     currentInteractBlockingContinuation = continuation
