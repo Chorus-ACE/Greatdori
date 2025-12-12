@@ -24,15 +24,15 @@ struct SettingsAdvancedView: View {
     @State var thermalState = ProcessInfo.processInfo.thermalState
     var body: some View {
         Group {
-#if os(iOS)
-            List {
-                settingsAdvancedSections()
-            }
-#else
+//#if os(iOS)
+//            List {
+//                settingsAdvancedSections()
+//            }
+//#else
             Group {
                 settingsAdvancedSections()
             }
-#endif
+//#endif
         }
         .navigationTitle("Settings.advanced")
         .onReceive(ProcessInfo.processInfo.publisher(for: \.isLowPowerModeEnabled)) { lowPowerMode in
@@ -135,7 +135,7 @@ struct SettingsAdvancedUISection: View {
                         .font(.footnote)
                 }
             })
-            SettingsAdvancedISVABTestView()
+//            SettingsAdvancedISVABTestView()
         } header: {
             Text("Settings.advanced.ui")
         }
@@ -150,42 +150,6 @@ func resetAllAdvancedSettings(showBannerAtHome: Bool = true) {
         }
         if showBannerAtHome {
             UserDefaults.standard.set(true, forKey: "AdvancedSettingsHaveReset")
-        }
-    }
-}
-
-struct SettingsAdvancedISVABTestView: View {
-    @AppStorage("ISVStyleTestFlag") var isvStyleTestFlag = 0
-    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
-    var body: some View {
-        if isvStyleTestFlag > 0 { // See the initializer in AppDelegate
-            Picker("Settings.advanced.ui.isv", selection: $isvAlwaysFullScreen) {
-                if isvStyleTestFlag == 2 {
-                    Text("Settings.advanced.ui.isv.always-full-screen")
-                        .tag(true)
-                    Text("Settings.advanced.ui.isv.resizable")
-                        .tag(false)
-                } else {
-                    Text("Settings.advanced.ui.isv.resizable")
-                        .tag(false)
-                    Text("Settings.advanced.ui.isv.always-full-screen")
-                        .tag(true)
-                }
-            }
-            .onChange(of: isvAlwaysFullScreen) {
-                Task {
-                    await submitStats(
-                        key: "ISVPreferAlwaysFullScreen",
-                        action: isvAlwaysFullScreen
-                    )
-                }
-                Task {
-                    await submitStats(
-                        key: "ISVPreferPreviewable",
-                        action: !isvAlwaysFullScreen
-                    )
-                }
-            }
         }
     }
 }

@@ -195,6 +195,7 @@ struct CustomGroupBox<Content: View>: View {
     var customGroupBoxVersion: Int
     @Environment(\._groupBoxStrokeLineWidth) var envStrokeLineWidth: CGFloat
     @Environment(\._suppressCustomGroupBox) var suppressCustomGroupBox
+    @Environment(\._groupBoxBackgroundTintOpacity) var backgroundTintOpacity: CGFloat
     
     init(
         showGroupBox: Bool = true,
@@ -248,6 +249,11 @@ struct CustomGroupBox<Content: View>: View {
                                                 .blendMode(.destinationOut)
                                         }
                                 }
+                            
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .fill(.accent)
+                                .opacity(backgroundTintOpacity)
+                            
                             RoundedRectangle(cornerRadius: cornerRadius)
                                 .fill(Color(.floatingCard))
                         }
@@ -316,10 +322,14 @@ extension EnvironmentValues {
 
 extension EnvironmentValues {
     @Entry fileprivate var _groupBoxStrokeLineWidth: CGFloat = 0
+    @Entry fileprivate var _groupBoxBackgroundTintOpacity: CGFloat = 0
 }
 extension View {
     func groupBoxStrokeLineWidth(_ width: CGFloat) -> some View {
         environment(\._groupBoxStrokeLineWidth, width)
+    }
+    func groupBoxBackgroundTintOpacity(_ opacity: CGFloat) -> some View {
+        environment(\._groupBoxBackgroundTintOpacity, opacity)
     }
 }
 

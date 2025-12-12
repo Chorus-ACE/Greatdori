@@ -64,6 +64,9 @@ struct InteractiveStoryView: View {
     @State private var talkShakeDuration = 0.0
     @State private var screenShakeDuration = 0.0
     
+    @State private var frameWidth: CGFloat = 0
+    @State private var frameHeight: CGFloat = 0
+    
     private var fullScreenToggleIsAvailable: Bool
     private var mutingIsAvailable: Bool
     
@@ -189,6 +192,7 @@ struct InteractiveStoryView: View {
                         .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
                 }
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)).combined(with: .opacity))
+                .scaleEffect(frameWidth/400/2*1.3)
             }
             
             // MARK: - Menu
@@ -231,6 +235,10 @@ struct InteractiveStoryView: View {
         .focusable()
         .focusEffectDisabled()
         .frame(minWidth: 300, minHeight: 75)
+        .onFrameChange(perform: { geometry in
+            frameWidth = geometry.size.width
+            frameHeight = geometry.size.height
+        })
         .background {
             WebImage(url: backgroundImageURL)
                 .resizable()

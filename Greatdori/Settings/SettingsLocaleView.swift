@@ -17,16 +17,16 @@ import SwiftUI
 
 struct SettingsLocaleView: View {
     var body: some View {
-#if os(iOS)
-        Section(content: {
-            Group {
-                SettingsPrimaryAndSecondaryLocalePicker()
-                SettingsBirthdayTimeZonePicker()
-            }
-        }, header: {
-            Text("Settings.locale")
-        })
-#else
+//#if os(iOS)
+//        Section(content: {
+//            Group {
+//                SettingsPrimaryAndSecondaryLocalePicker()
+//                SettingsBirthdayTimeZonePicker()
+//            }
+//        }, header: {
+//            Text("Settings.locale")
+//        })
+//#else
         Group {
             Section {
                 SettingsPrimaryAndSecondaryLocalePicker()
@@ -36,7 +36,7 @@ struct SettingsLocaleView: View {
             }
         }
         .navigationTitle("Settings.locale")
-#endif
+//#endif
     }
     
     

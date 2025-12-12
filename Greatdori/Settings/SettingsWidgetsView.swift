@@ -19,40 +19,40 @@ import SwiftUI
 import WidgetKit
 @_spi(Advanced) import SwiftUIIntrospect
 
+//struct SettingsWidgetsView: View {
+//    @State var allCollections = CardCollectionManager.shared.allCollections
+//    var body: some View {
+//#if os(iOS)
+//        Section("Settings.widgets") {
+//            NavigationLink(destination: {
+//                List {
+//                    SettingsWidgetsCollectionView()
+//                }
+//                .navigationTitle("Settings.widgets.collections")
+//            }, label: {
+//                HStack {
+//                    Text("Settings.widgets.collections")
+//                    Spacer()
+//                    if !allCollections.isEmpty {
+//                        Text("\(allCollections.count)")
+//                            .foregroundStyle(.secondary)
+//                    }
+//                }
+//            })
+//        }
+//        .onAppear {
+//            // Refresh every time the view appears.
+//            allCollections = CardCollectionManager.shared.allCollections
+//        }
+//#else
+//        SettingsWidgetsCollectionView()
+//            .navigationTitle("Settings.widgets")
+//#endif
+//    }
+//}
+
+
 struct SettingsWidgetsView: View {
-    @State var allCollections = CardCollectionManager.shared.allCollections
-    var body: some View {
-#if os(iOS)
-        Section("Settings.widgets") {
-            NavigationLink(destination: {
-                List {
-                    SettingsWidgetsCollectionView()
-                }
-                .navigationTitle("Settings.widgets.collections")
-            }, label: {
-                HStack {
-                    Text("Settings.widgets.collections")
-                    Spacer()
-                    if !allCollections.isEmpty {
-                        Text("\(allCollections.count)")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            })
-        }
-        .onAppear {
-            // Refresh every time the view appears.
-            allCollections = CardCollectionManager.shared.allCollections
-        }
-#else
-        SettingsWidgetsCollectionView()
-            .navigationTitle("Settings.widgets")
-#endif
-    }
-}
-
-
-struct SettingsWidgetsCollectionView: View {
     @AppStorage("hideCollectionNameWhileSharing") var hideCollectionNameWhileSharing = false
     @StateObject var collectionManager = CardCollectionManager.shared
     @State var destinationCollection: CardCollectionManager.Collection? = nil

@@ -17,20 +17,11 @@ import SwiftUI
 
 struct SettingsDebugView: View {
     var body: some View {
-        #if os(iOS)
-        Section(content: {
-          SettingsDebugControlsView()
-            .fontDesign(.monospaced)
-        }, header: {
-            Text("Settings.debug")
-        })
-        #else
         Section {
             SettingsDebugControlsView()
                 .fontDesign(.monospaced)
         }
         .navigationTitle("Settings.debug")
-        #endif
     }
     
     struct SettingsDebugControlsView: View {

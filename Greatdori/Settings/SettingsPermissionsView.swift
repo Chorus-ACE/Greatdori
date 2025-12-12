@@ -24,32 +24,32 @@ struct SettingsPermissionsView: View {
     @State var permissionRejected: Bool = false
     var body: some View {
         Group {
-#if os(iOS)
-            Section(content: {
-                SettingsPermissionsNotificationNews()
-                SettingsPermissionsCalendarBirthdays()
-            }, header: {
-                Text("Settings.permissions")
-            }, footer: {
-                if permissionNotGiven || permissionRejected {
-                    VStack(alignment: .leading) {
-                        if permissionNotGiven {
-                            Text("Settings.notifications.authorization-required.open-settings")
-                                .multilineTextAlignment(.leading)
-                                .onTapGesture {
-                                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                                        openURL(url)
-                                    }
-                                }
-                        }
-                        if permissionRejected {
-                            Text("Settings.notifications.access-denied")
-                                .multilineTextAlignment(.leading)
-                        }
-                    }
-                }
-            })
-#else
+//#if os(iOS)
+//            Section(content: {
+//                SettingsPermissionsNotificationNews()
+//                SettingsPermissionsCalendarBirthdays()
+//            }, header: {
+//                Text("Settings.permissions")
+//            }, footer: {
+//                if permissionNotGiven || permissionRejected {
+//                    VStack(alignment: .leading) {
+//                        if permissionNotGiven {
+//                            Text("Settings.notifications.authorization-required.open-settings")
+//                                .multilineTextAlignment(.leading)
+//                                .onTapGesture {
+//                                    if let url = URL(string: UIApplication.openSettingsURLString) {
+//                                        openURL(url)
+//                                    }
+//                                }
+//                        }
+//                        if permissionRejected {
+//                            Text("Settings.notifications.access-denied")
+//                                .multilineTextAlignment(.leading)
+//                        }
+//                    }
+//                }
+//            })
+//#else
             Group {
                 Section {
                     SettingsPermissionsNotificationNews()
@@ -72,7 +72,7 @@ struct SettingsPermissionsView: View {
                 })
             }
             .navigationTitle("Settings.permissions")
-#endif
+//#endif
         }
         .task {
             let notificationStatus = await UNUserNotificationCenter.current().notificationSettings()

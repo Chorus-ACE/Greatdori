@@ -162,7 +162,6 @@ struct StoryDetailView: View {
                                         } else {
                                             CustomGroupBox(cornerRadius: 20) {
                                                 Button(action: {
-                                                    /*
                                                     if let voiceID = transcript.voiceID {
                                                         let url = switch type {
                                                         case .event:
@@ -181,7 +180,6 @@ struct StoryDetailView: View {
                                                         audioPlayer.replaceCurrentItem(with: .init(url: .init(string: url)!))
                                                         audioPlayer.play()
                                                     }
-                                                     */
                                                 }, label: {
                                                     HStack {
                                                         VStack(alignment: .leading) {
@@ -229,6 +227,7 @@ struct StoryDetailView: View {
                                                 .buttonStyle(.borderless)
                                             }
                                             .groupBoxStrokeLineWidth(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? 3 : 0)
+//                                            .groupBoxBackgroundTintOpacity(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? 0.5: 0)
 #if os(macOS)
                                             .wrapIf(true) { content in
                                                 if #available(macOS 15.0, *) {
@@ -539,55 +538,4 @@ struct StoryDetailView: View {
      }
      }
      */
-}
-
-
-struct ISVLayoutPickerSheet: View {
-    @AppStorage("ISVHadChosenOption") var ISVHadChosenOption = false
-    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
-    @State var selection = "N"
-    var body: some View {
-        NavigationStack {
-            /*
-            VStack {
-                Text("Story-viewer.layout-test-sheet.title")
-                    .font(.largeTitle)
-                    .bold()
-                //            Text()
-                Text("Story-viewer.layout-test-sheet.body")
-                
-                HStack {
-                    Text(verbatim: "1")
-                    Text(verbatim: "2")
-                }
-                Spacer()
-#if os(iOS)
-                Button(action: {
-                    
-                }, label: {
-                    Text(verbatim: "3")
-                })
-#endif
-            }
-             */
-            EmptyView()
-            .padding()
-            .toolbar {
-#if os(macOS)
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(action: {
-                        submit()
-                    }, label: {
-                        Text(verbatim: "Story-viewer.layout-test-sheet.done")
-                    })
-                    .disabled(selection == "N")
-                }
-#endif
-            }
-        }
-    }
-    private func submit() {
-        isvAlwaysFullScreen = selection == "F"
-        ISVHadChosenOption = true
-    }
 }

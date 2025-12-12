@@ -23,27 +23,29 @@ import UserNotifications
 let birthdayTimeZoneNameDict: [BirthdayTimeZone: LocalizedStringResource] = [.adaptive: "Settings.birthday-time-zone.name.adaptive", .JST: "Settings.birthday-time-zone.name.JST", .UTC: "Settings.birthday-time-zone.name.UTC", .CST: "Settings.birthday-time-zone.name.CST", .PT: "Settings.birthday-time-zone.name.PT"]
 let showBirthdayDateDefaultValue = 1
 
+
+
 struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.horizontalSizeClass) var sizeClass
     @State var selectionItem: String = "locale"
     var usedAsSheet: Bool = false
     
-    let SettingsTabs: [(LocalizedStringResource, )] = []
     var body: some View {
         #if os(iOS)
         NavigationStack {
             Form {
-                SettingsLocaleView()
-                SettingsHomeView()
-                SettingsPermissionsView()
-                SettingsWidgetsView()
-                SettingsFontsView()
-                SettingsAccountsView()
-                SettingsOfflineDataView()
-                SettingsAboutView()
-                if AppFlag.DEBUG {
-                    SettingsDebugView()
+                ForEach(settingsTabs, id: \.self) { item in
+                    NavigationLink(destination: {
+                        settingsDestination(forTab: item.destination)
+//                            .navigationTitle(item.name)
+                            .navigationBarTitleDisplayMode(.inline)
+                    }, label: {
+                        if item.isDisplayable {
+                            Label(item.name, systemImage: item.symbol)
+                                .tag(item.destination)
+                        }
+                    })
                 }
             }
             .formStyle(.grouped)
@@ -62,74 +64,52 @@ struct SettingsView: View {
         #else
         NavigationSplitView(sidebar: {
             List(selection: $selectionItem, content: {
-                Label("Settings.locale", systemImage: "globe")
-                    .tag("locale")
-                Label("Settings.home-edit", systemImage: "rectangle.3.group")
-                    .tag("home")
-                Label("Settings.permissions", systemImage: "bell.badge")
-                    .tag("permission")
-                Label("Settings.widgets", systemImage: "widget.small")
-                    .tag("widget")
-                Label("Settings.accounts", systemImage: "person.crop.circle")
-                    .tag("account")
-                Label("Settings.fonts", systemImage: "textformat")
-                    .tag("font")
-                Label("Settings.advanced", systemImage: "hammer")
-                    .tag("advanced")
-                Label("Settings.about", systemImage: "info.circle")
-                    .tag("about")
-                if AppFlag.DEBUG {
-                    Label("Settings.debug", systemImage: "ant")
-                        .tag("debug")
+                ForEach(settingsTabs, id: \.self) { item in
+                    if item.isDisplayable {
+                        Label(item.name, systemImage: item.symbol)
+                            .tag(item.destination)
+                    }
                 }
             })
 //            .toolbar(removing: .sidebarToggle)
         }, detail: {
-            NavigationStack {
-                switch selectionItem {
+            settingsDestination(forTab: selectionItem)
+        })
+        //        .toolbar(removing: .sidebarToggle)
+        #endif
+    }
+    
+    @ViewBuilder
+    func settingsDestination(forTab tab: String) -> some View {
+        NavigationStack {
+            Form {
+                switch tab {
                 case "locale":
-                    Form {
-                        SettingsLocaleView()
-                    }
-                    .formStyle(.grouped)
+                    SettingsLocaleView()
                 case "home":
-                    Form {
-                        SettingsHomeView()
-                    }
-                    .formStyle(.grouped)
+                    SettingsHomeView()
+                case "story":
+                    SettingsStoryView()
                 case "permission":
-                    Form {
-                        SettingsPermissionsView()
-                    }
-                    .formStyle(.grouped)
+                    SettingsPermissionsView()
                 case "widget":
-                    Form {
-                        SettingsWidgetsView()
-                    }
-                    .formStyle(.grouped)
+                    SettingsWidgetsView()
                 case "font":
                     SettingsFontsView()
                 case "account":
                     SettingsAccountsView()
                 case "advanced":
-                    Form {
-                        SettingsAdvancedView()
-                    }
-                    .formStyle(.grouped)
+                    SettingsAdvancedView()
                 case "about":
                     SettingsAboutView()
                 case "debug":
-                    Form {
-                        SettingsDebugView()
-                    }
-                    .formStyle(.grouped)
+                    SettingsDebugView()
                 default:
                     ProgressView()
                 }
             }
-        })
-        //        .toolbar(removing: .sidebarToggle)
-        #endif
+            .formStyle(.grouped)
+        }
     }
 }
 
@@ -162,68 +142,32 @@ struct SettingsOfflineDataView: View {
     }
 }
 
-/*
-struct SettingsAboutView: View {
-    @State var showDebugVerificationAlert = false
-    @State var password = ""
-    @State var showDebugUnlockAlert = false
-    @AppStorage("lastDebugPassword") var lastDebugPassword = ""
-    var body: some View {
-        Section(content: {
-            Text(verbatim: "Greatdori!")
-                .onTapGesture(count: 3, perform: {
-                    showDebugVerificationAlert = true
-                })
-                .alert("Settings.debug.activate-alert.title", isPresented: $showDebugVerificationAlert, actions: {
-#if os(iOS)
-                    TextField("Settings.debug.activate-alert.prompt", text: $password)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-                        .fontDesign(.monospaced)
-#else
-                    TextField("Settings.debug.activate-alert.prompt", text: $password)
-                        .autocorrectionDisabled()
-                    //                        .textInputSuggestions(nil)
-                        .fontDesign(.monospaced)
-#endif
-                    Button(action: {
-                        if password == correctDebugPassword {
-                            lastDebugPassword = password
-                            AppFlag.set(true, forKey: "DEBUG")
-                            showDebugVerificationAlert = false
-                            showDebugUnlockAlert = true
-                        }
-                        password = ""
-                    }, label: {
-                        Text("Settings.debug.activate-alert.confirm")
-                    })
-                    .keyboardShortcut(.defaultAction)
-                    Button(role: .cancel, action: {}, label: {
-                        Text("Settings.debug.activate-alert.cancel")
-                    })
-                }, message: {
-                    Text("Settings.debug.activate-alert.message")
-                })
-                .alert("Settings.debug.activate-alert.succeed", isPresented: $showDebugUnlockAlert, actions: {})
-            NavigationLink(destination: {
-                SettingsAdvancedView()
-            }, label: {
-                Text("Settings.advanced")
-            })
-        }, header: {
-            Text("Settings.about")
-        })
-    }
-}
- */
-
 enum DataSourcePreference: String, CaseIterable {
     case useInternet
     case hybrid
     case useLocal
 }
 
+struct SettingsTab: Hashable {
+    var symbol: String
+    var name: LocalizedStringResource
+    var destination: String
+    var note: String?
+    
+    var isDisplayable: Bool {
+        !((self.note == "DEBUG" && !AppFlag.DEBUG) || (self.note == "HIDDEN"))
+    }
+}
 
-
-
-
+let settingsTabs: [SettingsTab] = [
+    .init(symbol: "globe", name: "Settings.locale", destination: "locale"),
+    .init(symbol: "rectangle.3.group", name: "Settings.home-edit", destination: "home"),
+    .init(symbol: "books.vertical", name: "Settings.story-viewer", destination: "story"),
+    .init(symbol: "bell.badge", name: "Settings.permissions", destination: "permission"),
+    .init(symbol: "widget.small", name: "Settings.widgets", destination: "widget"),
+    .init(symbol: "person.crop.circle", name: "Settings.accounts", destination: "account", note: "HIDE"),
+    .init(symbol: "textformat", name: "Settings.fonts", destination: "font"),
+    .init(symbol: "hammer", name: "Settings.advanced", destination: "advanced"),
+    .init(symbol: "info.circle", name: "Settings.about", destination: "about"),
+    .init(symbol: "ant", name: "Settings.debug", destination: "debug", note: "DEBUG")
+]

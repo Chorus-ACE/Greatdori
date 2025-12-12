@@ -14,23 +14,23 @@
 
 import SwiftUI
 
-struct SettingsAccountsView: View {
-    var body: some View {
-        if isMACOS {
-            SettingsAccountsMain()
-        } else {
-            Section("Settings.accounts") {
-                NavigationLink(destination: {
-                    SettingsFontsMain()
-                }, label: {
-                    Text("Settings.accounts")
-                })
-            }
-        }
-    }
-}
+//struct SettingsAccountsView: View {
+//    var body: some View {
+//        if isMACOS {
+//            SettingsAccountsMain()
+//        } else {
+//            Section("Settings.accounts") {
+//                NavigationLink(destination: {
+//                    SettingsFontsMain()
+//                }, label: {
+//                    Text("Settings.accounts")
+//                })
+//            }
+//        }
+//    }
+//}
 
-struct SettingsAccountsMain: View {
+struct SettingsAccountsView: View {
     var body: some View {
         Form {
             Text(verbatim: "TODO")

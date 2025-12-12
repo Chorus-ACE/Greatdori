@@ -22,23 +22,23 @@ import UniformTypeIdentifiers
 let fontManagerSampleText: [DoriLocale: String] = [.jp: "あなたの輝きが道を照らす", .en: "Your Spark Will Light the Way", .tw: "你的光芒照耀漫漫長路", .cn: "你的光芒会照亮前行之路", .kr: "당신의 반짝임이 길을 밝힌다"]
 let storyViewerDefaultFont: [DoriLocale: String] = [.jp: ".AppleSystemUIFont", .en: ".AppleSystemUIFont", .tw: ".AppleSystemUIFont", .cn: ".AppleSystemUIFont", .kr: ".AppleSystemUIFont"]
 
-struct SettingsFontsView: View {
-    var body: some View {
-        if isMACOS {
-            SettingsFontsMain()
-        } else {
-            Section("Settings.fonts") {
-                NavigationLink(destination: {
-                    SettingsFontsMain()
-                }, label: {
-                    Text("Settings.fonts")
-                })
-            }
-        }
-    }
-}
+//struct SettingsFontsView: View {
+//    var body: some View {
+//        if isMACOS {
+//            SettingsFontsMain()
+//        } else {
+//            Section("Settings.fonts") {
+//                NavigationLink(destination: {
+//                    SettingsFontsMain()
+//                }, label: {
+//                    Text("Settings.fonts")
+//                })
+//            }
+//        }
+//    }
+//}
 
-struct SettingsFontsMain: View {
+struct SettingsFontsView: View {
     @StateObject private var fontManager = FontManager.shared
     @State var newFontSheetIsDisplaying = false
     @State var fontInspectorSheetIsDisplaying = false
@@ -49,7 +49,7 @@ struct SettingsFontsMain: View {
     @State var showAboutSheet = false
     @State var aboutContent = ""
     var body: some View {
-        Form {
+        Group {
             Section("Settings.fonts.system") {
                 ForEach(FontManager.builtInFonts, id: \.self) { item in
                     SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item)
@@ -71,13 +71,13 @@ struct SettingsFontsMain: View {
                 if !fontManager.loadedFonts.isEmpty {
                     ForEach(fontManager.loadedFonts, id: \.self) { item in
                         SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item.fontName)
-                        .swipeActions {
-                            Button(role: .destructive, action: {
-                                fontManager.removeFont(fontName: item.fontName)
-                            }, label: {
-                                Label("Settings.fonts.remove", systemImage: "trash")
-                            })
-                        }
+                            .swipeActions {
+                                Button(role: .destructive, action: {
+                                    fontManager.removeFont(fontName: item.fontName)
+                                }, label: {
+                                    Label("Settings.fonts.remove", systemImage: "trash")
+                                })
+                            }
                     }
                 } else {
                     Text("Settings.fonts.installed.none")
@@ -86,7 +86,6 @@ struct SettingsFontsMain: View {
             }
             
             Section(content: {
-                
                 ForEach(DoriLocale.allCases, id: \.self) { locale in
                     NavigationLink(destination: {
                         SettingsFontsPicker(externalUpdateIndex: $storyViewerUpdateIndex, locale: locale)
@@ -107,6 +106,15 @@ struct SettingsFontsMain: View {
                     SettingsDocumentButton(document: "FontSuggestions") {
                         Text("Settings.fonts.learn-more")
                     }
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button(action: {
+                                newFontSheetIsDisplaying = true
+                            }, label: {
+                                Label("Settings.fonts.new", systemImage: "plus")
+                            })
+                        }
+                    }
                 }
             })
             .onChange(of: storyViewerUpdateIndex, initial: true) {
@@ -121,19 +129,18 @@ struct SettingsFontsMain: View {
                         Text("Settings.fonts.learn-more")
                     }
                 }
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(action: {
+                            newFontSheetIsDisplaying = true
+                        }, label: {
+                            Label("Settings.fonts.new", systemImage: "plus")
+                        })
+                    }
+                }
             }
         }
         .navigationTitle("Settings.fonts")
-        .formStyle(.grouped)
-        .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: {
-                        newFontSheetIsDisplaying = true
-                    }, label: {
-                        Label("Settings.fonts.new", systemImage: "plus")
-                    })
-                }
-        }
         .sheet(isPresented: $newFontSheetIsDisplaying) {
             SettingsFontsAdd()
         }
