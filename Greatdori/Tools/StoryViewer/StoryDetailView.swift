@@ -220,7 +220,7 @@ struct StoryDetailView: View {
                                                             Text(transcript.text)
                                                                 .font(.body)
                                                                 .multilineTextAlignment(.leading)
-                                                                .lineLimit(nil)
+                                                                .fixedSize(horizontal: false, vertical: true)
                                                         }
                                                         Spacer()
                                                     }
