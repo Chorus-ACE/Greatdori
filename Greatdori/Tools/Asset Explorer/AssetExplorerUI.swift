@@ -63,7 +63,7 @@ struct AssetListView: View {
                     HStack {
                         Spacer(minLength: 0)
                         if let filteredItems {
-                            VStack {
+                            LazyVStack {
                                 CustomGroupBox {
                                     if !filteredItems.isEmpty {
                                         VStack {
@@ -188,6 +188,7 @@ struct AssetListView: View {
                                     .highlightKeyword($searchField)
                                 }
                             }
+                            .padding()
                             .wrapIf(true, in: {
                                 if #available(iOS 26, macOS 14.0, *) {
                                     $0.navigationSubtitle(Text(searchField.isEmpty ? "Search.item.\(filteredItems.count)" : "Search.result.\(filteredItems.count)"))
