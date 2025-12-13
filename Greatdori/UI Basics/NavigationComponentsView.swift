@@ -143,8 +143,9 @@ struct InfoDestinationItem {
     let darkColor: Color?
     let tabValue: InfoTab
     let destination: () -> AnyView
+    let note: String
     
-    init<T: View>(title: LocalizedStringKey, shortenedTitle: LocalizedStringKey? = nil, symbol: String, lightColor: Color, darkColor: Color? = nil, tabValue: InfoTab, @ViewBuilder destination: @escaping () -> T) {
+    init<T: View>(title: LocalizedStringKey, shortenedTitle: LocalizedStringKey? = nil, symbol: String, lightColor: Color, darkColor: Color? = nil, tabValue: InfoTab, @ViewBuilder destination: @escaping () -> T, note: String = "") {
         self.title = title
         self.shortenedTitle = shortenedTitle
         self.symbol = symbol
@@ -152,6 +153,7 @@ struct InfoDestinationItem {
         self.darkColor = darkColor
         self.tabValue = tabValue
         self.destination = { AnyView(destination()) }
+        self.note = note
     }
 }
 

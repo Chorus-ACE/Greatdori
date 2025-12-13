@@ -36,8 +36,11 @@ struct AssetTextViewer: View {
                             .ignoresSafeArea()
 #else
                         ScrollView {
-                            Text(content)
-                                .textSelection(.enabled)
+                            HStack {
+                                Text(content)
+                                    .textSelection(.enabled)
+                                Spacer()
+                            }
                         }
 #endif
                     }

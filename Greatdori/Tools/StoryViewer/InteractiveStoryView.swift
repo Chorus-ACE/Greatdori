@@ -182,17 +182,17 @@ struct InteractiveStoryView: View {
                     Capsule()
                         .fill(Color.red.opacity(0.7))
                         .rotationEffect(.degrees(-0.5))
-                        .frame(width: 400, height: 35)
+                        .frame(width: 400 * frameWidth/400/2*1.3, height: 35 * frameWidth/400/2*1.3)
                     Capsule()
                         .fill(Color.white)
                         .rotationEffect(.degrees(0.5))
-                        .frame(width: 380, height: 32)
+                        .frame(width: 380 * frameWidth/400/2*1.3, height: 32 * frameWidth/400/2*1.3)
                     Text(currentTelop)
-                        .font(.custom(fontName(in: ir.locale), size: 18))
+                        .font(.custom(fontName(in: ir.locale), size: 18 * frameWidth/400/2*1.3))
                         .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
                 }
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)).combined(with: .opacity))
-                .scaleEffect(frameWidth/400/2*1.3)
+//                .scaleEffect()
             }
             
             // MARK: - Menu

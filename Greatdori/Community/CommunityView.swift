@@ -106,6 +106,7 @@ struct CommunityView: View {
 }
 
 private struct PostSectionView: View {
+    @Environment(\.horizontalSizeClass) var sizeClass
     var post: Post
     @State var commentSourceTitle: String?
     @State var tagsText: String = ""
@@ -113,20 +114,20 @@ private struct PostSectionView: View {
         CustomGroupBox {
             VStack(alignment: .leading) {
                 HStack {
-                    if !post.author.nickname.isEmpty {
-                        ViewThatFits {
-                            Group {
+                    Group {
+                        if !post.author.nickname.isEmpty {
+                            if sizeClass == .regular {
                                 Text(post.author.nickname)
                                 Text("@\(post.author.username)")
                                     .foregroundStyle(.secondary)
-                            }
-                            Group {
+                            } else {
                                 Text(post.author.nickname)
                             }
+                        } else {
+                            Text("@\(post.author.username)")
                         }
-                    } else {
-                        Text("@\(post.author.username)")
                     }
+                    .lineLimit(1)
                     Spacer()
                     Group {
                         if post.likes != 0 {
