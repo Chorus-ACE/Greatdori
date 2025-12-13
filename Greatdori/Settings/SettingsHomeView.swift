@@ -20,19 +20,6 @@ struct SettingsHomeView: View {
     @AppStorage("showBirthdayDate") var showBirthdayDate = showBirthdayDateDefaultValue
     let showCurrentDayPickerDescription: [Int: LocalizedStringKey] = [3: "Home.home.show-current-date.selection.always.description", 2: "Home.home.show-current-date.selection.during-birthday.description", 1: "Home.home.show-current-date.selection.automatic.description", 0: "Home.home.show-current-date.selection.never.description"]
     var body: some View {
-//        #if os(iOS)
-//        Section(content: {
-//            HomeEditEventsPicker(id: 1)
-//            HomeEditEventsPicker(id: 2)
-//            HomeEditEventsPicker(id: 3)
-//            HomeEditEventsPicker(id: 4)
-//            SettingsHomeShowTodayBirthdayPicker()
-//        }, header: {
-//            Text("Settings.home-edit")
-//        }, footer: {
-//            Text(sizeClass == .compact ? "Settings.home-edit.footer.compact" : "Settings.home-edit.footer")
-//        })
-//#else
         Group {
             Section(content: {
                 HomeEditEventsPicker(id: 1)
@@ -40,8 +27,9 @@ struct SettingsHomeView: View {
                 HomeEditEventsPicker(id: 3)
                 HomeEditEventsPicker(id: 4)
             }, footer: {
-                Text("Settings.home-edit.footer")
+                Text(sizeClass == .compact ? "Settings.home-edit.footer.compact" : "Settings.home-edit.footer")
             })
+            
             Section(content: {
                 SettingsHomeShowTodayBirthdayPicker()
             }, footer: {

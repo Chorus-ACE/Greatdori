@@ -276,6 +276,7 @@ struct SettingsWidgetsView: View {
                 }
             })
         }
+        .navigationTitle("Settings.widgets")
         .navigationDestination(isPresented: $showDestination, destination: {
             if let destinationCollection {
                 SettingsWidgetsCollectionDetailsView(collectionGivenName: destinationCollection.name, isPresented: $showDestination)

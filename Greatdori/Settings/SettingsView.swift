@@ -36,16 +36,16 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 ForEach(settingsTabs, id: \.self) { item in
-                    NavigationLink(destination: {
-                        settingsDestination(forTab: item.destination)
-//                            .navigationTitle(item.name)
-                            .navigationBarTitleDisplayMode(.inline)
-                    }, label: {
-                        if item.isDisplayable {
+                    if item.isDisplayable {
+                        NavigationLink(destination: {
+                            settingsDestination(forTab: item.destination)
+                            //                            .navigationTitle(item.name)
+                                .navigationBarTitleDisplayMode(.inline)
+                        }, label: {
                             Label(item.name, systemImage: item.symbol)
                                 .tag(item.destination)
-                        }
-                    })
+                        })
+                    }
                 }
             }
             .formStyle(.grouped)
@@ -165,7 +165,7 @@ let settingsTabs: [SettingsTab] = [
     .init(symbol: "books.vertical", name: "Settings.story-viewer", destination: "story"),
     .init(symbol: "bell.badge", name: "Settings.permissions", destination: "permission"),
     .init(symbol: "widget.small", name: "Settings.widgets", destination: "widget"),
-    .init(symbol: "person.crop.circle", name: "Settings.accounts", destination: "account", note: "HIDE"),
+    .init(symbol: "person.crop.circle", name: "Settings.accounts", destination: "account", note: "HIDDEN"),
     .init(symbol: "textformat", name: "Settings.fonts", destination: "font"),
     .init(symbol: "hammer", name: "Settings.advanced", destination: "advanced"),
     .init(symbol: "info.circle", name: "Settings.about", destination: "about"),

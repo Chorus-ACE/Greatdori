@@ -32,7 +32,7 @@ import SwiftUI
 
 struct SettingsAccountsView: View {
     var body: some View {
-        Form {
+        Group {
             Text(verbatim: "TODO")
         }
         .navigationTitle("Settings.accounts")

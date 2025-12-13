@@ -40,20 +40,20 @@ import SwiftUI
 struct SettingsAboutView: View {
     var body: some View {
         Group {
-//#if os(iOS)
+#if os(iOS)
 //            List {
-//                HStack {
-//                    Spacer()
-//                    SettingsAboutDetailIconView()
-//                    Spacer()
-//                }
-//                .listRowBackground(Color.clear)
-//                Section {
-//                    SettingsAboutDetailListView()
-//                }
+                HStack {
+                    Spacer()
+                    SettingsAboutDetailIconView()
+                    Spacer()
+                }
+                .listRowBackground(Color.clear)
+                Section {
+                    SettingsAboutDetailListView()
+                }
 //            }
-//            .navigationBarTitleDisplayMode(.inline)
-//#else
+            .navigationBarTitleDisplayMode(.inline)
+#else
             ScrollView {
                 VStack {
                     SettingsAboutDetailIconView()
@@ -68,7 +68,7 @@ struct SettingsAboutView: View {
                 }
                 .padding()
             }
-//#endif
+#endif
         }
         .navigationTitle("Settings.about")
         .withSystemBackground()
@@ -95,6 +95,8 @@ struct SettingsAboutDetailIconView: View {
             Group {
                 if AppFlag.DEBUG {
                     Text("Settings.about.version.\(appVersion)") + Text(verbatim: " - ") + Text(verbatim: "DEBUG")
+                } else if isComplyingWithAppStore {
+                    Text("Settings.about.version.\(appVersion)") + Text(verbatim: " - ") + Text(verbatim: "App Store")
                 } else {
                     Text("Settings.about.version.\(appVersion)")
                 }

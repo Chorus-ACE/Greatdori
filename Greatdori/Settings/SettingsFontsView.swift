@@ -656,6 +656,7 @@ struct SettingsFontsPicker: View {
             }
             .padding()
         }
+        .withSystemBackground()
         .navigationTitle("\(locale.rawValue.uppercased())")
         .formStyle(.grouped)
         .onAppear {
