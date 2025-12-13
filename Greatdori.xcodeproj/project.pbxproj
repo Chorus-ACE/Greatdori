@@ -273,6 +273,8 @@
 		E9AE9E082E909EDF00AAB049 /* SettingsCollectionCardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE9E072E909ED100AAB049 /* SettingsCollectionCardSelector.swift */; };
 		E9AF51252EAC634100BB808F /* TypeNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AF51242EAC633D00BB808F /* TypeNames.swift */; };
 		E9B17BBB2EA5DC430049C92C /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */; };
+		E9BDD6362EED3B74009568F5 /* AssetExplorerFileViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDD6352EED3B67009568F5 /* AssetExplorerFileViewer.swift */; };
+		E9BDD6392EED3B92009568F5 /* AssetExplorerUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDD6382EED3B8B009568F5 /* AssetExplorerUI.swift */; };
 		E9BDEFA32EEBE1B2009568F5 /* TranscriptMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDEFA22EEBE193009568F5 /* TranscriptMapping.swift */; };
 		E9BDF0002EEBFF46009568F5 /* ISVLayoutPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDEFFF2EEBFF44009568F5 /* ISVLayoutPickerSheet.swift */; };
 		E9BDF0022EEC1BF5009568F5 /* SettingsStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDF0012EEC1BF1009568F5 /* SettingsStoryView.swift */; };
@@ -755,6 +757,8 @@
 		E9AEC8C72EBA2EFC00490B75 /* FontSuggestions_ZH-HANS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "FontSuggestions_ZH-HANS.md"; sourceTree = "<group>"; };
 		E9AF51242EAC633D00BB808F /* TypeNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeNames.swift; sourceTree = "<group>"; };
 		E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
+		E9BDD6352EED3B67009568F5 /* AssetExplorerFileViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetExplorerFileViewer.swift; sourceTree = "<group>"; };
+		E9BDD6382EED3B8B009568F5 /* AssetExplorerUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetExplorerUI.swift; sourceTree = "<group>"; };
 		E9BDEFA22EEBE193009568F5 /* TranscriptMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptMapping.swift; sourceTree = "<group>"; };
 		E9BDEFFF2EEBFF44009568F5 /* ISVLayoutPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISVLayoutPickerSheet.swift; sourceTree = "<group>"; };
 		E9BDF0012EEC1BF1009568F5 /* SettingsStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoryView.swift; sourceTree = "<group>"; };
@@ -1480,7 +1484,7 @@
 				E92F02A12EDC430A00CB341F /* StoryViewer */,
 				E99B57642EC1E7DD0045EFC9 /* Station.swift */,
 				E949D28D2E93D9F100E50D3F /* Live2DViewer.swift */,
-				8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */,
+				E9BDD6372EED3B7D009568F5 /* Asset Explorer */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -1507,6 +1511,16 @@
 				E944DCB42ECB253A0005EE55 /* Acknowledgements.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		E9BDD6372EED3B7D009568F5 /* Asset Explorer */ = {
+			isa = PBXGroup;
+			children = (
+				8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */,
+				E9BDD6382EED3B8B009568F5 /* AssetExplorerUI.swift */,
+				E9BDD6352EED3B67009568F5 /* AssetExplorerFileViewer.swift */,
+			);
+			path = "Asset Explorer";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1914,6 +1928,7 @@
 				E94218FA2E8AA3B000F24974 /* CardPreviewImage.swift in Sources */,
 				E94219072E8AA48A00F24974 /* ComicDetailView.swift in Sources */,
 				8C3593062EDAD617009E41AD /* EventDetailStageView.swift in Sources */,
+				E9BDD6392EED3B92009568F5 /* AssetExplorerUI.swift in Sources */,
 				E978109F2EE86376000AD397 /* ISVActionMenu.swift in Sources */,
 				8CEA20C52EAB6362009D41C5 /* SongDetailMatchView.swift in Sources */,
 				E91ABF462ED97BF00043CCE7 /* EventDetailGoalsView.swift in Sources */,
@@ -1974,6 +1989,7 @@
 				8C480C0E2EC62F5900A8AE70 /* ZeileEditorFileEditView.swift in Sources */,
 				E90769D92E546D5B00C9871C /* SettingsView.swift in Sources */,
 				E9EE03812E4F5DB30088843B /* FilterView.swift in Sources */,
+				E9BDD6362EED3B74009568F5 /* AssetExplorerFileViewer.swift in Sources */,
 				8C480C0C2EC61DEB00A8AE70 /* ZeileEditorSidebar.swift in Sources */,
 				E94219352E8AA78800F24974 /* GachaSearchView.swift in Sources */,
 				8CF827AD2E8ACEDC0045CA97 /* LoginCampaignDetailView.swift in Sources */,

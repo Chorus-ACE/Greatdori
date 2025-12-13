@@ -1293,6 +1293,28 @@
         }
       }
     },
+    "Asset-explorer.search" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Assets"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索资源"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索資料"
+          }
+        }
+      }
+    },
     "Asset-explorer.text.failure" : {
       "localizations" : {
         "en" : {
@@ -1369,6 +1391,28 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Asset-explorer.unavailable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assets Unavailable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据包不可用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "資料不可用"
           }
         }
       }
@@ -9995,6 +10039,12 @@
                   "state" : "translated",
                   "value" : "%lld items"
                 }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "no items"
+                }
               }
             }
           }
@@ -10007,6 +10057,12 @@
                   "state" : "translated",
                   "value" : "%lld个项目"
                 }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "没有项目"
+                }
               }
             }
           }
@@ -10018,6 +10074,12 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld 個項目"
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "沒有項目"
                 }
               }
             }
@@ -10131,14 +10193,32 @@
                   "state" : "translated",
                   "value" : "%lld results"
                 }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "no results"
+                }
               }
             }
           }
         },
         "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld个结果"
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld个结果"
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "没有结果"
+                }
+              }
+            }
           }
         },
         "zh-Hant" : {
@@ -10148,6 +10228,12 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld 個結果"
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "沒有結果"
                 }
               }
             }

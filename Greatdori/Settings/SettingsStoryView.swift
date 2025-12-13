@@ -81,8 +81,10 @@ struct SettingsStoryView: View {
                         }
                     })
                 }
-                SettingsDocumentButton(document: "FontSuggestions") {
-                    Text("Settings.fonts.learn-more")
+                if !isMACOS {
+                    SettingsDocumentButton(document: "FontSuggestions") {
+                        Text("Settings.fonts.learn-more")
+                    }
                 }
             }, header: {
                 Text("Settings.story-viewer.fonts")

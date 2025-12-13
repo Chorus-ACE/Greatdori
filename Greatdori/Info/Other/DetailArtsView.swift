@@ -148,7 +148,6 @@ struct DetailArtsSection: View {
                                                     image
                                                         .resizable()
                                                         .antialiased(true)
-//                                                        .scaledToFit()
                                                         .aspectRatio(item.forceApplyRatio ? (item.ratio ?? tabContent.ratio) : nil, contentMode: .fit)
                                                 } placeholder: {
                                                     RoundedRectangle(cornerRadius: 10)
@@ -175,7 +174,7 @@ struct DetailArtsSection: View {
                                                             }
                                                     }
                                                 }
-                                                Text(item.title)
+                                                HighlightableText(String(localized: item.title))
                                                     .multilineTextAlignment(.center)
                                                 Spacer(minLength: 0)
                                             }
@@ -197,9 +196,9 @@ struct DetailArtsSection: View {
                     Text("Details.arts")
                         .font(.title2)
                         .bold()
-                    //                    if information.count > 1 {
-                    DetailSectionOptionPicker(selection: $tab, options: information.map(\.id), labels: information.reduce(into: [String?: String]()) { $0.updateValue(String(localized: $1.tabName), forKey: $1.id) })
-                    //                    }
+                    if information.count > 1 || !(information.first?.tabName.key.isEmpty ?? true) {
+                        DetailSectionOptionPicker(selection: $tab, options: information.map(\.id), labels: information.reduce(into: [String?: String]()) { $0.updateValue(String(localized: $1.tabName), forKey: $1.id) })
+                    }
                     Spacer()
                 }
                 .frame(maxWidth: 615)
