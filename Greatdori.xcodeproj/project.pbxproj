@@ -12,6 +12,7 @@
 		8C0C99842E296A5500549B5C /* GreatdoriApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0C99802E296A5500549B5C /* GreatdoriApp.swift */; };
 		8C0C99892E296A5800549B5C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0C99862E296A5800549B5C /* ContentView.swift */; };
 		8C0C998A2E296A5800549B5C /* GreatdoriApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0C99872E296A5800549B5C /* GreatdoriApp.swift */; };
+		8C0CCD4C2EEC5D5C00762292 /* EventDetailRewardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0CCD4B2EEC5D5500762292 /* EventDetailRewardsView.swift */; };
 		8C0DB86E2EE9B555007674F6 /* EventDetailDegreesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0DB86D2EE9B54B007674F6 /* EventDetailDegreesView.swift */; };
 		8C2B64022E940B2800D003D1 /* InteractiveStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2B64012E940B2100D003D1 /* InteractiveStoryView.swift */; };
 		8C2B64262E95600B00D003D1 /* CardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2B64252E95600400D003D1 /* CardSelector.swift */; };
@@ -505,6 +506,7 @@
 		8C0C99862E296A5800549B5C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8C0C99872E296A5800549B5C /* GreatdoriApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreatdoriApp.swift; sourceTree = "<group>"; };
 		8C0C99C22E2E664900549B5C /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		8C0CCD4B2EEC5D5500762292 /* EventDetailRewardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailRewardsView.swift; sourceTree = "<group>"; };
 		8C0DB86D2EE9B54B007674F6 /* EventDetailDegreesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailDegreesView.swift; sourceTree = "<group>"; };
 		8C2B64012E940B2100D003D1 /* InteractiveStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveStoryView.swift; sourceTree = "<group>"; };
 		8C2B64252E95600400D003D1 /* CardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSelector.swift; sourceTree = "<group>"; };
@@ -1392,6 +1394,7 @@
 				8C3593162EDC26AB009E41AD /* EventDetailRotationMusicView.swift */,
 				8C3593052EDAD60F009E41AD /* EventDetailStageView.swift */,
 				8C0DB86D2EE9B54B007674F6 /* EventDetailDegreesView.swift */,
+				8C0CCD4B2EEC5D5500762292 /* EventDetailRewardsView.swift */,
 				E930F7A72EE0542500E8847F /* EventDetailStoriesView.swift */,
 				E942192E2E8AA72700F24974 /* DetailEventsSection.swift */,
 				8C2BD6452E92503800D003D1 /* EventSelector.swift */,
@@ -1986,6 +1989,7 @@
 				8C889DE62EA2367900FBF01D /* StoryViewer.metal in Sources */,
 				E978109D2EE83616000AD397 /* CharacterDetailOverviewView.swift in Sources */,
 				E98B8B532E7E922A00B4C8A8 /* NavigationComponentsView.swift in Sources */,
+				8C0CCD4C2EEC5D5C00762292 /* EventDetailRewardsView.swift in Sources */,
 				8C480C0E2EC62F5900A8AE70 /* ZeileEditorFileEditView.swift in Sources */,
 				E90769D92E546D5B00C9871C /* SettingsView.swift in Sources */,
 				E9EE03812E4F5DB30088843B /* FilterView.swift in Sources */,

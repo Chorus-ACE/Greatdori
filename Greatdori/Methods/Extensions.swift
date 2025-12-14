@@ -464,3 +464,12 @@ public extension View {
         }
     }
 }
+
+extension URL {
+    func localeReplaced(to newLocale: DoriLocale) -> URL {
+        .init(string: self.absoluteString.replacing(
+            /bestdori\.com\/assets\/[jpentwcnkr]{2}\//,
+            with: "bestdori.com/assets/\(newLocale.rawValue)/"
+        ))!
+    }
+}

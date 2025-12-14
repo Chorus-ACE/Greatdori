@@ -53,6 +53,7 @@ struct EventDetailView: View {
             EventDetailGoalsView(information: information)
             EventDetailTeamsView(information: information)
             EventDetailDegreesView(information: information)
+            EventDetailRewardsView(information: information)
             EventDetailStoriesView(information: information)
             DetailArtsSection {
                 ArtsTab("Event.arts.banner", ratio: 3) {

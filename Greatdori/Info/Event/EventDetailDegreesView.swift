@@ -18,7 +18,7 @@ import SwiftUI
 struct EventDetailDegreesView: View {
     var information: ExtendedEvent
     @State private var locale = DoriLocale.primaryLocale
-    @State var isExpanded = false
+    @State private var isExpanded = false
     var body: some View {
         LazyVStack(pinnedViews: .sectionHeaders) {
             Section {
