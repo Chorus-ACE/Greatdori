@@ -4270,7 +4270,14 @@
       }
     },
     "Details.unavailable.rewards" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rewards Info Unavailable"
+          }
+        }
+      }
     },
     "Details.unavailable.story" : {
       "comment" : "Title of a view that indicates that story details are unavailable.",
@@ -5298,6 +5305,19 @@
         }
       }
     },
+    "Event.rewards.music-ranking" : {
+
+    },
+    "Event.rewards.point" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points"
+          }
+        }
+      }
+    },
     "Event.rewards.points.%lld" : {
       "localizations" : {
         "en" : {
@@ -5305,8 +5325,27 @@
             "state" : "translated",
             "value" : "%lld points"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld PT"
+          }
         }
       }
+    },
+    "Event.rewards.ranking" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rank"
+          }
+        }
+      }
+    },
+    "Event.rewards.team" : {
+
     },
     "Event.songs.rotation-music" : {
       "localizations" : {

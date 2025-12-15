@@ -42,38 +42,47 @@ struct EventDetailRewardsView: View {
                         }
                     case .ranking:
                         if let rewards = information.event.rankingRewards.forLocale(locale) {
-                            CustomGroupBox {
-                                VStack {
-                                    ForEach(rewards.grouped().prefix(isExpanded ? .max : 1), id: \.rankRange) { range, rewards in
-                                        HStack(alignment: .top) {
-                                            Text(verbatim: "#\(range.lowerBound)\(range.upperBound > range.lowerBound ? " - \(range.upperBound)" : "")")
+                            VStack {
+                                ForEach(rewards.grouped().prefix(isExpanded ? .max : 1), id: \.rankRange) { range, rewards in
+                                    CustomGroupBox {
+                                        HStack {
+                                            Text(verbatim: "#\(range.lowerBound.formatted())\(range.upperBound > range.lowerBound ? " - \(range.upperBound.formatted())" : "")")
                                                 .bold()
                                             Spacer()
-                                            VStack(alignment: .leading) {
+                                            WrappingHStack(alignment: .trailing) {
                                                 ForEach(rewards, id: \.self) { _reward in
                                                     if let reward = itemList.first(where: { $0.item == _reward.reward }) {
-                                                        HStack {
-                                                            if let url = reward.iconImageURL {
-                                                                WebImage(url: url.localeReplaced(to: locale))
-                                                                    .resizable()
-                                                                    .scaledToFit()
-                                                                    .frame(width: 30, height: 30)
-                                                            }
-                                                            if let text = reward.text,
-                                                               let name = text.name.forPreferredLocale() {
-                                                                Text(verbatim: "\(name) x\(reward.item.quantity)")
-                                                            } else {
-                                                                // FIXME: Text style
-                                                                Text(verbatim: "some \(reward.item.type) x\(reward.item.quantity)")
-                                                            }
-                                                        }
+                                                        EventDetailRewardsRankItemUnit(reward: reward, locale: locale, range: range)
                                                     }
                                                 }
                                             }
                                         }
-                                    }
-                                    .insert {
-                                        Divider()
+//                                        HStack(alignment: .top) {
+//                                            Text(verbatim: "#\(range.lowerBound.formatted())\(range.upperBound > range.lowerBound ? " - \(range.upperBound.formatted())" : "")")
+//                                                .bold()
+//                                            Spacer()
+//                                            VStack(alignment: .leading) {
+//                                                ForEach(rewards, id: \.self) { _reward in
+//                                                    if let reward = itemList.first(where: { $0.item == _reward.reward }) {
+//                                                        HStack {
+//                                                            if let url = reward.iconImageURL {
+//                                                                WebImage(url: url.localeReplaced(to: locale))
+//                                                                    .resizable()
+//                                                                    .scaledToFit()
+//                                                                    .frame(width: 30, height: 30)
+//                                                            }
+//                                                            if let text = reward.text,
+//                                                               let name = text.name.forPreferredLocale() {
+//                                                                Text(verbatim: "\(name) x\(reward.item.quantity)")
+//                                                            } else {
+//                                                                // FIXME: Text style
+//                                                                Text(verbatim: "some \(reward.item.type) x\(reward.item.quantity)")
+//                                                            }
+//                                                        }
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
                                     }
                                 }
                             }
@@ -186,7 +195,7 @@ struct EventDetailRewardsView: View {
                         .bold()
                     DetailSectionOptionPicker(selection: $selectedCategory,
                                               options: [.point, .ranking, information.event.musics != nil ? .musicRanking : nil, information.event.teamRewards != nil ? .team : nil].compactMap { $0 },
-                                              labels: [.point: "Event.rewards.point", .ranking: "Event.rewards.ranking", .musicRanking: "Event.rewards.music-ranking", .team: "Event.rewards.team"])
+                                              labels: [.point: String(localized: "Event.rewards.point"), .ranking: String(localized: "Event.rewards.ranking"), .musicRanking: String(localized: "Event.rewards.music-ranking"), .team: String(localized: "Event.rewards.team")])
                     Spacer()
                     Button(action: {
                         isExpanded.toggle()
@@ -290,6 +299,103 @@ struct EventDetailRewardsPointsItemUnit: View {
     }
 }
 
+struct EventDetailRewardsRankItemUnit: View {
+    var reward: _DoriFrontend.ExtendedItem
+    var locale: DoriLocale
+    
+    var range: ClosedRange<Int>?
+    
+    var popoverTitle = ""
+    var popoverSubtitle = ""
+    @State var isHovering = false
+    
+    init(reward: _DoriFrontend.ExtendedItem, locale: DoriLocale, range: ClosedRange<Int>? = nil) {
+        self.reward = reward
+        self.locale = locale
+        self.range = range
+        self.popoverTitle = reward.text?.name.forPreferredLocale() ?? "\(reward.item.type)"
+        self.popoverSubtitle = "\(reward.item.quantity)×"
+    }
+    var body: some View {
+        Group {
+            WebImage(url: reward.iconImageURL?.localeReplaced(to: locale), content: { $0 }, placeholder: {
+                    RoundedRectangle(cornerRadius: 2)
+                        .foregroundStyle(.placeholder)
+                })
+                .resizable()
+                .scaledToFit()
+                .frame(width: 50, height: 50)
+        }
+        .wrapIf(range != nil && reward.item.type == .degree, in: { content in
+            let lowerBound = range!.lowerBound
+            let upperBound = range!.upperBound
+            if upperBound > lowerBound {
+                let labelForRange: LocalizedData<String> = LocalizedData(jp: "TOP\(upperBound)", en: "TOP \(upperBound)", tw: "TOP\(upperBound)", cn: "TOP\(upperBound)", kr: "TOP \(upperBound)")
+                content.iconBadge(labelForRange[locale] ?? "")
+            } else {
+                let labelForTops: String = {
+                    switch locale {
+                    case .jp:
+                        return "\(lowerBound)位"
+                    case .en:
+                        return lowerBound == 1 ? "\(lowerBound)st" : (lowerBound == 2 ? "\(lowerBound)nd" : (lowerBound == 3 ? "\(lowerBound)rd" : "\(lowerBound)th"))
+                    case .tw:
+                        return "第\(lowerBound)名"
+                    case .cn:
+                        return "\(lowerBound)位"
+                    case .kr:
+                        return "\(lowerBound)위"
+                    }
+                }()
+                content.iconBadge(labelForTops)
+            }
+        }, else: { content in
+            content.iconBadge(reward.item.quantity, ignoreOne: true)
+            
+        })
+        .wrapIf(true, in: { content in
+#if os(iOS)
+            content
+                .contextMenu(menuItems: {
+                    VStack {
+                        Button(action: {}, label: {
+                            Group {
+                                Text(popoverTitle)
+                                Text(popoverSubtitle)
+                                    .font(.caption)
+                            }
+                        })
+                    }
+                })
+#else
+            let sumimi = HereTheWorld(arguments: (popoverTitle, popoverSubtitle)) { title, subtitle in
+                VStack {
+                    Group {
+                        Text(title)
+                        Text(subtitle)
+                            .font(.caption)
+                    }
+                }
+                .padding()
+            }
+            content
+                .onHover { isHovering in
+                    self.isHovering = isHovering
+                }
+                .popover(isPresented: $isHovering, arrowEdge: .bottom) {
+                    sumimi
+                }
+                .onChange(of: popoverTitle) {
+                    sumimi.updateArguments((popoverTitle, popoverSubtitle))
+                }
+                .onChange(of: popoverSubtitle) {
+                    sumimi.updateArguments((popoverTitle, popoverSubtitle))
+                }
+#endif
+        })
+    }
+}
+
 /*
  ViewThatFits {
      LazyVStack(spacing: showDetails ? nil : 15) {
@@ -344,16 +450,41 @@ struct IconBadgeModifier: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     
     let count: Int
+    let text: String?
     let backgroundColor: Color?
     let foregroundColor: Color
     let height: CGFloat
     let ignoreOne: Bool
+    
+    init(count: Int, backgroundColor: Color?, foregroundColor: Color, height: CGFloat, ignoreOne: Bool) {
+        self.count = count
+        self.text = nil
+        self.backgroundColor = backgroundColor
+        self.foregroundColor = foregroundColor
+        self.height = height
+        self.ignoreOne = ignoreOne
+    }
+    
+    init(text: String, backgroundColor: Color?, foregroundColor: Color, height: CGFloat) {
+        self.count = 0
+        self.text = text
+        self.backgroundColor = backgroundColor
+        self.foregroundColor = foregroundColor
+        self.height = height
+        self.ignoreOne = false
+    }
 
     func body(content: Content) -> some View {
         content
             .overlay(alignment: .topTrailing) {
                 if count > 0 && (!ignoreOne || count > 1) {
-                    Text(count, format: .number.notation(.compactName))
+                    Group {
+                        if let text {
+                            Text(text)
+                        } else {
+                            Text(count, format: .number.notation(.compactName))
+                        }
+                    }
                         .lineLimit(1)
                         .font(.system(size: height * 0.6, weight: .semibold))
                         .foregroundColor(foregroundColor)
@@ -387,6 +518,23 @@ extension View {
                 foregroundColor: foregroundColor,
                 height: height,
                 ignoreOne: ignoreOne
+            )
+        )
+    }
+    
+    func iconBadge(
+        _ text: String,
+        backgroundColor: Color? = nil,
+        foregroundColor: Color = .primary,
+        height: CGFloat = 18,
+        ignoreOne: Bool = false
+    ) -> some View {
+        modifier(
+            IconBadgeModifier(
+                text: text,
+                backgroundColor: backgroundColor,
+                foregroundColor: foregroundColor,
+                height: height
             )
         )
     }

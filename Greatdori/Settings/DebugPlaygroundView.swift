@@ -18,15 +18,16 @@ import UserNotifications
 
 struct DebugPlaygroundView: View {
     var body: some View {
-        ScrollView {
-            VStack(alignment: .center) {
-                Button(action: {
-                    scheduleLocalNotification()
-                }, label: {
-                    Text(verbatim: "1")
-                })
+        WrappingHStack(alignment: .trailing) {
+            ForEach(1...6, id: \.self) { i in
+                Text("\(i)")
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Capsule().fill(.blue.opacity(0.2)))
             }
         }
+        .padding()
+        .border(.gray)
     }
 }
 

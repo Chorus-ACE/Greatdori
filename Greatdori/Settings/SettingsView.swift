@@ -38,7 +38,7 @@ struct SettingsView: View {
                 ForEach(settingsTabs, id: \.self) { item in
                     if item.isDisplayable {
                         NavigationLink(destination: {
-                            settingsDestination(forTab: item.destination)
+                            settingsDestination(forTab: selectionItem, note: settingsTabs.first(where: { $0.destination == selectionItem })?.note ?? "")
                             //                            .navigationTitle(item.name)
                                 .navigationBarTitleDisplayMode(.inline)
                         }, label: {
@@ -73,16 +73,16 @@ struct SettingsView: View {
             })
 //            .toolbar(removing: .sidebarToggle)
         }, detail: {
-            settingsDestination(forTab: selectionItem)
+            settingsDestination(forTab: selectionItem, note: settingsTabs.first(where: { $0.destination == selectionItem })?.note ?? "")
         })
         //        .toolbar(removing: .sidebarToggle)
         #endif
     }
     
     @ViewBuilder
-    func settingsDestination(forTab tab: String) -> some View {
+    func settingsDestination(forTab tab: String, note: String) -> some View {
         NavigationStack {
-            Form {
+            Group {
                 switch tab {
                 case "locale":
                     SettingsLocaleView()
@@ -108,7 +108,12 @@ struct SettingsView: View {
                     ProgressView()
                 }
             }
-            .formStyle(.grouped)
+            .wrapIf(note != "NO-FORM") { content in
+                Form {
+                    content
+                }
+                .formStyle(.grouped)
+            }
         }
     }
 }
@@ -168,6 +173,6 @@ let settingsTabs: [SettingsTab] = [
     .init(symbol: "person.crop.circle", name: "Settings.accounts", destination: "account", note: "HIDDEN"),
     .init(symbol: "textformat", name: "Settings.fonts", destination: "font"),
     .init(symbol: "hammer", name: "Settings.advanced", destination: "advanced"),
-    .init(symbol: "info.circle", name: "Settings.about", destination: "about"),
+    .init(symbol: "info.circle", name: "Settings.about", destination: "about", note: "NO-FORM"),
     .init(symbol: "ant", name: "Settings.debug", destination: "debug", note: "DEBUG")
 ]

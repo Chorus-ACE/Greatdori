@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import DoriKit
+import SDWebImageSwiftUI
 import SwiftUI
 
 struct EventDetailDegreesView: View {
@@ -26,19 +27,23 @@ struct EventDetailDegreesView: View {
                     CustomGroupBox {
                         VStack {
                             if isExpanded {
-                                ForEach(0..<information.degrees.count, id: \.self) { i in
-                                    let degrees = information.degrees[i]
-                                    WrappingHStack(contentWidth: 140) {
-                                        ForEach(degrees) { degree in
-                                            DegreeView(degree)
-                                                .frame(width: 140)
+                                    ForEach(0..<information.degrees.count, id: \.self) { i in
+                                        let degrees = information.degrees[i]
+                                        HStack {
+                                            Spacer()
+                                            WrappingHStack(alignment: .leading) {
+                                                ForEach(degrees) { degree in
+                                                    DegreeView(degree)
+                                                        .frame(width: 140)
+                                                }
+                                            }
+                                            Spacer()
                                         }
                                     }
-                                }
-                                .insert {
-                                    Spacer()
-                                        .frame(height: 30)
-                                }
+                                    .insert {
+                                        Spacer()
+                                            .frame(height: 30)
+                                    }
                             } else {
                                 HStack {
                                     Spacer()
@@ -70,5 +75,41 @@ struct EventDetailDegreesView: View {
             }
         }
         .frame(maxWidth: infoContentMaxWidth)
+    }
+}
+
+struct DegreeView: View {
+    var degree: Degree
+    
+    init(_ degree: Degree) {
+        self.degree = degree
+    }
+    
+    @State private var baseSize = CGSize.zero
+    
+    var body: some View {
+        ZStack(alignment: .trailing) {
+            WebImage(url: degree.baseImageURL)
+                .resizable()
+                .scaledToFit()
+                .onFrameChange { geometry in
+                    baseSize = geometry.size
+                }
+            if let url = degree.rankImageURL {
+                WebImage(url: url)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: baseSize.height)
+            }
+            if let url = degree.iconImageURL {
+                HStack {
+                    WebImage(url: url)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: baseSize.height)
+                    Spacer()
+                }
+            }
+        }
     }
 }

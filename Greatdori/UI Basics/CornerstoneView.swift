@@ -118,73 +118,6 @@ struct CompactToggle: View {
     }
 }
 
-#Preview {
-    ExtendedConstraints {
-        VStack {
-            CustomGroupBox {
-                VStack {
-                        ListItem(title: {
-                            Text("Character.name")
-                                .bold()
-                        }, value: {
-                            Text(verbatim: "Hikawa Sayo")
-                        })
-                        Divider()
-                        
-                        ListItem(title: {
-                            Text("Character.character-voice")
-                                .bold()
-                        }, value: {
-                            Text(verbatim: "Kudo Haruka")
-                        })
-                        Divider()
-                        
-                        ListItem(title: {
-                            Text("Character.color")
-                                .bold()
-                        }, value: {
-                            Text("#00AABB")
-                                .fontDesign(.monospaced)
-                            RoundedRectangle(cornerRadius: 7)
-                                .frame(width: 30, height: 30)
-                                .foregroundStyle(Color(red: 00/255, green: 170/255, blue: 187/255))
-                        })
-                        Divider()
-                    
-                            ListItem(title: {
-                                Text("Character.role")
-                                    .bold()
-                            }, value: {
-                                Text(verbatim: "Guitarist")
-                            })
-                            Divider()
-                            
-                            ListItem(title: {
-                                Text("Character.birthday")
-                                    .bold()
-                            }, value: {
-                                Text(verbatim: "March 20")
-                            })
-                            Divider()
-                      
-                            ListItem(title: {
-                                Text("Character.height")
-                                    .bold()
-                            }, value: {
-                                Text(verbatim: "155cm")
-                            })
-                }
-            }
-            CustomGroupBox {
-                HomeBirthdayView()
-            }
-        }
-        .frame(maxHeight: 150)
-        .padding()
-    }
-}
-
-
 // MARK: CustomGroupBox
 struct CustomGroupBox<Content: View>: View {
     let content: () -> Content
@@ -310,6 +243,7 @@ struct CustomGroupBox<Content: View>: View {
         .preference(key: CustomGroupBoxActivePreference.self, value: showGroupBox)
     }
 }
+
 struct CustomGroupBoxActivePreference: PreferenceKey {
     @safe nonisolated(unsafe) static var defaultValue: Bool = false
     static func reduce(value: inout Bool, nextValue: () -> Bool) {
@@ -318,9 +252,6 @@ struct CustomGroupBoxActivePreference: PreferenceKey {
 }
 extension EnvironmentValues {
     @Entry var _suppressCustomGroupBox: Bool = false
-}
-
-extension EnvironmentValues {
     @Entry fileprivate var _groupBoxStrokeLineWidth: CGFloat = 0
     @Entry fileprivate var _groupBoxBackgroundTintOpacity: CGFloat = 0
 }
@@ -358,7 +289,6 @@ struct CustomGroupBoxOld<Content: View>: View {
     }
 }
 
-
 // MARK: CustomStack
 struct CustomStack<Content: View>: View {
     let axis: Axis
@@ -391,42 +321,6 @@ struct CustomStack<Content: View>: View {
             case .vertical:
                 VStack(alignment: hAlignment, spacing: spacing) {
                     content()
-                }
-            }
-        }
-    }
-}
-
-struct DegreeView: View {
-    var degree: Degree
-    
-    init(_ degree: Degree) {
-        self.degree = degree
-    }
-    
-    @State private var baseSize = CGSize.zero
-    
-    var body: some View {
-        ZStack(alignment: .trailing) {
-            WebImage(url: degree.baseImageURL)
-                .resizable()
-                .scaledToFit()
-                .onFrameChange { geometry in
-                    baseSize = geometry.size
-                }
-            if let url = degree.rankImageURL {
-                WebImage(url: url)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: baseSize.height)
-            }
-            if let url = degree.iconImageURL {
-                HStack {
-                    WebImage(url: url)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: baseSize.height)
-                    Spacer()
                 }
             }
         }
@@ -518,7 +412,6 @@ struct DetailsIDSwitcher<Content: View>: View {
 // })
 //```
 
-
 // MARK: DimissButton
 struct DismissButton<L: View>: View {
     var role: ButtonRole? = nil
@@ -537,7 +430,6 @@ struct DismissButton<L: View>: View {
         })
     }
 }
-
 
 // MARK: ExtendedConstraints
 struct ExtendedConstraints<Content: View>: View {
@@ -565,7 +457,6 @@ struct ExtendedConstraints<Content: View>: View {
         }
     }
 }
-
 
 // MARK: FilterAndSorterPicker
 struct FilterAndSorterPicker: View {
@@ -640,6 +531,123 @@ struct FilterAndSorterPicker: View {
 // }
 //```
 
+// MARK: FlowHStack
+struct WrappingHStack: Layout {
+    enum RowAlignment {
+        case leading
+        case trailing
+    }
+    
+    var alignment: RowAlignment = .leading
+    var spacing: CGFloat = 8
+    var rowSpacing: CGFloat = 8
+    
+    @available(*, deprecated, message: "Use without `contentWidth`.")
+    init(alignment: RowAlignment = .leading, contentWidth: CGFloat) {
+        self.alignment = alignment
+        self.spacing = 8
+        self.rowSpacing = 8
+    }
+    
+    init(alignment: RowAlignment, vSpacing: CGFloat = 8, hSpacing: CGFloat = 8) {
+        self.alignment = alignment
+        self.spacing = vSpacing
+        self.rowSpacing = hSpacing
+    }
+
+    func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) -> CGSize {
+        let maxWidth = proposal.width ?? .infinity
+
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var usedWidth: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+
+            if x + size.width > maxWidth {
+                usedWidth = max(usedWidth, x - spacing)
+                x = 0
+                y += rowHeight + rowSpacing
+                rowHeight = 0
+            }
+
+            rowHeight = max(rowHeight, size.height)
+            x += size.width + spacing
+        }
+
+        usedWidth = max(usedWidth, x - spacing)
+
+        return CGSize(
+            width: maxWidth.isInfinite ? usedWidth : maxWidth,
+            height: y + rowHeight
+        )
+    }
+
+    func placeSubviews(
+        in bounds: CGRect,
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) {
+        // 先按“行”把 subviews 分组
+        var rows: [[Subviews.Element]] = []
+        var currentRow: [Subviews.Element] = []
+        var currentRowWidth: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+
+            if !currentRow.isEmpty && currentRowWidth + size.width > bounds.width {
+                rows.append(currentRow)
+                currentRow = []
+                currentRowWidth = 0
+            }
+
+            currentRow.append(subview)
+            currentRowWidth += size.width + spacing
+        }
+
+        if !currentRow.isEmpty {
+            rows.append(currentRow)
+        }
+
+        // 逐行右对齐放置
+        var y = bounds.minY
+
+        for row in rows {
+            let sizes = row.map { $0.sizeThatFits(.unspecified) }
+            let rowHeight = sizes.map(\.height).max() ?? 0
+            let rowWidth = sizes.map(\.width).reduce(0, +)
+                + spacing * CGFloat(max(row.count - 1, 0))
+
+                        let startX: CGFloat
+            switch alignment {
+            case .leading:
+                startX = bounds.minX
+            case .trailing:
+                startX = bounds.maxX - rowWidth
+            }
+
+            var x = startX
+
+            for (subview, size) in zip(row, sizes) {
+                subview.place(
+                    at: CGPoint(x: x, y: y),
+                    proposal: ProposedViewSize(size)
+                )
+                x += size.width + spacing
+            }
+
+            y += rowHeight + rowSpacing
+        }
+    }
+}
 
 #if os(macOS)
 /// Hi, what happened?
@@ -684,6 +692,47 @@ struct HereTheWorld<each T, V: View>: UIViewRepresentable {
 }
 #endif
 
+// MARK: HighlightableText
+struct HighlightableText: View {
+    private var resolvedText: String
+    private var prefixText: String = ""
+    private var suffixText: String = ""
+    private var id: Int? = nil
+    @State private var attributedText: AttributedString = ""
+    
+//    init(_ titleKey: LocalizedStringResource) {
+//        self.init(String(localized: titleKey))
+//    }
+//    init(verbatim text: String) {
+//        self.init(text)
+//    }
+//    init(prefix: String = "", _ text: String, suffix: String = "") {
+//
+//    }
+    @_disfavoredOverload
+    init<S: StringProtocol>(_ string: S, prefix: String = "", suffix: String = "", itemID: Int? = nil) {
+        self.resolvedText = String(string)
+        self._attributedText = .init(initialValue: .init(string))
+        self.prefixText = prefix
+        self.suffixText = suffix
+        self.id = itemID
+    }
+    
+    @Environment(\.searchedKeyword) private var searchedKeyword: Binding<String>?
+    
+    var body: some View {
+        Group {
+            if let id {
+                Text(prefixText) + Text(attributedText) + Text(suffixText) + Text("Typography.bold-dot-seperater") + Text(verbatim: "#\(String(id))").fontDesign(.monospaced)
+            } else {
+                Text(prefixText) + Text(attributedText) + Text(suffixText)
+            }
+        }
+        .onChange(of: resolvedText, searchedKeyword?.wrappedValue, initial: true) {
+            attributedText = highlightOccurrences(of: searchedKeyword?.wrappedValue ?? "", in: resolvedText) ?? .init(resolvedText)
+        }
+    }
+}
 
 // MARK: LayoutPicker
 struct LayoutPicker<T: Hashable>: View {
@@ -769,7 +818,6 @@ struct LocalePicker<L: View>: View {
         }
     }
 }
-
 
 // MARK: MultilingualText
 struct MultilingualText: View {
@@ -948,7 +996,6 @@ struct MultilingualText: View {
         }
     }
 }
-
 
 // MARK: MultilingualTextForCountdown
 struct MultilingualTextForCountdown: View {
@@ -1266,7 +1313,6 @@ struct MultilingualTextForCountdownAlt: View {
     }
 }
 
-
 // MARK: ListItem
 struct ListItem<Content1: View, Content2: View>: View {
     @Environment(\.horizontalSizeClass) var sizeClass
@@ -1359,7 +1405,6 @@ struct ListItem<Content1: View, Content2: View>: View {
     }
 }
 
-
 // MARK: ListItemWithWrappingView
 struct ListItemWithWrappingView<Content1: View, Content2: View, Content3: View, T>: View {
     let title: Content1
@@ -1451,84 +1496,46 @@ struct ListItemWithWrappingView<Content1: View, Content2: View, Content3: View, 
     }
 }
 
-struct WrappingHStack<Content: View>: View {
-    var alignment: HorizontalAlignment
-    var rowSpacing: CGFloat?
-    var columnSpacing: CGFloat?
-    var contentWidth: CGFloat
-    var makeContent: () -> Content
-    
-    init(
-        alignment: HorizontalAlignment = .center,
-        rowSpacing: CGFloat? = nil,
-        columnSpacing: CGFloat? = nil,
-        contentWidth: CGFloat,
-        @ViewBuilder content: @escaping () -> Content
-    ) {
-        self.alignment = alignment
-        self.rowSpacing = rowSpacing
-        self.columnSpacing = columnSpacing
-        self.contentWidth = contentWidth
-        self.makeContent = content
-    }
-    
-    @Environment(\.layoutDirection) private var layoutDirection
-    
-    var body: some View {
-        LazyVGrid(
-            columns: [.init(.adaptive(minimum: contentWidth, maximum: contentWidth), spacing: columnSpacing)],
-            alignment: alignment != .trailing ? alignment : alignment == .leading ? .trailing : alignment == .trailing ? .leading : alignment,
-            spacing: rowSpacing
-        ) {
-            makeContent()
-                .environment(\.layoutDirection, alignment != .trailing ? layoutDirection : layoutDirection == .leftToRight ? .leftToRight : .rightToLeft)
-        }
-        .environment(\.layoutDirection, alignment != .trailing ? layoutDirection : layoutDirection == .leftToRight ? .rightToLeft : .leftToRight)
-//        .accessibilityRepresentation {
-//            makeContent()
-//        }
-//        .accessibilityAction {}
-//        .accessibilityElement(children: .combine)
-    }
-}
-
-struct HighlightableText: View {
-    private var resolvedText: String
-    private var prefixText: String = ""
-    private var suffixText: String = ""
-    private var id: Int? = nil
-    @State private var attributedText: AttributedString = ""
-    
-//    init(_ titleKey: LocalizedStringResource) {
-//        self.init(String(localized: titleKey))
-//    }
-//    init(verbatim text: String) {
-//        self.init(text)
-//    }
-//    init(prefix: String = "", _ text: String, suffix: String = "") {
-//       
-//    }
-    @_disfavoredOverload
-    init<S: StringProtocol>(_ string: S, prefix: String = "", suffix: String = "", itemID: Int? = nil) {
-        self.resolvedText = String(string)
-        self._attributedText = .init(initialValue: .init(string))
-        self.prefixText = prefix
-        self.suffixText = suffix
-        self.id = itemID
-    }
-    
-    @Environment(\.searchedKeyword) private var searchedKeyword: Binding<String>?
-    
-    var body: some View {
-        Group {
-            if let id {
-                Text(prefixText) + Text(attributedText) + Text(suffixText) + Text("Typography.bold-dot-seperater") + Text(verbatim: "#\(String(id))").fontDesign(.monospaced)
-            } else {
-                Text(prefixText) + Text(attributedText) + Text(suffixText)
-            }
-        }
-        .onChange(of: resolvedText, searchedKeyword?.wrappedValue, initial: true) {
-            attributedText = highlightOccurrences(of: searchedKeyword?.wrappedValue ?? "", in: resolvedText) ?? .init(resolvedText)
-        }
-    }
-}
+/*
+ // MARK: WrappingHStack
+ struct WrappingHStack<Content: View>: View {
+ var alignment: HorizontalAlignment
+ var rowSpacing: CGFloat?
+ var columnSpacing: CGFloat?
+ var contentWidth: CGFloat
+ var makeContent: () -> Content
+ 
+ init(
+ alignment: HorizontalAlignment = .center,
+ rowSpacing: CGFloat? = nil,
+ columnSpacing: CGFloat? = nil,
+ contentWidth: CGFloat,
+ @ViewBuilder content: @escaping () -> Content
+ ) {
+ self.alignment = alignment
+ self.rowSpacing = rowSpacing
+ self.columnSpacing = columnSpacing
+ self.contentWidth = contentWidth
+ self.makeContent = content
+ }
+ 
+ @Environment(\.layoutDirection) private var layoutDirection
+ 
+ var body: some View {
+ LazyVGrid(
+ columns: [.init(.adaptive(minimum: contentWidth, maximum: contentWidth), spacing: columnSpacing)],
+ alignment: (alignment != .trailing ? alignment : (alignment == .leading ? .trailing : (alignment == .trailing ? .leading : alignment))),
+ spacing: rowSpacing
+ ) {
+ makeContent()
+ .environment(\.layoutDirection, alignment != .trailing ? layoutDirection : (layoutDirection == .leftToRight ? .leftToRight : .rightToLeft))
+ }
+ //        .environment(\.layoutDirection, alignment != .trailing ? layoutDirection : layoutDirection == .leftToRight ? .rightToLeft : .leftToRight)
+ //        .accessibilityRepresentation {
+ //            makeContent()
+ //        }
+ //        .accessibilityAction {}
+ //        .accessibilityElement(children: .combine)
+ }
+ }
+ */
