@@ -855,7 +855,7 @@ struct MultilingualText: View {
     }
     var body: some View {
         Group {
-#if !os(macOS)
+#if os(iOS)
             Menu(content: {
                 ForEach(allLocaleTexts, id: \.self) { localeValue in
                     Button(action: {
