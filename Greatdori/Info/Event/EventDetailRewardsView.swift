@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import AVKit
 import DoriKit
 import SwiftUI
 import SDWebImageSwiftUI
@@ -312,7 +313,6 @@ struct EventDetailRewardsPointsItemUnit: View {
                 content
             }
         }
-//                                        .frame(width: 240)
     }
 }
 
@@ -324,7 +324,8 @@ struct EventDetailRewardsRankItemUnit: View {
     
     var popoverTitle = ""
     var popoverSubtitle = ""
-    @State var isHovering = false
+    @State private var isHovering = false
+    @State private var audioPlayer: AVPlayer?
     
     init(reward: _DoriFrontend.ExtendedItem, locale: DoriLocale, range: ClosedRange<Int>? = nil) {
         self.reward = reward
@@ -333,6 +334,7 @@ struct EventDetailRewardsRankItemUnit: View {
         self.popoverTitle = reward.text?.name.forPreferredLocale() ?? "\(reward.item.type)"
         self.popoverSubtitle = "\(reward.item.quantity)×"
     }
+    
     var body: some View {
         Group {
             WebImage(url: reward.iconImageURL?.localeReplaced(to: locale), content: { $0 }, placeholder: {
@@ -343,7 +345,7 @@ struct EventDetailRewardsRankItemUnit: View {
                 .scaledToFit()
                 .frame(width: 50, height: 50)
         }
-        .wrapIf(reward.item.type == .degree && range != nil, in: { content in
+        .wrapIf(reward.item.type == .degree && range != nil) { content in
             let lowerBound = range!.lowerBound
             let upperBound = range!.upperBound
             if upperBound > lowerBound {
@@ -365,13 +367,13 @@ struct EventDetailRewardsRankItemUnit: View {
                 }()
                 content.iconBadge(labelForTops)
             }
-        }, else: { content in
+        } else: { content in
             content.iconBadge(reward.item.quantity, ignoreOne: true)
-        })
-        .wrapIf(true, in: { content in
-#if os(iOS)
+        }
+        .wrapIf(true) { content in
+            #if os(iOS)
             content
-                .contextMenu(menuItems: {
+                .contextMenu {
                     VStack {
                         Button(action: {}, label: {
                             Group {
@@ -380,9 +382,14 @@ struct EventDetailRewardsRankItemUnit: View {
                                     .font(.caption)
                             }
                         })
+                        if let playVoice {
+                            Button("播放语音", systemImage: "play.fill") {
+                                playVoice()
+                            }
+                        }
                     }
-                })
-#else
+                }
+            #else
             let sumimi = HereTheWorld(arguments: (popoverTitle, popoverSubtitle)) { title, subtitle in
                 VStack {
                     Group {
@@ -406,8 +413,31 @@ struct EventDetailRewardsRankItemUnit: View {
                 .onChange(of: popoverSubtitle) {
                     sumimi.updateArguments((popoverTitle, popoverSubtitle))
                 }
-#endif
-        })
+            #endif
+        }
+        .wrapIf(true) { content in
+            if let playVoice {
+                Button(action: {
+                    playVoice()
+                }, label: {
+                    content
+                })
+                .buttonStyle(.plain)
+            } else {
+                content
+            }
+        }
+    }
+    
+    private var playVoice: (() -> Void)? {
+        if case .stampVoice(let url) = reward.relatedItemSource {
+            {
+                audioPlayer = .init(url: url)
+                unsafe audioPlayer.unsafelyUnwrapped.play()
+            }
+        } else {
+            nil
+        }
     }
 }
 
