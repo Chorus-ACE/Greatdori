@@ -5339,6 +5339,28 @@
         }
       }
     },
+    "Event.rewards.play-voice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play Voice"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "播放语音"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "播放語音"
+          }
+        }
+      }
+    },
     "Event.rewards.point" : {
       "localizations" : {
         "en" : {
