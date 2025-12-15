@@ -191,6 +191,7 @@ struct CharacterDetailView: View {
         
         var cardList = information.cards
         
+        guard !cardList.isEmpty else { return }
         
         // TL;DR: Removed Card #90036 - #90040 due to their terrible look. --ThreeManager785
         
