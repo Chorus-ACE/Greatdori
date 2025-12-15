@@ -193,9 +193,21 @@ struct EventDetailRewardsView: View {
                     Text("Event.rewards")
                         .font(.title2)
                         .bold()
-                    DetailSectionOptionPicker(selection: $selectedCategory,
-                                              options: [.point, .ranking, information.event.musics != nil ? .musicRanking : nil, information.event.teamRewards != nil ? .team : nil].compactMap { $0 },
-                                              labels: [.point: String(localized: "Event.rewards.point"), .ranking: String(localized: "Event.rewards.ranking"), .musicRanking: String(localized: "Event.rewards.music-ranking"), .team: String(localized: "Event.rewards.team")])
+                    DetailSectionOptionPicker(
+                        selection: $selectedCategory,
+                        options: [
+                            .point,
+                            .ranking,
+                            information.event.musics != nil ? .musicRanking : nil,
+                            information.event.teamRewards != nil ? .team : nil
+                        ].compactMap { $0 },
+                        labels: [
+                            .point: String(localized: "Event.rewards.point"),
+                            .ranking: String(localized: "Event.rewards.ranking"),
+                            .musicRanking: String(localized: "Event.rewards.music-ranking"),
+                            .team: String(localized: "Event.rewards.team")
+                        ]
+                    )
                     Spacer()
                     Button(action: {
                         isExpanded.toggle()
