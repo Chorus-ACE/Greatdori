@@ -95,26 +95,19 @@ struct DetailSectionDoubleOptionPicker<T: Hashable, S: Hashable>: View {
             .multilineTextAlignment(.leading)
         }, label: {
             ZStack(alignment: .leading) {
-//                if showSecondaryLabel {
-                    Text(getAttributedString(sLabels?[sSelection] ?? ((S.self == DoriLocale.self) ? "\(sSelection)".uppercased() : "\(sSelection)"), fontSize: .title2, fontWeight: .semibold, foregroundColor: .accent))
-                        .transition(.opacity)
-                        .opacity(showSecondaryLabel ? 1 : 0)
-                        .id("s")
-//                } else {
-                    Text(getAttributedString(pLabels?[pSelection] ?? ((T.self == DoriLocale.self) ? "\(pSelection)".uppercased() : "\(pSelection)"), fontSize: .title2, fontWeight: .semibold, foregroundColor: .accent))
-                        .transition(.opacity)
-                        .opacity(showSecondaryLabel ? 0 : 1)
-                        .id("p")
-//                }
+                Text(getAttributedString(sLabels?[sSelection] ?? ((S.self == DoriLocale.self) ? "\(sSelection)".uppercased() : "\(sSelection)"), fontSize: .title2, fontWeight: .semibold, foregroundColor: .accent))
+                    .opacity(showSecondaryLabel ? 1 : 0)
+                Text(getAttributedString(pLabels?[pSelection] ?? ((T.self == DoriLocale.self) ? "\(pSelection)".uppercased() : "\(pSelection)"), fontSize: .title2, fontWeight: .semibold, foregroundColor: .accent))
+                    .opacity(showSecondaryLabel ? 0 : 1)
             }
             .animation(.easeIn(duration: 0.2), value: showSecondaryLabel)
-            .onChange(of: showSecondaryLabel, {
+            .onChange(of: showSecondaryLabel) {
                 if showSecondaryLabel {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         showSecondaryLabel = false
                     }
                 }
-            })
+            }
         })
         .menuIndicator(.hidden)
         .menuStyle(.borderlessButton)

@@ -194,7 +194,22 @@ struct EventDetailRewardsView: View {
                     Text("Event.rewards")
                         .font(.title2)
                         .bold()
-                    DetailSectionDoubleOptionPicker(pSelection: $selectedCategory, sSelection: $locale, pOptions: [.point, .ranking, information.event.musics != nil ? .musicRanking : nil, information.event.teamRewards != nil ? .team : nil].compactMap { $0 }, sOptions: DoriLocale.allCases, pLabels: [.point: String(localized: "Event.rewards.point"), .ranking: String(localized: "Event.rewards.ranking"), .musicRanking: String(localized: "Event.rewards.music-ranking"), .team: String(localized: "Event.rewards.team")])
+                    DetailSectionDoubleOptionPicker(
+                        pSelection: $selectedCategory,
+                        sSelection: $locale,
+                        pOptions: [
+                            .point,
+                            .ranking,
+                            information.event.musics != nil ? .musicRanking : nil,
+                            information.event.teamRewards != nil ? .team : nil
+                        ].compactMap { $0 },
+                        sOptions: DoriLocale.allCases,
+                        pLabels: [
+                            .point: String(localized: "Event.rewards.point"),
+                            .ranking: String(localized: "Event.rewards.ranking"),
+                            .musicRanking: String(localized: "Event.rewards.music-ranking"),
+                            .team: String(localized: "Event.rewards.team")
+                        ])
                     Spacer()
                     Button(action: {
                         isExpanded.toggle()
