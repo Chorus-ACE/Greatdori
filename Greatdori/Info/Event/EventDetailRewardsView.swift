@@ -18,7 +18,7 @@ import SDWebImageSwiftUI
 
 struct EventDetailRewardsView: View {
     var information: ExtendedEvent
-    @State private var locale = DoriLocale.jp // FIXME: primaryLocale
+    @State private var locale: DoriLocale = .primaryLocale // FIXME: primaryLocale
     @State private var isExpanded = false
     @State private var selectedCategory = RewardCategory.point
     @State private var itemList: [_DoriFrontend.ExtendedItem]?
@@ -29,55 +29,16 @@ struct EventDetailRewardsView: View {
                     switch selectedCategory {
                     case .point:
                         if let rewards = information.event.pointRewards.forLocale(locale) {
-                            WrappingHStack(rowSpacing: 10, contentWidth: 240) {
-                                ForEach(rewards.enumerated().filter { isExpanded || (rewards.contains(where: { $0.reward.type == .situation || $0.reward.type == .stamp }) ? [.situation, .stamp].contains($0.element.reward.type) : $0.offset < 5) }.map { $0.element }, id: \.point) { _reward in
+                            let rewardPointsList = rewards.enumerated().filter { isExpanded || (rewards.contains(where: { $0.reward.type == .situation || $0.reward.type == .stamp }) ? [.situation, .stamp].contains($0.element.reward.type) : $0.offset < 5) }.map { $0.element }
+                            LazyVGrid(columns: [GridItem(.flexible(minimum: 100))], spacing: 10) {
+                                ForEach(rewardPointsList, id: \.point) { _reward in
                                     if let reward = itemList.first(where: { $0.item == _reward.reward }) {
-                                        CustomGroupBox(useExtenedConstraints: true) {
-                                            HStack {
-                                                VStack {
-                                                    if case .card(let card) = reward.relatedItemSource {
-                                                        CardPreviewImage(card, sideLength: 50)
-                                                    } else if let url = reward.iconImageURL {
-                                                        WebImage(url: url.localeReplaced(to: locale))
-                                                            .resizable()
-                                                            .scaledToFit()
-                                                            .frame(width: 50, height: 50)
-                                                    }
-                                                    if reward.item.quantity > 1 {
-                                                        Text(verbatim: "x\(String(reward.item.quantity))")
-                                                    }
-                                                }
-                                                Spacer()
-                                                VStack {
-                                                    if let text = reward.text,
-                                                       let name = text.name.forPreferredLocale() {
-                                                        Text(name)
-                                                    } else {
-                                                        // FIXME: Text style
-                                                        Text(verbatim: "some \(reward.item.type)")
-                                                    }
-                                                    Text(verbatim: "\(_reward.point) PT")
-                                                }
-                                                .multilineTextAlignment(.center)
-                                                Spacer()
-                                            }
-                                        }
-                                        .wrapIf(true) { content in
-                                            if case .card(let card) = reward.relatedItemSource {
-                                                NavigationLink(destination: { CardDetailView(id: card.id) }) {
-                                                    content
-                                                }
-                                                .buttonStyle(.plain)
-                                            } else {
-                                                content
-                                            }
-                                        }
-                                        .frame(width: 240)
+                                        EventDetailRewardsPointsItemUnit(reward: reward, _reward: _reward, locale: locale)
                                     }
                                 }
                             }
                         } else {
-                            DetailUnavailableView(title: "Details.unavailable.reward", symbol: "star.square.on.square")
+                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "star.square.on.square")
                         }
                     case .ranking:
                         if let rewards = information.event.rankingRewards.forLocale(locale) {
@@ -117,7 +78,7 @@ struct EventDetailRewardsView: View {
                                 }
                             }
                         } else {
-                            DetailUnavailableView(title: "Details.unavailable.reward", symbol: "star.square.on.square")
+                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "star.square.on.square")
                         }
                     case .musicRanking:
                         if let musics = information.event.musics?.forLocale(locale) {
@@ -167,7 +128,7 @@ struct EventDetailRewardsView: View {
                                 }
                             }
                         } else {
-                            DetailUnavailableView(title: "Details.unavailable.reward", symbol: "star.square.on.square")
+                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "star.square.on.square")
                         }
                     case .team:
                         if let rewards = information.event.teamRewards {
@@ -206,28 +167,26 @@ struct EventDetailRewardsView: View {
                                 }
                             }
                         } else {
-                            DetailUnavailableView(title: "Details.unavailable.reward", symbol: "star.square.on.square")
+                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "star.square.on.square")
                         }
                     }
                 } else {
-                    CustomGroupBox(useExtenedConstraints: true) {
-                        ProgressView()
+                    CustomGroupBox {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
                     }
                 }
             } header: {
                 HStack {
-                    Text("Event.reward")
+                    Text("Event.rewards")
                         .font(.title2)
                         .bold()
-                    DetailSectionOptionPicker(
-                        selection: $selectedCategory,
-                        options: [
-                            .point,
-                            .ranking,
-                            information.event.musics != nil ? .musicRanking : nil,
-                            information.event.teamRewards != nil ? .team : nil
-                        ].compactMap { $0 }
-                    )
+                    DetailSectionOptionPicker(selection: $selectedCategory,
+                                              options: [.point, .ranking, information.event.musics != nil ? .musicRanking : nil, information.event.teamRewards != nil ? .team : nil].compactMap { $0 },
+                                              labels: [.point: "Event.rewards.point", .ranking: "Event.rewards.ranking", .musicRanking: "Event.rewards.music-ranking", .team: "Event.rewards.team"])
                     Spacer()
                     Button(action: {
                         isExpanded.toggle()
@@ -276,6 +235,88 @@ struct EventDetailRewardsView: View {
     }
 }
 
+struct EventDetailRewardsPointsItemUnit: View {
+    var reward: _DoriFrontend.ExtendedItem
+    var _reward: Event.PointReward
+    var locale: DoriLocale
+    var body: some View {
+        CustomGroupBox {
+            HStack {
+                VStack {
+                    if case .card(let card) = reward.relatedItemSource {
+                        CardPreviewImage(card, sideLength: 50)
+                    } else if let url = reward.iconImageURL {
+                        WebImage(url: url.localeReplaced(to: locale), content: { $0 }, placeholder: {
+                            RoundedRectangle(cornerRadius: 5)
+                                .foregroundStyle(.placeholder)
+                        })
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 50, height: 50)
+                    } else {
+                        RoundedRectangle(cornerRadius: 5)
+                            .foregroundStyle(.placeholder)
+                            .frame(width: 50, height: 50)
+                    }
+                }
+                .iconBadge(reward.item.quantity, ignoreOne: true)
+                Spacer()
+                VStack {
+                    if let text = reward.text,
+                       let name = text.name.forPreferredLocale() {
+                        Text(name)
+                    } else {
+                        Text("\(reward.item.type)")
+                            .fontDesign(.monospaced)
+                    }
+                    Text("Event.rewards.points.\(_reward.point)")
+                        .foregroundStyle(.secondary)
+                }
+                .multilineTextAlignment(.center)
+                Spacer()
+            }
+        }
+        .wrapIf(true) { content in
+            if case .card(let card) = reward.relatedItemSource {
+                NavigationLink(destination: { CardDetailView(id: card.id) }) {
+                    content
+                }
+                .buttonStyle(.plain)
+            } else {
+                content
+            }
+        }
+//                                        .frame(width: 240)
+    }
+}
+
+/*
+ ViewThatFits {
+     LazyVStack(spacing: showDetails ? nil : 15) {
+         let events = elements.chunked(into: 2)
+         ForEach(events, id: \.self) { eventGroup in
+             HStack {
+                 Spacer(minLength: 0)
+                 ForEach(eventGroup) { event in
+                     eachContent(event)
+                     if eventGroup.count == 1 && events[0].count != 1 {
+                         Rectangle()
+                             .frame(maxWidth: 420, maxHeight: 140)
+                             .opacity(0)
+                     }
+                 }
+                 Spacer(minLength: 0)
+             }
+         }
+     }
+     .frame(width: bannerWidth * 2 + bannerSpacing)
+     LazyVStack(spacing: showDetails ? nil : bannerSpacing) {
+         content
+     }
+     .frame(maxWidth: bannerWidth)
+ }
+ */
+
 extension Array<Event.RankingReward> {
     fileprivate func grouped() -> [(rankRange: ClosedRange<Int>, reward: [Event.RankingReward])] {
         self.reduce(into: [(ClosedRange<Int>, [Event.RankingReward])]()) { partialResult, reward in
@@ -296,5 +337,57 @@ extension Array<Event.FestivalTeamReward> {
                 partialResult.append((reward.festivalResult, [reward]))
             }
         }.sorted { $0.0.rawValue > $1.0.rawValue }
+    }
+}
+
+struct IconBadgeModifier: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
+    let count: Int
+    let backgroundColor: Color?
+    let foregroundColor: Color
+    let height: CGFloat
+    let ignoreOne: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .overlay(alignment: .topTrailing) {
+                if count > 0 && (!ignoreOne || count > 1) {
+                    Text(count, format: .number.notation(.compactName))
+                        .lineLimit(1)
+                        .font(.system(size: height * 0.6, weight: .semibold))
+                        .foregroundColor(foregroundColor)
+                        .padding(.horizontal, height * 0.35)
+                        .frame(minWidth: height, minHeight: height)
+                        .background(
+                            Capsule()
+                                .fill(backgroundColor ?? (colorScheme == .dark ? .black : .white))
+                                .shadow(radius: 2)
+                        )
+                        // 微调位置，贴近图标角
+                        .offset(x: height * 0.35, y: -height * 0.35)
+                        .accessibilityLabel("\(count)")
+                }
+            }
+    }
+}
+
+extension View {
+    func iconBadge(
+        _ count: Int,
+        backgroundColor: Color? = nil,
+        foregroundColor: Color = .primary,
+        height: CGFloat = 18,
+        ignoreOne: Bool = false
+    ) -> some View {
+        modifier(
+            IconBadgeModifier(
+                count: count,
+                backgroundColor: backgroundColor,
+                foregroundColor: foregroundColor,
+                height: height,
+                ignoreOne: ignoreOne
+            )
+        )
     }
 }

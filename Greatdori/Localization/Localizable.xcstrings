@@ -4269,7 +4269,7 @@
         }
       }
     },
-    "Details.unavailable.reward" : {
+    "Details.unavailable.rewards" : {
 
     },
     "Details.unavailable.story" : {
@@ -5276,9 +5276,6 @@
         }
       }
     },
-    "Event.reward" : {
-
-    },
     "Event.rewards" : {
       "localizations" : {
         "en" : {
@@ -5297,6 +5294,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "獎勵"
+          }
+        }
+      }
+    },
+    "Event.rewards.points.%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld points"
           }
         }
       }
