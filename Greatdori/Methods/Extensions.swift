@@ -66,6 +66,22 @@ extension Button {
     }
 }
 
+// MARK: Collection
+extension Collection where Element: Equatable {
+    var allElementsEqual: Bool {
+        guard let first else { return true }
+        return allSatisfy { $0 == first }
+    }
+
+    func allEqual<T: Equatable>(by keyPath: KeyPath<Element, T>) -> Bool {
+        guard let first else { return true }
+        let value = first[keyPath: keyPath]
+        return allSatisfy { $0[keyPath: keyPath] == value }
+    }
+}
+
+
+
 // MARK: Color
 extension Color {
     func toHex() -> String? {

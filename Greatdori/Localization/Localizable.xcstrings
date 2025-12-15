@@ -4276,6 +4276,18 @@
             "state" : "translated",
             "value" : "Rewards Info Unavailable"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "奖励信息不可用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "獎勵信息不可用"
+          }
         }
       }
     },
@@ -5306,14 +5318,45 @@
       }
     },
     "Event.rewards.music-ranking" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Music Rank"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "歌曲排名"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "歌曲排名"
+          }
+        }
+      }
     },
     "Event.rewards.point" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Points"
+            "value" : "Event Points"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活动PT"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活動pt"
           }
         }
       }
@@ -5331,6 +5374,12 @@
             "state" : "translated",
             "value" : "%lld PT"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld pt"
+          }
         }
       }
     },
@@ -5339,13 +5388,44 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rank"
+            "value" : "Event Rank"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活动排名"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活動排名"
           }
         }
       }
     },
     "Event.rewards.team" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隊伍"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "團隊"
+          }
+        }
+      }
     },
     "Event.songs.rotation-music" : {
       "localizations" : {

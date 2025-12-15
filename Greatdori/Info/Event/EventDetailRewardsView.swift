@@ -46,7 +46,7 @@ struct EventDetailRewardsView: View {
                             VStack {
                                 ForEach(rewards.grouped().prefix(isExpanded ? .max : 1), id: \.rankRange) { range, rewards in
                                     CustomGroupBox {
-                                        HStack {
+                                        HStack(alignment: .top) {
                                             Text(verbatim: "#\(range.lowerBound.formatted())\(range.upperBound > range.lowerBound ? " - \(range.upperBound.formatted())" : "")")
                                                 .bold()
                                             Spacer()
@@ -66,38 +66,33 @@ struct EventDetailRewardsView: View {
                         }
                     case .musicRanking:
                         if let musics = information.event.musics?.forLocale(locale), !musics.isEmpty {
-                            CustomGroupBox {
-                                ForEach(musics.prefix(isExpanded ? .max : 1)) { music in
-                                    VStack {
-                                        if let song = information.eventSongs?.forLocale(locale)?.first(where: { $0.id == music.id }),
-                                           let title = song.musicTitle.forLocale(locale) {
-                                            HStack {
-                                                Text(title)
-                                                    .bold()
-                                                Spacer()
+                            let allElementsEqual = musics.allEqual(by: \.rankingRewards)
+                            CustomGroupBox(showGroupBox: !allElementsEqual) {
+                                ForEach(musics.prefix(allElementsEqual ? 1 : .max)) { music in
+                                        VStack {
+                                            if !allElementsEqual {
+                                                if let song = information.eventSongs?.forLocale(locale)?.first(where: { $0.id == music.id }),
+                                                   let title = song.musicTitle.forLocale(locale) {
+                                                    HStack {
+                                                        Text(title)
+                                                            .bold()
+                                                        Spacer()
+                                                    }
+                                                }
                                             }
-                                        }
-                                        ForEach(music.rankingRewards.grouped(), id: \.rankRange) { range, rewards in
-                                            HStack(alignment: .top) {
-                                                Text(verbatim: "#\(range.lowerBound)\(range.upperBound > range.lowerBound ? " - \(range.upperBound)" : "")")
-                                                    .bold()
-                                                Spacer()
-                                                VStack(alignment: .leading) {
-                                                    ForEach(rewards, id: \.self) { _reward in
-                                                        if let reward = itemList.first(where: { $0.item == _reward.reward }) {
-                                                            HStack {
-                                                                if let url = reward.iconImageURL {
-                                                                    WebImage(url: url.localeReplaced(to: locale))
-                                                                        .resizable()
-                                                                        .scaledToFit()
-                                                                        .frame(width: 30, height: 30)
-                                                                }
-                                                                if let text = reward.text,
-                                                                   let name = text.name.forPreferredLocale() {
-                                                                    Text(verbatim: "\(name) x\(reward.item.quantity)")
-                                                                } else {
-                                                                    // FIXME: Text style
-                                                                    Text(verbatim: "some \(reward.item.type) x\(reward.item.quantity)")
+                                            ForEach(music.rankingRewards.grouped().prefix(isExpanded ? .max : 1), id: \.rankRange) { range, rewards in
+                                                if !allElementsEqual {
+                                                    Divider()
+                                                }
+                                                CustomGroupBox(showGroupBox: allElementsEqual) {
+                                                    HStack(alignment: .top) {
+                                                        Text(verbatim: "#\(range.lowerBound)\(range.upperBound > range.lowerBound ? " - \(range.upperBound)" : "")")
+                                                            .bold()
+                                                        Spacer()
+                                                        WrappingHStack(alignment: .trailing) {
+                                                            ForEach(rewards, id: \.self) { _reward in
+                                                                if let reward = itemList.first(where: { $0.item == _reward.reward }) {
+                                                                    EventDetailRewardsRankItemUnit(reward: reward, locale: locale, range: range)
                                                                 }
                                                             }
                                                         }
@@ -105,10 +100,6 @@ struct EventDetailRewardsView: View {
                                                 }
                                             }
                                         }
-                                        .insert {
-                                            Divider()
-                                        }
-                                    }
                                 }
                             }
                         } else {
@@ -116,37 +107,21 @@ struct EventDetailRewardsView: View {
                         }
                     case .team:
                         if let rewards = information.event.teamRewards, !rewards.isEmpty {
-                            CustomGroupBox {
-                                VStack {
-                                    ForEach(rewards.grouped(), id: \.result) { result, rewards in
+                            VStack {
+                                ForEach(rewards.grouped(), id: \.result) { result, rewards in
+                                    CustomGroupBox {
                                         HStack(alignment: .top) {
                                             Text(result.localizedString)
+                                                .bold()
                                             Spacer()
-                                            VStack(alignment: .leading) {
+                                            WrappingHStack(alignment: .trailing) {
                                                 ForEach(rewards, id: \.self) { _reward in
                                                     if let reward = itemList.first(where: { $0.item == _reward.item }) {
-                                                        HStack {
-                                                            if let url = reward.iconImageURL {
-                                                                WebImage(url: url.localeReplaced(to: locale))
-                                                                    .resizable()
-                                                                    .scaledToFit()
-                                                                    .frame(width: 30, height: 30)
-                                                            }
-                                                            if let text = reward.text,
-                                                               let name = text.name.forPreferredLocale() {
-                                                                Text(verbatim: "\(name) x\(reward.item.quantity)")
-                                                            } else {
-                                                                // FIXME: Text style
-                                                                Text(verbatim: "some \(reward.item.type) x\(reward.item.quantity)")
-                                                            }
-                                                        }
+                                                        EventDetailRewardsRankItemUnit(reward: reward, locale: locale)
                                                     }
                                                 }
                                             }
                                         }
-                                    }
-                                    .insert {
-                                        Divider()
                                     }
                                 }
                             }
@@ -179,6 +154,7 @@ struct EventDetailRewardsView: View {
                             .foregroundStyle(.secondary)
                     })
                     .buttonStyle(.plain)
+                    .disabled(selectedCategory == .team)
                 }
             }
         }
@@ -307,7 +283,7 @@ struct EventDetailRewardsRankItemUnit: View {
         self.reward = reward
         self.locale = locale
         self.range = range
-        self.popoverTitle = reward.text?.name.forPreferredLocale() ?? "\(reward.item.type)"
+        self.popoverTitle = reward.text?.name.forLocale(locale) ?? "\(reward.item.type)"
         self.popoverSubtitle = "\(reward.item.quantity)×"
     }
     
