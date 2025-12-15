@@ -28,7 +28,7 @@ struct EventDetailRewardsView: View {
                 if let itemList {
                     switch selectedCategory {
                     case .point:
-                        if let rewards = information.event.pointRewards.forLocale(locale) {
+                        if let rewards = information.event.pointRewards.forLocale(locale), !rewards.isEmpty {
                             let rewardPointsList = rewards.enumerated().filter { isExpanded || (rewards.contains(where: { $0.reward.type == .situation || $0.reward.type == .stamp }) ? [.situation, .stamp].contains($0.element.reward.type) : $0.offset < 5) }.map { $0.element }
                             LazyVGrid(columns: [GridItem(.flexible(minimum: 100))], spacing: 10) {
                                 ForEach(rewardPointsList, id: \.point) { _reward in
@@ -41,7 +41,7 @@ struct EventDetailRewardsView: View {
                             DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "star.square.on.square")
                         }
                     case .ranking:
-                        if let rewards = information.event.rankingRewards.forLocale(locale) {
+                        if let rewards = information.event.rankingRewards.forLocale(locale), !rewards.isEmpty {
                             VStack {
                                 ForEach(rewards.grouped().prefix(isExpanded ? .max : 1), id: \.rankRange) { range, rewards in
                                     CustomGroupBox {
@@ -90,7 +90,7 @@ struct EventDetailRewardsView: View {
                             DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "star.square.on.square")
                         }
                     case .musicRanking:
-                        if let musics = information.event.musics?.forLocale(locale) {
+                        if let musics = information.event.musics?.forLocale(locale), !musics.isEmpty {
                             CustomGroupBox {
                                 ForEach(musics.prefix(isExpanded ? .max : 1)) { music in
                                     VStack {
@@ -140,7 +140,7 @@ struct EventDetailRewardsView: View {
                             DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "star.square.on.square")
                         }
                     case .team:
-                        if let rewards = information.event.teamRewards {
+                        if let rewards = information.event.teamRewards, !rewards.isEmpty {
                             CustomGroupBox {
                                 VStack {
                                     ForEach(rewards.grouped(), id: \.result) { result, rewards in
@@ -326,7 +326,7 @@ struct EventDetailRewardsRankItemUnit: View {
                 .scaledToFit()
                 .frame(width: 50, height: 50)
         }
-        .wrapIf(range != nil && reward.item.type == .degree, in: { content in
+        .wrapIf(reward.item.type == .degree && range != nil, in: { content in
             let lowerBound = range!.lowerBound
             let upperBound = range!.upperBound
             if upperBound > lowerBound {
@@ -351,7 +351,6 @@ struct EventDetailRewardsRankItemUnit: View {
             }
         }, else: { content in
             content.iconBadge(reward.item.quantity, ignoreOne: true)
-            
         })
         .wrapIf(true, in: { content in
 #if os(iOS)
@@ -477,7 +476,7 @@ struct IconBadgeModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .overlay(alignment: .topTrailing) {
-                if count > 0 && (!ignoreOne || count > 1) {
+                if (count > 0 && (!ignoreOne || count > 1)) || text != nil {
                     Group {
                         if let text {
                             Text(text)
