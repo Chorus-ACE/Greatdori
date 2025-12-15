@@ -282,6 +282,7 @@ func decodeTimbre(_ input: String) -> CollectionEncodingInfo? {
     
     // Verify verification code
     var verificationLength = str.removeFirst().unicodeScalars.first!.value - 33
+    guard verificationLength < str.count else { return nil }
     var verificationString = ""
     while verificationLength > 0 {
         verificationString.insert(str.removeLast(), at: verificationString.startIndex)
