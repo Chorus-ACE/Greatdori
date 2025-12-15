@@ -30,7 +30,7 @@ struct EventDetailRewardsView: View {
                     case .point:
                         if let rewards = information.event.pointRewards.forLocale(locale), !rewards.isEmpty {
                             let rewardPointsList = rewards.enumerated().filter { isExpanded || (rewards.contains(where: { $0.reward.type == .situation || $0.reward.type == .stamp }) ? [.situation, .stamp].contains($0.element.reward.type) : $0.offset < 5) }.map { $0.element }
-                            LazyVGrid(columns: [GridItem(.flexible(minimum: 100))], spacing: 10) {
+                            LazyVGrid(columns: [.init(.adaptive(minimum: 200))], spacing: 10) {
                                 ForEach(rewardPointsList, id: \.point) { _reward in
                                     if let reward = itemList.first(where: { $0.item == _reward.reward }) {
                                         EventDetailRewardsPointsItemUnit(reward: reward, _reward: _reward, locale: locale)
