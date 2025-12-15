@@ -39,7 +39,7 @@ struct EventDetailRewardsView: View {
                                 }
                             }
                         } else {
-                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "star.square.on.square")
+                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
                         }
                     case .ranking:
                         if let rewards = information.event.rankingRewards.forLocale(locale), !rewards.isEmpty {
@@ -58,37 +58,11 @@ struct EventDetailRewardsView: View {
                                                 }
                                             }
                                         }
-//                                        HStack(alignment: .top) {
-//                                            Text(verbatim: "#\(range.lowerBound.formatted())\(range.upperBound > range.lowerBound ? " - \(range.upperBound.formatted())" : "")")
-//                                                .bold()
-//                                            Spacer()
-//                                            VStack(alignment: .leading) {
-//                                                ForEach(rewards, id: \.self) { _reward in
-//                                                    if let reward = itemList.first(where: { $0.item == _reward.reward }) {
-//                                                        HStack {
-//                                                            if let url = reward.iconImageURL {
-//                                                                WebImage(url: url.localeReplaced(to: locale))
-//                                                                    .resizable()
-//                                                                    .scaledToFit()
-//                                                                    .frame(width: 30, height: 30)
-//                                                            }
-//                                                            if let text = reward.text,
-//                                                               let name = text.name.forPreferredLocale() {
-//                                                                Text(verbatim: "\(name) x\(reward.item.quantity)")
-//                                                            } else {
-//                                                                // FIXME: Text style
-//                                                                Text(verbatim: "some \(reward.item.type) x\(reward.item.quantity)")
-//                                                            }
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
                                     }
                                 }
                             }
                         } else {
-                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "star.square.on.square")
+                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
                         }
                     case .musicRanking:
                         if let musics = information.event.musics?.forLocale(locale), !musics.isEmpty {
@@ -138,7 +112,7 @@ struct EventDetailRewardsView: View {
                                 }
                             }
                         } else {
-                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "star.square.on.square")
+                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
                         }
                     case .team:
                         if let rewards = information.event.teamRewards, !rewards.isEmpty {
@@ -177,7 +151,7 @@ struct EventDetailRewardsView: View {
                                 }
                             }
                         } else {
-                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "star.square.on.square")
+                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
                         }
                     }
                 } else {
@@ -190,26 +164,13 @@ struct EventDetailRewardsView: View {
                     }
                 }
             } header: {
-                HStack {
+                HStack(spacing: 7) {
                     Text("Event.rewards")
                         .font(.title2)
                         .bold()
-                    DetailSectionDoubleOptionPicker(
-                        pSelection: $selectedCategory,
-                        sSelection: $locale,
-                        pOptions: [
-                            .point,
-                            .ranking,
-                            information.event.musics != nil ? .musicRanking : nil,
-                            information.event.teamRewards != nil ? .team : nil
-                        ].compactMap { $0 },
-                        sOptions: DoriLocale.allCases,
-                        pLabels: [
-                            .point: String(localized: "Event.rewards.point"),
-                            .ranking: String(localized: "Event.rewards.ranking"),
-                            .musicRanking: String(localized: "Event.rewards.music-ranking"),
-                            .team: String(localized: "Event.rewards.team")
-                        ])
+                    DetailSectionOptionPicker(selection: $selectedCategory, options: [.point, .ranking, information.event.musics != nil ? .musicRanking : nil, information.event.teamRewards != nil ? .team : nil].compactMap { $0 }, labels: [.point: String(localized: "Event.rewards.point"), .ranking: String(localized: "Event.rewards.ranking"), .musicRanking: String(localized: "Event.rewards.music-ranking"), .team: String(localized: "Event.rewards.team")])
+                    DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
+                        .offset(x: -5)
                     Spacer()
                     Button(action: {
                         isExpanded.toggle()

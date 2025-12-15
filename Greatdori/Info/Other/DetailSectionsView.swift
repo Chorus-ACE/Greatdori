@@ -60,6 +60,7 @@ struct DetailSectionOptionPicker<T: Hashable>: View {
 
 // MARK: DetailSectionDoubleOptionPicker
 struct DetailSectionDoubleOptionPicker<T: Hashable, S: Hashable>: View {
+    var showPrimaryLabel: Bool
     @Binding var pSelection: T
     @Binding var sSelection: S
     var pOptions: [T]
@@ -112,12 +113,6 @@ struct DetailSectionDoubleOptionPicker<T: Hashable, S: Hashable>: View {
         .menuIndicator(.hidden)
         .menuStyle(.borderlessButton)
         .buttonStyle(.plain)
-        .onChange(of: pSelection) {
-            showSecondaryLabel = true
-        }
-        .onChange(of: sSelection) {
-            showSecondaryLabel = true
-        }
     }
 }
 

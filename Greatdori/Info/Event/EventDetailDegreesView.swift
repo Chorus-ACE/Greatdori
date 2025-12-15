@@ -89,7 +89,11 @@ struct DegreeView: View {
     
     var body: some View {
         ZStack(alignment: .trailing) {
-            WebImage(url: degree.baseImageURL)
+            WebImage(url: degree.baseImageURL, content: { $0 }, placeholder: {
+                Capsule()
+                    .foregroundStyle(.placeholder)
+                    .frame(width: 140, height: 30.434) // Ratio: 4.6
+            })
                 .resizable()
                 .scaledToFit()
                 .onFrameChange { geometry in
