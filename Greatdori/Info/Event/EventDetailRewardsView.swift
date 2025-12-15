@@ -226,9 +226,28 @@ struct EventDetailRewardsView: View {
                     $0.item
                 } ?? []
                 
-                partialResult = Array(Set(partialResult))
-                Task {
-                    if let items = await _DoriFrontend.Misc.extendedItems(from: partialResult) {
+                let resultSet = Set(partialResult)
+                partialResult = Array(resultSet)
+                
+                var hasher = StableHasher()
+                var hash = 0
+                for member in resultSet {
+                    var hasher = StableHasher()
+                    var _id = member.id
+                    _id.withUTF8 { buffer in
+                        unsafe hasher.combine(bytes: UnsafeRawBufferPointer(buffer))
+                    }
+                    hasher.combine(UInt(truncatingIfNeeded: member.itemID ?? 0))
+                    hasher.combine(UInt(truncatingIfNeeded: member.quantity))
+                    hash ^= hasher.finalize()
+                }
+                hasher.combine(UInt(truncatingIfNeeded: hash))
+                let itemHash = hasher.finalize()
+                
+                withDoriCache(id: "ExtendedItems_\(itemHash)") {
+                    await _DoriFrontend.Misc.extendedItems(from: partialResult)
+                }.onUpdate {
+                    if let items = $0 {
                         itemList = items
                     }
                 }
