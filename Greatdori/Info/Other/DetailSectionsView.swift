@@ -58,65 +58,6 @@ struct DetailSectionOptionPicker<T: Hashable>: View {
     }
 }
 
-// MARK: DetailSectionDoubleOptionPicker
-struct DetailSectionDoubleOptionPicker<T: Hashable, S: Hashable>: View {
-    var showPrimaryLabel: Bool
-    @Binding var pSelection: T
-    @Binding var sSelection: S
-    var pOptions: [T]
-    var sOptions: [S]
-    var pLabels: [T: String]? = nil
-    var sLabels: [S: String]? = nil
-    
-    @State var showSecondaryLabel = false
-    var body: some View {
-        Menu(content: {
-            Picker(selection: $pSelection, content: {
-                ForEach(pOptions, id: \.self) { item in
-                    Text(pLabels?[item] ?? ((T.self == DoriLocale.self) ? "\(item)".uppercased() : "\(item)"))
-                        .tag(item)
-                }
-            }, label: {
-                Text("")
-            })
-            .pickerStyle(.inline)
-            .labelsHidden()
-            .multilineTextAlignment(.leading)
-            
-            Picker(selection: $sSelection, content: {
-                ForEach(sOptions, id: \.self) { item in
-                    Text(sLabels?[item] ?? ((S.self == DoriLocale.self) ? "\(item)".uppercased() : "\(item)"))
-                        .tag(item)
-                }
-            }, label: {
-                Text("")
-            })
-            .pickerStyle(.inline)
-            .labelsHidden()
-            .multilineTextAlignment(.leading)
-        }, label: {
-            ZStack(alignment: .leading) {
-                Text(getAttributedString(sLabels?[sSelection] ?? ((S.self == DoriLocale.self) ? "\(sSelection)".uppercased() : "\(sSelection)"), fontSize: .title2, fontWeight: .semibold, foregroundColor: .accent))
-                    .opacity(showSecondaryLabel ? 1 : 0)
-                Text(getAttributedString(pLabels?[pSelection] ?? ((T.self == DoriLocale.self) ? "\(pSelection)".uppercased() : "\(pSelection)"), fontSize: .title2, fontWeight: .semibold, foregroundColor: .accent))
-                    .opacity(showSecondaryLabel ? 0 : 1)
-            }
-            .animation(.easeIn(duration: 0.2), value: showSecondaryLabel)
-            .onChange(of: showSecondaryLabel) {
-                if showSecondaryLabel {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                        showSecondaryLabel = false
-                    }
-                }
-            }
-        })
-        .menuIndicator(.hidden)
-        .menuStyle(.borderlessButton)
-        .buttonStyle(.plain)
-    }
-}
-
-
 // MARK: DetailUnavailableView
 struct DetailUnavailableView: View {
     var title: LocalizedStringResource
