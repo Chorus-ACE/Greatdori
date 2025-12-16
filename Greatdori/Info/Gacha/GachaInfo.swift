@@ -40,7 +40,10 @@ struct GachaInfo: View {
     
     var body: some View {
         SummaryViewBase(.vertical(hidesDetail: !showDetails), source: information) {
-            WebImage(url: information.bannerImageURL) { image in
+            FallbackableWebImage(throughURLs: [
+                information.bannerImageURL,
+                information.logoImageURL
+            ]) { image in
                 image
                     .resizable()
                     .antialiased(true)
