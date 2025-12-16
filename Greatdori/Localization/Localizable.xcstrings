@@ -1284,7 +1284,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "活動Pt&排名追蹤器"
+            "value" : "活動pt&排名追蹤器"
           }
         }
       }
@@ -4597,7 +4597,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld Pt取得"
+            "value" : "累積活動%lldp獲得"
           }
         }
       }
