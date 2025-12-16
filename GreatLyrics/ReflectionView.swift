@@ -20,11 +20,15 @@ import UniformTypeIdentifiers
 
 struct ReflectionView: View {
     @Environment(\.openURL) var openURL
-    @State var singleMusicIDInput = ""
-    @State var singleMatchResults: [SHMatchedMediaItem]?
-    @State var batchMatchResults: [PreviewSong: Result<[SHMatchedMediaItem], any Error>] = [:]
-    @State var batchResultFile: PropertyListFileDocument?
-    @State var isBatchResultExporterPresented = false
+    @AppStorage("ReflectionBatchRetryFailedItem") private var batchRetryFailedItem = false
+    @State private var singleMusicIDInput = ""
+    @State private var singleMatchResults: [CodableMatchResult.CodableMatchItem]?
+    @State private var totalSongCount = 0
+    @State private var batchMatchResults: [PreviewSong: CodableMatchResult] = [:]
+    @State private var batchResultFile: PropertyListFileDocument?
+    @State private var isGettingBatchResult = false
+    @State private var isBatchResultImporterPresented = false
+    @State private var isBatchResultExporterPresented = false
     var body: some View {
         Form {
             Section {
@@ -34,7 +38,9 @@ struct ReflectionView: View {
                         guard let musicID = Int(singleMusicIDInput) else { return }
                         Task {
                             do {
-                                singleMatchResults = try await matchMediaItems(for: musicID)
+                                singleMatchResults = try await matchMediaItems(for: musicID).map {
+                                    .init($0)
+                                }
                             } catch {
                                 print(error)
                             }
@@ -51,42 +57,77 @@ struct ReflectionView: View {
             }
             Section {
                 HStack {
-                    Button("Get All") {
-                        batchMatchResults.removeAll()
-                        Task {
-                            await matchAllMediaItems { song, result in
-                                batchMatchResults.updateValue(result, forKey: song)
+                    Group {
+                        Button {
+                            Task {
+                                isGettingBatchResult = true
+                                var exceptions = batchMatchResults
+                                if batchRetryFailedItem {
+                                    exceptions = exceptions.filter {
+                                        if case .none = $0.value {
+                                            false
+                                        } else { true }
+                                    }
+                                }
+                                await matchAllMediaItems(except: Array(exceptions.keys)) { song, result in
+                                    DispatchQueue.main.async {
+                                        if let existingSong = batchMatchResults.keys.first(where: { $0.id == song.id }) {
+                                            batchMatchResults.updateValue(.init(result), forKey: existingSong)
+                                        } else {
+                                            batchMatchResults.updateValue(.init(result), forKey: song)
+                                        }
+                                    }
+                                }
+                                isGettingBatchResult = false
+                            }
+                        } label: {
+                            HStack {
+                                Text("Get All")
+                                if isGettingBatchResult {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                }
                             }
                         }
+                        Toggle("Retry Failed Items", isOn: $batchRetryFailedItem)
+                            .toggleStyle(.checkbox)
                     }
+                    .disabled(isGettingBatchResult)
                     Spacer()
+                    Button("Import...") {
+                        isBatchResultImporterPresented = true
+                    }
                     Button("Export...") {
                         let encoder = PropertyListEncoder()
-                        let codableResult = batchMatchResults.mapValues { CodableMatchResult($0) }
-                        if let data = try? encoder.encode(codableResult) {
+                        if let data = try? encoder.encode(batchMatchResults) {
                             batchResultFile = .init(data)
                             isBatchResultExporterPresented = true
                         }
                     }
-                    Text(String(batchMatchResults.count))
+                    Text("\(batchMatchResults.count) / \(totalSongCount)")
                 }
                 if !batchMatchResults.isEmpty {
-                    ForEach(batchMatchResults.keys.sorted(by: { $0.id > $1.id })) { key in
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Text(key.musicTitle.forPreferredLocale() ?? "No title")
-                                Text(verbatim: "#\(key.id)")
-                                    .foregroundStyle(.gray)
-                            }
-                            switch batchMatchResults[key]! {
-                            case .success(let items):
-                                ForEach(items) { item in
-                                    mediaItemPreview(item)
+                    LazyVStack(alignment: .leading) {
+                        ForEach(batchMatchResults.keys.sorted(by: { $0.id > $1.id })) { key in
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Text(key.musicTitle.forPreferredLocale() ?? "No title")
+                                    Text(verbatim: "#\(key.id)")
+                                        .foregroundStyle(.gray)
                                 }
-                            case .failure(let error):
-                                Text(error.localizedDescription)
-                                    .foregroundStyle(.red)
+                                switch batchMatchResults[key]! {
+                                case .some(let items):
+                                    ForEach(items) { item in
+                                        mediaItemPreview(item)
+                                    }
+                                case .none(let error):
+                                    Text(error)
+                                        .foregroundStyle(.red)
+                                }
                             }
+                        }
+                        .insert {
+                            Divider()
                         }
                     }
                 }
@@ -96,13 +137,38 @@ struct ReflectionView: View {
         }
         .formStyle(.grouped)
         .navigationSubtitle("Reflection")
-        .fileExporter(isPresented: $isBatchResultExporterPresented, document: batchResultFile, contentType: .propertyList, defaultFilename: "") { _ in
+        .onAppear {
+            Task {
+                if let count = await Song.all()?.count {
+                    totalSongCount = count
+                }
+            }
+        }
+        .fileImporter(
+            isPresented: $isBatchResultImporterPresented,
+            allowedContentTypes: [.propertyList]
+        ) { result in
+            if case .success(let url) = result {
+                _ = url.startAccessingSecurityScopedResource()
+                defer { url.stopAccessingSecurityScopedResource() }
+                if let data = try? Data(contentsOf: url),
+                   let codedResults = try? PropertyListDecoder().decode([PreviewSong: CodableMatchResult].self, from: data) {
+                    batchMatchResults = codedResults
+                }
+            }
+        }
+        .fileExporter(
+            isPresented: $isBatchResultExporterPresented,
+            document: batchResultFile,
+            contentType: .propertyList,
+            defaultFilename: "MappedSongs.plist"
+        ) { _ in
             batchResultFile = nil
         }
     }
     
     @ViewBuilder
-    func mediaItemPreview(_ item: SHMatchedMediaItem) -> some View {
+    private func mediaItemPreview(_ item: CodableMatchResult.CodableMatchItem) -> some View {
         HStack {
             WebImage(url: item.artworkURL) { image in
                 image
@@ -194,9 +260,11 @@ private func matchMediaItems(for id: Int) async throws -> [SHMatchedMediaItem] {
 }
 
 private func matchAllMediaItems(
+    except ignoredSongs: [PreviewSong] = [],
     eachCompletion: @Sendable @escaping (PreviewSong, Result<[SHMatchedMediaItem], any Error>) -> Void
 ) async {
-    guard let songs = await Song.all() else { return }
+    guard var songs = await Song.all() else { return }
+    songs.removeAll { ignoredSongs.map { $0.id }.contains($0.id) }
     await withTaskGroup { group in
         var counter = 0
         for song in songs {
@@ -232,7 +300,7 @@ private enum CodableMatchResult: Codable {
         }
     }
     
-    struct CodableMatchItem: Codable {
+    struct CodableMatchItem: Identifiable, Codable {
         var confidence: Float
         var matchOffset: TimeInterval
         var predictedCurrentMatchOffset: TimeInterval
