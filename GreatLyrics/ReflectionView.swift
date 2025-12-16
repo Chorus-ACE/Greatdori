@@ -19,7 +19,6 @@ import SDWebImageSwiftUI
 import UniformTypeIdentifiers
 
 struct ReflectionView: View {
-    @Environment(\.openURL) var openURL
     @AppStorage("ReflectionBatchRetryFailedItem") private var batchRetryFailedItem = false
     @State private var singleMusicIDInput = ""
     @State private var singleMatchResults: [CodableMatchResult.CodableMatchItem]?
@@ -29,6 +28,7 @@ struct ReflectionView: View {
     @State private var isGettingBatchResult = false
     @State private var isBatchResultImporterPresented = false
     @State private var isBatchResultExporterPresented = false
+    @State private var batchListSearchText = ""
     var body: some View {
         Form {
             Section {
@@ -49,7 +49,7 @@ struct ReflectionView: View {
                 }
                 if let results = singleMatchResults {
                     ForEach(results) { result in
-                        mediaItemPreview(result)
+                        MediaItemPreview(result)
                     }
                 }
             } header: {
@@ -108,23 +108,12 @@ struct ReflectionView: View {
                 }
                 if !batchMatchResults.isEmpty {
                     LazyVStack(alignment: .leading) {
-                        ForEach(batchMatchResults.keys.sorted(by: { $0.id > $1.id })) { key in
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Text(key.musicTitle.forPreferredLocale() ?? "No title")
-                                    Text(verbatim: "#\(key.id)")
-                                        .foregroundStyle(.gray)
-                                }
-                                switch batchMatchResults[key]! {
-                                case .some(let items):
-                                    ForEach(items) { item in
-                                        mediaItemPreview(item)
-                                    }
-                                case .none(let error):
-                                    Text(error)
-                                        .foregroundStyle(.red)
-                                }
-                            }
+                        ForEach(
+                            Array(batchMatchResults.keys)
+                                .search(for: batchListSearchText)
+                                .sorted(by: { $0.id > $1.id })
+                        ) { key in
+                            SongReflectionResultsView(for: key, in: $batchMatchResults)
                         }
                         .insert {
                             Divider()
@@ -136,6 +125,7 @@ struct ReflectionView: View {
             }
         }
         .formStyle(.grouped)
+        .searchable(text: $batchListSearchText, prompt: "Search in Batch Result...")
         .navigationSubtitle("Reflection")
         .onAppear {
             Task {
@@ -166,9 +156,172 @@ struct ReflectionView: View {
             batchResultFile = nil
         }
     }
+}
+
+private struct SongReflectionResultsView: View {
+    @Binding var results: [PreviewSong: CodableMatchResult]
+    var song: PreviewSong
     
-    @ViewBuilder
-    private func mediaItemPreview(_ item: CodableMatchResult.CodableMatchItem) -> some View {
+    init(for song: PreviewSong, in results: Binding<[PreviewSong : CodableMatchResult]>) {
+        self._results = results
+        self.song = song
+    }
+    
+    @State private var isEditing = false
+    @State private var saveFlag = false
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Text(song.musicTitle.forPreferredLocale() ?? "No title")
+                Text(verbatim: "#\(song.id)")
+                    .foregroundStyle(.gray)
+                Spacer()
+                if case .some = results[song]! {
+                    if !isEditing {
+                        Button("Edit") {
+                            isEditing = true
+                        }
+                    } else {
+                        Button("Discard", systemImage: "xmark", role: .destructive) {
+                            isEditing = false
+                        }
+                        .tint(.red)
+                        Button("Apply", systemImage: "checkmark") {
+                            Task {
+                                saveFlag.toggle()
+                                await Task.yield()
+                                isEditing = false
+                            }
+                        }
+                    }
+                }
+            }
+            switch results[song]! {
+            case .some(let items):
+                if !isEditing {
+                    ForEach(items) { item in
+                        MediaItemPreview(item)
+                    }
+                } else {
+                    VStack {
+                        ForEach(items.enumerated(), id: \.element.id) { index, item in
+                            ItemEditView(
+                                index: index,
+                                item: item,
+                                song: song,
+                                allResults: $results,
+                                saveFlag: saveFlag
+                            )
+                        }
+                    }
+                }
+            case .none(let error):
+                Text(error)
+                    .foregroundStyle(.red)
+            }
+        }
+    }
+    
+    private struct ItemEditView: View {
+        var index: Int
+        var item: CodableMatchResult.CodableMatchItem
+        var song: PreviewSong
+        @Binding var allResults: [PreviewSong: CodableMatchResult]
+        var saveFlag: Bool
+        @State private var confidence = ""
+        @State private var matchOffset = ""
+        @State private var predictedCurrentMatchOffset = ""
+        @State private var frequencySkew = ""
+        @State private var title = ""
+        @State private var subtitle = ""
+        @State private var artist = ""
+        @State private var artworkURL = ""
+        @State private var videoURL = ""
+        @State private var isrc = ""
+        @State private var appleMusicURL = ""
+        @State private var appleMusicID = ""
+        @State private var webURL = ""
+        @State private var shazamID = ""
+        var body: some View {
+            VStack {
+                Group {
+                    TextField("Confidence", text: $confidence)
+                    TextField("Match Offset", text: $matchOffset)
+                    TextField("Predicted Current Match Offset", text: $predictedCurrentMatchOffset)
+                    TextField("Frequency Skew", text: $frequencySkew)
+                    TextField("Title", text: $title)
+                    TextField("Subtitle", text: $subtitle)
+                    TextField("Artist", text: $artist)
+                    TextField("Artwork URL", text: $artworkURL)
+                    TextField("Video URL", text: $videoURL)
+                    TextField("ISRC", text: $isrc)
+                    TextField("Apple Music URL", text: $appleMusicURL)
+                    TextField("Apple Music ID", text: $appleMusicID)
+                    TextField("Web URL", text: $webURL)
+                    TextField("Shazam ID", text: $shazamID)
+                }
+                .padding(5)
+                .background {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(nsColor: .tertiarySystemFill))
+                }
+            }
+            .onAppear {
+                guard confidence.isEmpty else { return }
+                confidence = String(item.confidence)
+                matchOffset = String(item.matchOffset)
+                predictedCurrentMatchOffset = String(item.predictedCurrentMatchOffset)
+                frequencySkew = String(item.frequencySkew)
+                title = item.title ?? ""
+                subtitle = item.subtitle ?? ""
+                artist = item.artist ?? ""
+                artworkURL = item.artworkURL?.absoluteString ?? ""
+                videoURL = item.videoURL?.absoluteString ?? ""
+                isrc = item.isrc ?? ""
+                appleMusicURL = item.appleMusicURL?.absoluteString ?? ""
+                appleMusicID = item.appleMusicID ?? ""
+                webURL = item.webURL?.absoluteString ?? ""
+                shazamID = item.shazamID ?? ""
+            }
+            .onChange(of: saveFlag) {
+                if let confidence = Float(confidence) {
+                    allResults[song]!.castSome[index].confidence = confidence
+                }
+                if let matchOffset = TimeInterval(matchOffset) {
+                    allResults[song]!.castSome[index].matchOffset = matchOffset
+                }
+                if let predictedCurrentMatchOffset = TimeInterval(predictedCurrentMatchOffset) {
+                    allResults[song]!.castSome[index].predictedCurrentMatchOffset = predictedCurrentMatchOffset
+                }
+                if let frequencySkew = Float(frequencySkew) {
+                    allResults[song]!.castSome[index].frequencySkew = frequencySkew
+                }
+                allResults[song]!.castSome[index].title = title
+                allResults[song]!.castSome[index].subtitle = subtitle
+                allResults[song]!.castSome[index].artist = artist
+                allResults[song]!.castSome[index].artworkURL = .init(string: artworkURL)
+                allResults[song]!.castSome[index].videoURL = .init(string: videoURL)
+                allResults[song]!.castSome[index].isrc = isrc
+                allResults[song]!.castSome[index].appleMusicURL = .init(string: appleMusicURL)
+                allResults[song]!.castSome[index].appleMusicID = appleMusicID.isEmpty ? nil : appleMusicID
+                allResults[song]!.castSome[index].webURL = .init(string: webURL)
+                allResults[song]!.castSome[index].shazamID = shazamID.isEmpty ? nil : shazamID
+            }
+        }
+    }
+}
+
+private struct MediaItemPreview: View {
+    var item: CodableMatchResult.CodableMatchItem
+    
+    init(_ item: CodableMatchResult.CodableMatchItem) {
+        self.item = item
+    }
+    
+    @Environment(\.openURL) private var openURL
+    
+    var body: some View {
         HStack {
             WebImage(url: item.artworkURL) { image in
                 image
@@ -343,6 +496,19 @@ private enum CodableMatchResult: Codable {
             self.appleMusicID = item.appleMusicID
             self.webURL = item.webURL
             self.shazamID = item.shazamID
+        }
+    }
+    
+    var castSome: [CodableMatchItem] {
+        get {
+            if case .some(let items) = self {
+                items
+            } else {
+                preconditionFailure()
+            }
+        }
+        set {
+            self = .some(newValue)
         }
     }
 }
