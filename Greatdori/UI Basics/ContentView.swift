@@ -63,7 +63,7 @@ struct ContentView: View {
                                         }
                                     }, label: {
                                         Label(title: {
-                                            Text(allInfoDestinationItems[itemIndex].title)
+                                            Text(allInfoDestinationItems[itemIndex].shortenedTitle ?? allInfoDestinationItems[itemIndex].title)
                                         }, icon: {
                                             Image(_internalSystemName: allInfoDestinationItems[itemIndex].symbol)
                                         })

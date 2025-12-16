@@ -18,6 +18,7 @@ import SwiftUI
 @MainActor let allInfoDestinationItems: [InfoDestinationItem] = [
     InfoDestinationItem(
         title: "App.info.characters",
+        shortenedTitle: "App.info.characters.abbr",
         symbol: "person.2",
         lightColor: .mint,
         tabValue: .characters,
