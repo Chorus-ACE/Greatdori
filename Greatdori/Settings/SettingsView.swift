@@ -38,8 +38,7 @@ struct SettingsView: View {
                 ForEach(settingsTabs, id: \.self) { item in
                     if item.isDisplayable {
                         NavigationLink(destination: {
-                            settingsDestination(forTab: selectionItem, note: settingsTabs.first(where: { $0.destination == selectionItem })?.note ?? "")
-                            //                            .navigationTitle(item.name)
+                            settingsDestination(forTab: item.destination, note: item.note ?? "")
                                 .navigationBarTitleDisplayMode(.inline)
                         }, label: {
                             Label(item.name, systemImage: item.symbol)
@@ -73,7 +72,9 @@ struct SettingsView: View {
             })
 //            .toolbar(removing: .sidebarToggle)
         }, detail: {
-            settingsDestination(forTab: selectionItem, note: settingsTabs.first(where: { $0.destination == selectionItem })?.note ?? "")
+            NavigationStack {
+                settingsDestination(forTab: selectionItem, note: settingsTabs.first(where: { $0.destination == selectionItem })?.note ?? "")
+            }
         })
         //        .toolbar(removing: .sidebarToggle)
         #endif
@@ -81,47 +82,40 @@ struct SettingsView: View {
     
     @ViewBuilder
     func settingsDestination(forTab tab: String, note: String) -> some View {
-        NavigationStack {
-            Group {
-                switch tab {
-                case "locale":
-                    SettingsLocaleView()
-                case "home":
-                    SettingsHomeView()
-                case "story":
-                    SettingsStoryView()
-                case "permission":
-                    SettingsPermissionsView()
-                case "widget":
-                    SettingsWidgetsView()
-                case "font":
-                    SettingsFontsView()
-                case "account":
-                    SettingsAccountsView()
-                case "advanced":
-                    SettingsAdvancedView()
-                case "about":
-                    SettingsAboutView()
-                case "debug":
-                    SettingsDebugView()
-                default:
-                    ProgressView()
-                }
+        Group {
+            switch tab {
+            case "locale":
+                SettingsLocaleView()
+            case "home":
+                SettingsHomeView()
+            case "story":
+                SettingsStoryView()
+            case "permission":
+                SettingsPermissionsView()
+            case "widget":
+                SettingsWidgetsView()
+            case "font":
+                SettingsFontsView()
+            case "account":
+                SettingsAccountsView()
+            case "advanced":
+                SettingsAdvancedView()
+            case "about":
+                SettingsAboutView()
+            case "debug":
+                SettingsDebugView()
+            default:
+                ProgressView()
             }
-            .wrapIf(note != "NO-FORM") { content in
-                Form {
-                    content
-                }
-                .formStyle(.grouped)
+        }
+        .wrapIf(note != "NO-FORM") { content in
+            Form {
+                content
             }
+            .formStyle(.grouped)
         }
     }
 }
-
-
-
-
-
 
 struct SettingsOfflineDataView: View {
     @State var dataSourcePreference: DataSourcePreference = .hybrid
