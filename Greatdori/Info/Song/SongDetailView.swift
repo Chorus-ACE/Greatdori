@@ -31,8 +31,10 @@ struct SongDetailView: View {
             DetailArtsSection {
                 ArtsTab("Song.arts.cover", ratio: 1) {
                     for locale in DoriLocale.allCases {
-                        if let url = information.song.jacketImageURL(in: locale, allowsFallback: false) {
-                            ArtsItem(title: LocalizedStringResource(stringLiteral: locale.rawValue.uppercased()), url: url, ratio: 1)
+                        if let urls = information.song.jacketImageURLs(in: locale, allowsFallback: false) {
+                            for (index, url) in urls.enumerated() {
+                                ArtsItem(title: .init(stringLiteral: "\(locale.rawValue.uppercased()) \(index + 1)"), url: url, ratio: 1)
+                            }
                         }
                     }
                 }
