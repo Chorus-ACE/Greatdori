@@ -1,0 +1,92 @@
+#===---*- Greatdori! -*----------------------------------------------------===#
+#
+# build-greatdori.yml
+#
+# This source file is part of the Greatdori! open source project
+#
+# Copyright (c) 2025 the Greatdori! project authors
+# Licensed under Apache License v2.0
+#
+# See https://greatdori.com/LICENSE.txt for license information
+# See https://greatdori.com/CONTRIBUTORS.txt for the list of Greatdori! project authors
+#
+#===-----------------------------------------------------------------------===#
+
+name: Update Song Reflection
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build GreatLyrics
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+      - name: Remove runner local related libs
+        run: brew remove --ignore-dependencies libssh2
+      - name: Update checkout
+        run: utils/update-checkout --clone
+      - name: Generate workspace
+        run: utils/generate-workspace
+      - name: Create build folder
+        run: mkdir build
+      - name: Build
+        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme GreatLyrics -configuration Release -derivedDataPath ./build -destination "generic/platform=macOS" build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_STYLE=Manual DEVELOPMENT_TEAM=""
+      - name: Prepare build result
+        run: tar -czvf GreatLyrics.app.tar.gz ./build/Build/Products/Release/GreatLyrics.app
+      - name: Upload build result
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: GreatLyrics.app.tar.gz
+          path: ./GreatLyrics.app.tar.gz
+          if-no-files-found: error
+  reflect:
+    name: Reflect Songs
+    runs-on: macos-26
+    needs:
+      - build
+    steps:
+      - name: Download GreatLyrics build
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: GreatLyrics.app.tar.gz
+      - name: Retrieve GreatLyrics build
+        run: tar -zxvf ./GreatLyrics.app.tar.gz
+      - name: Download current song mapping
+        run: wget "https://kashi.greatdori.com/MappedSongs.plist"
+      - name: Reflect
+        run: ./GreatLyrics.app/Contents/MacOS/GreatLyrics --reflect --input ./MappedSongs.plist --output ./NewMappedSongs.plist
+      - name: Upload old mapping
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: MappedSongs-old.plist
+          path: ./MappedSongs.plist
+          if-no-files-found: error
+      - name: Upload new mapping
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: MappedSongs-new.plist
+          path: ./NewMappedSongs.plist
+          if-no-files-found: error
+  deploy:
+    name: Deploy to Server
+    runs-on: macos-26
+    needs:
+      - reflect
+    steps:
+      - name: Download mapped songs
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: MappedSongs-new.plist
+      - name: Deploy new map
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_KASHI_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_KASHI_SECRET_KEY }}
+          AWS_DEFAULT_REGION: 'auto'
+          AWS_EC2_METADATA_DISABLED: 'true'
+          ENDPOINT_URL: ${{ secrets.R2_ENDPOINT }}
+        run: aws s3 cp ./NewMappedSongs.plist s3://dorikashi/MappedSongs.plist --endpoint-url "$ENDPOINT_URL"
