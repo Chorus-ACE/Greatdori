@@ -128,9 +128,10 @@ struct SongDetailView: View {
                     Text("资讯")
                 }
                 .listRowBackground(Color.clear)
-                if !information.events.isEmpty {
+                if let events = information.events.forPreferredLocale(),
+                   !events.isEmpty {
                     Section {
-                        FoldableList(information.events.reversed()) { event in
+                        FoldableList(events.reversed()) { event in
                             NavigationLink(destination: { EventDetailView(id: event.id) }) {
                                 EventCardView(event, inLocale: nil)
                             }
@@ -224,7 +225,7 @@ struct SongDetailView: View {
                 self.information = information
                 selectedDifficulty = information.song.difficulty.keys.sorted { $0.rawValue < $1.rawValue }.first
                 prefetchImages(
-                    information.events.map(\.bannerImageURL)
+                    information.events.compactMap { $0 }.flatMap { $0 }.map(\.bannerImageURL)
                 )
             } else {
                 availability = false
