@@ -534,3 +534,36 @@ struct PropertyListFileDocument: FileDocument {
         return FileWrapper(regularFileWithContents: data)
     }
 }
+
+// MARK: Command Line Support
+func reflectNewSongs(into newFile: URL, from currentFile: URL) async throws {
+    var results: [PreviewSong: CodableMatchResult]
+    
+    do {
+        _ = currentFile.startAccessingSecurityScopedResource()
+        defer { currentFile.stopAccessingSecurityScopedResource() }
+        let data = try Data(contentsOf: currentFile)
+        let codedResults = try PropertyListDecoder().decode([PreviewSong: CodableMatchResult].self, from: data)
+        results = codedResults
+    }
+    
+    var exceptions = results
+    exceptions = exceptions.filter {
+        if case .none = $0.value {
+            false
+        } else { true }
+    }
+    await matchAllMediaItems(except: Array(exceptions.keys)) { song, result in
+        DispatchQueue.main.async {
+            if let existingSong = results.keys.first(where: { $0.id == song.id }) {
+                results.updateValue(.init(result), forKey: existingSong)
+            } else {
+                results.updateValue(.init(result), forKey: song)
+            }
+        }
+    }
+    
+    let encoder = PropertyListEncoder()
+    encoder.outputFormat = .binary
+    try encoder.encode(results).write(to: newFile)
+}
