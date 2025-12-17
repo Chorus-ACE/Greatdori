@@ -12,7 +12,7 @@
 #
 #===-----------------------------------------------------------------------===#
 
-name: Build Greatdori
+name: Build Greatdori iOS & watchOS
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
     runs-on: macos-26
     strategy:
       matrix:
-        destination: ["macOS", "iOS Simulator", "iOS"]
+        destination: ["iOS Simulator", "iOS"]
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0

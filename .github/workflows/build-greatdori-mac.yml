@@ -12,7 +12,7 @@
 #
 #===-----------------------------------------------------------------------===#
 
-name: Build Greatdori Watch App
+name: Build Greatdori macOS
 
 on:
   push:
@@ -23,9 +23,6 @@ jobs:
   build:
     name: Build
     runs-on: macos-26
-    strategy:
-      matrix:
-        destination: ["watchOS Simulator", "watchOS"]
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
@@ -38,10 +35,10 @@ jobs:
       - name: Create build folder
         run: mkdir build
       - name: Build
-        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme "Greatdori Watch App" -configuration Release -derivedDataPath ./build -destination "generic/platform=${{ matrix.destination }}" build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_STYLE=Manual DEVELOPMENT_TEAM=""
+        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -derivedDataPath ./build -destination "generic/platform=macOS" build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_STYLE=Manual DEVELOPMENT_TEAM=""
       - name: Upload build result
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: Greatdori-Watch-App-${{ matrix.destination }}.app
-          path: ./build/Build/Products/*/Greatdori Watch App.app
+          name: Greatdori-macOS.app
+          path: ./build/Build/Products/*/Greatdori!.app
           if-no-files-found: error

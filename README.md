@@ -8,10 +8,10 @@
 Greatdori includes iOS, macOS and watchOS app,
 built with [DoriKit](https://github.com/Greatdori/DoriKit)
 
-| **Target** | **Status** |
+| **Platform** | **Status** |
 |---:|:---:|
-| Greatdori           | ![Greatdori Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori.yml)|
-| Greatdori Watch App | ![Greatdori Watch App Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori-watch.yml)|
+| iOS & watchOS | ![Greatdori iOS & watchOS Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori.yml)|
+| macOS         | ![Greatdori macOS Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori-mac.yml)|
 
 ## Building
 
