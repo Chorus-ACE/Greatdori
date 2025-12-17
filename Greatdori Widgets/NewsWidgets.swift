@@ -107,6 +107,7 @@ private struct CardWidgetsEntryView : View {
         case .systemMedium: 1
         case .systemLarge: 3
         case .systemExtraLarge: 4
+        case let f where f.rawValue == 4: 6
         default: 3
         }
     }
@@ -137,18 +138,10 @@ private struct CardWidgetsEntryView : View {
                     Spacer()
                 }
                 Spacer()
-                    .frame(maxHeight: 3)
-//                Rectangle()
-//                    .frame(height: 1)
-//                Divider()
-//                    .opacity(0)
+                    .frame(height: 10)
                 if let news = entry.news {
                     ForEach(0..<news.prefix(capacity).count, id: \.self) { newsIndex in
                         NewsPreview(news: news[newsIndex])
-                        
-//                        if widgetFamily == .systemLarge || widgetFamily == .systemExtraLarge && newsIndex != capacity-1 {
-//                            Divider()
-//                        }
                         if newsIndex != capacity-1 {
                             Divider()
                         }
