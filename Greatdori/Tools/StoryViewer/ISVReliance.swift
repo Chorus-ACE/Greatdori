@@ -19,43 +19,61 @@ import SwiftUI
 
 // MARK: class ReferenceCountingContainer
 final class ReferenceCountingContainer: @unchecked Sendable, ObservableObject {
+    @safe nonisolated(unsafe) static var all: [UUID: [ReferenceCountingContainer]] = [:]
+    
     @Published var _count: Int = 0
     @Published var _tappingActionCount: Int = 0
     var observers: [UUID: AnyCancellable] = [:]
     
-    let isValidInstance: Bool
+    let parentID: UUID?
     
-    init(valid: Bool = true) {
-        self.isValidInstance = valid
+    init(parentID: UUID?) {
+        self.parentID = parentID
+        
+        if let parentID {
+            Self.all.updateValue(
+                (Self.all[parentID] ?? []) + [self],
+                forKey: parentID
+            )
+        }
+    }
+    
+    deinit {
+        if let parentID {
+            Self.all.updateValue(
+                (Self.all[parentID] ?? []).filter { $0 !== self },
+                forKey: parentID
+            )
+        }
     }
     
     private let countLock = NSLock()
     var count: Int {
         get {
-            assert(isValidInstance, "Attempting to access an invalid ReferenceCountingContainer")
+            assert(parentID != nil, "Attempting to access an invalid ReferenceCountingContainer")
             return countLock.withLock {
                 _count
             }
         }
         set {
-            assert(isValidInstance, "Attempting to access an invalid ReferenceCountingContainer")
+            assert(parentID != nil, "Attempting to access an invalid ReferenceCountingContainer")
             countLock.withLock {
-                _count = newValue
+                _count = max(newValue, 0)
             }
         }
     }
     private let tappingCountLock = NSLock()
     var tappingActionCount: Int {
         get {
-            assert(isValidInstance, "Attempting to access an invalid ReferenceCountingContainer")
+            assert(parentID != nil, "Attempting to access an invalid ReferenceCountingContainer")
             return tappingCountLock.withLock {
                 _tappingActionCount
             }
         }
         set {
-            assert(isValidInstance, "Attempting to access an invalid ReferenceCountingContainer")
+            assert(parentID != nil, "Attempting to access an invalid ReferenceCountingContainer")
             tappingCountLock.withLock {
-                _tappingActionCount = newValue
+                _tappingActionCount = max(newValue, 0)
             }
         }
     }

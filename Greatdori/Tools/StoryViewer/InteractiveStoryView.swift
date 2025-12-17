@@ -23,10 +23,11 @@ import SDWebImageSwiftUI
 
 @safe
 struct InteractiveStoryView: View {
+    var viewID: UUID
     var ir: StoryIR
     var assetFolder: URL?
     
-    @TaskLocal nonisolated private static var performingActionCount = ReferenceCountingContainer(valid: false)
+    @TaskLocal nonisolated private static var performingActionCount = ReferenceCountingContainer(parentID: nil)
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\._isvIsMuted) private var isMuted
@@ -41,7 +42,7 @@ struct InteractiveStoryView: View {
     @State private var bgmPlayer = AVQueuePlayer()
     @State private var bgmLooper: AVPlayerLooper!
     @State private var sePlayer = AVPlayer()
-    @State private var safeVoicePlayer: AVAudioPlayer? = nil
+    @State private var voicePlayer: AVAudioPlayer? = nil
     @State private var currentSnippetIndex = -1
     @State private var currentTelop: String?
     
@@ -71,12 +72,14 @@ struct InteractiveStoryView: View {
     private var mutingIsAvailable: Bool
     
     init(_ ir: StoryIR, assetFolder: URL? = nil, fullScreenToggleIsAvailable: Bool = false, mutingIsAvailable: Bool = false) {
+        // We assign an ID for ISV so that we can identify data related
+        // to this view in some global states
+        self.viewID = .init()
+        
         self.ir = ir
         self.assetFolder = assetFolder
         self.fullScreenToggleIsAvailable = fullScreenToggleIsAvailable
         self.mutingIsAvailable = mutingIsAvailable
-//        unsafe voicePlayer = .allocate(capacity: 1)
-//        unsafe voicePlayer.initialize(to: .init())
     }
     init(asset: _DoriAPI.Misc.StoryAsset, voiceBundlePath: String, locale: DoriLocale) {
         let ir = DoriStoryBuilder.Conversion.zeileIR(
@@ -136,7 +139,7 @@ struct InteractiveStoryView: View {
                                         }
                                     }()
                                     ISVLive2DView(modelPath: layout.modelPath, state: showingLayoutIndexs[index], currentSpeckerID: currentTalk?.characterIDs.first ?? -1)
-                                        .safeVoicePlayer($safeVoicePlayer)
+                                        .safeVoicePlayer($voicePlayer)
                                         .frame(width: geometry.size.height, height: geometry.size.height)
                                         .offset(x: offsetX, y: offsetY)
                                         .opacity(showingLayoutIndexs[index] != nil ? 1 : 0)
@@ -235,10 +238,10 @@ struct InteractiveStoryView: View {
         .focusable()
         .focusEffectDisabled()
         .frame(minWidth: 300, minHeight: 75)
-        .onFrameChange(perform: { geometry in
+        .onFrameChange { geometry in
             frameWidth = geometry.size.width
             frameHeight = geometry.size.height
-        })
+        }
         .background {
             WebImage(url: backgroundImageURL)
                 .resizable()
@@ -318,13 +321,13 @@ struct InteractiveStoryView: View {
             next()
             return .handled
         }
-        .onChange(of: isMuted.wrappedValue, initial: true, {
+        .onChange(of: isMuted.wrappedValue, initial: true) {
             bgmPlayer.isMuted = isMuted.wrappedValue
             sePlayer.isMuted = isMuted.wrappedValue
-            if let safeVoicePlayer {
-                safeVoicePlayer.volume = isMuted.wrappedValue ? 0 : 1
+            if let voicePlayer {
+                voicePlayer.volume = isMuted.wrappedValue ? 0 : 1
             }
-        })
+        }
         .sheet(isPresented: $backlogIsPresenting) {
             if let talk = currentTalk {
                 NavigationStack {
@@ -387,11 +390,15 @@ struct InteractiveStoryView: View {
                         fastForwardTimer = nil
                         return
                     }
-//                    fastForwardTimer = .scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
-//                        DispatchQueue.main.async {
-//                            next(ignoresDelay: true)
-//                        }
-//                    }
+                    fastForwardTimer = .scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
+                        DispatchQueue.main.async {
+                            ReferenceCountingContainer.all[viewID]?.forEach {
+                                $0.count = 0
+                                $0.tappingActionCount = 0
+                            }
+                            next()
+                        }
+                    }
                 }, label: {
                     if fastForwardTimer == nil {
                         Label("Story-viewer.menu.fast-forward", systemImage: "forward")
@@ -514,16 +521,13 @@ struct InteractiveStoryView: View {
                    let voice = talkAudios[voicePath],
                    let newPlayer = try? AVAudioPlayer(data: voice) {
                     newPlayer.isMeteringEnabled = true
-                    safeVoicePlayer = newPlayer
-                    if let safeVoicePlayer {
-                        safeVoicePlayer.volume = isMuted.wrappedValue ? 0 : 1
-                        safeVoicePlayer.play()
-                        //                    unsafe voicePlayer.pointee = newPlayer
-                        //                    unsafe voicePlayer.pointee.play()
+                    voicePlayer = newPlayer
+                    if let voicePlayer {
+                        voicePlayer.volume = isMuted.wrappedValue ? 0 : 1
+                        voicePlayer.play()
                         if isAutoPlaying {
                             autoPlayTimer = .scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
-                                //                            if unsafe !voicePlayer.pointee.isPlaying {
-                                if !safeVoicePlayer.isPlaying {
+                                if !voicePlayer.isPlaying {
                                     timer.invalidate()
                                     autoPlayTimer = .scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
                                         DispatchQueue.main.async {
@@ -793,7 +797,7 @@ struct InteractiveStoryView: View {
     // MARK: - detachedReferenceCountedTask
     func detachedReferenceCountedTask(operation: sending @escaping @isolated(any) () async -> Void) {
         Task.detached {
-            await Self.$performingActionCount.withValue(.init()) {
+            await Self.$performingActionCount.withValue(.init(parentID: viewID)) {
                 await operation()
             }
         }
@@ -806,8 +810,7 @@ struct InteractiveStoryView: View {
         fastForwardTimer?.invalidate()
         bgmPlayer.pause()
         sePlayer.pause()
-        safeVoicePlayer?.stop()
-//        unsafe voicePlayer.pointee.stop()
+        voicePlayer?.stop()
         
         if doDismiss {
             dismiss()
@@ -816,11 +819,6 @@ struct InteractiveStoryView: View {
         #if os(iOS)
         setDeviceOrientation(to: .portrait, allowing: .portrait)
         #endif
-        
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-//            unsafe voicePlayer.deinitialize(count: 1)
-//            unsafe voicePlayer.deallocate()
-//        }
     }
 }
 
