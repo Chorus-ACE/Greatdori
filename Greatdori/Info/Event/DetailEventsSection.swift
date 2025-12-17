@@ -100,24 +100,28 @@ struct DetailsEventsSection: View {
                 }
             }
         } else {
-            var eventsFromSources: [PreviewEvent] = []
+            var eventsFromSources = LocalizedData<[PreviewEvent]>(forEveryLocale: nil)
             if let sources {
-                for item in Array(sources.forLocale(locale) ?? Set()) {
-                    switch item {
-                    case .event(let dict):
-                        for (key, value) in dict {
-                            eventsFromSources.append(key)
-                            pointsDict.updateValue(value, forKey: key)
+                for locale in DoriLocale.allCases {
+                    var localeEvents: [PreviewEvent] = []
+                    for item in Array(sources.forLocale(locale) ?? Set()) {
+                        switch item {
+                        case .event(let dict):
+                            for (key, value) in dict {
+                                localeEvents.append(key)
+                                pointsDict.updateValue(value, forKey: key)
+                            }
+                        default: break
                         }
-                        eventsFromSources = eventsFromSources.sorted(withDoriSorter: DoriSorter(keyword: .releaseDate(in: locale)))
-                    default: break
                     }
+                    localeEvents.sort(withDoriSorter: .init(keyword: .releaseDate(in: locale)))
+                    if let localEvent = event?.forLocale(locale), !localeEvents.contains(localEvent) {
+                        localeEvents.insert(localEvent, at: 0)
+                    }
+                    eventsFromSources._set(localeEvents, forLocale: locale)
                 }
             }
-            if let localEvent = event?.forLocale(locale), !eventsFromSources.contains(localEvent) {
-                eventsFromSources.insert(localEvent, at: 0)
-            }
-            self.eventsFromSources = .init(forEveryLocale: eventsFromSources)
+            self.eventsFromSources = eventsFromSources
         }
     }
 }
