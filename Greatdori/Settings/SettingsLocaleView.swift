@@ -54,6 +54,7 @@ struct SettingsLocaleView: View {
                         secondaryLocale = DoriLocale.secondaryLocale
                     }
                     DoriLocale.primaryLocale = newValue
+                    UserDefaults(suiteName: "group.memz233.Greatdori.Widgets")?.set(newValue.rawValue, forKey: "PreferredLocale")
                 })
                 
                 LocalePicker($secondaryLocale) {
@@ -65,6 +66,7 @@ struct SettingsLocaleView: View {
                         primaryLocale = DoriLocale.primaryLocale
                     }
                     DoriLocale.secondaryLocale = newValue
+                    UserDefaults(suiteName: "group.memz233.Greatdori.Widgets")?.set(newValue.rawValue, forKey: "SecondaryLocale")
                 })
             }
             .onAppear {

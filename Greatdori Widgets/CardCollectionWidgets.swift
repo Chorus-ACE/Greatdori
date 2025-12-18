@@ -57,7 +57,12 @@ private struct Provider: AppIntentTimelineProvider {
         )
     }
     
-    func entry(for date: Date = .now, align: Bool = true, in collection: String?, frequency: ShuffleFrequency) -> CardEntry {
+    func entry(
+        for date: Date = .now,
+        align: Bool = true,
+        in collection: String?,
+        frequency: CardCollectionWidgetIntent.ShuffleFrequency
+    ) -> CardEntry {
         guard let collectionName = collection else { return .init(frequency: frequency) }
         guard let collection = CardCollectionManager.shared._collection(named: collectionName) else { return .init(frequency: frequency) }
         var generator = seed(for: date, align: align)
@@ -89,7 +94,7 @@ private struct Provider: AppIntentTimelineProvider {
 
 private struct CardEntry: TimelineEntry {
     var date: Date = .now
-    var frequency: ShuffleFrequency = .onTap
+    var frequency: CardCollectionWidgetIntent.ShuffleFrequency = .onTap
     var cardID: Int?
     #if !os(macOS)
     var image: UIImage?

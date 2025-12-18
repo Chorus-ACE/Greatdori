@@ -16,24 +16,6 @@ import DoriKit
 import WidgetKit
 import AppIntents
 
-struct CardWidgetIntent: WidgetConfigurationIntent {
-    static var title: LocalizedStringResource { "Widget.cards" }
-    static var description: IntentDescription { "Widget.cards.description" }
-    
-    @Parameter(title: "Widget.cards.parameter.name", optionsProvider: CardOptionsProvider())
-    var cardName: String?
-    
-    struct CardOptionsProvider: DynamicOptionsProvider {
-        func results() async throws -> [String] {
-            let containerPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.memz233.Greatdori.Widgets")!.path
-            let decoder = PropertyListDecoder()
-            guard let data = try? Data(contentsOf: URL(filePath: containerPath + "/CardWidgetDescriptors.plist")) else { return [] }
-            guard let descriptors = try? decoder.decode([CardWidgetDescriptor].self, from: data) else { return [] }
-            return descriptors.map { $0.localizedName }
-        }
-    }
-}
-
 struct CardCollectionWidgetIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource { "Widget.collections" }
     static var description: IntentDescription { "Widget.collections.description" }
@@ -53,22 +35,58 @@ struct CardCollectionWidgetIntent: WidgetConfigurationIntent {
             return collections.map { $0.name }
         }
     }
+    
+    enum ShuffleFrequency: String, CaseIterable, AppEnum {
+        case onTap
+        case hourly
+        case daily
+        
+        static var typeDisplayRepresentation: TypeDisplayRepresentation {
+            "Widget.shuffle-frequency"
+        }
+        
+        static var caseDisplayRepresentations: [ShuffleFrequency: DisplayRepresentation] {
+            [
+                .onTap: "Widget.shuffle-frequency.on-tap",
+                .hourly: "Widget.shuffle-frequency.hourly",
+                .daily: "Widget.shuffle-frequency.daily"
+            ]
+        }
+    }
 }
 
-enum ShuffleFrequency: String, CaseIterable, AppEnum {
-    case onTap
-    case hourly
-    case daily
+struct EventWidgetIntent: WidgetConfigurationIntent {
+    static var title: LocalizedStringResource { "Widget.event" }
+    static var description: IntentDescription { "Widget.event.description" }
+    
+    @Parameter(title: "Widget.event.parameter.locale", default: .jp)
+    var locale: WidgetDoriLocale
+}
 
-    static var typeDisplayRepresentation: TypeDisplayRepresentation {
-        "Widget.shuffle-frequency"
-    }
-
-    static var caseDisplayRepresentations: [ShuffleFrequency: DisplayRepresentation] {
-        [
-            .onTap: "Widget.shuffle-frequency.on-tap",
-            .hourly: "Widget.shuffle-frequency.hourly",
-            .daily: "Widget.shuffle-frequency.daily"
-        ]
+enum WidgetDoriLocale: String, CaseIterable, AppEnum {
+    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Widget.locale"
+    
+    static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+        .jp: "JP",
+        .en: "EN",
+        .tw: "TW",
+        .cn: "CN",
+        .kr: "KR"
+    ]
+    
+    case jp
+    case en
+    case tw
+    case cn
+    case kr
+    
+    var doriLocale: DoriLocale {
+        switch self {
+        case .jp: .jp
+        case .en: .en
+        case .tw: .tw
+        case .cn: .cn
+        case .kr: .kr
+        }
     }
 }

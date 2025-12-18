@@ -87,7 +87,7 @@
 		8C6C0ECD2E422F9000D1FB0A /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C6C0ECC2E422F9000D1FB0A /* SwiftUI.framework */; };
 		8C6C0EDA2E422F9100D1FB0A /* Greatdori Widgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8C6C0EC92E422F8F00D1FB0A /* Greatdori Widgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8C6C0EED2E42301000D1FB0A /* AppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6C0EE72E42301000D1FB0A /* AppIntents.swift */; };
-		8C6C0EEE2E42301000D1FB0A /* CardWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6C0EE92E42301000D1FB0A /* CardWidgets.swift */; };
+		8C6C0EEE2E42301000D1FB0A /* EventWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6C0EE92E42301000D1FB0A /* EventWidgets.swift */; };
 		8C6C0EEF2E42301000D1FB0A /* GreatdoriWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6C0EEA2E42301000D1FB0A /* GreatdoriWidgetsBundle.swift */; };
 		8C6C0EF02E42301000D1FB0A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C6C0EE82E42301000D1FB0A /* Assets.xcassets */; };
 		8C6C0EF22E4230B800D1FB0A /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8C94744B2E35DA49003A90B4 /* AppIcon.icon */; };
@@ -580,7 +580,7 @@
 		8C6C0ECC2E422F9000D1FB0A /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		8C6C0EE72E42301000D1FB0A /* AppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntents.swift; sourceTree = "<group>"; };
 		8C6C0EE82E42301000D1FB0A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		8C6C0EE92E42301000D1FB0A /* CardWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardWidgets.swift; sourceTree = "<group>"; };
+		8C6C0EE92E42301000D1FB0A /* EventWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventWidgets.swift; sourceTree = "<group>"; };
 		8C6C0EEA2E42301000D1FB0A /* GreatdoriWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreatdoriWidgetsBundle.swift; sourceTree = "<group>"; };
 		8C6C0EEB2E42301000D1FB0A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8C6C0EF92E423C8E00D1FB0A /* Greatdori.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Greatdori.entitlements; sourceTree = "<group>"; };
@@ -1056,10 +1056,10 @@
 				8C6C0EEA2E42301000D1FB0A /* GreatdoriWidgetsBundle.swift */,
 				8C6C0F0C2E42654E00D1FB0A /* Date+.swift */,
 				8C719D372EF3F49400E8645B /* View+WrapIf.swift */,
-				8C6C0EE92E42301000D1FB0A /* CardWidgets.swift */,
 				8CB4D4722E4459200085D57A /* CardCollectionWidgets.swift */,
 				8C6C0F0A2E425AF100D1FB0A /* NewsWidgets.swift */,
 				8C719D352EF3060D00E8645B /* BirthdayWidgets.swift */,
+				8C6C0EE92E42301000D1FB0A /* EventWidgets.swift */,
 				8C6C0EE82E42301000D1FB0A /* Assets.xcassets */,
 			);
 			path = "Greatdori Widgets";
@@ -2129,7 +2129,7 @@
 				8CB4D4732E4459200085D57A /* CardCollectionWidgets.swift in Sources */,
 				8C719D362EF3061100E8645B /* BirthdayWidgets.swift in Sources */,
 				8C719D382EF3F49900E8645B /* View+WrapIf.swift in Sources */,
-				8C6C0EEE2E42301000D1FB0A /* CardWidgets.swift in Sources */,
+				8C6C0EEE2E42301000D1FB0A /* EventWidgets.swift in Sources */,
 				8CB4D4702E4454890085D57A /* CardCollectionManager.swift in Sources */,
 				8C6C0F002E42462A00D1FB0A /* OptionsData.swift in Sources */,
 				8C6C0F0D2E42655000D1FB0A /* Date+.swift in Sources */,

@@ -21,5 +21,6 @@ struct GreatdoriWidgetsBundle: WidgetBundle {
         CardCollectionWidgets()
         NewsWidgets()
         BirthdayWidgets()
+        EventWidgets()
     }
 }
