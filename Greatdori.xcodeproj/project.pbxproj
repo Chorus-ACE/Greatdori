@@ -101,6 +101,8 @@
 		8C719D112EF03AE900E8645B /* StableHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C719D102EF03AE300E8645B /* StableHasher.swift */; };
 		8C719D2F2EF1ABA600E8645B /* View+Variadic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C719D2E2EF1AB9E00E8645B /* View+Variadic.swift */; };
 		8C719D312EF28B8600E8645B /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 8C719D302EF28B8600E8645B /* ArgumentParser */; };
+		8C719D362EF3061100E8645B /* BirthdayWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C719D352EF3060D00E8645B /* BirthdayWidgets.swift */; };
+		8C719D382EF3F49900E8645B /* View+WrapIf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C719D372EF3F49400E8645B /* View+WrapIf.swift */; };
 		8C7288DE2E3B4458002AF70F /* Selectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7288DD2E3B4451002AF70F /* Selectors.swift */; };
 		8C74C66E2E4C8BB80070A70A /* MetadataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C74C66D2E4C8BB60070A70A /* MetadataView.swift */; };
 		8C78559D2E48F10C000EA06E /* ComicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C78559C2E48F107000EA06E /* ComicListView.swift */; };
@@ -589,6 +591,8 @@
 		8C6C0F0C2E42654E00D1FB0A /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
 		8C719D102EF03AE300E8645B /* StableHasher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StableHasher.swift; sourceTree = "<group>"; };
 		8C719D2E2EF1AB9E00E8645B /* View+Variadic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Variadic.swift"; sourceTree = "<group>"; };
+		8C719D352EF3060D00E8645B /* BirthdayWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdayWidgets.swift; sourceTree = "<group>"; };
+		8C719D372EF3F49400E8645B /* View+WrapIf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+WrapIf.swift"; sourceTree = "<group>"; };
 		8C7288DD2E3B4451002AF70F /* Selectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selectors.swift; sourceTree = "<group>"; };
 		8C74C66D2E4C8BB60070A70A /* MetadataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataView.swift; sourceTree = "<group>"; };
 		8C78559C2E48F107000EA06E /* ComicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicListView.swift; sourceTree = "<group>"; };
@@ -1051,9 +1055,11 @@
 				8CB4D4B42E44938D0085D57A /* Localizable.xcstrings */,
 				8C6C0EEA2E42301000D1FB0A /* GreatdoriWidgetsBundle.swift */,
 				8C6C0F0C2E42654E00D1FB0A /* Date+.swift */,
+				8C719D372EF3F49400E8645B /* View+WrapIf.swift */,
 				8C6C0EE92E42301000D1FB0A /* CardWidgets.swift */,
 				8CB4D4722E4459200085D57A /* CardCollectionWidgets.swift */,
 				8C6C0F0A2E425AF100D1FB0A /* NewsWidgets.swift */,
+				8C719D352EF3060D00E8645B /* BirthdayWidgets.swift */,
 				8C6C0EE82E42301000D1FB0A /* Assets.xcassets */,
 			);
 			path = "Greatdori Widgets";
@@ -2121,6 +2127,8 @@
 			files = (
 				8C6C0EED2E42301000D1FB0A /* AppIntents.swift in Sources */,
 				8CB4D4732E4459200085D57A /* CardCollectionWidgets.swift in Sources */,
+				8C719D362EF3061100E8645B /* BirthdayWidgets.swift in Sources */,
+				8C719D382EF3F49900E8645B /* View+WrapIf.swift in Sources */,
 				8C6C0EEE2E42301000D1FB0A /* CardWidgets.swift in Sources */,
 				8CB4D4702E4454890085D57A /* CardCollectionManager.swift in Sources */,
 				8C6C0F002E42462A00D1FB0A /* OptionsData.swift in Sources */,

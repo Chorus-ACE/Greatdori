@@ -18,10 +18,8 @@ import SwiftUI
 @main
 struct GreatdoriWidgetsBundle: WidgetBundle {
     var body: some Widget {
-        /*
-        CardWidgets()
-         */
         CardCollectionWidgets()
         NewsWidgets()
+        BirthdayWidgets()
     }
 }

@@ -20,7 +20,7 @@ struct NewsWidgets: Widget {
     let kind: String = "com.memz233.Greatdori.Widgets.News"
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            CardWidgetsEntryView(entry: entry)
+            NewsWidgetsEntryView(entry: entry)
                 .containerBackground(.background, for: .widget)
         }
         .supportedFamilies([
@@ -92,7 +92,7 @@ private struct NewsEntry: TimelineEntry {
     var news: [_DoriFrontend.News.ListItem]?
 }
 
-private struct CardWidgetsEntryView : View {
+private struct NewsWidgetsEntryView : View {
     var entry: Provider.Entry
     let dateFormatter = {
         let result = DateFormatter()
