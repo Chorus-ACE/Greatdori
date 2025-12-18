@@ -14,34 +14,11 @@
 
 import SwiftUI
 
-//struct SettingsAboutView: View {
-//    var body: some View {
-////#if os(iOS)
-////        Section(content: {
-////            NavigationLink(destination: {
-////                SettingsAboutDetailView()
-////            }, label: {
-////                Text("Settings.about.about-greatdori")
-////            })
-////            NavigationLink(destination: {
-////                SettingsAdvancedView()
-////            }, label: {
-////                Text("Settings.advanced")
-////            })
-////        }, header: {
-////            Text(verbatim: "Greatdori!")
-////        })
-////#else
-//        SettingsAboutDetailView()
-////#endif
-//    }
-//}
-
 struct SettingsAboutView: View {
     var body: some View {
         Group {
-#if os(iOS)
-//            List {
+            #if os(iOS)
+            List {
                 HStack {
                     Spacer()
                     SettingsAboutDetailIconView()
@@ -51,9 +28,9 @@ struct SettingsAboutView: View {
                 Section {
                     SettingsAboutDetailListView()
                 }
-//            }
+            }
             .navigationBarTitleDisplayMode(.inline)
-#else
+            #else
             ScrollView {
                 VStack {
                     SettingsAboutDetailIconView()
@@ -68,7 +45,7 @@ struct SettingsAboutView: View {
                 }
                 .padding()
             }
-#endif
+            #endif
         }
         .navigationTitle("Settings.about")
         .withSystemBackground()
