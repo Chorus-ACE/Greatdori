@@ -80,7 +80,7 @@ struct EventInfoForHome: View {
                     .multilineTextAlignment(.center)
                 Group {
                     if let startDate = locale != nil ? startAt.forLocale(locale!) : startAt.forPreferredLocale(),
-                       let endDate = locale != nil ? endAt.forLocale(locale!) : startAt.forPreferredLocale() {
+                       let endDate = locale != nil ? endAt.forLocale(locale!) : endAt.forPreferredLocale() {
                         if startDate > .now {
                             Text("Events.countdown.start-at.\(Text(startDate, style: .relative)).\(locale != nil ? "(\(locale!.rawValue.uppercased()))" : "")")
                                 .multilineTextAlignment(.center)
