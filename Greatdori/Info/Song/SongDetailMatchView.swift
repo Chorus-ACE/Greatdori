@@ -20,6 +20,7 @@ struct SongDetailMatchView: View {
     var song: Song
     @Binding var songMatches: [Int: _DoriFrontend.Songs._SongMatchResult]?
     @Environment(\.openURL) private var openURL
+    @State private var isReportPresented = false
     var body: some View {
         Group {
             if let songMatches,
@@ -76,10 +77,98 @@ struct SongDetailMatchView: View {
                                 .font(.title2)
                                 .bold()
                             Spacer()
+                            Button("Report a Concern", systemImage: "exclamationmark.bubble") {
+                                isReportPresented = true
+                            }
+                            .labelStyle(.iconOnly)
+                            .buttonStyle(.plain)
                         }
                         .frame(maxWidth: 615)
                     }
                 }
+                .sheet(isPresented: $isReportPresented) {
+                    NavigationStack {
+                        SongMatchReportView(song: song)
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct SongMatchReportView: View {
+    var song: Song
+    @Environment(\.dismiss) private var dismiss
+    @State private var selectedConcern: ConcernType?
+    @State private var isSubmitting = false
+    var body: some View {
+        Form {
+            Picker("What's your concern with this content?", selection: $selectedConcern) {
+                ForEach(ConcernType.allCases, id: \.rawValue) { concern in
+                    Text(concern.localizedString).tag(concern)
+                }
+            }
+            .pickerStyle(.inline)
+        }
+        .formStyle(.grouped)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel", systemImage: "xmark") {
+                    dismiss()
+                }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button {
+                    Task {
+                        guard let selectedConcern else { return }
+                        isSubmitting = true
+                        await submitCombinedStats(
+                            key: "SongShazamReport_\(song.id)",
+                            subKey: selectedConcern.rawValue,
+                            action: true /* +1 */
+                        )
+                        isSubmitting = false
+                        dismiss()
+                    }
+                } label: {
+                    if !isSubmitting {
+                        Label("Submit", systemImage: "checkmark")
+                    } else {
+                        ProgressView()
+                            .controlSize(.small)
+                    }
+                }
+                #if os(iOS)
+                .wrapIf(true) { content in
+                    if #available(iOS 26.0, *) {
+                        content
+                            .buttonStyle(.glassProminent)
+                    } else {
+                        content
+                    }
+                }
+                #endif
+                .disabled(selectedConcern == nil || isSubmitting)
+            }
+        }
+    }
+    
+    // Please don't change the Swift name of cases here,
+    // feel free to add new ones.
+    enum ConcernType: String, Hashable, CaseIterable {
+        case incorrectResult
+        case incorrectVersion
+        case incorrectMetadata
+        case missingAppleMusicLink
+        case other
+        
+        var localizedString: LocalizedStringResource {
+            switch self {
+            case .incorrectResult: "Incorrect music"
+            case .incorrectVersion: "Incorrect cover"
+            case .incorrectMetadata: "Incorrect metadata (title, artist, artwork, etc.)"
+            case .missingAppleMusicLink: "Apple Music link not available"
+            case .other: "My concern is not listed here"
             }
         }
     }

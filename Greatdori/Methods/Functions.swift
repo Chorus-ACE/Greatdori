@@ -374,3 +374,42 @@ func submitStats(
         }
     }
 }
+@discardableResult
+func submitCombinedStats(
+    key: String,
+    subKey: String,
+    action: Bool /* true: +1, false: -1 */
+) async -> Bool {
+    #if targetEnvironment(simulator)
+    return false
+    #endif
+    
+    guard !statsAPIPrivateKey.isEmpty else {
+        return false
+    }
+    struct S: Claims {
+        var sub: String
+        var action: Bool
+        var subKey: String
+        var iat: Date
+    }
+    return await withCheckedContinuation { continuation in
+        var jwt = JWT(header: .init(), claims: S(sub: key, action: action, subKey: subKey, iat: .now))
+        let signer = JWTSigner.rs512(privateKey: statsAPIPrivateKey.data(using: .utf8)!)
+        guard let signed = try? jwt.sign(using: signer) else {
+            return continuation.resume(returning: false)
+        }
+        AF.request(
+            "https://stats.greatdori.com/submitCombined",
+            method: .post,
+            parameters: ["payload": signed],
+            encoder: .json
+        ).response { response in
+            if let data = response.data, let json = try? JSON(data: data) {
+                return continuation.resume(returning: json["success"].boolValue)
+            } else {
+                return continuation.resume(returning: false)
+            }
+        }
+    }
+}
