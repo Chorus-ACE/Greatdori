@@ -52,13 +52,13 @@ struct SettingsStoryView: View {
                     .onChange(of: isvAlwaysFullScreen) {
                         Task {
                             await submitStats(
-                                key: "ISVPreferAlwaysFullScreen",
+                                key: "ISVPreferAlwaysFullScreen2",
                                 action: isvAlwaysFullScreen
                             )
                         }
                         Task {
                             await submitStats(
-                                key: "ISVPreferPreviewable",
+                                key: "ISVPreferPreviewable2",
                                 action: !isvAlwaysFullScreen
                             )
                         }

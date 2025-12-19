@@ -292,12 +292,12 @@ private func initializeISV_ABTest() {
         UserDefaults.standard.set(flag ? 1 : 2, forKey: "ISVStyleTestFlag")
         UserDefaults.standard.set(flag, forKey: "ISVAlwaysFullScreen")
     }
-    if !UserDefaults.standard.bool(forKey: "ISVTestInitialSubmit") {
+    if !UserDefaults.standard.bool(forKey: "ISVTestInitialSubmit2") {
         Task {
             let flag = UserDefaults.standard.integer(forKey: "ISVStyleTestFlag")
-            let key = flag == 1 ? "ISVPreferAlwaysFullScreen" : "ISVPreferPreviewable"
+            let key = flag == 1 ? "ISVPreferAlwaysFullScreen2" : "ISVPreferPreviewable2"
             if await submitStats(key: key, action: true /* +1 */) {
-                UserDefaults.standard.set(true, forKey: "ISVTestInitialSubmit")
+                UserDefaults.standard.set(true, forKey: "ISVTestInitialSubmit2")
             }
         }
     }
