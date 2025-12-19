@@ -272,6 +272,7 @@
 		E97888C62E8A79EA00ABD33E /* QuickLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97888C52E8A79E500ABD33E /* QuickLook.swift */; };
 		E97C5B882E8E9A50004858A3 /* SettingsWidgetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97C5B872E8E9A4A004858A3 /* SettingsWidgetsView.swift */; };
 		E98B8B532E7E922A00B4C8A8 /* NavigationComponentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */; };
+		E992283E2EF2AA0C00C123DC /* WhatsNewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E992283D2EF2AA0900C123DC /* WhatsNewView.swift */; };
 		E99B3D912EC29A700045EFC9 /* SettingsAccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B3D902EC29A670045EFC9 /* SettingsAccountsView.swift */; };
 		E99B57652EC1E7DF0045EFC9 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B57642EC1E7DD0045EFC9 /* Station.swift */; };
 		E9A126FC2E8CB62000BBD39E /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A126FB2E8CB61900BBD39E /* EventTracker.swift */; };
@@ -760,6 +761,7 @@
 		E97888C52E8A79E500ABD33E /* QuickLook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLook.swift; sourceTree = "<group>"; };
 		E97C5B872E8E9A4A004858A3 /* SettingsWidgetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWidgetsView.swift; sourceTree = "<group>"; };
 		E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationComponentsView.swift; sourceTree = "<group>"; };
+		E992283D2EF2AA0900C123DC /* WhatsNewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewView.swift; sourceTree = "<group>"; };
 		E99B3D902EC29A670045EFC9 /* SettingsAccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountsView.swift; sourceTree = "<group>"; };
 		E99B57642EC1E7DD0045EFC9 /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		E9A126FB2E8CB61900BBD39E /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
@@ -1295,6 +1297,7 @@
 				E90769CF2E546D5B00C9871C /* ContentView.swift */,
 				E90769CA2E546D5500C9871C /* HomeView.swift */,
 				E949A5602EAA00C8007441A6 /* WelcomeView.swift */,
+				E992283D2EF2AA0900C123DC /* WhatsNewView.swift */,
 				E90769D02E546D5B00C9871C /* CornerstoneView.swift */,
 				E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */,
 				E942C37F2E8B63E900F24974 /* FallbackableWebImage.swift */,
@@ -2041,6 +2044,7 @@
 				8C3593152EDC1B9B009E41AD /* GachaDetailConsumptionView.swift in Sources */,
 				E949A5632EAA0231007441A6 /* ViewModifiers.swift in Sources */,
 				8C6C0EF82E42352700D1FB0A /* AppIntents.swift in Sources */,
+				E992283E2EF2AA0C00C123DC /* WhatsNewView.swift in Sources */,
 				E94218F52E8AA38300F24974 /* CardInfo.swift in Sources */,
 				E9076E2F2E8B83A100A9F5AE /* SettingsAdvanced.swift in Sources */,
 				8CD580BC2EA7CE73007A3F49 /* AssetExplorer.swift in Sources */,
