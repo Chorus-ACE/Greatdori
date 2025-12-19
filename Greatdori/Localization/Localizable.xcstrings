@@ -237,6 +237,12 @@
             "value" : "Double tap to copy."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ダブルタップしてコピーします。"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -395,6 +401,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Filter"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィルタ"
           }
         },
         "zh-Hans" : {
@@ -18615,6 +18627,214 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "歡迎使用 GreatdorI!"
+          }
+        }
+      }
+    },
+    "Whats-new.done" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成"
+          }
+        }
+      }
+    },
+    "Whats-new.item.asset-explorer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Asset Explorer"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新数据包浏览器"
+          }
+        }
+      }
+    },
+    "Whats-new.item.asset-explorer.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asset Explorer now supports image preview and search."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据包浏览器先已支持图像预览和搜索。"
+          }
+        }
+      }
+    },
+    "Whats-new.item.localization" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Internationalization"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "国际化"
+          }
+        }
+      }
+    },
+    "Whats-new.item.localization.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added translation for Traditional Chinese and Japanese. Japanese translation work under progress."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为繁体中文和日语添加了翻译。日语翻译工作仍在进程。"
+          }
+        }
+      }
+    },
+    "Whats-new.item.rewards" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Event Rewards"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活动奖励"
+          }
+        }
+      }
+    },
+    "Whats-new.item.rewards.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can now view event rewards and voiced stickers right from event detail page."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你现在可以在活动详细页直接查看活动奖励和有声贴纸。"
+          }
+        }
+      }
+    },
+    "Whats-new.item.shazam" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shazam Update"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shazam更新"
+          }
+        }
+      }
+    },
+    "Whats-new.item.shazam.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updated music recognition database to follow up the latest songs."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新了音乐识别数据库以追上最新的歌曲。"
+          }
+        }
+      }
+    },
+    "Whats-new.testflight-note" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please feel free to report any bug or crashes to us, we would be very happy to receive these feedbacks."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欢迎随时向我们反馈任何问题或崩溃问题，我们非常乐意接受这些报告。"
+          }
+        }
+      }
+    },
+    "Whats-new.title.build.%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What’s New in Greatdori! Build %lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Greatdori! Build %lld 的新功能"
+          }
+        }
+      }
+    },
+    "Whats-new.title.recent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recent Updates"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近更新"
+          }
+        }
+      }
+    },
+    "Whats-new.title.version.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What’s New in Greatdori! %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Greatdori! %@ 的新功能"
           }
         }
       }

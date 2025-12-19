@@ -29,6 +29,7 @@ struct SettingsDebugView: View {
         @AppStorage("isFirstLaunchResettable") var isFirstLaunchResettable = true
         @AppStorage("startUpSucceeded") var startUpSucceeded = true
         @AppStorage("EnableRulerOverlay") var enableRulerOverlay = false
+        @AppStorage("forceDisplayWhatsNewSheet") var forceDisplayWhatsNewSheet = false
         @AppStorage("ISVStyleTestFlag") var isvStyleTestFlag = 0
         @State var showDebugDisactivationAlert = false
         
@@ -48,6 +49,9 @@ struct SettingsDebugView: View {
                 })
                 Toggle(isOn: $enableRulerOverlay, label: {
                     Text(verbatim: "enableRulerOverlay")
+                })
+                Toggle(isOn: $forceDisplayWhatsNewSheet, label: {
+                    Text(verbatim: "forceDisplayWhatsNewSheet")
                 })
                 Toggle(isOn: .init(get: { AppFlag.ISV_DEBUG }, set: { AppFlag.set($0, forKey: "ISV_DEBUG") })) {
                     Text(verbatim: "ISV_DEBUG")

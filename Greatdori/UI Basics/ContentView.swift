@@ -31,6 +31,7 @@ struct ContentView: View {
     @AppStorage("isFirstLaunchResettable") var isFirstLaunchResettable = true
     @AppStorage("startUpSucceeded") var startUpSucceeded = true
     @AppStorage("lastDebugPassword") var lastDebugPassword = ""
+    @AppStorage("forceDisplayWhatsNewSheet") var forceDisplayWhatsNewSheet = false
     @State var mainAppShouldBeDisplayed = false
     @State var crashViewShouldBeDisplayed = false
     @State var lastStartUpWasSuccessful = true
@@ -38,6 +39,7 @@ struct ContentView: View {
     @State var welcomeViewHadSafeExited = false
     @State var showPreCacheAlert = false
     @State var showCrashAlert = false
+    @State var showWhatsNewSheet = false
     
     var body: some View {
         if mainAppShouldBeDisplayed {
@@ -178,6 +180,9 @@ struct ContentView: View {
                 if isInitializationRequired {
                     showWelcomeScreen = true
                 }
+                if AppVersion.appHadUpdated(ignoreBuildNumber: false) ?? false && UserDefaults.standard.integer(forKey: "LastSeenWhatsNewHash") != whatsNew.hashValue || forceDisplayWhatsNewSheet {
+                    showWhatsNewSheet = true
+                }
 #if !DORIKIT_ENABLE_PRECACHE
                 if !isFirstLaunch {
                     showPreCacheAlert = true
@@ -201,6 +206,9 @@ struct ContentView: View {
             }) {
                 WelcomeView(showWelcomeScreen: $showWelcomeScreen, isSafeExit: $welcomeViewHadSafeExited)
             }
+            .sheet(isPresented: $showWhatsNewSheet, content: {
+                WhatsNewView()
+            })
             .alert("Home.banner.no-pre-cahce.title", isPresented: $showPreCacheAlert, actions: {
             }, message: {
                 Text("Home.banner.no-pre-cahce.subtitle")

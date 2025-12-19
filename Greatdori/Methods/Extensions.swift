@@ -32,6 +32,11 @@ extension Array {
             Array(self[$0..<Swift.min($0 + size, count)])
         }
     }
+    
+    func access(_ index: Int) -> Element? {
+        guard indices.contains(index) else { return nil }
+        return self[index]
+    }
 }
 
 // MARK: Bool

@@ -90,9 +90,9 @@ struct StoryViewerView: View {
                                     Text("Story-viewer.story")
                                         .bold()
                                 }, value: {
-                                    let availableBandStories: [_DoriAPI.Misc.BandStory] = allBandStories.filter({ $0.bandID == selectedBand?.id }).sorted { $0.chapterNumber < $1.chapterNumber }
+//                                    let availableBandStories: [_DoriAPI.Misc.BandStory] =
                                     Picker(selection: $selectedBandStory, content: {
-                                        ForEach(availableBandStories, id: \.self) { item in
+                                        ForEach(allBandStories.filter({ $0.bandID == selectedBand?.id }).sorted { $0.chapterNumber < $1.chapterNumber }, id: \.self) { item in
                                             Text(verbatim: "\(item.mainTitle.forLocale(locale) ?? "")\(getLocalizedColon(forLocale: locale))\(item.subTitle.forLocale(locale) ?? "")")
                                                 .tag(item)
                                         }
