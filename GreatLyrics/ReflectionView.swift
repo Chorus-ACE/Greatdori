@@ -169,11 +169,14 @@ private struct SongReflectionResultsView: View {
     
     @State private var isEditing = false
     @State private var saveFlag = false
+    @State private var reReflectionStart = 0.0
+    @State private var isReReflecting = false
     
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                Text(song.musicTitle.forPreferredLocale() ?? "No title")
+                Text(song.musicTitle.forPreferredLocale() ?? "[No title]")
+                    .textSelection(.enabled)
                 Text(verbatim: "#\(song.id)")
                     .foregroundStyle(.gray)
                 Spacer()
@@ -183,6 +186,40 @@ private struct SongReflectionResultsView: View {
                             isEditing = true
                         }
                     } else {
+                        Button("Add", systemImage: "plus") {
+                            switch results[song]! {
+                            case .some(let items):
+                                results.updateValue(
+                                    .some(items + [.init(
+                                        confidence: 1,
+                                        matchOffset: 0,
+                                        predictedCurrentMatchOffset: 0,
+                                        frequencySkew: 0,
+                                        timeRanges: [],
+                                        frequencySkewRanges: [],
+                                        genres: [],
+                                        explicitContent: false,
+                                        id: .init()
+                                    )]),
+                                    forKey: song
+                                )
+                            case .none:
+                                results.updateValue(
+                                    .some([.init(
+                                        confidence: 1,
+                                        matchOffset: 0,
+                                        predictedCurrentMatchOffset: 0,
+                                        frequencySkew: 0,
+                                        timeRanges: [],
+                                        frequencySkewRanges: [],
+                                        genres: [],
+                                        explicitContent: false,
+                                        id: .init()
+                                    )]),
+                                    forKey: song
+                                )
+                            }
+                        }
                         Button("Discard", systemImage: "xmark", role: .destructive) {
                             isEditing = false
                         }
@@ -195,6 +232,37 @@ private struct SongReflectionResultsView: View {
                             }
                         }
                     }
+                }
+            }
+            HStack {
+                Text(PreCache.current.bands.first { $0.id == song.bandID }?.bandName.forPreferredLocale() ?? "[No Band]")
+                Spacer()
+                if case .some = results[song]!, isEditing {
+                    Button {
+                        Task {
+                            isReReflecting = true
+                            do {
+                                let result = try await matchMediaItems(for: song.id, sliceFrom: reReflectionStart)
+                                results.updateValue(.init(.success(result)), forKey: song)
+                                isEditing = false
+                            } catch {
+                                print(error)
+                            }
+                            isReReflecting = false
+                        }
+                    } label: {
+                        HStack {
+                            if isReReflecting {
+                                ProgressView()
+                                    .controlSize(.small)
+                            }
+                            Label("Re-Reflect from \(unsafe String(format: "%.1f", reReflectionStart))s", systemImage: "music.note.arrow.trianglehead.clockwise")
+                        }
+                    }
+                    .disabled(isReReflecting)
+                    Slider(value: $reReflectionStart, in: 0...100)
+                        .labelsHidden()
+                        .frame(width: 200)
                 }
             }
             switch results[song]! {
@@ -213,6 +281,9 @@ private struct SongReflectionResultsView: View {
                                 allResults: $results,
                                 saveFlag: saveFlag
                             )
+                        }
+                        .insert {
+                            Divider()
                         }
                     }
                 }
@@ -245,6 +316,13 @@ private struct SongReflectionResultsView: View {
         @State private var shazamID = ""
         var body: some View {
             VStack {
+                HStack {
+                    Spacer()
+                    Button("Remove Reference", systemImage: "trash", role: .destructive) {
+                        allResults[song]!.castSome.remove(at: index)
+                    }
+                    .tint(.red)
+                }
                 Group {
                     TextField("Confidence", text: $confidence)
                     TextField("Match Offset", text: $matchOffset)
@@ -365,7 +443,10 @@ private struct MediaItemPreview: View {
     }
 }
 
-private func matchMediaItems(for id: Int) async throws -> [SHMatchedMediaItem] {
+private func matchMediaItems(
+    for id: Int,
+    sliceFrom sliceInterval: TimeInterval = 1
+) async throws -> [SHMatchedMediaItem] {
     guard let song = await Song(id: id) else {
         throw CocoaError(.fileReadUnknown)
     }
@@ -381,7 +462,7 @@ private func matchMediaItems(for id: Int) async throws -> [SHMatchedMediaItem] {
                 )
                 return
             }
-            let destination = URL(filePath: NSHomeDirectory() + "/tmp/\(url.lastPathComponent)")
+            let destination = URL(filePath: NSTemporaryDirectory() + "/\(url.lastPathComponent)")
             guard (try? data.write(to: destination)) != nil else {
                 continuation.resume(throwing: CocoaError(.fileReadCorruptFile))
                 return
@@ -392,7 +473,7 @@ private func matchMediaItems(for id: Int) async throws -> [SHMatchedMediaItem] {
                     return
                 }
                 Task {
-                    guard let signature = try? await signature?.slices(from: 1, duration: 12).first(where: { _ in true }) else {
+                    guard let signature = try? await signature?.slices(from: sliceInterval, duration: 12).first(where: { _ in true }) else {
                         continuation.resume(throwing: CocoaError(.coderValueNotFound))
                         return
                     }
@@ -474,29 +555,6 @@ private enum CodableMatchResult: Codable {
         var appleMusicID: String?
         var webURL: URL?
         var shazamID: String?
-        
-        init(_ item: SHMatchedMediaItem) {
-            self.confidence = item.confidence
-            self.matchOffset = item.matchOffset
-            self.predictedCurrentMatchOffset = item.predictedCurrentMatchOffset
-            self.frequencySkew = item.frequencySkew
-            self.timeRanges = item.timeRanges
-            self.frequencySkewRanges = item.frequencySkewRanges
-            self.title = item.title
-            self.subtitle = item.subtitle
-            self.artist = item.artist
-            self.artworkURL = item.artworkURL
-            self.videoURL = item.videoURL
-            self.genres = item.genres
-            self.explicitContent = item.explicitContent
-            self.creationDate = item.creationDate
-            self.isrc = item.isrc
-            self.id = item.id
-            self.appleMusicURL = item.appleMusicURL
-            self.appleMusicID = item.appleMusicID
-            self.webURL = item.webURL
-            self.shazamID = item.shazamID
-        }
     }
     
     var castSome: [CodableMatchItem] {
@@ -510,6 +568,30 @@ private enum CodableMatchResult: Codable {
         set {
             self = .some(newValue)
         }
+    }
+}
+extension CodableMatchResult.CodableMatchItem {
+    init(_ item: SHMatchedMediaItem) {
+        self.confidence = item.confidence
+        self.matchOffset = item.matchOffset
+        self.predictedCurrentMatchOffset = item.predictedCurrentMatchOffset
+        self.frequencySkew = item.frequencySkew
+        self.timeRanges = item.timeRanges
+        self.frequencySkewRanges = item.frequencySkewRanges
+        self.title = item.title
+        self.subtitle = item.subtitle
+        self.artist = item.artist
+        self.artworkURL = item.artworkURL
+        self.videoURL = item.videoURL
+        self.genres = item.genres
+        self.explicitContent = item.explicitContent
+        self.creationDate = item.creationDate
+        self.isrc = item.isrc
+        self.id = item.id
+        self.appleMusicURL = item.appleMusicURL
+        self.appleMusicID = item.appleMusicID
+        self.webURL = item.webURL
+        self.shazamID = item.shazamID
     }
 }
 
