@@ -59,7 +59,7 @@ jobs:
       - name: Download current song mapping
         run: wget "https://kashi.greatdori.com/MappedSongs.plist"
       - name: Reflect
-        run: ./GreatLyrics.app/Contents/MacOS/GreatLyrics --reflect --input ./MappedSongs.plist --output ./NewMappedSongs.plist
+        run: ./build/Build/Products/Release/GreatLyrics.app/Contents/MacOS/GreatLyrics --reflect --input ./MappedSongs.plist --output ./NewMappedSongs.plist
       - name: Upload old mapping
         uses: actions/upload-artifact@v4.6.2
         with:
