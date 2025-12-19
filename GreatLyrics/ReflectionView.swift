@@ -29,6 +29,7 @@ struct ReflectionView: View {
     @State private var isBatchResultImporterPresented = false
     @State private var isBatchResultExporterPresented = false
     @State private var batchListSearchText = ""
+    @State private var isBatchExportVisible = true
     var body: some View {
         Form {
             Section {
@@ -56,58 +57,69 @@ struct ReflectionView: View {
                 Text("Single")
             }
             Section {
-                HStack {
-                    Group {
-                        Button {
-                            Task {
-                                isGettingBatchResult = true
-                                var exceptions = batchMatchResults
-                                if batchRetryFailedItem {
-                                    exceptions = exceptions.filter {
-                                        if case .none = $0.value {
-                                            false
-                                        } else { true }
-                                    }
-                                }
-                                await matchAllMediaItems(except: Array(exceptions.keys)) { song, result in
-                                    DispatchQueue.main.async {
-                                        if let existingSong = batchMatchResults.keys.first(where: { $0.id == song.id }) {
-                                            batchMatchResults.updateValue(.init(result), forKey: existingSong)
-                                        } else {
-                                            batchMatchResults.updateValue(.init(result), forKey: song)
+                LazyVStack(alignment: .leading) {
+                    HStack {
+                        Group {
+                            Button {
+                                Task {
+                                    isGettingBatchResult = true
+                                    var exceptions = batchMatchResults
+                                    if batchRetryFailedItem {
+                                        exceptions = exceptions.filter {
+                                            if case .none = $0.value {
+                                                false
+                                            } else { true }
                                         }
                                     }
+                                    await matchAllMediaItems(except: Array(exceptions.keys)) { song, result in
+                                        DispatchQueue.main.async {
+                                            if let existingSong = batchMatchResults.keys.first(where: { $0.id == song.id }) {
+                                                batchMatchResults.updateValue(.init(result), forKey: existingSong)
+                                            } else {
+                                                batchMatchResults.updateValue(.init(result), forKey: song)
+                                            }
+                                        }
+                                    }
+                                    isGettingBatchResult = false
                                 }
-                                isGettingBatchResult = false
+                            } label: {
+                                HStack {
+                                    Text("Get All")
+                                    if isGettingBatchResult {
+                                        ProgressView()
+                                            .controlSize(.small)
+                                    }
+                                }
                             }
-                        } label: {
-                            HStack {
-                                Text("Get All")
-                                if isGettingBatchResult {
-                                    ProgressView()
-                                        .controlSize(.small)
-                                }
+                            Toggle("Retry Failed Items", isOn: $batchRetryFailedItem)
+                                .toggleStyle(.checkbox)
+                        }
+                        .disabled(isGettingBatchResult)
+                        Spacer()
+                        Button("Import...") {
+                            isBatchResultImporterPresented = true
+                        }
+                        Button("Export...") {
+                            let encoder = PropertyListEncoder()
+                            if let data = try? encoder.encode(batchMatchResults) {
+                                batchResultFile = .init(data)
+                                isBatchResultExporterPresented = true
                             }
                         }
-                        Toggle("Retry Failed Items", isOn: $batchRetryFailedItem)
-                            .toggleStyle(.checkbox)
-                    }
-                    .disabled(isGettingBatchResult)
-                    Spacer()
-                    Button("Import...") {
-                        isBatchResultImporterPresented = true
-                    }
-                    Button("Export...") {
-                        let encoder = PropertyListEncoder()
-                        if let data = try? encoder.encode(batchMatchResults) {
-                            batchResultFile = .init(data)
-                            isBatchResultExporterPresented = true
+                        .onAppear {
+                            withAnimation {
+                                isBatchExportVisible = true
+                            }
                         }
+                        .onDisappear {
+                            withAnimation {
+                                isBatchExportVisible = false
+                            }
+                        }
+                        Text("\(batchMatchResults.count) / \(totalSongCount)")
                     }
-                    Text("\(batchMatchResults.count) / \(totalSongCount)")
-                }
-                if !batchMatchResults.isEmpty {
-                    LazyVStack(alignment: .leading) {
+                    if !batchMatchResults.isEmpty {
+                        Divider()
                         ForEach(
                             Array(batchMatchResults.keys)
                                 .search(for: batchListSearchText)
@@ -127,6 +139,19 @@ struct ReflectionView: View {
         .formStyle(.grouped)
         .searchable(text: $batchListSearchText, prompt: "Search in Batch Result...")
         .navigationSubtitle("Reflection")
+        .toolbar {
+            ToolbarItem {
+                if !isBatchExportVisible {
+                    Button("Export...", systemImage: "square.and.arrow.up") {
+                        let encoder = PropertyListEncoder()
+                        if let data = try? encoder.encode(batchMatchResults) {
+                            batchResultFile = .init(data)
+                            isBatchResultExporterPresented = true
+                        }
+                    }
+                }
+            }
+        }
         .onAppear {
             Task {
                 if let count = await Song.all()?.count {
@@ -169,7 +194,7 @@ private struct SongReflectionResultsView: View {
     
     @State private var isEditing = false
     @State private var saveFlag = false
-    @State private var reReflectionStart = 0.0
+    @State private var reReflectionStart = 30.0
     @State private var isReReflecting = false
     
     var body: some View {
@@ -236,6 +261,8 @@ private struct SongReflectionResultsView: View {
             }
             HStack {
                 Text(PreCache.current.bands.first { $0.id == song.bandID }?.bandName.forPreferredLocale() ?? "[No Band]")
+                    .foregroundStyle(.gray)
+                    .padding(.top, -10)
                 Spacer()
                 if case .some = results[song]!, isEditing {
                     Button {
@@ -445,7 +472,7 @@ private struct MediaItemPreview: View {
 
 private func matchMediaItems(
     for id: Int,
-    sliceFrom sliceInterval: TimeInterval = 1
+    sliceFrom sliceInterval: TimeInterval = 30
 ) async throws -> [SHMatchedMediaItem] {
     guard let song = await Song(id: id) else {
         throw CocoaError(.fileReadUnknown)
