@@ -90,22 +90,22 @@ struct StoryViewerView: View {
                                     Text("Story-viewer.story")
                                         .bold()
                                 }, value: {
-//                                    let availableBandStories: [_DoriAPI.Misc.BandStory] =
-                                    Picker(selection: $selectedBandStory, content: {
+                                    Picker(selection: $selectedBandStory) {
                                         ForEach(allBandStories.filter({ $0.bandID == selectedBand?.id }).sorted { $0.chapterNumber < $1.chapterNumber }, id: \.self) { item in
                                             Text(verbatim: "\(item.mainTitle.forLocale(locale) ?? "")\(getLocalizedColon(forLocale: locale))\(item.subTitle.forLocale(locale) ?? "")")
                                                 .tag(item)
                                         }
-                                    }, label: {
+                                    } label: {
                                         EmptyView()
-                                    }, optionalCurrentValueLabel: {
+                                    } optionalCurrentValueLabel: {
                                         if let item = selectedBandStory {
                                             Text(verbatim: "\(item.mainTitle.forLocale(locale) ?? "")\(getLocalizedColon(forLocale: locale))\(item.subTitle.forLocale(locale) ?? "")")
                                         } else {
                                             Text("Story-viewer.story.select")
                                         }
-                                    })
+                                    }
                                     .labelsHidden()
+                                    .id(allBandStories)
                                 })
                                 Divider()
                             case .card:
@@ -251,7 +251,7 @@ struct StoryViewerView: View {
             if allBandStories.isEmpty {
                 DoriCache.withCache(id: "BandStories") {
                     await _DoriAPI.Misc.bandStories()
-                } .onUpdate {
+                }.onUpdate {
                     if let bands = $0 {
                         self.allBandStories = bands
                         displayingStories = selectedBandStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
