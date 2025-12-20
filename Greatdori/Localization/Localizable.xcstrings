@@ -4866,6 +4866,12 @@
             "value" : "Event Tracker"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "イベントトラッカー"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4886,6 +4892,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Current Cutoff"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新ボーダー"
           }
         },
         "zh-Hans" : {
@@ -4910,6 +4922,12 @@
             "value" : "Data"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "データ"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4932,6 +4950,12 @@
             "value" : "Date"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日付"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4949,6 +4973,12 @@
     "Event-tracker.ep" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EP"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "EP"
@@ -4974,6 +5004,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Event"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "イベント"
           }
         },
         "zh-Hans" : {
@@ -5020,6 +5056,12 @@
             "value" : "Last Update"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新時間"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5042,6 +5084,12 @@
             "value" : "%@ ago"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@前"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5062,6 +5110,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Latest Cutoff"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新ボーダー"
           }
         },
         "zh-Hans" : {
@@ -5108,6 +5162,12 @@
             "value" : "Latest Prediction"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新予測"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5128,6 +5188,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Server"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サーバー"
           }
         },
         "zh-Hans" : {
@@ -5152,6 +5218,12 @@
             "value" : "Name"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5169,6 +5241,12 @@
     "Event-tracker.point" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Point"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Point"
@@ -5196,6 +5274,12 @@
             "value" : "Predicted Cutoff"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボーダー予測"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5213,6 +5297,12 @@
     "Event-tracker.score.%lld" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Pts"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld Pts"
@@ -5238,6 +5328,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Status"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ステータス"
           }
         },
         "zh-Hans" : {
@@ -5284,6 +5380,12 @@
             "value" : "%lld%% Completed"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "進行率%lld%%"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5304,6 +5406,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ends in %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終了まで%@"
           }
         },
         "zh-Hans" : {
@@ -5348,6 +5456,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tier"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ランキング"
           }
         },
         "zh-Hans" : {
@@ -6464,6 +6578,12 @@
             "value" : "Filter"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィルター"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6508,6 +6628,12 @@
             "value" : "All Selected"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてを選択"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6531,6 +6657,12 @@
             "value" : "All"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべて"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6551,6 +6683,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Any Selected"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任意の選択"
           }
         },
         "zh-Hans" : {
@@ -6576,6 +6714,12 @@
             "value" : "Any"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任意"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6596,6 +6740,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Any"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自由"
           }
         },
         "zh-Hans" : {
@@ -8497,10 +8647,24 @@
       }
     },
     "JP" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JP"
+          }
+        }
+      }
     },
     "KR" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "KR"
+          }
+        }
+      }
     },
     "Live2d-viewer" : {
       "comment" : "The title of the Live2d-viewer view.",
@@ -8510,6 +8674,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Live2D Viewer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live2Dビューアー"
           }
         },
         "zh-Hans" : {
@@ -8536,6 +8706,12 @@
             "value" : "Card"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8560,6 +8736,12 @@
             "value" : "Character"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャラ"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8582,6 +8764,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Costume"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衣装"
           }
         },
         "zh-Hans" : {
@@ -8632,6 +8820,12 @@
             "value" : "Card"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8656,6 +8850,12 @@
             "value" : "Costume"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衣装"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8678,6 +8878,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seasonal Costume"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期間衣装"
           }
         },
         "zh-Hans" : {
@@ -8752,6 +8958,12 @@
             "value" : "Blink"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "瞬き"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8774,6 +8986,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Breathe"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "息吹"
           }
         },
         "zh-Hans" : {
@@ -8800,6 +9018,12 @@
             "value" : "Expression"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表現"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8822,6 +9046,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "(none)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(なし)"
           }
         },
         "zh-Hans" : {
@@ -8872,6 +9102,12 @@
             "value" : "Motion"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "動作"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8896,6 +9132,12 @@
             "value" : "(none)"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(なし)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8918,6 +9160,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sway"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "振動"
           }
         },
         "zh-Hans" : {
@@ -9244,6 +9492,12 @@
             "value" : "Miracle Tickets"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミラクルチケット"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9266,6 +9520,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Close Date"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "閉じる時間"
           }
         },
         "zh-Hans" : {
@@ -9339,6 +9599,12 @@
             "value" : "Release Date"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リリース時間"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9361,6 +9627,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ticket"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チケット"
           }
         },
         "zh-Hans" : {
@@ -9409,6 +9681,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Title"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タイトル"
           }
         },
         "zh-Hans" : {
