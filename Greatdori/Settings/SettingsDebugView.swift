@@ -79,21 +79,6 @@ struct SettingsDebugView: View {
                     Text(verbatim: "DebugStorageView")
                 })
                 Button(role: .destructive, action: {
-                    DoriCache.invalidateAll()
-                }, label: {
-                    Text("Settings.debug.clear-cache")
-                })
-                Button(role: .destructive, action: {
-                    DoriCache.invalidateAll()
-                    if let contents = try? FileManager.default.contentsOfDirectory(atPath: NSHomeDirectory() + "/tmp") {
-                        for content in contents {
-                            try? FileManager.default.removeItem(atPath: NSHomeDirectory() + "/tmp/\(content)")
-                        }
-                    }
-                }, label: {
-                    Text("Settings.debug.clear-all-local-cache")
-                })
-                Button(role: .destructive, action: {
                     
                 }, label: {
                     Text("Settings.debug.clean-chart-asset")

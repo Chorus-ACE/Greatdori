@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import DoriKit
 import SwiftUI
 import SDWebImageSwiftUI
 
@@ -48,6 +49,7 @@ struct SettingsAdvancedView: View {
         SettingsAdvancedBannersSection(isInLowPowerMode: $isInLowPowerMode, thermalState: $thermalState)
         SettingsAdvancedImageSection(disablePowerConsumingFeatures: isInLowPowerMode || thermalState == .critical)
         SettingsAdvancedUISection()
+        SettingsAdvancedStorageSection()
     }
 }
 
@@ -139,6 +141,57 @@ struct SettingsAdvancedUISection: View {
         } header: {
             Text("Settings.advanced.ui")
         }
+    }
+}
+
+struct SettingsAdvancedStorageSection: View {
+    @State private var cacheSize = ""
+    @State private var isClearCacheAlertPresented = false
+    var body: some View {
+        Section {
+            Button(action: {
+                isClearCacheAlertPresented = true
+            }, label: {
+                HStack {
+                    Text("Settings.advanced.storage.clear-cache")
+                    Spacer()
+                    Text(cacheSize)
+                        .foregroundStyle(.secondary)
+                }
+            })
+            .buttonStyle(.plain)
+            .alert("Settings.advanced.storage.clear-cache.alert.title", isPresented: $isClearCacheAlertPresented) {
+                Button("Settings.advanced.storage.clear-cache.alert.action.clear-metadata") {
+                    DoriCache.invalidateAll()
+                    updateCacheSize()
+                }
+                Button("Settings.advanced.storage.clear-cache.alert.action.clear-other") {
+                    if let contents = try? FileManager.default.contentsOfDirectory(atPath: NSTemporaryDirectory()) {
+                        for content in contents {
+                            try? FileManager.default.removeItem(atPath: NSTemporaryDirectory() + "/\(content)")
+                        }
+                    }
+                    updateCacheSize()
+                }
+                Button("Settings.advanced.storage.clear-cache.alert.action.cancel", role: .cancel) {}
+            } message: {
+                Text("Settings.advanced.storage.clear-cache.alert.description")
+            }
+            .onAppear {
+                updateCacheSize()
+            }
+        } header: {
+            Text("Settings.advanced.storage")
+        }
+    }
+    
+    func updateCacheSize() {
+        let metaCacheSize = URL(
+            filePath: NSHomeDirectory() + "/Library/Caches/"
+        ).directorySize(including: /DoriKit_.+\.cache/)
+        let otherCacheSize = URL(filePath: NSTemporaryDirectory()).directorySize()
+        let totalCacheSize = metaCacheSize + otherCacheSize
+        cacheSize = ByteCountFormatter().string(fromByteCount: totalCacheSize)
     }
 }
 

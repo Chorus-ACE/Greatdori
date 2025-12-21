@@ -396,6 +396,34 @@ extension Picker {
     }
 }
 
+extension URL {
+    func directorySize(including fileMatch: some RegexComponent = /.+/) -> Int64 {
+        guard let contents = try? FileManager.default.contentsOfDirectory(
+            at: self,
+            includingPropertiesForKeys: [.fileSizeKey, .isDirectoryKey]
+        ) else { return 0 }
+        
+        var size: Int64 = 0
+        for url in contents {
+            guard let isDirectoryResourceValue = try? url.resourceValues(
+                forKeys: [.isDirectoryKey]
+            ) else { continue }
+            
+            if isDirectoryResourceValue.isDirectory == true {
+                size += url.directorySize()
+            } else {
+                guard let fileSizeResourceValue = try? url.resourceValues(
+                    forKeys: [.fileSizeKey]
+                ) else { continue }
+                if url.lastPathComponent.contains(fileMatch) {
+                    size += Int64(fileSizeResourceValue.fileSize ?? 0)
+                }
+            }
+        }
+        return size
+    }
+}
+
 // MARK: View
 public extension View {
     // MARK: hidden
