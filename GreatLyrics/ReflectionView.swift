@@ -205,7 +205,36 @@ private struct SongReflectionResultsView: View {
                 Text(verbatim: "#\(song.id)")
                     .foregroundStyle(.gray)
                 Spacer()
-                if case .some = results[song]! {
+                if case .some(let items) = results[song]! {
+                    if let firstItem = items.first {
+                        if firstItem.appleMusicURL == nil {
+                            BlockMark(
+                                character: "A",
+                                color: .yellow,
+                                description: "Missing Apple Music URL"
+                            )
+                            if firstItem.shazamID == nil {
+                                BlockMark(
+                                    character: "S",
+                                    color: .red,
+                                    description: "Missing Shazam ID"
+                                )
+                            }
+                        }
+                        if firstItem.artworkURL == nil {
+                            BlockMark(
+                                character: "C",
+                                color: .red,
+                                description: "Missing artwork"
+                            )
+                        }
+                    } else {
+                        BlockMark(
+                            character: "E",
+                            color: .red,
+                            description: "Missing result"
+                        )
+                    }
                     if !isEditing {
                         Button("Edit") {
                             isEditing = true
@@ -467,6 +496,23 @@ private struct MediaItemPreview: View {
                 .buttonStyle(.borderless)
             }
         }
+    }
+}
+
+private struct BlockMark: View {
+    var character: Swift.Character
+    var color: Color
+    var description: LocalizedStringResource
+    var body: some View {
+        RoundedRectangle(cornerRadius: 5)
+            .fill(color)
+            .frame(width: 20, height: 20)
+            .overlay {
+                Text(character.uppercased())
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white)
+            }
+            .help(description)
     }
 }
 
