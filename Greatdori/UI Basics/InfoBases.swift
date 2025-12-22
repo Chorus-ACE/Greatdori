@@ -575,7 +575,7 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
         showLocalePicker: Bool = false,
         @ViewBuilder eachContent: @escaping (Element) -> Content
     ) {
-        self.localizedElements = .init(forEveryLocale: elements)
+        self.localizedElements = .init(repeating: elements)
         self.showLocalePicker = showLocalePicker
         self.makeEachContent = eachContent
     }

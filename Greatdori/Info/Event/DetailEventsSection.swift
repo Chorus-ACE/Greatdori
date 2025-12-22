@@ -24,14 +24,14 @@ struct DetailsEventsSection: View {
     var sources: LocalizedData<Set<ExtendedCard.Source>>?
     var applyLocaleFilter: Bool = false
     @State var locale: DoriLocale = DoriLocale.primaryLocale
-    @State var eventsFromList = LocalizedData<[PreviewEvent]>(forEveryLocale: nil)
-    @State var eventsFromSources = LocalizedData<[PreviewEvent]>(forEveryLocale: nil)
+    @State var eventsFromList = LocalizedData<[PreviewEvent]>(repeating: nil)
+    @State var eventsFromSources = LocalizedData<[PreviewEvent]>(repeating: nil)
     @State var pointsDict: [PreviewEvent: Int] = [:]
     @State var showAll = false
     @State var sourcePreference: Int
     
     init(events: [PreviewEvent], applyLocaleFilter: Bool = false) {
-        self.events = .init(forEveryLocale: events)
+        self.events = .init(repeating: events)
         self.event = nil
         self.sources = nil
         self.applyLocaleFilter = applyLocaleFilter
@@ -89,8 +89,8 @@ struct DetailsEventsSection: View {
     }
     
     func handleEvents() {
-        eventsFromList = .init(forEveryLocale: nil)
-        eventsFromSources = .init(forEveryLocale: nil)
+        eventsFromList = .init(repeating: nil)
+        eventsFromSources = .init(repeating: nil)
         pointsDict = [:]
         
         if sourcePreference == 0 {
@@ -100,7 +100,7 @@ struct DetailsEventsSection: View {
                 }
             }
         } else {
-            var eventsFromSources = LocalizedData<[PreviewEvent]>(forEveryLocale: nil)
+            var eventsFromSources = LocalizedData<[PreviewEvent]>(repeating: nil)
             if let sources {
                 for locale in DoriLocale.allCases {
                     var localeEvents: [PreviewEvent] = []

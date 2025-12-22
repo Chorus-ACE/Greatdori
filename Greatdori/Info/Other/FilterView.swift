@@ -121,6 +121,8 @@ struct FilterItemView: View {
                                     filter[key] = Set(allCases)
                                     if key == .band && allKeys.contains(.bandMatchesOthers) {
                                         filter.bandMatchesOthers = .includeOthers
+                                    } else if key == .character && allKeys.contains(.characterMatchesOthers) {
+                                        filter.characterMatchesOthers = .includeOthers
                                     }
                                 } else {
                                     if var filterSet = filter[key] as? Set<AnyHashable> {
@@ -128,6 +130,8 @@ struct FilterItemView: View {
                                         filter[key] = filterSet
                                         if key == .band && allKeys.contains(.bandMatchesOthers) {
                                             filter.bandMatchesOthers = .excludeOthers
+                                        } else if key == .character && allKeys.contains(.characterMatchesOthers) {
+                                            filter.characterMatchesOthers = .excludeOthers
                                         }
                                     }
                                 }
@@ -137,8 +141,10 @@ struct FilterItemView: View {
                         Group {
                             let allCases = key.selector.items.map { $0.item.value }
                             if let filterSet = filter[key] as? Set<AnyHashable> {
-                                if key == .band && allKeys.contains(.bandMatchesOthers) {
-                                    let selectionStatus = (filterSet.count == allCases.count && filter.bandMatchesOthers == .includeOthers) ? true : (filterSet.count == 0 && filter.bandMatchesOthers == .excludeOthers ? false : nil)
+                                if key == .band && allKeys.contains(.bandMatchesOthers) || key == .character && allKeys.contains(.characterMatchesOthers) {
+                                    let includeOthers = key == .band ? filter.bandMatchesOthers == .includeOthers : filter.characterMatchesOthers == .includeOthers
+                                    
+                                    let selectionStatus = (filterSet.count == allCases.count && includeOthers) ? true : (filterSet.count == 0 && !includeOthers ? false : nil)
                                     CompactToggle(isLit: selectionStatus)
                                         .accessibilityValue({
                                             if selectionStatus == true {
@@ -190,9 +196,9 @@ struct FilterItemView: View {
                     // `.server` is not expected to use flags in Greatdori!.
                     // MARK: Image Selection
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: filterItemHeight))]/*, spacing: 3*/) {
-                        ForEach((key == .band && allKeys.contains(.bandMatchesOthers)) ? key.selector.items + [_DoriFrontend.Filter.Key.bandMatchesOthers.selector.items.first!] : key.selector.items, id: \.self) { item in
+                        ForEach(key.selector.items + ((key == .band && allKeys.contains(.bandMatchesOthers)) ? [_DoriFrontend.Filter.Key.bandMatchesOthers.selector.items.first!] : []) + ((key == .character && allKeys.contains(.characterMatchesOthers)) ? [_DoriFrontend.Filter.Key.characterMatchesOthers.selector.items.first!] : []), id: \.self) { item in
                             Group {
-                                if item != _DoriFrontend.Filter.Key.bandMatchesOthers.selector.items.first! {
+                                if item != _DoriFrontend.Filter.Key.bandMatchesOthers.selector.items.first! && item != _DoriFrontend.Filter.Key.characterMatchesOthers.selector.items.first! {
                                     Button(action: {
                                         withAnimation(.easeInOut(duration: 0.05)) {
                                             if var filterSet = filter[key] as? Set<AnyHashable> {
@@ -224,10 +230,18 @@ struct FilterItemView: View {
                                 } else {
                                     Button(action: {
                                         withAnimation(.easeInOut(duration: 0.05)) {
-                                            if filter.bandMatchesOthers == .includeOthers {
-                                                filter.bandMatchesOthers = .excludeOthers
+                                            if key == .band {
+                                                if filter.bandMatchesOthers == .includeOthers {
+                                                    filter.bandMatchesOthers = .excludeOthers
+                                                } else {
+                                                    filter.bandMatchesOthers = .includeOthers
+                                                }
                                             } else {
-                                                filter.bandMatchesOthers = .includeOthers
+                                                if filter.characterMatchesOthers == .includeOthers {
+                                                    filter.characterMatchesOthers = .excludeOthers
+                                                } else {
+                                                    filter.characterMatchesOthers = .includeOthers
+                                                }
                                             }
                                         }
                                     }, label: {
@@ -235,7 +249,7 @@ struct FilterItemView: View {
                                             Circle()
                                                 .stroke(Color.accent, lineWidth: 2)
                                                 .frame(width: filterItemHeight, height: filterItemHeight)
-                                                .opacity(filter.bandMatchesOthers == .includeOthers ? 1 : 0)
+                                                .opacity((key == .band ? filter.bandMatchesOthers == .includeOthers : filter.characterMatchesOthers == .includeOthers) ? 1 : 0)
                                             if item.imageURL != nil {
                                                 WebImage(url: item.imageURL)
                                                     .antialiased(true)
@@ -249,7 +263,7 @@ struct FilterItemView: View {
                                         }
                                         .contentShape(Circle())
                                     })
-                                    .wrapIf(filter.bandMatchesOthers == .includeOthers, in: {
+                                    .wrapIf((key == .band ? filter.bandMatchesOthers == .includeOthers : filter.characterMatchesOthers == .includeOthers), in: {
                                         $0.accessibilityValue("Accessibility.filter.activated")
                                     })
                                 }

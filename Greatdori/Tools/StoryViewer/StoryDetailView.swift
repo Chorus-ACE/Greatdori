@@ -71,7 +71,7 @@ struct StoryDetailView: View {
         unsafeSecondaryAssociatedID: String? = nil
     ) {
         self.init(
-            title: .init(forEveryLocale: title),
+            title: .init(repeating: title),
             scenarioID: scenarioID,
             voiceAssetBundleName: voiceAssetBundleName,
             type: type,

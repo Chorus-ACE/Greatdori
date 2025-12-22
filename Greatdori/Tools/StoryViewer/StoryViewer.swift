@@ -16,10 +16,11 @@ import AVKit
 import DoriKit
 import SwiftUI
 import SDWebImageSwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 struct StoryViewerView: View {
     @State var storyType = StoryType.event
-    @State var displayingStories: LocalizedData<[CustomStory]> = LocalizedData<[CustomStory]>(forEveryLocale: [])
+    @State var displayingStories: LocalizedData<[CustomStory]> = LocalizedData<[CustomStory]>(repeating: [])
     @State var informationIsAvailable = true
     @State var locale: DoriLocale = DoriLocale.primaryLocale
     @State var sectionTitle: String = "" // Deprecated?
@@ -28,17 +29,22 @@ struct StoryViewerView: View {
     @State var allMainStories: [_DoriAPI.Story] = []
     @State var allBandStories: [_DoriAPI.Misc.BandStory] = []
     @State var allMainBands: [Band] = DoriCache.preCache.mainBands
+    @State var allConversationAreas: [_DoriAPI.Misc.Area] = []
     
     @State var selectedEvent: PreviewEvent?
     @State var selectedBandStory: _DoriAPI.Misc.BandStory?
     @State var selectedBand: Band? = DoriCache.preCache.mainBands.first
     @State var selectedCard: PreviewCard?
     
+    @State var conversationFilter = DoriFilter()
+    @State var conversationArea: _DoriAPI.Misc.Area? = nil
+    @State var conversationType: _DoriAPI.Misc.ActionSet.ActionSetType? = nil
+    
     var body: some View {
         ScrollView {
             HStack {
                 Spacer(minLength: 0)
-                VStack {
+                LazyVStack {
                     CustomGroupBox(cornerRadius: 20) {
                         VStack {
                             Group {
@@ -61,7 +67,7 @@ struct StoryViewerView: View {
                             switch storyType {
                             case .event:
                                 ListItem(title: {
-                                    Text("Story-viewer.type.event")
+                                    Text("Story-viewer.event")
                                         .bold()
                                 }, value: {
                                     ItemSelectorButton(selection: $selectedEvent)
@@ -110,14 +116,55 @@ struct StoryViewerView: View {
                                 Divider()
                             case .card:
                                 ListItem(title: {
-                                    Text("Story-viewer.type.card")
+                                    Text("Story-viewer.card")
                                         .bold()
                                 }, value: {
                                     ItemSelectorButton(selection: $selectedCard)
                                 })
                                 Divider()
                             case .actionSet:
-                                EmptyView()
+                                ListItem(title: {
+                                    Text("Story-viewer.character")
+                                        .bold()
+                                }, value: {
+                                    MultiCharacterSelectorButton(filter: $conversationFilter, characterMatchesOthers: true)
+                                })
+                                Divider()
+                                
+                                ListItem(title: {
+                                    Text("Story-viewer.area")
+                                        .bold()
+                                }, value: {
+                                    Picker(selection: $conversationArea, content: {
+                                        ForEach([nil] + allConversationAreas, id: \.self) { item in
+                                            Text(verbatim: item?.areaName.forLocale(locale) ?? String(localized: "Story-viewer.area.any"))
+                                                .tag(item)
+                                        }
+                                    }, label: {
+                                        EmptyView()
+                                    })
+                                    .labelsHidden()
+                                    .id(conversationArea)
+                                })
+                                Divider()
+                                
+                                ListItem(title: {
+                                    Text("Story-viewer.type")
+                                        .bold()
+                                }, value: {
+                                    Picker(selection: $conversationType, content: {
+                                        let actionSetTypeLocalizedName: [_DoriAPI.Misc.ActionSet.ActionSetType?: LocalizedStringResource] = [.normal: "Story-viewer.area-conversation.type.normal", .birthday: "Story-viewer.area-conversation.type.birthday", .areaItem: "Story-viewer.area-conversation.type.area-item", .periodLimitedArea: "Story-viewer.area-conversation.type.period-limited-area"]
+                                        ForEach([nil] + (_DoriAPI.Misc.ActionSet.ActionSetType.allCases as [_DoriAPI.Misc.ActionSet.ActionSetType?]), id: \.self) { item in
+                                            Text(actionSetTypeLocalizedName[item] ?? "Story-viewer.type.any")
+                                                .tag(item)
+                                        }
+                                    }, label: {
+                                        EmptyView()
+                                    })
+                                    .labelsHidden()
+                                })
+                                Divider()
+                                
                             case .afterLive:
                                 EmptyView()
                             }
@@ -151,8 +198,8 @@ struct StoryViewerView: View {
                                     StoryCardView(story: item, type: storyType, locale: locale, unsafeAssociatedID: String(selectedBand?.id ?? -1))
                                 case .card:
                                     StoryCardView(story: item, type: storyType, locale: locale, unsafeAssociatedID: selectedCard?.resourceSetName ?? "")
-                                    //                                case .actionSet:
-                                    //                                    <#code#>
+                                case .actionSet:
+                                    StoryCardView(story: item, type: storyType, locale: locale, unsafeAssociatedID: selectedCard?.resourceSetName ?? "")
                                     //                                case .afterLive:
                                     //                                    <#code#>
                                 default:
@@ -197,7 +244,7 @@ struct StoryViewerView: View {
                 await getStories()
             }
         }
-        .onChange(of: locale, storyType, selectedEvent, selectedBand, selectedBandStory, selectedCard) {
+        .onChange(of: locale, storyType, selectedEvent, selectedBand, selectedBandStory, selectedCard, conversationFilter, conversationArea, conversationType) {
             Task {
                 await getStories()
             }
@@ -221,7 +268,7 @@ struct StoryViewerView: View {
                         let eventStory = allEventStories.first {
                             $0.id == (selectedEvent?.id ?? -1)
                         }
-                        displayingStories = eventStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
+                        displayingStories = eventStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(repeating: [])
                     } else {
                         informationIsAvailable = false
                     }
@@ -230,7 +277,7 @@ struct StoryViewerView: View {
                 let eventStory = allEventStories.first {
                     $0.id == (selectedEvent?.id ?? -1)
                 }
-                displayingStories = eventStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
+                displayingStories = eventStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(repeating: [])
             }
         case .main:
             if allMainStories.isEmpty {
@@ -254,13 +301,13 @@ struct StoryViewerView: View {
                 }.onUpdate {
                     if let bands = $0 {
                         self.allBandStories = bands
-                        displayingStories = selectedBandStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
+                        displayingStories = selectedBandStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(repeating: [])
                     } else {
                         informationIsAvailable = false
                     }
                 }
             } else {
-                displayingStories = selectedBandStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(forEveryLocale: [])
+                displayingStories = selectedBandStory?.stories.convertToLocalizedData() ?? LocalizedData<[CustomStory]>(repeating: [])
             }
         case .card:
             if let selectedCard {
@@ -274,8 +321,52 @@ struct StoryViewerView: View {
                     }
                 }
             }
-            //        case .actionSet:
-            //            <#code#>
+        case .actionSet:
+            if allConversationAreas.isEmpty {
+                DoriCache.withCache(id: "AllAreas") {
+                    await _DoriAPI.Misc.areas()
+                }.onUpdate {
+                    if let info = $0 {
+                        allConversationAreas = info
+                    } else {
+                        informationIsAvailable = false
+                    }
+                }
+            }
+            DoriCache.withCache(id: "ActionSet") {
+                await _DoriAPI.Misc.actionSets()
+            } .onUpdate {
+                if let info = $0 {
+                    self.displayingStories = LocalizedData<[CustomStory]>(repeating: info.filter({ convo in
+                        (conversationArea == nil ? true : convo.areaID == conversationArea!.id) && (conversationType == nil ? true : convo.actionSetType == conversationType!)
+                    }).filter({ convo in
+                        if conversationFilter.characterRequiresMatchAll {
+                            return conversationFilter.character.allSatisfy { character in
+                                convo.characterIDs.isEmpty ? conversationFilter.characterMatchesOthers == .includeOthers : convo.characterIDs.contains { $0 == character.rawValue }
+                            }
+                        } else {
+                            guard conversationFilter.character != Set(_DoriFrontend.Filter.Character.allCases) else { return true }
+                            return conversationFilter.character.contains { character in
+                                convo.characterIDs.isEmpty ? conversationFilter.characterMatchesOthers == .includeOthers : convo.characterIDs.contains { $0 == character.rawValue }
+                            }
+                        }
+                    }).map({ convo in
+                        return CustomStory(scenarioID: "\(convo.id)", caption: "#\(convo.id)", title: LocalizedData({ locale in
+                            guard !convo.characterIDs.isEmpty else { return String(localized: "Story-viewer.area-conversation.no-character") }
+                            return convo.characterIDs
+                                .map({ char in DoriCache.preCache.characters.first(where: { $0.id == char }) })
+                                .map({ $0?.characterName.forLocale(locale) ?? $0?.characterName.forPreferredLocale() ?? String(localized: "Character.unknown") })
+                                .joined(separator: "×")
+                        }), synopsis: "GreatdoriAreaConversation!\(convo.characterIDs.map(String.init).joined(separator: ","))", note: "\(convo.)")
+                    }))
+                } else {
+                    informationIsAvailable = false
+                }
+            }
+            
+//            //.map({ convo in
+//            return CustomStory(scenarioID: "\(convo.id)", caption: "", title: LocalizedData(forEveryLocale: ""), synopsis: "", voiceAssetBundleName: nil)
+//        })
             //        case .afterLive:
             //            <#code#>
         default: break
@@ -509,6 +600,7 @@ struct StoryCardView: View {
     var unsafeAssociatedID: String
     var unsafeSecondaryAssociatedID: String?
     var notes: String?
+    var image: URL?
     
     init(story: _DoriAPI.Story, type: StoryType, locale: _DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil, notes: String? = nil) {
         self.scenarioID = story.scenarioID
@@ -522,7 +614,7 @@ struct StoryCardView: View {
         self.unsafeSecondaryAssociatedID = unsafeSecondaryAssociatedID
         self.notes = notes
     }
-    init(story: CustomStory, type: StoryType, locale: _DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil, notes: String? = nil) {
+    init(story: CustomStory, type: StoryType, locale: _DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil, notes: String? = nil, image: URL? = nil) {
         self.scenarioID = story.scenarioID
         self.caption = story.caption
         self.title = story.title
@@ -533,6 +625,7 @@ struct StoryCardView: View {
         self.unsafeAssociatedID = unsafeAssociatedID
         self.unsafeSecondaryAssociatedID = unsafeSecondaryAssociatedID
         self.notes = notes
+        self.image = image
     }
     
     var body: some View {
@@ -550,14 +643,24 @@ struct StoryCardView: View {
             CustomGroupBox(cornerRadius: 20) {
                 HStack {
                     VStack(alignment: .leading) {
-                        if ![CardEpisode.EpisodeType.animation.localizedString,
-                             CardEpisode.EpisodeType.standard.localizedString,
-                             CardEpisode.EpisodeType.memorial.localizedString
-                        ].contains(caption) {
+                        if ![CardEpisode.EpisodeType.animation.localizedString, CardEpisode.EpisodeType.standard.localizedString, CardEpisode.EpisodeType.memorial.localizedString].contains(caption) {
                             Text(verbatim: "\(caption)\(getLocalizedColon(forLocale: locale))\(title.forLocale(locale) ?? "")")
                                 .font(.headline)
-                            Text(synopsis)
-                                .foregroundStyle(.secondary)
+                            if synopsis.hasPrefix("GreatdoriAreaConversation!") {
+                                let characterIDs = synopsis.dropFirst("GreatdoriAreaConversation!".count).components(separatedBy: ",").map({ Int($0) }).filter({ $0 != nil })
+                                HStack {
+                                    ForEach(characterIDs, id: \.self) { item in
+                                        WebImage(url: URL(string: "https://bestdori.com/res/icon/chara_icon_\(item!).png")!)
+                                            .resizable()
+                                            .clipShape(Circle())
+                                            .frame(width: imageButtonSize, height: imageButtonSize)
+                                    }
+                                }
+                            } else {
+                                Text(synopsis)
+                                    .foregroundStyle(.secondary)
+                            }
+//
                             if let notes, sizeClass == .compact {
                                 Text(notes)
                                     .foregroundStyle(.secondary)
@@ -575,6 +678,11 @@ struct StoryCardView: View {
                     if let notes, sizeClass == .regular {
                         Text(notes)
                             .foregroundStyle(.secondary)
+                    }
+                    if let image {
+                        WebImage(url: image)
+                            .resizable()
+                            .scaledToFit()
                     }
                 }
             }
@@ -610,6 +718,7 @@ public struct CustomStory: Sendable, Identifiable, Hashable, DoriCache.Cacheable
     public var title: LocalizedData<String>
     public var synopsis: String
     public var voiceAssetBundleName: String?
+    public var note: String? = nil
     
     public var id: String { scenarioID }
 }
@@ -655,5 +764,64 @@ extension Array<_DoriAPI.Story> {
             }
         }
         return result
+    }
+}
+
+struct MultiCharacterSelectorButton: View {
+    @Binding var filter: DoriFilter
+    var characterMatchesOthers: Bool = false
+    @State private var selectorWindowIsPresented = false
+    var body: some View {
+        Button(action: {
+            selectorWindowIsPresented = true
+        }, label: {
+            HStack {
+                Text(multiCharSelectorLabel(for: filter))
+                    .multilineTextAlignment(.trailing)
+                Image(systemName: "chevron.up.chevron.down")
+                    .bold(isMACOS)
+                    .font(.footnote)
+            }
+        })
+        .padding(.vertical, isMACOS ? 0 : 3)
+        .onDisappear {
+            selectorWindowIsPresented = false
+        }
+        .window(isPresented: $selectorWindowIsPresented) {
+            NavigationStack {
+                FilterView(filter: $filter, includingKeys: Set([.character, .characterRequiresMatchAll] + (characterMatchesOthers ? [.characterMatchesOthers] : [])))
+                    .formStyle(.grouped)
+            }
+            .navigationTitle("Selector.multi-char")
+            #if os(macOS)
+            .introspect(.window, on: .macOS(.v14...)) { window in
+                window.standardWindowButton(.zoomButton)?.isEnabled = false
+                window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
+                window.collectionBehavior = [.fullScreenAuxiliary, .fullScreenNone]
+                window.level = .floating
+            }
+            #endif
+        }
+    }
+    
+    func multiCharSelectorLabel(for filter: DoriFilter) -> LocalizedStringResource {
+        let characters = filter.character.sorted(by: { $0.rawValue < $1.rawValue }) + (filter.characterMatchesOthers == .includeOthers ? [nil] : [])
+        if characters.isEmpty {
+            return "Selector.multi-char.none"
+        } else if characters.count == 1 {
+            return "Selector.multi-char.one.\(filter.character.first?.name ?? String(localized: "Character.other"))"
+        } else if characters.count == 2 {
+            if filter.characterRequiresMatchAll {
+                return "Selector.multi-char.two.and.\(characters[0]?.name ?? String(localized: "Character.other")).\(characters[1]?.name ?? String(localized: "Character.other"))"
+            } else {
+                return "Selector.multi-char.two.or.\(characters[0]?.name ?? String(localized: "Character.other")).\(characters[1]?.name ?? String(localized: "Character.other"))"
+            }
+        } else {
+            if filter.characterRequiresMatchAll {
+                return "Selector.multi-char.mutliple.and.\(characters.count)"
+            } else {
+                return "Selector.multi-char.mutliple.or.\(characters.count)"
+            }
+        }
     }
 }

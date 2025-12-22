@@ -22,8 +22,8 @@ struct DetailsGachasSection: View {
     var gachas: [PreviewGacha]?
     var sources: LocalizedData<Set<ExtendedCard.Source>>?
     var applyLocaleFilter: Bool = false
-    @State var gachasFromList = LocalizedData<[PreviewGacha]>(forEveryLocale: nil)
-    @State var gachasFromSources = LocalizedData<[PreviewGacha]>(forEveryLocale: nil)
+    @State var gachasFromList = LocalizedData<[PreviewGacha]>(repeating: nil)
+    @State var gachasFromSources = LocalizedData<[PreviewGacha]>(repeating: nil)
     @State var probabilityDict: [PreviewGacha: Double] = [:]
     @State var showAll = false
     @State var sourcePreference: Int
@@ -66,8 +66,8 @@ struct DetailsGachasSection: View {
     }
     
     func handleGachas() {
-        gachasFromList = .init(forEveryLocale: nil)
-        gachasFromSources = .init(forEveryLocale: nil)
+        gachasFromList = .init(repeating: nil)
+        gachasFromSources = .init(repeating: nil)
         probabilityDict = [:]
         
         if sourcePreference == 0 {

@@ -323,8 +323,17 @@ extension LocalizedData {
     }
     
     @inline(__always)
-    init(forEveryLocale item: T?) {
-        self.init(jp: item, en: item, tw: item, cn: item, kr: item)
+    init(_ method: (DoriLocale) -> T?) {
+        self.init(jp: method(.jp), en: method(.en), tw: method(.tw), cn: method(.cn), kr: method(.kr))
+    }
+    
+    @inline(__always)
+    init(repeating item: T?, forLocale locales: [DoriLocale] = DoriLocale.allCases) {
+        if locales.count == 5 {
+            self.init(jp: item, en: item, tw: item, cn: item, kr: item)
+        } else {
+            self.init({ locales.contains($0) ? item : nil })
+        }
     }
     
     func allAvailableLocales() -> [DoriLocale] {

@@ -137,7 +137,6 @@ struct SettingsAdvancedUISection: View {
                         .font(.footnote)
                 }
             })
-//            SettingsAdvancedISVABTestView()
         } header: {
             Text("Settings.advanced.ui")
         }
@@ -149,33 +148,38 @@ struct SettingsAdvancedStorageSection: View {
     @State private var isClearCacheAlertPresented = false
     var body: some View {
         Section {
-            Button(action: {
-                isClearCacheAlertPresented = true
-            }, label: {
-                HStack {
+            HStack {
+                VStack(alignment: .leading) {
                     Text("Settings.advanced.storage.clear-cache")
-                    Spacer()
-                    Text(cacheSize)
+                    Text("Settings.advanced.storage.clear-cache.description")
                         .foregroundStyle(.secondary)
+                        .font(.footnote)
                 }
-            })
-            .buttonStyle(.plain)
+                Spacer()
+                Text(cacheSize)
+                    .foregroundStyle(.secondary)
+                Button(role: .destructive, action: {
+                    isClearCacheAlertPresented = true
+                }, label: {
+                    Text("Settings.advanced.storage.clear-cache.clear")
+                })
+            }
             .alert("Settings.advanced.storage.clear-cache.alert.title", isPresented: $isClearCacheAlertPresented) {
-                Button("Settings.advanced.storage.clear-cache.alert.action.clear-metadata") {
-                    DoriCache.invalidateAll()
-                    updateCacheSize()
-                }
-                Button("Settings.advanced.storage.clear-cache.alert.action.clear-other") {
+                Button(role: .destructive, action: {
                     if let contents = try? FileManager.default.contentsOfDirectory(atPath: NSTemporaryDirectory()) {
                         for content in contents {
                             try? FileManager.default.removeItem(atPath: NSTemporaryDirectory() + "/\(content)")
                         }
                     }
+                    DoriCache.invalidateAll()
                     updateCacheSize()
-                }
+                }, label: {
+                    Text("Settings.advanced.storage.clear-cache.alert.action.confirm")
+                })
+                
                 Button("Settings.advanced.storage.clear-cache.alert.action.cancel", role: .cancel) {}
             } message: {
-                Text("Settings.advanced.storage.clear-cache.alert.description")
+                Text("Settings.advanced.storage.clear-cache.alert.message")
             }
             .onAppear {
                 updateCacheSize()
