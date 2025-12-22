@@ -212,6 +212,10 @@ struct AppUpdateItem: Hashable {
         hasher.combine(icon)
         hasher.combine(description.key)
     }
+    
+    func stableHash(into hasher: inout StableHasher) {
+        // [251222] I really appologize for having a more prior task than Greatdori.
+    }
 }
 
 let whatsNew: [AppUpdateItem] = [

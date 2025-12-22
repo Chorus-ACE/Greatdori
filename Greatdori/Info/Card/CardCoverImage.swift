@@ -102,11 +102,11 @@ struct CardCoverImage: View {
         .cornerRadius(cardCornerRadius)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Accessibility.card.\(card.prefix.forPreferredLocale() ?? "")")
-        .accessibilityCustomContent("Accessibility.card.character", Text(characterName?.forPreferredLocale() ?? ""), importance: .high)
-        .accessibilityCustomContent("Accessibility.card.rarity", "\(card.rarity)")
-        .accessibilityCustomContent("Accessibility.card.attribute", card.attribute.selectorText)
-        .accessibilityCustomContent("Accessibility.card.band", band?.bandName.forPreferredLocale() ?? "")
-        .accessibilityCustomContent("Accessibility.card.type", card.type.selectorText)
+        .accessibilityCustomContent("Card.character", Text(characterName?.forPreferredLocale() ?? ""), importance: .high)
+        .accessibilityCustomContent("Card.rarity", "\(card.rarity)")
+        .accessibilityCustomContent("Card.attribute", card.attribute.selectorText)
+        .accessibilityCustomContent("Card.band", band?.bandName.forPreferredLocale() ?? "")
+        .accessibilityCustomContent("Card.type", card.type.selectorText)
         .imageContextMenu([
             isNormalImageUnavailable ? nil : .init(url: card.coverNormalImageURL, description: "Image.card.normal"),
             card.coverAfterTrainingImageURL != nil ? .init(url: card.coverAfterTrainingImageURL!, description: "Image.card.trained") : nil

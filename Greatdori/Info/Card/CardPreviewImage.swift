@@ -219,8 +219,8 @@ struct CardPreviewImage: View {
         })
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Accessibility.card.\(cardTitle.forPreferredLocale() ?? "")")
-        .accessibilityCustomContent("Accessibility.card.character", cardCharacterName?.forPreferredLocale() ?? "", importance: .high)
-        .accessibilityCustomContent("Accessibility.card.rarity", "\(rarity)")
-        .accessibilityCustomContent("Accessibility.card.attribute", attribute.selectorText)
+        .accessibilityCustomContent("Card.character", cardCharacterName?.forPreferredLocale() ?? "", importance: .high)
+        .accessibilityCustomContent("Card.rarity", "\(rarity)")
+        .accessibilityCustomContent("Card.attribute", attribute.selectorText)
     }
 }

@@ -264,11 +264,11 @@ struct NewsPreview: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(getAccessibilityLabel(news))
-        .accessibilityCustomContent("Accessibility.news.release-date", dateFormatter.string(from: news.timestamp), importance: .high)
-        .accessibilityCustomContent("Accessibility.news.type", newsItemTypeLocalizedString[news.type]!)
-        .accessibilityCustomContent("Accessibility.news.type", news.locale?.rawValue.uppercased() ?? "")
-        .accessibilityCustomContent("Accessibility.news.tags", news.tags.joined(separator: ", "))
-        .accessibilityCustomContent("Accessibility.news.author", news.author)
+        .accessibilityCustomContent("News.release-date", dateFormatter.string(from: news.timestamp), importance: .high)
+        .accessibilityCustomContent("News.type", newsItemTypeLocalizedString[news.type]!)
+        .accessibilityCustomContent("News.type", news.locale?.rawValue.uppercased() ?? "")
+        .accessibilityCustomContent("News.tags", news.tags.joined(separator: ", "))
+        .accessibilityCustomContent("News.author", news.author)
     }
     func getDetailsLineString(author: String, tags: [String], separator: String = "  ") -> SwiftUI.Text {
         let tagsCombined = news.tags.map { "#\($0)" }.joined(separator: separator)

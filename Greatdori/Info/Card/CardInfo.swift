@@ -86,10 +86,10 @@ struct CardInfo: View {
             }
             self.cardCharacterName = DoriCache.preCache.characterDetails[previewCard.characterID]?.characterName
         }
-        .accessibilityCustomContent("Accessibility.card.rarity", "\(previewCard.rarity)")
-        .accessibilityCustomContent("Accessibility.card.attribute", previewCard.attribute.selectorText)
-        .accessibilityCustomContent("Accessibility.card.band", band?.bandName.forPreferredLocale() ?? "")
-        .accessibilityCustomContent("Accessibility.card.type", previewCard.type.selectorText)
+        .accessibilityCustomContent("Card.rarity", "\(previewCard.rarity)")
+        .accessibilityCustomContent("Card.attribute", previewCard.attribute.selectorText)
+        .accessibilityCustomContent("Card.band", band?.bandName.forPreferredLocale() ?? "")
+        .accessibilityCustomContent("Card.type", previewCard.type.selectorText)
     }
 }
 

@@ -517,7 +517,7 @@ struct FilterAndSorterPicker: View {
             }
         })
         .animation(.easeInOut(duration: 0.2), value: filterIsFiltering)
-        .accessibilityLabel("Accessibility.filter")
+        .accessibilityLabel("Filter")
         .accessibilityValue(filterIsFiltering ? "Accessibility.filter.active" : "Accessibility.filter.not-active")
         SorterPickerView(sorter: $sorter, allOptions: sorterKeywords, sortingItemsHaveEndingDate: hasEndingDate)
 #endif
