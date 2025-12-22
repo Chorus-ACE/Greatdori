@@ -21,6 +21,26 @@ struct StyleView: View {
     var body: some View {
         Form {
             Section {
+                if let mainStyle = lyrics.mainStyle,
+                   !presetStyles.contains(where: { $0.id == mainStyle.id }) {
+                    HStack {
+                        TextStyleRender(text: "迷い星のうた", style: mainStyle)
+                        Spacer()
+                        Text("Temporary")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.gray)
+                            .padding(2)
+                            .padding(.horizontal, 3)
+                            .background {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .strokeBorder(Color.gray)
+                            }
+                        Button("Move to Presets") {
+                            presetStyles.append(mainStyle)
+                            savePresets()
+                        }
+                    }
+                }
                 if !presetStyles.isEmpty {
                     ForEach(Array(presetStyles.enumerated()), id: \.element.id) { (index, style) in
                         NavigationLink(value: index) {
