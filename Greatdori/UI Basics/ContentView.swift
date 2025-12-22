@@ -181,7 +181,7 @@ struct ContentView: View {
                     showWelcomeScreen = true
                     AppVersion.updateLastVersion()
                 }
-                if AppVersion.appHadUpdated(ignoreBuildNumber: false) ?? false && UserDefaults.standard.integer(forKey: "LastSeenWhatsNewHash") != whatsNew.stableHash || forceDisplayWhatsNewSheet {
+                if AppVersion.appHadUpdated(ignoreBuildNumber: false) ?? false && UserDefaults.standard.integer(forKey: "LastSeenWhatsNewHash") != stableHashOfWhatsNew() || forceDisplayWhatsNewSheet {
                     showWhatsNewSheet = true
                 }
 #if !DORIKIT_ENABLE_PRECACHE

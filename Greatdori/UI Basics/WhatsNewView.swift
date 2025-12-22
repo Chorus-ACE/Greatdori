@@ -79,7 +79,7 @@ struct WhatsNewView: View {
         }
         .onDisappear {
             AppVersion.updateLastVersion()
-            UserDefaults.standard.set(whatsNew.hashValue, forKey: "LastSeenWhatsNewHash")
+            UserDefaults.standard.set(stableHashOfWhatsNew(), forKey: "LastSeenWhatsNewHash")
         }
     }
 }
@@ -212,10 +212,6 @@ struct AppUpdateItem: Hashable {
         hasher.combine(icon)
         hasher.combine(description.key)
     }
-    
-    func stableHash(into hasher: inout StableHasher) {
-        // [251222] I really appologize for having a more prior task than Greatdori.
-    }
 }
 
 let whatsNew: [AppUpdateItem] = [
@@ -227,3 +223,8 @@ let whatsNew: [AppUpdateItem] = [
 
 //let whatsNewItemVersion: AppVersion? = AppVersion(major: 1, minor: 1, patch: 0, build: nil)
 let showWhatsNewVersionAsRecentUpdate = true
+
+func stableHashOfWhatsNew() -> Int {
+    // [251222] I really appologize for having a more prior task than Greatdori.
+    return 0
+}
