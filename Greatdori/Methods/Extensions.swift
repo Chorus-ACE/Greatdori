@@ -317,25 +317,6 @@ extension Int?: @retroactive Identifiable {
 
 // MARK: LocalizedData
 extension LocalizedData {
-    @inline(__always)
-    init(jp: T? = nil, en: T? = nil, tw: T? = nil, cn: T? = nil, kr: T? = nil) {
-        self.init(_jp: jp, en: en, tw: tw, cn: cn, kr: kr)
-    }
-    
-    @inline(__always)
-    init(_ method: (DoriLocale) -> T?) {
-        self.init(jp: method(.jp), en: method(.en), tw: method(.tw), cn: method(.cn), kr: method(.kr))
-    }
-    
-    @inline(__always)
-    init(repeating item: T?, forLocale locales: [DoriLocale] = DoriLocale.allCases) {
-        if locales.count == 5 {
-            self.init(jp: item, en: item, tw: item, cn: item, kr: item)
-        } else {
-            self.init({ locales.contains($0) ? item : nil })
-        }
-    }
-    
     func allAvailableLocales() -> [DoriLocale] {
         var result: [DoriLocale] = []
         for locale in DoriLocale.allCases {

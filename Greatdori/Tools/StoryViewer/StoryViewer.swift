@@ -351,7 +351,7 @@ struct StoryViewerView: View {
                             }
                         }
                     }).map({ convo in
-                        return CustomStory(scenarioID: "\(convo.id)", caption: "#\(convo.id)", title: LocalizedData({ locale in
+                        return CustomStory(scenarioID: "\(convo.id)", caption: "#\(convo.id)", title: LocalizedData(builder: { locale in
                             guard !convo.characterIDs.isEmpty else { return String(localized: "Story-viewer.area-conversation.no-character") }
                             return convo.characterIDs
                                 .map({ char in DoriCache.preCache.characters.first(where: { $0.id == char }) })
