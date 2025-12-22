@@ -357,7 +357,7 @@ struct StoryViewerView: View {
                                 .map({ char in DoriCache.preCache.characters.first(where: { $0.id == char }) })
                                 .map({ $0?.characterName.forLocale(locale) ?? $0?.characterName.forPreferredLocale() ?? String(localized: "Character.unknown") })
                                 .joined(separator: "×")
-                        }), synopsis: "GreatdoriAreaConversation!\(convo.characterIDs.map(String.init).joined(separator: ","))", note: "\(convo.)")
+                        }), synopsis: "GreatdoriAreaConversation!\(convo.characterIDs.map(String.init).joined(separator: ","))", note: "\(convo.areaID),\(convo.actionSetType.rawValue)")
                     }))
                 } else {
                     informationIsAvailable = false
