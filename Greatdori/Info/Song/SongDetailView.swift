@@ -21,6 +21,7 @@ struct SongDetailView: View {
     var id: Int
     var allSongs: [PreviewSong]? = nil
     @State var songMatches: [Int: _DoriFrontend.Songs._SongMatchResult]?
+    @State private var lyrics: _DoriFrontend.Songs.Lyrics?
     var body: some View {
         DetailViewBase(previewList: allSongs, initialID: id) { information in
             SongDetailOverviewView(information: information.song)
@@ -28,6 +29,9 @@ struct SongDetailView: View {
             SongDetailMusicMovieView(musicVideos: information.song.musicVideos)
             DetailsEventsSection(events: information.events, applyLocaleFilter: true)
             SongDetailMatchView(song: information.song, songMatches: $songMatches)
+            if #available(iOS 26.0, macOS 26.0, *), let lyrics {
+                SongDetailLyricsView(lyrics: lyrics)
+            }
             DetailArtsSection {
                 ArtsTab("Song.arts.cover", ratio: 1) {
                     for locale in DoriLocale.allCases {
@@ -43,12 +47,18 @@ struct SongDetailView: View {
         } switcherDestination: {
             SongSearchView()
         }
+        .id(lyrics?.hashValue ?? id)
         .onAppear {
-            Task {
-                DoriCache.withCache(id: "_DoriFrontend.Songs._allMatches", trait: .invocationElidable) {
-                    await _DoriFrontend.Songs._allMatches()
-                }.onUpdate {
-                    self.songMatches = $0
+            DoriCache.withCache(id: "_DoriFrontend.Songs._allMatches", trait: .realTime) {
+                await _DoriFrontend.Songs._allMatches()
+            }.onUpdate {
+                self.songMatches = $0
+            }
+            if #available(iOS 26.0, macOS 26.0, *) {
+                DoriCache.withCache(id: "SongAttributedLyrics_\(id)") {
+                    await _DoriFrontend.Songs._lyrics(of: id)
+                }.onUpdate { lyrics in
+                    self.lyrics = lyrics
                 }
             }
         }

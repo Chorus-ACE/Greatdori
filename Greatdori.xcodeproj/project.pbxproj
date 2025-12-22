@@ -112,6 +112,7 @@
 		8C7B2D7E2E7B9EAF00EE0C89 /* NewsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7B2D7D2E7B9EA900EE0C89 /* NewsListView.swift */; };
 		8C7B2D832E7C3A3A00EE0C89 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7B2D822E7C3A3500EE0C89 /* Network.swift */; };
 		8C7B2D852E7C3D0E00EE0C89 /* ImagePrefetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7B2D842E7C3D0400EE0C89 /* ImagePrefetch.swift */; };
+		8C7C32522EF9312F00CFAE61 /* SongDetailLyricsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7C32512EF9312800CFAE61 /* SongDetailLyricsView.swift */; };
 		8C889D9C2EA1258D00FBF01D /* CommunityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C889D9B2EA1258700FBF01D /* CommunityView.swift */; };
 		8C889DE42EA22C9700FBF01D /* StoryViewerAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C889DE32EA22C9700FBF01D /* StoryViewerAssets.xcassets */; };
 		8C889DE62EA2367900FBF01D /* StoryViewer.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8C889DE52EA2366200FBF01D /* StoryViewer.metal */; };
@@ -603,6 +604,7 @@
 		8C7B2D7D2E7B9EA900EE0C89 /* NewsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsListView.swift; sourceTree = "<group>"; };
 		8C7B2D822E7C3A3500EE0C89 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		8C7B2D842E7C3D0400EE0C89 /* ImagePrefetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePrefetch.swift; sourceTree = "<group>"; };
+		8C7C32512EF9312800CFAE61 /* SongDetailLyricsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailLyricsView.swift; sourceTree = "<group>"; };
 		8C7F6B8E2E5921990040C206 /* libgssapi_krb5.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libgssapi_krb5.tbd; path = usr/lib/libgssapi_krb5.tbd; sourceTree = SDKROOT; };
 		8C7F6B902E5921BB0040C206 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		8C7F6B922E5922070040C206 /* GSS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GSS.framework; path = System/Library/Frameworks/GSS.framework; sourceTree = SDKROOT; };
@@ -1374,9 +1376,10 @@
 				E94219092E8AA4AE00F24974 /* SongSearchView.swift */,
 				E942190B2E8AA4C200F24974 /* SongDetailView.swift */,
 				E930F7A32EE048AE00E8847F /* SongDetailOverviewView.swift */,
-				8CEA20C42EAB62DA009D41C5 /* SongDetailMatchView.swift */,
 				E942190D2E8AA4D200F24974 /* SongDetailGameplayView.swift */,
 				E9DA971D2ED97FA70047B464 /* SongDetailMusicMovieView.swift */,
+				8CEA20C42EAB62DA009D41C5 /* SongDetailMatchView.swift */,
+				8C7C32512EF9312800CFAE61 /* SongDetailLyricsView.swift */,
 				E94219142E8AA55200F24974 /* SongDifficultyIndicators.swift */,
 				E94219212E8AA65100F24974 /* DetailSongsSection.swift */,
 				8CD28FF12E9F6D5400831458 /* SongSelector.swift */,
@@ -2022,6 +2025,7 @@
 				8C2BD6462E92503D00D003D1 /* EventSelector.swift in Sources */,
 				E9CD3A4A2E58984400BF5EA9 /* Functions.swift in Sources */,
 				E97888C62E8A79EA00ABD33E /* QuickLook.swift in Sources */,
+				8C7C32522EF9312F00CFAE61 /* SongDetailLyricsView.swift in Sources */,
 				E9DA97202ED981A80047B464 /* DebugPlaygroundView.swift in Sources */,
 				8C0DB86E2EE9B555007674F6 /* EventDetailDegreesView.swift in Sources */,
 				8CF827AB2E8ACE1D0045CA97 /* LoginCampaignSearchView.swift in Sources */,

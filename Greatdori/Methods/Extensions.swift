@@ -512,6 +512,17 @@ public extension View {
             elseContainer(self)
         }
     }
+    @ViewBuilder
+    func wrapIfLet<T>(
+        _ optional: T?,
+        @ViewBuilder in container: (Self, T) -> some View
+    ) -> some View {
+        if let wrapped = optional {
+            container(self, wrapped)
+        } else {
+            self
+        }
+    }
 }
 
 extension URL {
