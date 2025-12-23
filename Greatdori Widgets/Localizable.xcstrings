@@ -400,6 +400,22 @@
         }
       }
     },
+    "Widget.collections.no-internet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Internet Connection"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无互联网连接"
+          }
+        }
+      }
+    },
     "Widget.collections.parameter.name" : {
       "localizations" : {
         "en" : {

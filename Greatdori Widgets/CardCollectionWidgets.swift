@@ -67,7 +67,7 @@ private struct Provider: AppIntentTimelineProvider {
         guard let collection = CardCollectionManager.shared._collection(named: collectionName) else { return .init(frequency: frequency) }
         var generator = seed(for: date, align: align)
         guard let card = collection.cards.randomElement(using: &generator) else { return .init(frequency: frequency) }
-        guard let image = card.file.image else { return .init(frequency: frequency) }
+        guard let image = card.file.image else { return .init(frequency: frequency, emptyReason: 1) }
         return .init(date: date, frequency: frequency, cardID: card.id, image: image)
     }
     
@@ -95,6 +95,7 @@ private struct Provider: AppIntentTimelineProvider {
 private struct CardEntry: TimelineEntry {
     var date: Date = .now
     var frequency: CardCollectionWidgetIntent.ShuffleFrequency = .onTap
+    var emptyReason: UInt8 = 0
     var cardID: Int?
     #if !os(macOS)
     var image: UIImage?
@@ -135,11 +136,27 @@ private struct CardWidgetsEntryView : View {
                 .buttonStyle(.plain)
             }
         } else {
-            Text("Widget.collections.edit-tip")
+            switch entry.emptyReason {
+            case 0x1:
+                HStack {
+                    Spacer()
+                    VStack {
+                        Image(systemName: "network.slash")
+                        Text("Widget.collections.no-internet")
+                    }
+                    Spacer()
+                }
                 .bold()
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .padding()
+            default:
+                Text("Widget.collections.edit-tip")
+                    .bold()
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.secondary)
+                    .padding()
+            }
         }
     }
 }

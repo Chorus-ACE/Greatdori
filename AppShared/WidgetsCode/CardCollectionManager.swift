@@ -138,22 +138,30 @@ final class CardCollectionManager: @unchecked Sendable, ObservableObject {
             
             #if !os(macOS)
             var image: UIImage? {
-                let containerPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.memz233.Greatdori.Widgets")!.path
+//                let containerPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.memz233.Greatdori.Widgets")!.path
                 switch self {
                 case .builtin(let name):
                     return builtinImage(named: name)
                 case .path(let path):
-                    return UIImage(contentsOfFile: containerPath + path)
+                    if let data = try? Data(contentsOf: .init(string: path)!) {
+                        return UIImage(data: data)
+                    } else {
+                        return nil
+                    }
                 }
             }
             #else
             var image: NSImage? {
-                let containerPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.memz233.Greatdori.Widgets")!.path
+//                let containerPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.memz233.Greatdori.Widgets")!.path
                 switch self {
                 case .builtin(let name):
                     return builtinImage(named: name)
                 case .path(let path):
-                    return NSImage(contentsOfFile: containerPath + path)
+                    if let data = try? Data(contentsOf: .init(string: path)!) {
+                        return NSImage(data: data)
+                    } else {
+                        return nil
+                    }
                 }
             }
             #endif
