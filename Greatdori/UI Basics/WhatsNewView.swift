@@ -225,6 +225,13 @@ let whatsNew: [AppUpdateItem] = [
 let showWhatsNewVersionAsRecentUpdate = true
 
 func stableHashOfWhatsNew() -> Int {
-    // [251222] I really appologize for having a more prior task than Greatdori.
-    return 0
+    var hasher = StableHasher(seed: 0x3344aa)
+    // See the conformance to Hashable in Array.swift in stdlib
+    hasher.combine(whatsNew.count) // discriminator
+    for element in whatsNew {
+        hasher.combine(element.title.key)
+        hasher.combine(element.icon)
+        hasher.combine(element.description.key)
+    }
+    return hasher.finalize()
 }

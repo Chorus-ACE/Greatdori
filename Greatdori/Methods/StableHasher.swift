@@ -334,3 +334,16 @@ extension StableHasher._State {
         return _extract()
     }
 }
+
+extension StableHasher {
+    mutating func combine(_ value: Int) {
+        combine(UInt(truncatingIfNeeded: value))
+    }
+    
+    mutating func combine(_ value: String) {
+        var cpy = value
+        cpy.withUTF8 { buffer in
+            unsafe combine(bytes: .init(buffer))
+        }
+    }
+}
