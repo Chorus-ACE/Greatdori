@@ -50,7 +50,8 @@ public struct BuiltinCard: Codable {
 
 public let builtinCardCollectionNames = [
     "BUILTIN_CARD_COLLECTION_GREATDORI",
-    "BUILTIN_CARD_COLLECTION_MYGO"
+    "BUILTIN_CARD_COLLECTION_MYGO",
+    "BUILTIN_CARD_COLLECTION_HIKAWA_TWINS"
 ]
 
 #if !os(macOS)

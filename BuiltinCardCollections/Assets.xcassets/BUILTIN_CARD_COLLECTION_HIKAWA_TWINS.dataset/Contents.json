@@ -1,0 +1,13 @@
+{
+  "data" : [
+    {
+      "filename" : "BUILTIN_CARD_COLLECTION_HIKAWA_TWINS.plist",
+      "idiom" : "universal",
+      "universal-type-identifier" : "com.apple.property-list"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -1475,6 +1475,23 @@
         }
       }
     },
+    "BUILTIN_CARD_COLLECTION_HIKAWA_TWINS" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikawa Twins Collection"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "冰川双子精选集"
+          }
+        }
+      }
+    },
     "BUILTIN_CARD_COLLECTION_MYGO" : {
       "extractionState" : "manual",
       "localizations" : {
