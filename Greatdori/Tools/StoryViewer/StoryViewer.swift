@@ -351,14 +351,24 @@ struct StoryViewerView: View {
             self.displayingStories = LocalizedData<[CustomStory]>(repeating: allActionSets.filter({ convo in
                 (conversationArea == nil ? true : convo.areaID == conversationArea!.id) && (conversationType == nil ? true : convo.actionSetType == conversationType!)
             }).filter({ convo in
+                guard conversationFilter.character != Set(DoriFilter.Character.allCases) else { return true }
                 if conversationFilter.characterRequiresMatchAll {
-                    return conversationFilter.character.allSatisfy { character in
-                        convo.characterIDs.isEmpty ? conversationFilter.characterMatchesOthers == .includeOthers : convo.characterIDs.contains { $0 == character.rawValue }
+                    return convo.characterIDs.allSatisfy { convoCharaID in
+                        if _fastPath(DoriFilter.Character.allCases.contains(where: { $0.rawValue == convoCharaID })) {
+                            conversationFilter.character.contains { character in
+                                character.rawValue == convoCharaID
+                            }
+                        } else {
+                            conversationFilter.characterMatchesOthers == .includeOthers
+                        }
                     }
                 } else {
-                    guard conversationFilter.character != Set(_DoriFrontend.Filter.Character.allCases) else { return true }
-                    return conversationFilter.character.contains { character in
-                        convo.characterIDs.isEmpty ? conversationFilter.characterMatchesOthers == .includeOthers : convo.characterIDs.contains { $0 == character.rawValue }
+                    return convo.characterIDs.contains { convoCharaID in
+                        if _fastPath(DoriFilter.Character.allCases.contains(where: { $0.rawValue == convoCharaID })) {
+                            conversationFilter.character.contains { $0.rawValue == convoCharaID }
+                        } else {
+                            conversationFilter.characterMatchesOthers == .includeOthers
+                        }
                     }
                 }
             }).map({ convo in
