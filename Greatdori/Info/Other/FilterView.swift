@@ -107,9 +107,12 @@ struct FilterItemView: View {
                         .menuIndicator(.hidden)
                         .menuStyle(.borderlessButton)
                         .buttonStyle(.plain)
-                        .onChange(of: characterRequiresMatchAll, {
+                        .onAppear {
+                            characterRequiresMatchAll = filter.characterRequiresMatchAll
+                        }
+                        .onChange(of: characterRequiresMatchAll) {
                             filter.characterRequiresMatchAll = characterRequiresMatchAll
-                        })
+                        }
                         .accessibilityLabel(Text(getAttributedStringForMatchAll(isAllSelected: characterRequiresMatchAll)))
                     }
                     Spacer()

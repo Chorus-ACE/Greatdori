@@ -41,6 +41,8 @@ struct StoryViewerView: View {
     @State var conversationArea: _DoriAPI.Misc.Area? = nil
     @State var conversationType: _DoriAPI.Misc.ActionSet.ActionSetType? = nil
     
+    @State var afterLiveFilter = DoriFilter(characterMatchesOthers: .excludeOthers)
+    
     var body: some View {
         ScrollView {
             HStack {
@@ -62,126 +64,122 @@ struct StoryViewerView: View {
                                     }
                                     .labelsHidden()
                                 })
-                                Divider()
-                            }
-                            
-                            switch storyType {
-                            case .event:
-                                ListItem(title: {
-                                    Text("Story-viewer.event")
-                                        .bold()
-                                }, value: {
-                                    ItemSelectorButton(selection: $selectedEvent)
-                                })
-                                Divider()
-                            case .main:
-                                EmptyView()
-                            case .band:
-                                ListItem(title: {
-                                    Text("Story-viewer.band")
-                                        .bold()
-                                }, value: {
-                                    Picker(selection: $selectedBand, content: {
-                                        ForEach(allMainBands, id: \.self) { item in
-                                            Text(item.bandName.forLocale(locale) ?? "")
-                                                .tag(item)
-                                        }
-                                    }, label: {
-                                        EmptyView()
+                                
+                                switch storyType {
+                                case .event:
+                                    ListItem(title: {
+                                        Text("Story-viewer.event")
+                                            .bold()
+                                    }, value: {
+                                        ItemSelectorButton(selection: $selectedEvent)
                                     })
-                                    .labelsHidden()
-                                })
-                                Divider()
+                                case .main:
+                                    EmptyView()
+                                case .band:
+                                    ListItem(title: {
+                                        Text("Story-viewer.band")
+                                            .bold()
+                                    }, value: {
+                                        Picker(selection: $selectedBand, content: {
+                                            ForEach(allMainBands, id: \.self) { item in
+                                                Text(item.bandName.forLocale(locale) ?? "")
+                                                    .tag(item)
+                                            }
+                                        }, label: {
+                                            EmptyView()
+                                        })
+                                        .labelsHidden()
+                                    })
+                                    ListItem(title: {
+                                        Text("Story-viewer.story")
+                                            .bold()
+                                    }, value: {
+                                        Picker(selection: $selectedBandStory) {
+                                            ForEach(allBandStories.filter({ $0.bandID == selectedBand?.id }).sorted { $0.chapterNumber < $1.chapterNumber }, id: \.self) { item in
+                                                Text(verbatim: "\(item.mainTitle.forLocale(locale) ?? "")\(getLocalizedColon(forLocale: locale))\(item.subTitle.forLocale(locale) ?? "")")
+                                                    .tag(item)
+                                            }
+                                        } label: {
+                                            EmptyView()
+                                        } optionalCurrentValueLabel: {
+                                            if let item = selectedBandStory {
+                                                Text(verbatim: "\(item.mainTitle.forLocale(locale) ?? "")\(getLocalizedColon(forLocale: locale))\(item.subTitle.forLocale(locale) ?? "")")
+                                            } else {
+                                                Text("Story-viewer.story.select")
+                                            }
+                                        }
+                                        .labelsHidden()
+                                        .id(allBandStories)
+                                    })
+                                case .card:
+                                    ListItem(title: {
+                                        Text("Story-viewer.card")
+                                            .bold()
+                                    }, value: {
+                                        ItemSelectorButton(selection: $selectedCard)
+                                    })
+                                case .actionSet:
+                                    ListItem(title: {
+                                        Text("Story-viewer.character")
+                                            .bold()
+                                    }, value: {
+                                        MultiCharacterSelectorButton(filter: $conversationFilter, characterMatchesOthers: true)
+                                    })
+                                    ListItem(title: {
+                                        Text("Story-viewer.area")
+                                            .bold()
+                                    }, value: {
+                                        Picker(selection: $conversationArea, content: {
+                                            ForEach([nil] + allConversationAreas, id: \.self) { item in
+                                                Text(verbatim: item?.areaName.forLocale(locale) ?? String(localized: "Story-viewer.area.any"))
+                                                    .tag(item)
+                                            }
+                                        }, label: {
+                                            EmptyView()
+                                        })
+                                        .labelsHidden()
+                                        .id(conversationArea)
+                                    })
+                                    ListItem(title: {
+                                        Text("Story-viewer.type")
+                                            .bold()
+                                    }, value: {
+                                        Picker(selection: $conversationType, content: {
+                                            ForEach([nil] + (_DoriAPI.Misc.ActionSet.ActionSetType.allCases as [_DoriAPI.Misc.ActionSet.ActionSetType?]), id: \.self) { item in
+                                                Text(item?.localizedString ?? String(localized: "Story-viewer.type.any"))
+                                                    .tag(item)
+                                            }
+                                        }, label: {
+                                            EmptyView()
+                                        })
+                                        .labelsHidden()
+                                    })
+                                case .afterLive:
+                                    ListItem(title: {
+                                        Text("Story-viewer.character")
+                                            .bold()
+                                    }, value: {
+                                        MultiCharacterSelectorButton(filter: $afterLiveFilter)
+                                    })
+                                }
                                 
                                 ListItem(title: {
-                                    Text("Story-viewer.story")
+                                    Text("Story-viewer.locale")
                                         .bold()
                                 }, value: {
-                                    Picker(selection: $selectedBandStory) {
-                                        ForEach(allBandStories.filter({ $0.bandID == selectedBand?.id }).sorted { $0.chapterNumber < $1.chapterNumber }, id: \.self) { item in
-                                            Text(verbatim: "\(item.mainTitle.forLocale(locale) ?? "")\(getLocalizedColon(forLocale: locale))\(item.subTitle.forLocale(locale) ?? "")")
-                                                .tag(item)
+                                    Picker(selection: $locale) {
+                                        ForEach(DoriLocale.allCases, id: \.self) { item in
+                                            Text(item.rawValue.uppercased()).tag(item)
                                         }
                                     } label: {
                                         EmptyView()
-                                    } optionalCurrentValueLabel: {
-                                        if let item = selectedBandStory {
-                                            Text(verbatim: "\(item.mainTitle.forLocale(locale) ?? "")\(getLocalizedColon(forLocale: locale))\(item.subTitle.forLocale(locale) ?? "")")
-                                        } else {
-                                            Text("Story-viewer.story.select")
-                                        }
                                     }
                                     .labelsHidden()
-                                    .id(allBandStories)
                                 })
-                                Divider()
-                            case .card:
-                                ListItem(title: {
-                                    Text("Story-viewer.card")
-                                        .bold()
-                                }, value: {
-                                    ItemSelectorButton(selection: $selectedCard)
-                                })
-                                Divider()
-                            case .actionSet:
-                                ListItem(title: {
-                                    Text("Story-viewer.character")
-                                        .bold()
-                                }, value: {
-                                    MultiCharacterSelectorButton(filter: $conversationFilter, characterMatchesOthers: true)
-                                })
-                                Divider()
-                                
-                                ListItem(title: {
-                                    Text("Story-viewer.area")
-                                        .bold()
-                                }, value: {
-                                    Picker(selection: $conversationArea, content: {
-                                        ForEach([nil] + allConversationAreas, id: \.self) { item in
-                                            Text(verbatim: item?.areaName.forLocale(locale) ?? String(localized: "Story-viewer.area.any"))
-                                                .tag(item)
-                                        }
-                                    }, label: {
-                                        EmptyView()
-                                    })
-                                    .labelsHidden()
-                                    .id(conversationArea)
-                                })
-                                Divider()
-                                
-                                ListItem(title: {
-                                    Text("Story-viewer.type")
-                                        .bold()
-                                }, value: {
-                                    Picker(selection: $conversationType, content: {
-                                        ForEach([nil] + (_DoriAPI.Misc.ActionSet.ActionSetType.allCases as [_DoriAPI.Misc.ActionSet.ActionSetType?]), id: \.self) { item in
-                                            Text(item?.localizedString ?? String(localized: "Story-viewer.type.any"))
-                                                .tag(item)
-                                        }
-                                    }, label: {
-                                        EmptyView()
-                                    })
-                                    .labelsHidden()
-                                })
-                                Divider()
-                                
-                            case .afterLive:
-                                EmptyView()
                             }
-                            
-                            ListItem(title: {
-                                Text("Story-viewer.locale")
-                                    .bold()
-                            }, value: {
-                                Picker(selection: $locale) {
-                                    ForEach(DoriLocale.allCases, id: \.self) { item in
-                                        Text(item.rawValue.uppercased()).tag(item)
-                                    }
-                                } label: {
-                                    EmptyView()
-                                }
-                                .labelsHidden()
-                            })
+                            .insert {
+                                Divider()
+                            }
                         }
                     }
                     DetailSectionsSpacer(height: 15)
@@ -211,11 +209,13 @@ struct StoryViewerView: View {
                                         ],
                                         characterIDs: item.characterIDs
                                     )
-                                    
-                                    //                                case .afterLive:
-                                    //                                    <#code#>
-                                default:
-                                    EmptyView()
+                                case .afterLive:
+                                    StoryCardView(
+                                        story: item,
+                                        type: storyType,
+                                        locale: locale,
+                                        unsafeAssociatedID: item.note!
+                                    )
                                 }
                             }
                         } else {
@@ -256,7 +256,18 @@ struct StoryViewerView: View {
                 await getStories()
             }
         }
-        .onChange(of: locale, storyType, selectedEvent, selectedBand, selectedBandStory, selectedCard, conversationFilter, conversationArea, conversationType) {
+        .onChange(
+            of: locale,
+            storyType,
+            selectedEvent,
+            selectedBand,
+            selectedBandStory,
+            selectedCard,
+            conversationFilter,
+            conversationArea,
+            conversationType,
+            afterLiveFilter
+        ) {
             Task {
                 await getStories()
             }
@@ -326,12 +337,48 @@ struct StoryViewerView: View {
                 }
             }
         case .actionSet:
+            func updateActionSets() {
+                self.displayingStories = LocalizedData<[CustomStory]>(repeating: allActionSets.filter({ convo in
+                    (conversationArea == nil ? true : convo.areaID == conversationArea!.id) && (conversationType == nil ? true : convo.actionSetType == conversationType!)
+                }).filter({ convo in
+                    guard conversationFilter.character != Set(DoriFilter.Character.allCases) else { return true }
+                    if conversationFilter.characterRequiresMatchAll {
+                        return convo.characterIDs.allSatisfy { convoCharaID in
+                            if _fastPath(DoriFilter.Character.allCases.contains(where: { $0.rawValue == convoCharaID })) {
+                                conversationFilter.character.contains { character in
+                                    character.rawValue == convoCharaID
+                                }
+                            } else {
+                                conversationFilter.characterMatchesOthers == .includeOthers
+                            }
+                        }
+                    } else {
+                        return convo.characterIDs.contains { convoCharaID in
+                            if _fastPath(DoriFilter.Character.allCases.contains(where: { $0.rawValue == convoCharaID })) {
+                                conversationFilter.character.contains { $0.rawValue == convoCharaID }
+                            } else {
+                                conversationFilter.characterMatchesOthers == .includeOthers
+                            }
+                        }
+                    }
+                }).map({ convo in
+                    return CustomStory(scenarioID: "\(convo.id)", caption: "#\(convo.id)", title: LocalizedData(builder: { locale in
+                        guard !convo.characterIDs.isEmpty else { return String(localized: "Story-viewer.area-conversation.no-character") }
+                        return convo.characterIDs
+                            .map({ char in DoriCache.preCache.characters.first(where: { $0.id == char }) })
+                            .map({ $0?.characterName.forLocale(locale) ?? $0?.characterName.forPreferredLocale() ?? "???" })
+                            .joined(separator: "×")
+                    }), synopsis: convo.actionSetType.localizedString, note: "\(convo.areaID)", characterIDs: convo.characterIDs)
+                }))
+            }
+            
             if allActionSets.isEmpty {
                 DoriCache.withCache(id: "ActionSet") {
                     await _DoriAPI.Misc.actionSets()
                 } .onUpdate {
                     if let info = $0 {
                         self.allActionSets = info
+                        updateActionSets()
                     } else {
                         informationIsAvailable = false
                     }
@@ -343,56 +390,67 @@ struct StoryViewerView: View {
                 }.onUpdate {
                     if let info = $0 {
                         allConversationAreas = info
+                        updateActionSets()
                     } else {
                         informationIsAvailable = false
                     }
                 }
             }
-            self.displayingStories = LocalizedData<[CustomStory]>(repeating: allActionSets.filter({ convo in
-                (conversationArea == nil ? true : convo.areaID == conversationArea!.id) && (conversationType == nil ? true : convo.actionSetType == conversationType!)
-            }).filter({ convo in
-                guard conversationFilter.character != Set(DoriFilter.Character.allCases) else { return true }
-                if conversationFilter.characterRequiresMatchAll {
-                    return convo.characterIDs.allSatisfy { convoCharaID in
-                        if _fastPath(DoriFilter.Character.allCases.contains(where: { $0.rawValue == convoCharaID })) {
-                            conversationFilter.character.contains { character in
-                                character.rawValue == convoCharaID
+            updateActionSets()
+        case .afterLive:
+            func updateAfterLiveTalks() {
+                self.displayingStories = LocalizedData<[CustomStory]>(
+                    repeating: allAfterLiveTalks.compactMap { (talk) -> CustomStory? in
+                        guard let locale = talk.description.availableLocale(prefer: .jp) else {
+                            return nil
+                        }
+                        let someDescription = talk.description.forLocale(locale)!
+                        outerIf: if afterLiveFilter.characterRequiresMatchAll {
+                            for character in afterLiveFilter.character {
+                                guard let chara = PreCache.current.characters.first(where: { $0.id == character.rawValue }) else {
+                                    continue
+                                }
+                                if !someDescription.contains(chara.characterName.forLocale(locale)?.split(separator: " ").last ?? "😋") {
+                                    return nil
+                                }
                             }
                         } else {
-                            conversationFilter.characterMatchesOthers == .includeOthers
+                            for character in afterLiveFilter.character {
+                                guard let chara = PreCache.current.characters.first(where: { $0.id == character.rawValue }) else {
+                                    continue
+                                }
+                                if someDescription.contains(chara.characterName.forLocale(locale)?.split(separator: " ").last ?? "😋") {
+                                    break outerIf
+                                }
+                            }
+                            return nil
                         }
+                        
+                        return CustomStory(
+                            scenarioID: talk.scenarioID,
+                            caption: "#\(talk.id)",
+                            title: talk.description,
+                            synopsis: "",
+                            note: String(talk.id)
+                        )
                     }
-                } else {
-                    return convo.characterIDs.contains { convoCharaID in
-                        if _fastPath(DoriFilter.Character.allCases.contains(where: { $0.rawValue == convoCharaID })) {
-                            conversationFilter.character.contains { $0.rawValue == convoCharaID }
-                        } else {
-                            conversationFilter.characterMatchesOthers == .includeOthers
-                        }
-                    }
-                }
-            }).map({ convo in
-                return CustomStory(scenarioID: "\(convo.id)", caption: "#\(convo.id)", title: LocalizedData(builder: { locale in
-                    guard !convo.characterIDs.isEmpty else { return String(localized: "Story-viewer.area-conversation.no-character") }
-                    return convo.characterIDs
-                        .map({ char in DoriCache.preCache.characters.first(where: { $0.id == char }) })
-                        .map({ $0?.characterName.forLocale(locale) ?? $0?.characterName.forPreferredLocale() ?? "???" })
-                        .joined(separator: "×")
-                }), synopsis: convo.actionSetType.localizedString, note: "\(convo.areaID)", characterIDs: convo.characterIDs)
-            }))
-        case .afterLive:
+                )
+            }
+            
             if allAfterLiveTalks.isEmpty {
                 DoriCache.withCache(id: "AfterLiveStories") {
                     await _DoriAPI.Misc.afterLiveTalks()
                 }.onUpdate {
                     if let stories = $0 {
                         allAfterLiveTalks = stories
+                        updateAfterLiveTalks()
                     } else {
                         informationIsAvailable = false
                     }
                 }
+            } else {
+                updateAfterLiveTalks()
             }
-            self.displayingStories = LocalizedData<[CustomStory]>(repeating: [])
         }
     }
     
