@@ -31,7 +31,7 @@ struct StoryCardView: View {
     var unsafeAssociatedID: String
     var unsafeSecondaryAssociatedID: String?
     var notes: String?
-    var image: URL?
+    var images: [URL] = []
     var characterIDs: [Int]?
     
     init(story: _DoriAPI.Story, type: StoryType, locale: _DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil, notes: String? = nil) {
@@ -48,7 +48,7 @@ struct StoryCardView: View {
         self.storyNote = nil
         self.characterIDs = nil
     }
-    init(story: CustomStory, type: StoryType, locale: _DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil, notes: String? = nil, image: URL? = nil, characterIDs: [Int]? = nil) {
+    init(story: CustomStory, type: StoryType, locale: _DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil, notes: String? = nil, images: [URL] = [], characterIDs: [Int]? = nil) {
         self.scenarioID = story.scenarioID
         self.caption = story.caption
         self.title = story.title
@@ -60,7 +60,7 @@ struct StoryCardView: View {
         self.unsafeSecondaryAssociatedID = unsafeSecondaryAssociatedID
         self.notes = notes
         self.storyNote = story.note
-        self.image = image
+        self.images = images
         self.characterIDs = characterIDs
     }
     
@@ -115,8 +115,8 @@ struct StoryCardView: View {
                         Text(notes)
                             .foregroundStyle(.secondary)
                     }
-                    if let image {
-                        WebImage(url: image)
+                    if !images.isEmpty {
+                        FallbackableWebImage(throughURLs: images)
                             .resizable()
                             .scaledToFit()
                             .frame(maxHeight: 60)
