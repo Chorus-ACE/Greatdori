@@ -61,9 +61,6 @@
     "+%lld%%" : {
       "shouldTranslate" : false
     },
-    "1" : {
-
-    },
     "Accessibility.card.%@" : {
       "localizations" : {
         "en" : {
@@ -2938,7 +2935,14 @@
       }
     },
     "Character.other" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        }
+      }
     },
     "Character.random-card" : {
       "localizations" : {
@@ -17604,44 +17608,11 @@
       }
     },
     "Story-viewer.area-conversation.no-character" : {
-
-    },
-    "Story-viewer.area-conversation.type.area-item" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Area Item"
-          }
-        }
-      }
-    },
-    "Story-viewer.area-conversation.type.birthday" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Birthday"
-          }
-        }
-      }
-    },
-    "Story-viewer.area-conversation.type.normal" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Normal"
-          }
-        }
-      }
-    },
-    "Story-viewer.area-conversation.type.period-limited-area" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Period Limited Area"
+            "value" : "(No Character)"
           }
         }
       }

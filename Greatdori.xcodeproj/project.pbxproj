@@ -281,6 +281,8 @@
 		E9AE9E082E909EDF00AAB049 /* SettingsCollectionCardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE9E072E909ED100AAB049 /* SettingsCollectionCardSelector.swift */; };
 		E9AF51252EAC634100BB808F /* TypeNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AF51242EAC633D00BB808F /* TypeNames.swift */; };
 		E9B17BBB2EA5DC430049C92C /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */; };
+		E9BB28F02EF9B3EB0088B654 /* StoryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BB28EF2EF9B3EB0088B654 /* StoryCardView.swift */; };
+		E9BB28F22EF9B46B0088B654 /* StorySupportiveStuffs.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BB28F12EF9B4650088B654 /* StorySupportiveStuffs.swift */; };
 		E9BDD6362EED3B74009568F5 /* AssetExplorerFileViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDD6352EED3B67009568F5 /* AssetExplorerFileViewer.swift */; };
 		E9BDD6392EED3B92009568F5 /* AssetExplorerUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDD6382EED3B8B009568F5 /* AssetExplorerUI.swift */; };
 		E9BDEFA32EEBE1B2009568F5 /* TranscriptMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDEFA22EEBE193009568F5 /* TranscriptMapping.swift */; };
@@ -772,6 +774,8 @@
 		E9AEC8C72EBA2EFC00490B75 /* FontSuggestions_ZH-HANS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "FontSuggestions_ZH-HANS.md"; sourceTree = "<group>"; };
 		E9AF51242EAC633D00BB808F /* TypeNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeNames.swift; sourceTree = "<group>"; };
 		E9B17BBA2EA5DC390049C92C /* SettingsAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutView.swift; sourceTree = "<group>"; };
+		E9BB28EF2EF9B3EB0088B654 /* StoryCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCardView.swift; sourceTree = "<group>"; };
+		E9BB28F12EF9B4650088B654 /* StorySupportiveStuffs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorySupportiveStuffs.swift; sourceTree = "<group>"; };
 		E9BDD6352EED3B67009568F5 /* AssetExplorerFileViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetExplorerFileViewer.swift; sourceTree = "<group>"; };
 		E9BDD6382EED3B8B009568F5 /* AssetExplorerUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetExplorerUI.swift; sourceTree = "<group>"; };
 		E9BDEFA22EEBE193009568F5 /* TranscriptMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptMapping.swift; sourceTree = "<group>"; };
@@ -1315,6 +1319,8 @@
 			isa = PBXGroup;
 			children = (
 				8C2BB9B32E92AF3700D003D1 /* StoryViewer.swift */,
+				E9BB28F12EF9B4650088B654 /* StorySupportiveStuffs.swift */,
+				E9BB28EF2EF9B3EB0088B654 /* StoryCardView.swift */,
 				E960D3372EB64CDC00EA6A5E /* StoryDetailView.swift */,
 				8C2B64012E940B2100D003D1 /* InteractiveStoryView.swift */,
 				E978109E2EE86376000AD397 /* ISVActionMenu.swift */,
@@ -1933,6 +1939,7 @@
 				E94219242E8AA67E00F24974 /* DetailArtsView.swift in Sources */,
 				8CD28FF02E9F6C6D00831458 /* ChartSimulator.swift in Sources */,
 				E94219192E8AA58800F24974 /* CostumeSearchView.swift in Sources */,
+				E9BB28F22EF9B46B0088B654 /* StorySupportiveStuffs.swift in Sources */,
 				E94218F02E8AA2FF00F24974 /* CharacterDetailView.swift in Sources */,
 				8C3DFB102EAF84BB0004E1F5 /* CostumeSelector.swift in Sources */,
 				E930F7A22EE0461600E8847F /* ExternalLinks.swift in Sources */,
@@ -2049,6 +2056,7 @@
 				E949A5632EAA0231007441A6 /* ViewModifiers.swift in Sources */,
 				8C6C0EF82E42352700D1FB0A /* AppIntents.swift in Sources */,
 				E992283E2EF2AA0C00C123DC /* WhatsNewView.swift in Sources */,
+				E9BB28F02EF9B3EB0088B654 /* StoryCardView.swift in Sources */,
 				E94218F52E8AA38300F24974 /* CardInfo.swift in Sources */,
 				E9076E2F2E8B83A100A9F5AE /* SettingsAdvanced.swift in Sources */,
 				8CD580BC2EA7CE73007A3F49 /* AssetExplorer.swift in Sources */,
