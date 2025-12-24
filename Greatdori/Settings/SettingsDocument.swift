@@ -30,7 +30,6 @@ struct SettingsDocumentButton<L: View>: View {
                 sheetIsDisplayed = true
             }
         }, label: {
-//            Text(label)
             label()
         })
         .navigationDestination(isPresented: $navigationLinkIsEntered, destination: {
@@ -42,13 +41,15 @@ struct SettingsDocumentButton<L: View>: View {
                     .toolbar {
                         #if os(macOS)
                         ToolbarItem(placement: .cancellationAction) {
-                            DismissButton {
-                                Text("Settings.document.close")
+                            Button("Settings.document.close") {
+                                sheetIsDisplayed = false
                             }
                         }
                         #else
                         ToolbarItem(placement: .topBarTrailing) {
-                            Label("Settings.document.close", systemImage: "xmark")
+                            Button("Settings.document.close", systemImage: "xmark") {
+                                sheetIsDisplayed = false
+                            }
                         }
                         #endif
                     }
