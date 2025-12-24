@@ -23,7 +23,7 @@ struct ContentView: View {
         mainStyle: nil,
         metadata: .init(legends: [])
     )
-    @State var mainTabSelection = 0
+    @State var mainTabSelection = "file"
     @State var detailNavigationPath = NavigationPath()
     @State var navigationActions = NavigationActions()
     @State var shouldRecordChange = true
@@ -31,10 +31,10 @@ struct ContentView: View {
         NavigationSplitView {
             List(selection: $mainTabSelection) {
                 Section {
-                    Label("File", systemImage: "document").tag(0)
-                    Label("Style", systemImage: "paintbrush").tag(1)
-                    Label("Metadata", systemImage: "gearshape").tag(2)
-                    Label("Lyrics", systemImage: "music.note.list").tag(3)
+                    Label("File", systemImage: "document").tag("file")
+                    Label("Style", systemImage: "paintbrush").tag("style")
+                    Label("Metadata", systemImage: "gearshape").tag("mtd")
+                    Label("Lyrics", systemImage: "music.note.list").tag("lyrics")
                 } header: {
                     Text("Lyrics")
                 }
@@ -44,7 +44,13 @@ struct ContentView: View {
                     } icon: {
                         Image(_internalSystemName: "music.note.circle.righthalf.dotted")
                     }
-                    .tag(4)
+                    .tag("ref2")
+                    Label(title: {
+                        Text("MusicKit")
+                    }, icon: {
+                        Image(_internalSystemName: "music.note.and.sparkles")
+                    })
+                    .tag("musickit")
                 } header: {
                     Text("Music")
                 }
@@ -54,11 +60,13 @@ struct ContentView: View {
             NavigationStack(path: $detailNavigationPath) {
                 Group {
                     switch mainTabSelection {
-                    case 0: FileView(lyrics: $lyrics)
-                    case 1: StyleView(lyrics: $lyrics)
-                    case 2: MetadataView(lyrics: $lyrics)
-                    case 3: LyricsView(lyrics: $lyrics)
-                    case 4: ReflectionView()
+                    case "file": FileView(lyrics: $lyrics)
+                    case "stlye": StyleView(lyrics: $lyrics)
+                    case "mtd": MetadataView(lyrics: $lyrics)
+                    case "lyrics": LyricsView(lyrics: $lyrics)
+//                    case "ref": ReflectionView()
+                    case "ref2": NeoReflectionView()
+                    case "musickit": MusicKitView()
                     default: EmptyView()
                     }
                 }
@@ -111,7 +119,7 @@ struct ContentView: View {
     struct NavigationActions {
         // Actions: T, T, P...
         // Cursor:  <- ^ ->
-        var actions: [Action] = [.tab(0)]
+        var actions: [Action] = [.tab("file")]
         var cursor = 0
         
         mutating func newChange(_ action: Action) {
@@ -119,7 +127,7 @@ struct ContentView: View {
             actions.append(action)
             cursor = actions.count - 1
         }
-        mutating func goBackward(toPath path: inout NavigationPath, toTab tab: inout Int) {
+        mutating func goBackward(toPath path: inout NavigationPath, toTab tab: inout String) {
             guard canGoBackward else { return }
             cursor -= 1
             if case .tab = actions[cursor + 1] {
@@ -140,7 +148,7 @@ struct ContentView: View {
                 }
             }
         }
-        mutating func goForward(toPath path: inout NavigationPath, toTab tab: inout Int) {
+        mutating func goForward(toPath path: inout NavigationPath, toTab tab: inout String) {
             guard canGoForward else { return }
             cursor += 1
             let item = actions[cursor]
@@ -161,7 +169,7 @@ struct ContentView: View {
         
         enum Action {
             case path(NavigationPath)
-            case tab(Int)
+            case tab(String)
         }
     }
 }

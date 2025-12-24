@@ -278,6 +278,7 @@
 		E99B3D912EC29A700045EFC9 /* SettingsAccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B3D902EC29A670045EFC9 /* SettingsAccountsView.swift */; };
 		E99B57652EC1E7DF0045EFC9 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B57642EC1E7DD0045EFC9 /* Station.swift */; };
 		E9A126FC2E8CB62000BBD39E /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A126FB2E8CB61900BBD39E /* EventTracker.swift */; };
+		E9A8A8642EFBBF6300B78FEE /* MusicKitHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A8A8632EFBBF5F00B78FEE /* MusicKitHelper.swift */; };
 		E9AE639E2EB745B100490B75 /* SettingsFontsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE639D2EB745B100490B75 /* SettingsFontsView.swift */; };
 		E9AE9E082E909EDF00AAB049 /* SettingsCollectionCardSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE9E072E909ED100AAB049 /* SettingsCollectionCardSelector.swift */; };
 		E9AF51252EAC634100BB808F /* TypeNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AF51242EAC633D00BB808F /* TypeNames.swift */; };
@@ -289,6 +290,8 @@
 		E9BDEFA32EEBE1B2009568F5 /* TranscriptMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDEFA22EEBE193009568F5 /* TranscriptMapping.swift */; };
 		E9BDF0002EEBFF46009568F5 /* ISVLayoutPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDEFFF2EEBFF44009568F5 /* ISVLayoutPickerSheet.swift */; };
 		E9BDF0022EEC1BF5009568F5 /* SettingsStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDF0012EEC1BF1009568F5 /* SettingsStoryView.swift */; };
+		E9CA1F742EFBDCE6005932E5 /* MusicKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F732EFBDCE4005932E5 /* MusicKitView.swift */; };
+		E9CA1F762EFBF2BE005932E5 /* NeoReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F752EFBF2BE005932E5 /* NeoReflectionView.swift */; };
 		E9CD3A482E58975D00BF5EA9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A472E58975900BF5EA9 /* Extensions.swift */; };
 		E9CD3A4A2E58984400BF5EA9 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A492E58984200BF5EA9 /* Functions.swift */; };
 		E9DA971C2ED97ED90047B464 /* GachaDetailCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA971B2ED97ED90047B464 /* GachaDetailCardsView.swift */; };
@@ -771,6 +774,7 @@
 		E99B3D902EC29A670045EFC9 /* SettingsAccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountsView.swift; sourceTree = "<group>"; };
 		E99B57642EC1E7DD0045EFC9 /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		E9A126FB2E8CB61900BBD39E /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
+		E9A8A8632EFBBF5F00B78FEE /* MusicKitHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicKitHelper.swift; sourceTree = "<group>"; };
 		E9AE639D2EB745B100490B75 /* SettingsFontsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFontsView.swift; sourceTree = "<group>"; };
 		E9AE9E072E909ED100AAB049 /* SettingsCollectionCardSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCollectionCardSelector.swift; sourceTree = "<group>"; };
 		E9AEC8C72EBA2EFC00490B75 /* FontSuggestions_ZH-HANS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "FontSuggestions_ZH-HANS.md"; sourceTree = "<group>"; };
@@ -783,6 +787,8 @@
 		E9BDEFA22EEBE193009568F5 /* TranscriptMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptMapping.swift; sourceTree = "<group>"; };
 		E9BDEFFF2EEBFF44009568F5 /* ISVLayoutPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISVLayoutPickerSheet.swift; sourceTree = "<group>"; };
 		E9BDF0012EEC1BF1009568F5 /* SettingsStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoryView.swift; sourceTree = "<group>"; };
+		E9CA1F732EFBDCE4005932E5 /* MusicKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicKitView.swift; sourceTree = "<group>"; };
+		E9CA1F752EFBF2BE005932E5 /* NeoReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeoReflectionView.swift; sourceTree = "<group>"; };
 		E9CD3A472E58975900BF5EA9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E9CD3A492E58984200BF5EA9 /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		E9D96AA42E752BE7005E0F2C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -1032,6 +1038,9 @@
 				8C74C66D2E4C8BB60070A70A /* MetadataView.swift */,
 				8CFEF5C02E4DE6220017FF66 /* LyricsView.swift */,
 				8C32BA352E8E90D3002D183A /* ReflectionView.swift */,
+				E9CA1F752EFBF2BE005932E5 /* NeoReflectionView.swift */,
+				E9CA1F732EFBDCE4005932E5 /* MusicKitView.swift */,
+				E9A8A8632EFBBF5F00B78FEE /* MusicKitHelper.swift */,
 				8C3FA2562E4B9EC6001526F2 /* Assets.xcassets */,
 			);
 			path = GreatLyrics;
@@ -2132,11 +2141,14 @@
 				8C3FA26D2E4BCE7B001526F2 /* TextStyleRender.swift in Sources */,
 				8C32BA362E8E90D9002D183A /* ReflectionView.swift in Sources */,
 				8C3FA2712E4BD487001526F2 /* StyleEditorView.swift in Sources */,
+				E9CA1F762EFBF2BE005932E5 /* NeoReflectionView.swift in Sources */,
+				E9CA1F742EFBDCE6005932E5 /* MusicKitView.swift in Sources */,
 				8C3FA26B2E4BCC20001526F2 /* StyleView.swift in Sources */,
 				8C3FA26F2E4BCEC2001526F2 /* WrapIf.swift in Sources */,
 				8CFEF5C12E4DE6250017FF66 /* LyricsView.swift in Sources */,
 				8C3FA25C2E4B9EC6001526F2 /* GreatLyricsApp.swift in Sources */,
 				8C719D2F2EF1ABA600E8645B /* View+Variadic.swift in Sources */,
+				E9A8A8642EFBBF6300B78FEE /* MusicKitHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

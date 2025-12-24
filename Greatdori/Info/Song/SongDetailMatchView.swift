@@ -56,6 +56,7 @@ struct SongDetailMatchView: View {
                                                 Group {
                                                     Text(result.artist ?? "") + Text(verbatim: " · ") + Text(result.appleMusicURL != nil ? "Song.shazam.apple-music" : "Song.shazam.shazam")
                                                 }
+                                                .lineLimit(3)
                                                 .foregroundStyle(.secondary)
                                             }
                                             Spacer()
@@ -77,10 +78,12 @@ struct SongDetailMatchView: View {
                                 .font(.title2)
                                 .bold()
                             Spacer()
-                            Button("Report a Concern", systemImage: "exclamationmark.bubble") {
+                            Button(action: {
                                 isReportPresented = true
-                            }
-                            .labelStyle(.iconOnly)
+                            }, label: {
+                                Text("Song.shazam.report")
+                                    .foregroundStyle(.secondary)
+                            })
                             .buttonStyle(.plain)
                         }
                         .frame(maxWidth: 615)
