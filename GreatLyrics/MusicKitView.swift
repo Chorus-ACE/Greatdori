@@ -34,6 +34,9 @@ struct MusicKitView: View {
                 SecureField(text: $token, label: {
                     Text("Token")
                 })
+                .onChange(of: token) {
+                    MusicKitTokenManager.shared.token = token
+                }
                 TextField(text: $musicIDInput, label: {
                     Text("Apple Music IDs")
                 })
@@ -136,6 +139,9 @@ struct MusicKitView: View {
             }
         }
         .formStyle(.grouped)
+        .onAppear {
+            token = MusicKitTokenManager.shared.token
+        }
     }
     
     func getMusicIDsFromString(_ input: String) -> [Int]? {

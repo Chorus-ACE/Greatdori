@@ -99,10 +99,6 @@ struct BlockMark: View {
 }
 
 func matchMediaItems(for id: Int, sliceFrom sliceInterval: TimeInterval = 30) async throws -> [_DoriFrontend.Songs._NeoSongMatchResult.MatchItem] {
-    guard let song = await Song(id: id) else {
-        throw CocoaError(.fileReadUnknown)
-    }
-    
     do {
         let shazamResult = try await matchMediaItemsShazam(for: id, sliceFrom: sliceInterval)
         let results = await withTaskGroup(
@@ -128,6 +124,10 @@ func matchMediaItems(for id: Int, sliceFrom sliceInterval: TimeInterval = 30) as
     }
     
     func matchMediaItemsShazam(for id: Int, sliceFrom sliceInterval: TimeInterval = 30) async throws -> [SHMatchedMediaItem] {
+        guard let song = await Song(id: id) else {
+            throw CocoaError(.fileReadUnknown)
+        }
+        
         let url = song.soundURL
         return try await withCheckedThrowingContinuation { continuation in
             DispatchQueue(label: "com.memz233.Greatdori.GreatLyrics.Download-Song-For-Reflection-\(song.id)", qos: .userInitiated).async {
@@ -231,13 +231,14 @@ extension _DoriFrontend.Songs._NeoSongMatchResult.MatchItem {
                 throw BasicError(content: "No Apple Music ID")
             }
             
-            guard let token = await MusicKitTokenManager.shared.token else {
-                throw BasicError(content: "No token given.")
+            let token = await MusicKitTokenManager.shared.token
+            guard !token.isEmpty else {
+                throw BasicError(content: "Token is empty.")
             }
             
             let jp = try await fetchAppleMusicMetadata(ids: [id], storefront: "jp", token: token).first!
             let en = try await fetchAppleMusicMetadata(ids: [id], storefront: "us", token: token).first!
-            self = .init(titleJP: jp.title, titleEN: en.title, artistJP: jp.artist, artistEN: en.artist, artworkURL: item.artworkURL, appleMusicID: appleMusicID, shazamID: shazamID)
+            self = .init(titleJP: jp.title, titleEN: en.title != jp.title ? en.title : nil, artistJP: jp.artist, artistEN: en.artist != jp.artist ? en.artist : nil, artworkURL: item.artworkURL, appleMusicID: appleMusicID, shazamID: shazamID)
         } catch {
             print("Did not access MusicKit. \(error)")
             self = .init(titleJP: item.title ?? "", artistJP: item.artist ?? "", artworkURL: item.artworkURL, appleMusicID: appleMusicID, shazamID: shazamID)
@@ -248,7 +249,8 @@ extension _DoriFrontend.Songs._NeoSongMatchResult.MatchItem {
 func getFullMetadata(from item: SHMatchedMediaItem) async -> _DoriFrontend.Songs._NeoSongMatchResult.MatchItem {
     let appleMusicID: Int? = item.appleMusicID == nil ? nil : Int(item.appleMusicID!)!
     let shazamID: Int? = item.shazamID == nil ? nil : Int(item.shazamID!)!
-    if let id = appleMusicID, let token = await MusicKitTokenManager.shared.token {
+    let token = await MusicKitTokenManager.shared.token
+    if let id = appleMusicID, !token.isEmpty {
         do {
             let jp = try await fetchAppleMusicMetadata(ids: [id], storefront: "jp", token: token).first!
             let en = try await fetchAppleMusicMetadata(ids: [id], storefront: "us", token: token).first!
@@ -320,11 +322,10 @@ func reflectNewSongs(into newFile: URL, from currentFile: URL) async throws {
     try encoder.encode(results).write(to: newFile)
 }
 
-@MainActor
-class MusicKitTokenManager: Sendable {
+class MusicKitTokenManager: @unchecked Sendable {
     static let shared: MusicKitTokenManager = MusicKitTokenManager()
     
-    var token: String?
+    @safe nonisolated(unsafe) var token: String = ""
 }
 
 struct BasicError: Error {

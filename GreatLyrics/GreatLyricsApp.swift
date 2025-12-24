@@ -45,6 +45,9 @@ struct GreatLyricsCommandLine: AsyncParsableCommand {
     @Option(name: [.long], transform: URL.init(fileURLWithPath:))
     var output: URL? = nil
     
+    @Option(name: [.long])
+    var token: String? = nil
+    
     @Argument(parsing: .allUnrecognized) var other: [String] = []
     
     func validate() throws {
@@ -66,6 +69,10 @@ struct GreatLyricsCommandLine: AsyncParsableCommand {
             guard let output else {
                 fatalError("Reflection requires an output file path")
             }
+            guard let token else {
+                fatalError("Reflection requires a MusicKit token")
+            }
+            MusicKitTokenManager.shared.token = token
             try await reflectNewSongs(into: output, from: input)
         }
     }

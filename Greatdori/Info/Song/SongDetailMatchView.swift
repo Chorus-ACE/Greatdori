@@ -52,9 +52,9 @@ struct SongDetailMatchView: View {
                                             .padding(.trailing, 3)
                                             
                                             VStack(alignment: .leading) {
-                                                Text(result.title())
+                                                Text(result.title(preferEN: DoriLocale.primaryLocale == .en))
                                                 Group {
-                                                    Text(result.artist()) + Text(verbatim: " · ") + Text(result.appleMusicURL != nil ? "Song.shazam.apple-music" : "Song.shazam.shazam")
+                                                    Text(result.artist(preferEN: DoriLocale.primaryLocale == .en)) + Text(verbatim: " · ") + Text(result.appleMusicURL != nil ? "Song.shazam.apple-music" : "Song.shazam.shazam")
                                                 }
                                                 .lineLimit(3)
                                                 .foregroundStyle(.secondary)
@@ -104,54 +104,83 @@ private struct SongMatchReportView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedConcern: ConcernType?
     @State private var isSubmitting = false
+    @State private var isSubmitted = false
     var body: some View {
-        Form {
-            Picker("What's your concern with this content?", selection: $selectedConcern) {
-                ForEach(ConcernType.allCases, id: \.rawValue) { concern in
-                    Text(concern.localizedString).tag(concern)
+        Group {
+            if !isSubmitted {
+                Form {
+                    Picker("Song.shazam.report.type", selection: $selectedConcern) {
+                        ForEach(ConcernType.allCases, id: \.rawValue) { concern in
+                            VStack(alignment: .leading) {
+                                Text(concern.label)
+                                Text(concern.description)
+                                    .foregroundStyle(.secondary)
+                                    .font(.caption)
+                            }
+                            .tag(concern)
+                        }
+                    }
+                    .pickerStyle(.inline)
+                }
+                .formStyle(.grouped)
+            } else {
+                ExtendedConstraints {
+                    ContentUnavailableView("Song.shazam.report.sent", systemImage: "paperplane", description: Text("Song.shazam.report.sent.description"))
                 }
             }
-            .pickerStyle(.inline)
         }
-        .formStyle(.grouped)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel", systemImage: "xmark") {
+                Button(action: {
                     dismiss()
-                }
+                }, label: {
+                    Label("Song.shazam.report.cancel", systemImage: "xmark")
+                        .wrapIf(isMACOS, in: {
+                            $0.labelStyle(.titleOnly)
+                        }, else: {
+                            $0.labelStyle(.iconOnly)
+                        })
+                })
             }
-            ToolbarItem(placement: .confirmationAction) {
-                Button {
-                    Task {
-                        guard let selectedConcern else { return }
-                        isSubmitting = true
-                        await submitCombinedStats(
-                            key: "SongShazamReport_\(song.id)",
-                            subKey: selectedConcern.rawValue,
-                            action: true /* +1 */
-                        )
-                        isSubmitting = false
-                        dismiss()
+            if !isSubmitted {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        Task {
+                            guard let selectedConcern else { return }
+                            isSubmitting = true
+                            await submitCombinedStats(
+                                key: "SongShazamReport_\(song.id)",
+                                subKey: selectedConcern.rawValue,
+                                action: true /* +1 */
+                            )
+                            isSubmitting = false
+                            isSubmitted = true
+                        }
+                    } label: {
+                        if !isSubmitting {
+                            Label("Song.shazam.report.submit", systemImage: "checkmark")
+                                .wrapIf(isMACOS, in: {
+                                    $0.labelStyle(.titleOnly)
+                                }, else: {
+                                    $0.labelStyle(.iconOnly)
+                                })
+                        } else {
+                            ProgressView()
+                                .controlSize(.small)
+                        }
                     }
-                } label: {
-                    if !isSubmitting {
-                        Label("Submit", systemImage: "checkmark")
-                    } else {
-                        ProgressView()
-                            .controlSize(.small)
+#if os(iOS)
+                    .wrapIf(true) { content in
+                        if #available(iOS 26.0, *) {
+                            content
+                                .buttonStyle(.glassProminent)
+                        } else {
+                            content
+                        }
                     }
+#endif
+                    .disabled(selectedConcern == nil || isSubmitting)
                 }
-                #if os(iOS)
-                .wrapIf(true) { content in
-                    if #available(iOS 26.0, *) {
-                        content
-                            .buttonStyle(.glassProminent)
-                    } else {
-                        content
-                    }
-                }
-                #endif
-                .disabled(selectedConcern == nil || isSubmitting)
             }
         }
     }
@@ -159,19 +188,29 @@ private struct SongMatchReportView: View {
     // Please don't change the Swift name of cases here,
     // feel free to add new ones.
     enum ConcernType: String, Hashable, CaseIterable {
-        case incorrectResult
+        case mismatch
         case incorrectVersion
         case incorrectMetadata
-        case missingAppleMusicLink
+        case appleMusicLinkMissing
         case other
         
-        var localizedString: LocalizedStringResource {
+        var label: LocalizedStringResource {
             switch self {
-            case .incorrectResult: "Incorrect music"
-            case .incorrectVersion: "Incorrect cover"
-            case .incorrectMetadata: "Incorrect metadata (title, artist, artwork, etc.)"
-            case .missingAppleMusicLink: "Apple Music link not available"
-            case .other: "My concern is not listed here"
+            case .mismatch: "Song.shazam.report.type.mismatch"
+            case .incorrectVersion: "Song.shazam.report.type.version"
+            case .incorrectMetadata: "Song.shazam.report.type.metadata"
+            case .appleMusicLinkMissing: "Song.shazam.report.type.apple-music-link-missing"
+            case .other: "Song.shazam.report.type.metadata.other"
+            }
+        }
+        
+        var description: LocalizedStringResource {
+            switch self {
+            case .mismatch: "Song.shazam.report.type.mismatch.description"
+            case .incorrectVersion: "Song.shazam.report.type.version.description"
+            case .incorrectMetadata: "Song.shazam.report.type.metadata.description"
+            case .appleMusicLinkMissing: "Song.shazam.report.type.apple-music-link-missing.description"
+            case .other: "Song.shazam.report.type.metadata.other.description"
             }
         }
     }

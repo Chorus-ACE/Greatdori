@@ -58,10 +58,12 @@ struct SongDetailLyricsView: View {
                         .font(.title2)
                         .bold()
                     Spacer()
-                    Button("Report a Concern", systemImage: "exclamationmark.bubble") {
+                    Button(action: {
                         isReportPresented = true
-                    }
-                    .labelStyle(.iconOnly)
+                    }, label: {
+                        Text("Song.lyrics.report")
+                            .foregroundStyle(.secondary)
+                    })
                     .buttonStyle(.plain)
                 }
                 .frame(maxWidth: 615)

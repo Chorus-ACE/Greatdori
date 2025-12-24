@@ -30,11 +30,16 @@ struct NeoReflectionView: View {
     @State private var batchListSearchText = ""
     @State private var isBatchExportVisible = true
     @State private var isFetchingFromGreatdoriServer = false
+    @State private var token: String = ""
     
     @State var allSongs: [PreviewSong] = []
     var body: some View {
         Form {
             Section("Single") {
+                SecureField("Token", text: $token)
+                    .onChange(of: token) {
+                        MusicKitTokenManager.shared.token = token
+                    }
                 HStack {
                     TextField("Music ID", text: $singleMusicIDInput)
                     Button(action: {
@@ -85,7 +90,7 @@ struct NeoReflectionView: View {
                                 }
                             }, label: {
                                 HStack {
-                                    Text("Get All")
+                                    Text("Get Unlisted")
                                     if isGettingBatchResult {
                                         ProgressView()
                                             .controlSize(.small)
@@ -105,7 +110,6 @@ struct NeoReflectionView: View {
                                     let (data, _) = try await URLSession.shared.data(from: URL(string: "https://kashi.greatdori.com/MappedSongs.plist")!)
                                     let codedResults = try PropertyListDecoder()
                                         .decode([Int: _DoriFrontend.Songs._NeoSongMatchResult].self, from: data)
-                                    
                                     await MainActor.run {
                                         batchMatchResults = codedResults
                                     }
@@ -182,6 +186,7 @@ struct NeoReflectionView: View {
             }
         }
         .onAppear {
+            token = MusicKitTokenManager.shared.token
             Task {
                 if let songs = await Song.all() {
                     allSongs = songs
