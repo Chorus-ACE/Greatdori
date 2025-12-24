@@ -18,7 +18,7 @@ import DoriKit
 // MARK: SongSearchView
 struct SongSearchView: View {
     let gridLayoutItemWidth: CGFloat = 225
-    @State private var songMatches: [Int: _DoriFrontend.Songs._SongMatchResult]?
+    @State private var songMatches: [Int: _DoriFrontend.Songs._NeoSongMatchResult]?
     var body: some View {
         SearchViewBase(forType: PreviewSong.self, initialLayout: SummaryLayout.horizontal, layoutOptions: verticalAndHorizontalLayouts) { layout, _, content, _ in
             if layout == .horizontal {

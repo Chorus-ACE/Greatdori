@@ -18,21 +18,21 @@ import SDWebImageSwiftUI
 
 struct SongDetailMatchView: View {
     var song: Song
-    @Binding var songMatches: [Int: _DoriFrontend.Songs._SongMatchResult]?
+    @Binding var songMatches: [Int: _DoriFrontend.Songs._NeoSongMatchResult]?
     @Environment(\.openURL) private var openURL
     @State private var isReportPresented = false
     var body: some View {
         Group {
             if let songMatches,
                let matchResult = songMatches.first(where: { $0.key == song.id })?.value,
-               case let .some(results) = matchResult, !results.isEmpty {
+               case let .success(results) = matchResult, !results.isEmpty {
                 LazyVStack(pinnedViews: .sectionHeaders) {
                     Section {
                         ForEach(results, id: \.self) { result in
                             Button(action: {
                                 if let url = result.appleMusicURL {
                                     openURL(url)
-                                } else if let url = result.webURL {
+                                } else if let url = result.shazamURL {
                                     openURL(url)
                                 }
                             }, label: {
@@ -52,15 +52,15 @@ struct SongDetailMatchView: View {
                                             .padding(.trailing, 3)
                                             
                                             VStack(alignment: .leading) {
-                                                Text(result.title ?? "")
+                                                Text(result.title())
                                                 Group {
-                                                    Text(result.artist ?? "") + Text(verbatim: " · ") + Text(result.appleMusicURL != nil ? "Song.shazam.apple-music" : "Song.shazam.shazam")
+                                                    Text(result.artist()) + Text(verbatim: " · ") + Text(result.appleMusicURL != nil ? "Song.shazam.apple-music" : "Song.shazam.shazam")
                                                 }
                                                 .lineLimit(3)
                                                 .foregroundStyle(.secondary)
                                             }
                                             Spacer()
-                                            if result.appleMusicURL != nil || result.webURL != nil {
+                                            if result.appleMusicURL != nil || result.shazamURL != nil {
                                                 Image(systemName: "arrow.up.forward.app")
                                                     .foregroundStyle(.secondary)
                                                     .font(.title3)

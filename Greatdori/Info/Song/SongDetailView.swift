@@ -20,7 +20,7 @@ import SDWebImageSwiftUI
 struct SongDetailView: View {
     var id: Int
     var allSongs: [PreviewSong]? = nil
-    @State var songMatches: [Int: _DoriFrontend.Songs._SongMatchResult]?
+    @State var songMatches: [Int: _DoriFrontend.Songs._NeoSongMatchResult]?
     @State private var lyrics: _DoriFrontend.Songs.Lyrics?
     var body: some View {
         DetailViewBase(previewList: allSongs, initialID: id) { information in
