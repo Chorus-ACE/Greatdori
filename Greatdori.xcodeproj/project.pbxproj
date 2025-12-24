@@ -144,7 +144,6 @@
 		8CB4D4802E445F700085D57A /* BuiltinCardCollections.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB4D4792E445F700085D57A /* BuiltinCardCollections.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8CB4D4862E445F800085D57A /* BuiltinCardCollections.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB4D4792E445F700085D57A /* BuiltinCardCollections.framework */; };
 		8CB4D4872E445F800085D57A /* BuiltinCardCollections.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB4D4792E445F700085D57A /* BuiltinCardCollections.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8CB4D48E2E4460640085D57A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8CB4D48D2E4460640085D57A /* Assets.xcassets */; };
 		8CB4D4A12E4461790085D57A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB4D49F2E4461790085D57A /* main.swift */; };
 		8CB4D4A92E4481790085D57A /* BuiltinCardCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB4D4A82E4481780085D57A /* BuiltinCardCollections.swift */; };
 		8CB4D4AF2E44871D0085D57A /* BuiltinCardCollections.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB4D4792E445F700085D57A /* BuiltinCardCollections.framework */; platformFilters = (ios, macos, ); };
@@ -184,6 +183,7 @@
 		8CD290172E9FFD6700831458 /* ChartViewer_LongNoteLine.fsh in Copy Shaders */ = {isa = PBXBuildFile; fileRef = 8CD290162E9FFD4F00831458 /* ChartViewer_LongNoteLine.fsh */; };
 		8CD2A9D22E9F690D00831458 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8CD2A9D12E9F690D00831458 /* Alamofire */; };
 		8CD5037F2EFBF0AD0073409C /* ImageCompressing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD5037E2EFBF0A90073409C /* ImageCompressing.swift */; };
+		8CD506BE2EFC2E590073409C /* Collections in Resources */ = {isa = PBXBuildFile; fileRef = 8CD506BD2EFC2E590073409C /* Collections */; };
 		8CD580BC2EA7CE73007A3F49 /* AssetExplorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */; };
 		8CE0BBAC2ED2FE1F00E22ED6 /* SwiftJWT in Frameworks */ = {isa = PBXBuildFile; productRef = 8CE0BBAB2ED2FE1F00E22ED6 /* SwiftJWT */; };
 		8CE0BBAE2ED2FE7B00E22ED6 /* Secrets.swift.gyb in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0BBAD2ED2FE7200E22ED6 /* Secrets.swift.gyb */; };
@@ -645,7 +645,6 @@
 		8CB4D46F2E4454840085D57A /* CardCollectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionManager.swift; sourceTree = "<group>"; };
 		8CB4D4722E4459200085D57A /* CardCollectionWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionWidgets.swift; sourceTree = "<group>"; };
 		8CB4D4792E445F700085D57A /* BuiltinCardCollections.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BuiltinCardCollections.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8CB4D48D2E4460640085D57A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8CB4D4932E4461450085D57A /* CardCollectionGen */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CardCollectionGen; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CB4D49F2E4461790085D57A /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		8CB4D4A82E4481780085D57A /* BuiltinCardCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinCardCollections.swift; sourceTree = "<group>"; };
@@ -681,6 +680,7 @@
 		8CD290132E9FCBB700831458 /* ChartSimAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ChartSimAssets.xcassets; sourceTree = "<group>"; };
 		8CD290162E9FFD4F00831458 /* ChartViewer_LongNoteLine.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ChartViewer_LongNoteLine.fsh; sourceTree = "<group>"; };
 		8CD5037E2EFBF0A90073409C /* ImageCompressing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCompressing.swift; sourceTree = "<group>"; };
+		8CD506BD2EFC2E590073409C /* Collections */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Collections; sourceTree = "<group>"; };
 		8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetExplorer.swift; sourceTree = "<group>"; };
 		8CE0BBAD2ED2FE7200E22ED6 /* Secrets.swift.gyb */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Secrets.swift.gyb; sourceTree = "<group>"; };
 		8CEA20C42EAB62DA009D41C5 /* SongDetailMatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailMatchView.swift; sourceTree = "<group>"; };
@@ -1208,7 +1208,7 @@
 		8CB4D48B2E445F870085D57A /* BuiltinCardCollections */ = {
 			isa = PBXGroup;
 			children = (
-				8CB4D48D2E4460640085D57A /* Assets.xcassets */,
+				8CD506BD2EFC2E590073409C /* Collections */,
 				8CB4D4A82E4481780085D57A /* BuiltinCardCollections.swift */,
 			);
 			path = BuiltinCardCollections;
@@ -1902,7 +1902,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8CB4D48E2E4460640085D57A /* Assets.xcassets in Resources */,
+				8CD506BE2EFC2E590073409C /* Collections in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

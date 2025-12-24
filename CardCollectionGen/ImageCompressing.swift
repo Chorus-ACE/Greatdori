@@ -15,27 +15,10 @@
 import ImageIO
 import Foundation
 
-func imageCompressing() throws {
-    print("""
-    XCAsset folder path
-    Example: ~/Desktop/Assets.xcassets
-    """)
-    print("> ", terminator: .init())
-    let path = (readLine()! as NSString).expandingTildeInPath as String
-    print("")
-    
+func compressImages(at path: String) throws {
     let contents = try FileManager.default.contentsOfDirectory(atPath: path)
-    for content in contents where content.hasSuffix(".imageset") {
-        let imageSetPath = path + "/\(content)"
-        if FileManager.default.fileExists(atPath: imageSetPath + "/.compressed") {
-            continue
-        }
-        guard let _imageName = (try? FileManager.default.contentsOfDirectory(atPath: imageSetPath))?
-            .first(where: { $0.hasSuffix(".png") }) else {
-            continue
-        }
-        let imagePath = imageSetPath + "/\(consume _imageName)"
-        
+    for content in contents where content.hasSuffix(".png") {
+        let imagePath = path + "/\(content)"
         guard let inputImage = CGImageSourceCreateWithURL(URL(filePath: imagePath) as CFURL, nil) else {
             continue
         }
@@ -47,10 +30,5 @@ func imageCompressing() throws {
         }
         CGImageDestinationAddImageFromSource(destination, inputImage, 0, options as CFDictionary)
         CGImageDestinationFinalize(destination)
-        try? "CardCollectionGen".write(
-            toFile: imageSetPath + "/.compressed",
-            atomically: true,
-            encoding: .utf8
-        )
     }
 }

@@ -32,18 +32,14 @@ public struct BuiltinCard: Codable {
     public var fileName: String
     
     #if !os(macOS)
-    @inline(never)
+    @inlinable
     public var image: UIImage {
-        #if !os(watchOS)
-        .init(resource: .init(name: fileName, bundle: #bundle))
-        #else
-        .init(named: fileName, in: #bundle, with: nil)!
-        #endif
+        builtinImage(named: fileName)
     }
     #else
-    @inline(never)
+    @inlinable
     public var image: NSImage {
-        .init(resource: .init(name: fileName, bundle: #bundle))
+        builtinImage(named: fileName)
     }
     #endif
 }
@@ -56,24 +52,23 @@ public let builtinCardCollectionNames = [
 
 #if !os(macOS)
 public func builtinImage(named name: String) -> UIImage {
-    #if !os(watchOS)
-    .init(resource: .init(name: name, bundle: #bundle))
-    #else
-    .init(named: name, in: #bundle, with: nil)!
-    #endif
+    UIImage(contentsOfFile: #bundle.path(forResource: name, ofType: "png", inDirectory: "Collections")!)!
 }
 #else
 public func builtinImage(named name: String) -> NSImage {
-    .init(resource: .init(name: name, bundle: #bundle))
+    NSImage(contentsOfFile: #bundle.path(forResource: name, ofType: "png", inDirectory: "Collections")!)!
 }
 #endif
 
 extension BuiltinCardCollection {
     @inline(never)
-    @_optimize(size)
     public init?(named name: String) {
         let decoder = PropertyListDecoder()
-        let data = NSDataAsset(name: name, bundle: #bundle)!.data
+        guard let _url = #bundle.url(
+            forResource: name,
+            withExtension: "plist",
+            subdirectory: "Collections"
+        ), let data = try? Data(contentsOf: consume _url) else { return nil }
         if let collection = try? decoder.decode(BuiltinCardCollection.self, from: data) {
             self = collection
         } else {
@@ -83,13 +78,10 @@ extension BuiltinCardCollection {
 }
 
 extension Array<BuiltinCardCollection> {
-    @_optimize(size)
     public static func all() -> Self {
-        let decoder = PropertyListDecoder()
         var result = Self()
         for name in builtinCardCollectionNames {
-            let data = NSDataAsset(name: name, bundle: #bundle)!.data
-            result.append(try! decoder.decode(BuiltinCardCollection.self, from: data))
+            result.append(.init(named: name)!)
         }
         return result
     }

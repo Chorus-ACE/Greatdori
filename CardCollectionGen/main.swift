@@ -17,12 +17,6 @@ import AppKit
 import DoriKit
 import Foundation
 
-if CommandLine.arguments.contains("-c")
-    || CommandLine.arguments.contains("--compress") {
-    try imageCompressing()
-    exit(EXIT_SUCCESS)
-}
-
 print("""
 Localization Key for Collection Name
 Example: BUILTIN_CARD_COLLECTION_MYGO
@@ -105,49 +99,20 @@ if let cards = await _DoriAPI.Cards.all() {
         printProgressBar(index + 1, total: relatedCards.count)
     }
     print("")
-    try! FileManager.default.createDirectory(atPath: outputPath + "/", withIntermediateDirectories: true)
     for (data, fileName) in resultImageData {
-        try! FileManager.default.createDirectory(atPath: outputPath + "/\(fileName).imageset" + "/", withIntermediateDirectories: false)
-        try! """
-        {
-          "images" : [
-            {
-              "filename" : "\(fileName).png",
-              "idiom" : "universal"
-            }
-          ],
-          "info" : {
-            "author" : "xcode",
-            "version" : 1
-          }
-        }
-        """.write(toFile: outputPath + "/\(fileName).imageset/Contents.json", atomically: true, encoding: .utf8)
-        try! data.write(to: URL(filePath: outputPath + "/\(fileName).imageset/\(fileName).png"))
+        try! data.write(to: URL(filePath: outputPath + "/\(fileName).png"))
         if NSImage(data: data) == nil {
-            print("error: data integrity check failed: image data of card '\(fileName)' is invalid")
+            print("warning: data integrity check failed: image data of card '\(fileName)' is invalid")
         }
     }
     let encoder = PropertyListEncoder()
     encoder.outputFormat = .binary
     let collection = Collection(name: collectionNameKey, cards: resultCards)
-    let data = try! encoder.encode(collection)
-    try! FileManager.default.createDirectory(atPath: outputPath + "/\(collectionNameKey).dataset" + "/", withIntermediateDirectories: false)
-    try! """
-    {
-      "data" : [
-        {
-          "filename" : "\(collectionNameKey).plist",
-          "idiom" : "universal",
-          "universal-type-identifier" : "com.apple.property-list"
-        }
-      ],
-      "info" : {
-        "author" : "xcode",
-        "version" : 1
-      }
-    }
-    """.write(toFile: outputPath + "/\(collectionNameKey).dataset/Contents.json", atomically: true, encoding: .utf8)
-    try! data.write(to: URL(filePath: outputPath + "/\(collectionNameKey).dataset/\(collectionNameKey).plist"))
+    let data = try encoder.encode(collection)
+    try data.write(to: URL(filePath: outputPath + "/\(collectionNameKey).plist"))
+    
+    print("Compressing...")
+    try compressImages(at: outputPath)
     print("Successfully generated card collection files at \(outputPath)")
 } else {
     print("Failed to get cards from API")
