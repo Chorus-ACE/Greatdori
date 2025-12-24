@@ -67,7 +67,7 @@ private struct Provider: AppIntentTimelineProvider {
         guard let collection = CardCollectionManager.shared._collection(named: collectionName) else { return .init(frequency: frequency) }
         var generator = seed(for: date, align: align)
         guard let card = collection.cards.randomElement(using: &generator) else { return .init(frequency: frequency) }
-        guard let image = card.file.image else { return .init(frequency: frequency, emptyReason: 1) }
+        guard let image = card.image else { return .init(frequency: frequency, emptyReason: 1) }
         return .init(date: date, frequency: frequency, cardID: card.id, image: image)
     }
     

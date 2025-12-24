@@ -124,6 +124,14 @@ final class CardCollectionManager: @unchecked Sendable, ObservableObject {
             self.isBuiltIn = true
             self.cards = cards
         }
+        
+        var availableInOffline: Bool {
+            if _fastPath(isBuiltIn) {
+                true
+            } else {
+                cards.allSatisfy { $0.availableInOffline }
+            }
+        }
     }
     @_eagerMove
     struct Card: Identifiable, Codable, Hashable {
@@ -132,13 +140,79 @@ final class CardCollectionManager: @unchecked Sendable, ObservableObject {
         var localizedName: LocalizedData<String>?
         var file: File
         
+        /// This getter doesn't check file existence,
+        /// use the one without underscore to get a qualified URL.
+        var _offlineFileURL: URL? {
+            switch file {
+            case .builtin: return nil
+            case .path:
+                let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.memz233.Greatdori.Widgets")!
+                let storageURL = containerURL.appending(path: "CardImageStore")
+                if _slowPath(!FileManager.default.fileExists(atPath: storageURL.path)) {
+                    try? FileManager.default.createDirectory(at: storageURL, withIntermediateDirectories: true)
+                }
+                return storageURL.appending(path: "Card\(id)\(isTrained ? "After" : "Before").png")
+            }
+        }
+        var offlineFileURL: URL? {
+            switch file {
+            case .builtin: return nil
+            case .path:
+                return availableInOffline ? _offlineFileURL! : nil
+            }
+        }
+        var availableInOffline: Bool {
+            switch file {
+            case .builtin:
+                return true
+            case .path:
+                return FileManager.default.fileExists(atPath: _offlineFileURL!.path)
+            }
+        }
+        
+        #if !os(macOS)
+        var image: UIImage? {
+            switch file {
+            case .builtin(let name):
+                return builtinImage(named: name)
+            case .path(let path):
+                if let url = offlineFileURL {
+                    return NSImage(contentsOf: url)
+                } else {
+                    if let data = try? Data(contentsOf: .init(string: path)!) {
+                        return UIImage(data: data)
+                    } else {
+                        return nil
+                    }
+                }
+            }
+        }
+        #else
+        var image: NSImage? {
+            switch file {
+            case .builtin(let name):
+                return builtinImage(named: name)
+            case .path(let path):
+                if let url = offlineFileURL {
+                    return NSImage(contentsOf: url)
+                } else {
+                    if let data = try? Data(contentsOf: .init(string: path)!) {
+                        return NSImage(data: data)
+                    } else {
+                        return nil
+                    }
+                }
+            }
+        }
+        #endif
+        
         enum File: Codable, Hashable {
             case builtin(String)
             case path(String)
             
             #if !os(macOS)
+            @available(*, deprecated, message: "Use the 'image' getter in 'Card' instead.")
             var image: UIImage? {
-//                let containerPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.memz233.Greatdori.Widgets")!.path
                 switch self {
                 case .builtin(let name):
                     return builtinImage(named: name)
@@ -151,8 +225,8 @@ final class CardCollectionManager: @unchecked Sendable, ObservableObject {
                 }
             }
             #else
+            @available(*, deprecated, message: "Use the 'image' getter in 'Card' instead.")
             var image: NSImage? {
-//                let containerPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.memz233.Greatdori.Widgets")!.path
                 switch self {
                 case .builtin(let name):
                     return builtinImage(named: name)

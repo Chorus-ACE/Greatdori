@@ -14,6 +14,7 @@
 
 import Combine
 import DoriKit
+import Alamofire
 import MarkdownUI
 import SwiftUI
 import WidgetKit
@@ -356,6 +357,10 @@ struct SettingsWidgetsCollectionDetailsView: View {
     @State var showExportCheckmark = false
     @State var showCollectionEditorSheet = false
     @State var isCodeShareSheetPresented = false
+    @State var isDownloading = false
+    @State var downloadCountCurrent = 0
+    @State var downloadCountTotal = 0
+    @State var isRemovingDownloads = false
     var body: some View {
         if let collection = collectionManager.allCollections.first(where: { $0.name == collectionGivenName }) {
             ScrollView {
@@ -363,7 +368,7 @@ struct SettingsWidgetsCollectionDetailsView: View {
                     Spacer(minLength: 0)
                     LazyVStack {
                         CustomGroupBox(cornerRadius: isMACOS ? 15 : 25) {
-                            LazyVStack {
+                            VStack {
                                 Group {
                                     HStack {
                                         Text("Settings.widgets.collections.name")
@@ -386,12 +391,75 @@ struct SettingsWidgetsCollectionDetailsView: View {
                                                 .textSelection(.enabled)
                                         }
                                     }
-                                }
-                                
-                                Divider()
-                                
-                                if !collection.isBuiltIn {
-                                    Group {
+                                    
+                                    if !collection.isBuiltIn {
+                                        if !collection.availableInOffline {
+                                            if !isDownloading {
+                                                Button(action: {
+                                                    Task {
+                                                        let handle = caffeinate(reason: "Download widget collection card images")
+                                                        downloadCountCurrent = 0
+                                                        downloadCountTotal = collection.cards.count
+                                                        isDownloading = true
+                                                        await withTaskGroup { group in
+                                                            var counter = 0
+                                                            for card in collection.cards {
+                                                                group.addTask(priority: .userInitiated) {
+                                                                    try? await card.downloadForOffline()
+                                                                    await MainActor.run {
+                                                                        downloadCountCurrent += 1
+                                                                    }
+                                                                }
+                                                                if counter >= 20 {
+                                                                    await group.waitForAll()
+                                                                    counter = 0
+                                                                }
+                                                                counter += 1
+                                                            }
+                                                        }
+                                                        isDownloading = false
+                                                        decaffeinate(handle)
+                                                    }
+                                                }, label: {
+                                                    HStack {
+                                                        Label("Settings.widgets.collections.download", systemImage: "arrow.down.circle")
+                                                            .bold()
+                                                            .foregroundStyle(.accent)
+                                                        Spacer()
+                                                    }
+                                                    .contentShape(Rectangle())
+                                                })
+                                                .buttonStyle(.plain)
+                                            } else {
+                                                VStack(alignment: .leading) {
+                                                    Text("Settings.widgets.collections.download.in-progress.\(downloadCountCurrent).\(downloadCountTotal)")
+                                                    ProgressView(value: Double(downloadCountCurrent) / Double(downloadCountTotal))
+                                                }
+                                            }
+                                        } else {
+                                            HStack {
+                                                Label("Settings.widgets.collection.download.available.\(ByteCountFormatter().string(fromByteCount: collection.localImageSize()))", systemImage: "arrow.down.circle")
+                                                Spacer()
+                                                Button(action: {
+                                                    isRemovingDownloads = true
+                                                    DispatchQueue(label: "com.memz233.Greatdori.Collection.Remove-Download", qos: .userInitiated).async {
+                                                        collection.removeLocalImages()
+                                                        DispatchQueue.main.async {
+                                                            isRemovingDownloads = false
+                                                        }
+                                                    }
+                                                }, label: {
+                                                    HStack {
+                                                        if isRemovingDownloads {
+                                                            ProgressView()
+                                                                .controlSize(.small)
+                                                        }
+                                                        Text("Settings.widgets.collection.download.remove")
+                                                    }
+                                                })
+                                                .disabled(isRemovingDownloads)
+                                            }
+                                        }
                                         Button(role: .destructive, action: {
                                             showCollectionDeleteAlert = true
                                         }, label: {
@@ -404,26 +472,24 @@ struct SettingsWidgetsCollectionDetailsView: View {
                                             .contentShape(Rectangle())
                                         })
                                         .buttonStyle(.plain)
-                                        .wrapIf(!isMACOS, in: { content in
+                                        .wrapIf(!isMACOS) { content in
                                             content
                                                 .padding(.top, 3)
+                                        }
+                                        .alert("Settings.widgets.collections.delete.alert.title.\(collection.name)", isPresented: $showCollectionDeleteAlert, actions: {
+                                            Button(role: .destructive, action: {
+                                                collectionManager.remove(at: collectionManager.userCollections.firstIndex{$0.name == collectionName}!)
+                                                isPresented = false
+                                            }, label: {
+                                                Text("Settings.widgets.collections.delete.alert.delete")
+                                            })
+                                            Button(role: .cancel, action: {}, label: {
+                                                Text("Settings.widgets.collections.delete.alert.cancel")
+                                            })
+                                        }, message: {
+                                            Text("Settings.widgets.collections.delete.alert.message")
                                         })
-                                    }
-                                    .alert("Settings.widgets.collections.delete.alert.title.\(collection.name)", isPresented: $showCollectionDeleteAlert, actions: {
-                                        Button(role: .destructive, action: {
-                                            collectionManager.remove(at: collectionManager.userCollections.firstIndex{$0.name == collectionName}!)
-                                            isPresented = false
-                                        }, label: {
-                                            Text("Settings.widgets.collections.delete.alert.delete")
-                                        })
-                                        Button(role: .cancel, action: {}, label: {
-                                            Text("Settings.widgets.collections.delete.alert.cancel")
-                                        })
-                                    }, message: {
-                                        Text("Settings.widgets.collections.delete.alert.message")
-                                    })
-                                } else {
-                                    Group {
+                                    } else {
                                         HStack {
                                             Text("Settings.widgets.collections.is-built-in")
                                                 .bold()
@@ -432,6 +498,9 @@ struct SettingsWidgetsCollectionDetailsView: View {
                                                 .textSelection(.enabled)
                                         }
                                     }
+                                }
+                                .insert {
+                                    Divider()
                                 }
                             }
                         }
@@ -777,5 +846,69 @@ struct SettingsWidgetsCollectionsItemActionMenuView: View {
             Image(systemName: "ellipsis.circle")
                 .font(isMACOS ? .body : .title3)
         })
+    }
+}
+
+// These code should be placed in `CardCollectionManager.swift`.
+// However, it's shared with the widget target and we don't link Alamofire
+// for widgets, so it's placed here.
+extension CardCollectionManager.Card {
+    func downloadForOffline() async throws {
+        guard !availableInOffline else { return }
+        guard case .path(let _path) = file,
+              let url = URL(string: consume _path) else { return }
+        
+        let _: Void = try await withCheckedThrowingContinuation { continuation in
+            AF.download(url, to: { _, _ in
+                (_offlineFileURL!, [])
+            }).response { response in
+                if let error = response.error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+    
+    func removeLocalImage() {
+        if let url = offlineFileURL {
+            try? FileManager.default.removeItem(at: url)
+        }
+    }
+}
+
+extension CardCollectionManager.Collection {
+    func localImageSize() -> Int64 {
+        var result: Int64 = 0
+        for card in cards {
+            if let url = card.offlineFileURL {
+                result += Int64((try? url.resourceValues(
+                    forKeys: [.fileSizeKey]
+                ).fileSize) ?? 0)
+            }
+        }
+        return result
+    }
+    
+    func removeLocalImages() {
+        guard !isBuiltIn else { return }
+        
+        var removingCards = cards
+        let comparingCollections = CardCollectionManager.shared.userCollections.filter {
+            $0 != self && $0.availableInOffline
+        }
+        removingCards.removeAll { card in
+            for collection in comparingCollections {
+                if collection.cards.contains(where: {
+                    $0.id == card.id && $0.isTrained == card.isTrained
+                }) { return true }
+            }
+            return false
+        }
+        
+        for card in removingCards {
+            card.removeLocalImage()
+        }
     }
 }

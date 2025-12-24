@@ -27,6 +27,9 @@ import Vision
 
 #if os(iOS)
 import UIKit
+#else
+import IOKit
+import IOKit.pwr_mgt
 #endif
 
 // MARK: bindingCast
@@ -38,6 +41,39 @@ func bindingCast<T, U>(_ binding: Binding<T>, to type: U.Type) -> Binding<U>? {
             binding.wrappedValue = newValue as! T
         }
     )
+}
+
+func caffeinate(reason: String) -> UInt32? {
+    #if os(iOS)
+    DispatchQueue.main.async {
+        UIApplication.shared.isIdleTimerDisabled = true
+    }
+    return nil
+    #else
+    var assertionID: IOPMAssertionID = 0
+    var success = unsafe IOPMAssertionCreateWithName(
+        kIOPMAssertionTypeNoDisplaySleep as CFString,
+        IOPMAssertionLevel(kIOPMAssertionLevelOn),
+        reason as CFString,
+        &assertionID
+    )
+    if success == kIOReturnSuccess {
+        return assertionID
+    } else {
+        return nil
+    }
+    #endif
+}
+func decaffeinate(_ id: UInt32?) {
+    #if os(iOS)
+    DispatchQueue.main.async {
+        UIApplication.shared.isIdleTimerDisabled = false
+    }
+    #else
+    if let id {
+        IOPMAssertionRelease(id)
+    }
+    #endif
 }
 
 // MARK: compare

@@ -15302,6 +15302,38 @@
         }
       }
     },
+    "Settings.widgets.collection.download.available.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloaded (%@)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已下载 (%@)"
+          }
+        }
+      }
+    },
+    "Settings.widgets.collection.download.remove" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove Download"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除下载"
+          }
+        }
+      }
+    },
     "Settings.widgets.collection.selector.auto-save" : {
       "localizations" : {
         "en" : {
@@ -16136,6 +16168,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "確定要刪除“%@”嗎？"
+          }
+        }
+      }
+    },
+    "Settings.widgets.collections.download" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下载"
+          }
+        }
+      }
+    },
+    "Settings.widgets.collections.download.in-progress.%lld.%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloading… (%1$lld/%2$lld)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下载中… (%1$lld/%2$lld)"
           }
         }
       }
