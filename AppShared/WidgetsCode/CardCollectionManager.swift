@@ -177,7 +177,7 @@ final class CardCollectionManager: @unchecked Sendable, ObservableObject {
                 return builtinImage(named: name)
             case .path(let path):
                 if let url = offlineFileURL {
-                    return NSImage(contentsOf: url)
+                    return UIImage(contentsOfFile: url.path)
                 } else {
                     if let data = try? Data(contentsOf: .init(string: path)!) {
                         return UIImage(data: data)
