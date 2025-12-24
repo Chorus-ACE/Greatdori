@@ -40,8 +40,13 @@ Default: ~/Desktop/CardCollections
 """)
 print("> ", terminator: .init())
 let _outputPath = readLine() ?? ""
-let outputPath = _outputPath.isEmpty ? "~/Desktop/CardCollections" : _outputPath
+let outputPath = ((_outputPath.isEmpty ? "~/Desktop/CardCollections" : _outputPath) as NSString)
+    .expandingTildeInPath as String
 print("")
+
+if !FileManager.default.fileExists(atPath: outputPath) {
+    try FileManager.default.createDirectory(atPath: outputPath, withIntermediateDirectories: false)
+}
 
 print("Fetching...")
 
@@ -57,7 +62,7 @@ let ids = formattedCardInfoString
             let separated = $0.components(separatedBy: ":")
             guard separated.count == 2 else { return nil }
             guard let id = Int(separated[0]) else { return nil }
-            return (id: id, trained: separated[1] == "after")
+            return (id: id, trained: separated[1].lowercased() == "after")
         } else {
             return nil
         }
@@ -65,13 +70,18 @@ let ids = formattedCardInfoString
 print("Please wait...", terminator: .init())
 fflush(stdout)
 if let cards = await _DoriAPI.Cards.all() {
-    let relatedCards = cards.compactMap { card in
-        if ids.map({ $0.id }).contains(card.id) {
-            (card: card, trained: ids.first(where: { $0.id == card.id })!.trained)
-        } else {
-            nil
+    var relatedCards = cards.flatMap { card in
+        ids.filter { $0.id == card.id }.map {
+            (card: card, trained: $0.trained)
         }
     }
+    for (index, card) in relatedCards.enumerated() {
+        if index == 0 { continue }
+        if relatedCards[0..<index].contains(where: { $0 == card }) {
+            relatedCards.remove(at: index)
+        }
+    }
+    
     printProgressBar(0, total: relatedCards.count)
     var resultCards = [Card]()
     var resultImageData = [(Data, String)]()
