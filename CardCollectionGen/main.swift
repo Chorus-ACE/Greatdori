@@ -17,6 +17,12 @@ import AppKit
 import DoriKit
 import Foundation
 
+if CommandLine.arguments.contains("-c")
+    || CommandLine.arguments.contains("--compress") {
+    try imageCompressing()
+    exit(EXIT_SUCCESS)
+}
+
 print("""
 Localization Key for Collection Name
 Example: BUILTIN_CARD_COLLECTION_MYGO
