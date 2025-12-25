@@ -452,7 +452,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                             .geometryGroup()
                             .navigationDestination(item: $presentingElement) { element in
                                 makeDestination(element, elements ?? [])
-#if !os(macOS)
+                                #if !os(macOS)
                                     .wrapIf(true, in: { content in
                                         if #available(iOS 18.0, *) {
                                             content
@@ -514,11 +514,22 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
             }
         }
         .withSystemBackground()
-        .inspector(isPresented: $showFilterSheet) {
-            FilterView(filter: $filter, includingKeys: Set(Element.applicableFilteringKeys))
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
-                .presentationBackgroundInteraction(.enabled)
+        .wrapIf(sizeClass == .regular || isMACOS) { content in
+            content
+                .inspector(isPresented: $showFilterSheet) {
+                    FilterView(filter: $filter, includingKeys: Set(Element.applicableFilteringKeys))
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackgroundInteraction(.enabled)
+                }
+        } else: { content in
+            content
+                .sheet(isPresented: $showFilterSheet) {
+                    FilterView(filter: $filter, includingKeys: Set(Element.applicableFilteringKeys))
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackgroundInteraction(.enabled)
+                }
         }
         .withSystemBackground() // This modifier MUST be placed BOTH before
                                 // and after `inspector` to make it work as expected

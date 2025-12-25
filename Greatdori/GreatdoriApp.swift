@@ -59,7 +59,6 @@ struct GreatdoriApp: App {
         WindowGroup {
             ZStack {
                 ContentView()
-                    .toolbarBackground(.visible, for: .windowToolbar)
                 if enableRulerOverlay {
                     DebugRulerOverlay()
                 }
@@ -68,7 +67,6 @@ struct GreatdoriApp: App {
                 _handleURL(url)
             }
         }
-        .windowToolbarStyle(.unified)
         .commands {
             CommandGroup(replacing: .appSettings) {
                 Button(action: {
