@@ -15401,34 +15401,12 @@
         }
       }
     },
-    "Settings.widgets.collection.download.available.%@" : {
+    "Settings.widgets.collection.download.remove.%@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Downloaded (%@)"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已下载 (%@)"
-          }
-        }
-      }
-    },
-    "Settings.widgets.collection.download.remove" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remove Download"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "移除下载"
+            "value" : "Remove Download (%@)"
           }
         }
       }
@@ -16062,6 +16040,7 @@
       }
     },
     "Settings.widgets.collections.code.dialog.share" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16271,18 +16250,12 @@
         }
       }
     },
-    "Settings.widgets.collections.download" : {
+    "Settings.widgets.collections.download.%@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Download"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "下载"
+            "value" : "Download (~%@)"
           }
         }
       }
