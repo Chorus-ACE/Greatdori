@@ -178,7 +178,7 @@ struct LyricsFocusView: View {
                                     Spacer()
                                     TextField("", text: $focusSource)
                                     Menu(content: {
-                                        ForEach(["Musixmatch", "Lyricfind", ""], id: \.self) { item in
+                                        ForEach(["Musixmatch", "LyricFind", "Apple Music"] + [""], id: \.self) { item in
                                             Button(action: {
                                                 focusSource = item
                                             }, label: {
