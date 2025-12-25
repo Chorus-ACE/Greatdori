@@ -292,6 +292,8 @@
 		E9BDF0022EEC1BF5009568F5 /* SettingsStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDF0012EEC1BF1009568F5 /* SettingsStoryView.swift */; };
 		E9CA1F742EFBDCE6005932E5 /* MusicKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F732EFBDCE4005932E5 /* MusicKitView.swift */; };
 		E9CA1F762EFBF2BE005932E5 /* NeoReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F752EFBF2BE005932E5 /* NeoReflectionView.swift */; };
+		E9CA1F862EFD24FB005932E5 /* LyricsEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F852EFD24F2005932E5 /* LyricsEditor.swift */; };
+		E9CA1F882EFDAA8F005932E5 /* CompactAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F872EFDAA8F005932E5 /* CompactAudioPlayer.swift */; };
 		E9CD3A482E58975D00BF5EA9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A472E58975900BF5EA9 /* Extensions.swift */; };
 		E9CD3A4A2E58984400BF5EA9 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A492E58984200BF5EA9 /* Functions.swift */; };
 		E9DA971C2ED97ED90047B464 /* GachaDetailCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA971B2ED97ED90047B464 /* GachaDetailCardsView.swift */; };
@@ -789,6 +791,8 @@
 		E9BDF0012EEC1BF1009568F5 /* SettingsStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoryView.swift; sourceTree = "<group>"; };
 		E9CA1F732EFBDCE4005932E5 /* MusicKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicKitView.swift; sourceTree = "<group>"; };
 		E9CA1F752EFBF2BE005932E5 /* NeoReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeoReflectionView.swift; sourceTree = "<group>"; };
+		E9CA1F852EFD24F2005932E5 /* LyricsEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsEditor.swift; sourceTree = "<group>"; };
+		E9CA1F872EFDAA8F005932E5 /* CompactAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactAudioPlayer.swift; sourceTree = "<group>"; };
 		E9CD3A472E58975900BF5EA9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E9CD3A492E58984200BF5EA9 /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		E9D96AA42E752BE7005E0F2C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -1028,6 +1032,7 @@
 				8C3FA25D2E4BA52C001526F2 /* GreatLyricsIcon.icon */,
 				8C3FA2582E4B9EC6001526F2 /* GreatLyricsApp.swift */,
 				8C3FA26E2E4BCEC0001526F2 /* WrapIf.swift */,
+				E9CA1F872EFDAA8F005932E5 /* CompactAudioPlayer.swift */,
 				8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */,
 				8C719D2E2EF1AB9E00E8645B /* View+Variadic.swift */,
 				8C3FA26C2E4BCE77001526F2 /* TextStyleRender.swift */,
@@ -1041,6 +1046,7 @@
 				E9CA1F752EFBF2BE005932E5 /* NeoReflectionView.swift */,
 				E9CA1F732EFBDCE4005932E5 /* MusicKitView.swift */,
 				E9A8A8632EFBBF5F00B78FEE /* MusicKitHelper.swift */,
+				E9CA1F852EFD24F2005932E5 /* LyricsEditor.swift */,
 				8C3FA2562E4B9EC6001526F2 /* Assets.xcassets */,
 			);
 			path = GreatLyrics;
@@ -2144,9 +2150,11 @@
 				E9CA1F762EFBF2BE005932E5 /* NeoReflectionView.swift in Sources */,
 				E9CA1F742EFBDCE6005932E5 /* MusicKitView.swift in Sources */,
 				8C3FA26B2E4BCC20001526F2 /* StyleView.swift in Sources */,
+				E9CA1F862EFD24FB005932E5 /* LyricsEditor.swift in Sources */,
 				8C3FA26F2E4BCEC2001526F2 /* WrapIf.swift in Sources */,
 				8CFEF5C12E4DE6250017FF66 /* LyricsView.swift in Sources */,
 				8C3FA25C2E4B9EC6001526F2 /* GreatLyricsApp.swift in Sources */,
+				E9CA1F882EFDAA8F005932E5 /* CompactAudioPlayer.swift in Sources */,
 				8C719D2F2EF1ABA600E8645B /* View+Variadic.swift in Sources */,
 				E9A8A8642EFBBF6300B78FEE /* MusicKitHelper.swift in Sources */,
 			);

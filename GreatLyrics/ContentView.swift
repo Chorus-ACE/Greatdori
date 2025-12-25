@@ -33,7 +33,7 @@ struct ContentView: View {
                 Section {
                     Label("File", systemImage: "document").tag("file")
                     Label("Style", systemImage: "paintbrush").tag("style")
-                    Label("Metadata", systemImage: "gearshape").tag("mtd")
+                    Label("Metadata", systemImage: "gearshape").tag("metadata")
                     Label("Lyrics", systemImage: "music.note.list").tag("lyrics")
                 } header: {
                     Text("Lyrics")
@@ -44,13 +44,19 @@ struct ContentView: View {
                     } icon: {
                         Image(_internalSystemName: "music.note.circle.righthalf.dotted")
                     }
-                    .tag("ref2")
+                    .tag("reflection")
                     Label(title: {
                         Text("MusicKit")
                     }, icon: {
                         Image(_internalSystemName: "music.note.and.sparkles")
                     })
                     .tag("musickit")
+                    Label(title: {
+                        Text("Plain Lyrics")
+                    }, icon: {
+                        Image(_internalSystemName: "quote.bubble")
+                    })
+                    .tag("plain-lyrics")
                 } header: {
                     Text("Music")
                 }
@@ -62,11 +68,11 @@ struct ContentView: View {
                     switch mainTabSelection {
                     case "file": FileView(lyrics: $lyrics)
                     case "stlye": StyleView(lyrics: $lyrics)
-                    case "mtd": MetadataView(lyrics: $lyrics)
+                    case "metadata": MetadataView(lyrics: $lyrics)
                     case "lyrics": LyricsView(lyrics: $lyrics)
-//                    case "ref": ReflectionView()
-                    case "ref2": NeoReflectionView()
+                    case "reflection": NeoReflectionView()
                     case "musickit": MusicKitView()
+                    case "plain-lyrics": LyricsEditorView()
                     default: EmptyView()
                     }
                 }

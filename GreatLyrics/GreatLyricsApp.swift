@@ -102,3 +102,98 @@ struct StyleEditorWindowData: Hashable, Codable {
     var style: Lyrics.Style
     @unsafe var update: Int
 }
+
+// MARK: CustomGroupBox
+struct CustomGroupBox<Content: View>: View {
+    let content: () -> Content
+    var cornerRadius: CGFloat
+    var showGroupBox: Bool
+    
+    init(
+        showGroupBox: Bool = true,
+        cornerRadius: CGFloat = 15,
+        useExtenedConstraints: Bool = false,
+        strokeLineWidth: CGFloat = 0,
+        customGroupBoxVersion: Int? = nil,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.showGroupBox = showGroupBox
+        self.cornerRadius = cornerRadius
+        self.content = content
+    }
+    
+    var body: some View {
+        Group {
+            content()
+        }
+            .padding(.all, showGroupBox ? nil : 0)
+            .background {
+                if showGroupBox {
+                    GeometryReader { geometry in
+                        ZStack {
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .fill(.black.opacity(0.1))
+                                .offset(y: 2)
+                                .blur(radius: 2)
+                                .mask {
+                                    Rectangle()
+                                        .size(width: geometry.size.width + 18, height: geometry.size.height + 18)
+                                        .offset(x: -9, y: -9)
+                                        .overlay {
+                                            RoundedRectangle(cornerRadius: cornerRadius)
+                                                .blendMode(.destinationOut)
+                                        }
+                                }
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .fill(.black.opacity(0.1))
+                                .offset(y: 2)
+                                .blur(radius: 4)
+                                .mask {
+                                    Rectangle()
+                                        .size(width: geometry.size.width + 60, height: geometry.size.height + 60)
+                                        .offset(x: -30, y: -30)
+                                        .overlay {
+                                            RoundedRectangle(cornerRadius: cornerRadius)
+                                                .blendMode(.destinationOut)
+                                        }
+                                }
+                            
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .fill(Color(.floatingCard))
+                        }
+                    }
+                    
+                }
+            }
+            .overlay {
+                if showGroupBox {
+                LinearGradient(
+                    colors: [
+                        Color(.floatingCardTopBorder),
+                        Color(.floatingCard)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .mask {
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(.clear)
+                        .stroke(.black, style: .init(lineWidth: 1))
+                }
+                .allowsHitTesting(false)
+            }
+        }
+        // We pass the group box status bidirectionally to allow
+        // other views that suppress the custom group box
+        // to provide their own representation
+        .preference(key: CustomGroupBoxActivePreference.self, value: showGroupBox)
+    }
+}
+
+
+struct CustomGroupBoxActivePreference: PreferenceKey {
+    @safe nonisolated(unsafe) static var defaultValue: Bool = false
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue()
+    }
+}
