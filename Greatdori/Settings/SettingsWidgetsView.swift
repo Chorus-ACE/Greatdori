@@ -452,7 +452,7 @@ struct SettingsWidgetsCollectionDetailsView: View {
                                                                 ProgressView()
                                                                     .controlSize(.small)
                                                             }
-                                                            Label("Settings.widgets.collection.download.remove.\(ByteCountFormatter().string(fromByteCount: collection.localImageSize()))", systemImage: "arrow.down.circle.badge.xmark")
+                                                            Label("Settings.widgets.collection.download.remove.\(ByteCountFormatter().string(fromByteCount: collection.localImageSize()))", systemImage: "arrow.down.circle")
                                                                 .bold()
                                                                 .foregroundStyle(.red)
                                                     })

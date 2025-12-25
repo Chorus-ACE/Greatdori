@@ -15408,6 +15408,12 @@
             "state" : "translated",
             "value" : "Remove Download (%@)"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除下载（%@）"
+          }
         }
       }
     },
@@ -16256,6 +16262,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Download (~%@)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下载（约%@）"
           }
         }
       }
