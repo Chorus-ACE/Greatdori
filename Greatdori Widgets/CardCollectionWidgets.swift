@@ -16,6 +16,7 @@ import DoriKit
 import SwiftUI
 import WidgetKit
 import AppIntents
+private import Builtin
 
 struct CardCollectionWidgets: Widget {
     let kind: String = "com.memz233.Greatdori.Widgets.CardCollection"
@@ -44,17 +45,31 @@ private struct Provider: AppIntentTimelineProvider {
     }
     
     func timeline(for configuration: CardCollectionWidgetIntent, in context: Context) async -> Timeline<Entry> {
-        let policy: TimelineReloadPolicy = switch configuration.shuffleFrequency {
-        case .onTap: .never
-        case .hourly: .after(Date.now.addingTimeInterval(60 * 60).componentsRewritten(minute: 0, second: 0))
-        case .daily: .after(Date.now.addingTimeInterval(60 * 60 * 24).componentsRewritten(hour: 0, minute: 0, second: 0))
+        if configuration.shuffleFrequency == .onTap {
+            return .init(
+                entries: [
+                    entry(align: false, in: configuration.collectionName, frequency: configuration.shuffleFrequency)
+                ],
+                policy: .never
+            )
         }
-        return .init(
-            entries: [
-                entry(align: false, in: configuration.collectionName, frequency: configuration.shuffleFrequency)
-            ],
-            policy: policy
-        )
+        
+        let preloadEntryCount = 8
+        let policy: TimelineReloadPolicy = switch configuration.shuffleFrequency {
+        case .onTap: Builtin.unreachable()
+        case .hourly: .after(Date.now.addingTimeInterval(60 * 60 * Double(preloadEntryCount)).componentsRewritten(minute: 0, second: 0))
+        case .daily: .after(Date.now.addingTimeInterval(60 * 60 * 24 * Double(preloadEntryCount)).componentsRewritten(hour: 0, minute: 0, second: 0))
+        }
+        var entries: [Entry] = []
+        for i in 0..<preloadEntryCount {
+            entries.append(entry(
+                for: .now.addingTimeInterval(60 * 60 * Double(i)),
+                align: false,
+                in: configuration.collectionName,
+                frequency: configuration.shuffleFrequency
+            ))
+        }
+        return .init(entries: entries, policy: policy)
     }
     
     func entry(

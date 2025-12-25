@@ -3122,6 +3122,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -3165,6 +3166,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -3209,6 +3211,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -3253,6 +3256,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -4147,6 +4151,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -4558,6 +4563,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
