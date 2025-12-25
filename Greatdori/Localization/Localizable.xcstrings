@@ -15230,7 +15230,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交互式故事播放器"
+            "value" : "故事播放器"
           }
         },
         "zh-Hant" : {
@@ -16041,29 +16041,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "接收者可以通過點擊“新收藏集”並輸入收藏集代碼來導入收藏集。"
-          }
-        }
-      }
-    },
-    "Settings.widgets.collections.code.dialog.share" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Share..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分享"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "共享…"
           }
         }
       }
@@ -17170,18 +17147,12 @@
         }
       }
     },
-    "Song.lyrics.report" : {
+    "Song.lyrics.artistic" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Report a Concern"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "报告问题"
+            "value" : "艺术字"
           }
         }
       }

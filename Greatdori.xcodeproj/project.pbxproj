@@ -2968,6 +2968,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "GreatLyrics!";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3003,6 +3004,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "GreatLyrics!";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3038,6 +3040,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "GreatLyrics!";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3073,6 +3076,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "GreatLyrics!";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4380,6 +4384,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "GreatLyrics!";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4808,6 +4813,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "GreatLyrics!";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 the Greatdori! project authors.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

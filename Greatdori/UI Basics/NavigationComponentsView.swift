@@ -47,7 +47,7 @@ import SwiftUI
     ),
     InfoDestinationItem(
         title: "App.info.gachas",
-        symbol: "line.horizontal.star.fill.line.horizontal",
+        symbol: "dice",
         lightColor: .yellow,
         tabValue: .gacha,
         destination: {GachaSearchView()}

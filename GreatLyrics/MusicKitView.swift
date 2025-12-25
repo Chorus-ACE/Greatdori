@@ -14,6 +14,7 @@
 
 import DoriKit
 import Foundation
+import MusicKit
 import SDWebImageSwiftUI
 import SwiftUI
 
@@ -84,6 +85,16 @@ struct MusicKitView: View {
                     })
                     .disabled(!musicIDInputIsValid)
                 }
+            }
+            
+            Section {
+                Button(action: {
+                    Task {
+                        await MusicAuthorization.request()
+                    }
+                }, label: {
+                    Text("Request Authorization")
+                })
             }
             
             if !lastError.isEmpty {

@@ -214,7 +214,6 @@ struct ContentView: View {
             }, message: {
                 Text("Home.banner.no-pre-cahce.subtitle")
             })
-//            .windowToolbarStyle(.unified)
         } else {
             if crashViewShouldBeDisplayed {
                 // Crash View pretended to be the same as loading view below.

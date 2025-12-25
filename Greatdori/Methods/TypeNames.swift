@@ -54,7 +54,7 @@ extension PreviewEvent: DoriTypeDescribable {
 extension PreviewGacha: DoriTypeDescribable {
     static var singularName: LocalizedStringResource { "Type.gacha.singular" }
     static var pluralName: LocalizedStringResource { "Type.gacha.plural" }
-    static var symbol: String { "line.horizontal.star.fill.line.horizontal" }
+    static var symbol: String { "dice" }
 }
 
 extension PreviewSong: DoriTypeDescribable {

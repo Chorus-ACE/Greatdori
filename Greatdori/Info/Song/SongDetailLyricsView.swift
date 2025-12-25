@@ -18,7 +18,7 @@ import SwiftUI
 @available(iOS 26.0, macOS 26.0, *)
 struct SongDetailLyricsView: View {
     var lyrics: _DoriFrontend.Songs.Lyrics
-    @State private var isReportPresented = false
+    @State private var fontIsArtistic = false
     var body: some View {
         LazyVStack(pinnedViews: .sectionHeaders) {
             Section {
@@ -27,24 +27,28 @@ struct SongDetailLyricsView: View {
                         VStack(alignment: .leading, spacing: 5) {
                             ForEach(lyrics.lyrics) { lyricLine in
                                 VStack(alignment: .leading, spacing: 0) {
-                                    Group {
-                                        if let mainStyle = lyrics.mainStyle {
-                                            TextStyleRender(
-                                                text: lyricLine.original,
-                                                partialStyle: mergingMainStyle(
-                                                    mainStyle,
-                                                    with: lyricLine.partialStyle,
-                                                    for: lyricLine
+                                    if fontIsArtistic {
+                                        Group {
+                                            if let mainStyle = lyrics.mainStyle {
+                                                TextStyleRender(
+                                                    text: lyricLine.original,
+                                                    partialStyle: mergingMainStyle(
+                                                        mainStyle,
+                                                        with: lyricLine.partialStyle,
+                                                        for: lyricLine
+                                                    )
                                                 )
-                                            )
-                                        } else {
-                                            TextStyleRender(
-                                                text: lyricLine.original,
-                                                partialStyle: lyricLine.partialStyle
-                                            )
+                                            } else {
+                                                TextStyleRender(
+                                                    text: lyricLine.original,
+                                                    partialStyle: lyricLine.partialStyle
+                                                )
+                                            }
                                         }
+                                        .font(.system(size: 20))
+                                    } else {
+                                        Text(lyricLine.original)
                                     }
-                                    .font(.system(size: 20))
                                 }
                             }
                         }
@@ -59,10 +63,10 @@ struct SongDetailLyricsView: View {
                         .bold()
                     Spacer()
                     Button(action: {
-                        isReportPresented = true
+                        fontIsArtistic.toggle()
                     }, label: {
-                        Text("Song.lyrics.report")
-                            .foregroundStyle(.secondary)
+                        Text("Song.lyrics.artistic")
+                            .foregroundStyle(fontIsArtistic ? .accent : .secondary)
                     })
                     .buttonStyle(.plain)
                 }

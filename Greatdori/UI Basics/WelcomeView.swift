@@ -383,7 +383,7 @@ fileprivate let configuration: [AppIconWrappingFeatureImageConfiguration] = [
           color: .green,
           size: 28,
           offset: .init(width: 80, height: 25)),
-    .init(systemName: "line.horizontal.star.fill.line.horizontal",
+    .init(systemName: "dice",
           color: .yellow,
           size: 28,
           offset: .init(width: 0, height: 75)),
