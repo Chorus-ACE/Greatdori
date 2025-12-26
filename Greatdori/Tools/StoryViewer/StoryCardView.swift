@@ -79,7 +79,6 @@ struct StoryCardView: View {
             CustomGroupBox(cornerRadius: 20) {
                 HStack {
                     VStack(alignment: .leading) {
-                        //                        if ![CardEpisode.EpisodeType.animation.localizedString, CardEpisode.EpisodeType.standard.localizedString, CardEpisode.EpisodeType.memorial.localizedString].contains(caption) {
                         if type != .card {
                             Text(verbatim: "\(caption)\(getLocalizedColon(forLocale: locale))\(title.forLocale(locale) ?? "")")
                                 .font(.headline)
@@ -119,7 +118,7 @@ struct StoryCardView: View {
                         FallbackableWebImage(throughURLs: images)
                             .resizable()
                             .scaledToFit()
-                            .frame(maxHeight: 60)
+                            .frame(height: 60)
                     }
                 }
             }
