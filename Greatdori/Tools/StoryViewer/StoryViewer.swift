@@ -197,25 +197,28 @@ struct StoryViewerView: View {
                                 case .card:
                                     StoryCardView(story: item, type: storyType, locale: locale, unsafeAssociatedID: selectedCard?.resourceSetName ?? "")
                                 case .actionSet:
-                                    let areaID = Int(item.note!)!
-                                    StoryCardView(
-                                        story: item,
-                                        type: storyType,
-                                        locale: locale,
-                                        unsafeAssociatedID: item.scenarioID,
-                                        images: [
-                                            URL(string: "https://bestdori.com/assets/\(locale.rawValue)/worldmap_rip/area_icon\(unsafe String(format: "%03d", areaID)).png")!,
-                                            URL(string: "https://bestdori.com/assets/\(locale.rawValue)/map/area_icon/area_icon\(unsafe String(format: "%03d", areaID))_rip/area_icon\(unsafe String(format: "%03d", areaID)).png")!
-                                        ],
-                                        characterIDs: item.characterIDs
-                                    )
+                                    if let _note = item.note, let areaID = Int(consume _note) {
+                                        StoryCardView(
+                                            story: item,
+                                            type: storyType,
+                                            locale: locale,
+                                            unsafeAssociatedID: item.scenarioID,
+                                            images: [
+                                                URL(string: "https://bestdori.com/assets/\(locale.rawValue)/worldmap_rip/area_icon\(unsafe String(format: "%03d", areaID)).png")!,
+                                                URL(string: "https://bestdori.com/assets/\(locale.rawValue)/map/area_icon/area_icon\(unsafe String(format: "%03d", areaID))_rip/area_icon\(unsafe String(format: "%03d", areaID)).png")!
+                                            ],
+                                            characterIDs: item.characterIDs
+                                        )
+                                    }
                                 case .afterLive:
-                                    StoryCardView(
-                                        story: item,
-                                        type: storyType,
-                                        locale: locale,
-                                        unsafeAssociatedID: item.note!
-                                    )
+                                    if let note = item.note {
+                                        StoryCardView(
+                                            story: item,
+                                            type: storyType,
+                                            locale: locale,
+                                            unsafeAssociatedID: note
+                                        )
+                                    }
                                 }
                             }
                         } else {
