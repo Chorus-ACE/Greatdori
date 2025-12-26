@@ -105,7 +105,7 @@ private struct NewsWidgetsEntryView : View {
     var capacity: Int {
         switch widgetFamily {
         case .systemMedium: 1
-        case .systemLarge: 3
+        case .systemLarge: 4
         case .systemExtraLarge: 4
         case let f where f.rawValue == 4: 6
         default: 3
@@ -147,7 +147,7 @@ private struct NewsWidgetsEntryView : View {
                         }
                     }
                 } else {
-                    ForEach(0..<5, id: \.self) { newsIndex in
+                    ForEach(0..<capacity, id: \.self) { newsIndex in
                         VStack(alignment: .leading) {
                             Text(verbatim: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
                                 .lineLimit(3)
@@ -169,7 +169,7 @@ private struct NewsWidgetsEntryView : View {
     }
 }
 
-struct NewsPreview: View {
+private struct NewsPreview: View {
     var news: _DoriFrontend.News.ListItem
     var showLocale: Bool = true
     var titleFont: Font = .body
