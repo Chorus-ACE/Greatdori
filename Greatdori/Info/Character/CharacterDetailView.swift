@@ -44,7 +44,7 @@ struct CharacterDetailView: View {
         Group {
             if let information {
                 ScrollView {
-                    VStack {
+                    LazyVStack(spacing: 35, pinnedViews: .sectionHeaders) {
                         HStack {
                             Spacer(minLength: 0)
                             VStack {
@@ -80,18 +80,11 @@ struct CharacterDetailView: View {
                             Spacer(minLength: 0)
                         }
                         CharacterDetailOverviewView(information: information)
-                        DetailSectionsSpacer()
                         DetailsCardsSection(cards: information.cards)
-                        DetailSectionsSpacer()
                         DetailsCostumesSection(costumes: information.costumes)
-                        DetailSectionsSpacer()
                         DetailsEventsSection(events: information.events)
-                        DetailSectionsSpacer()
                         DetailsGachasSection(gachas: information.gacha)
-                        DetailSectionsSpacer()
                         ExternalLinksSection(links: [ExternalLink(name: "External-link.bestdori", url: URL(string: "https://bestdori.com/info/characters/\(id)")!)])
-                        Spacer()
-                        
                     }
                     .padding()
                 }

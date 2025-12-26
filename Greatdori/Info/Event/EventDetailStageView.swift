@@ -21,68 +21,67 @@ struct EventDetailStageView: View {
     @State var isExpanded = false
     var body: some View {
         if information.event.eventType == .festival {
-            LazyVStack(pinnedViews: .sectionHeaders) {
-                Section {
-                    CustomGroupBox {
-                        VStack {
-                            HStack {
-                                Text("Event.stages")
-                                    .bold()
-                                Spacer()
-                                Image(systemName: "chevron.forward")
-                                    .foregroundStyle(.secondary)
-                                    .rotationEffect(.init(degrees: isExpanded ? 90 : 0))
-                                    .font(isMACOS ? .body : .caption)
+            Section {
+                CustomGroupBox {
+                    VStack {
+                        HStack {
+                            Text("Event.stages")
+                                .bold()
+                            Spacer()
+                            Image(systemName: "chevron.forward")
+                                .foregroundStyle(.secondary)
+                                .rotationEffect(.init(degrees: isExpanded ? 90 : 0))
+                                .font(isMACOS ? .body : .caption)
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            withAnimation {
+                                isExpanded.toggle()
                             }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                withAnimation {
-                                    isExpanded.toggle()
+                        }
+                        
+                        if isExpanded {
+                            if let stages {
+                                ForEach(stages.map { IdentifiableStage(stage: $0) }) { stage in
+                                    ListItem {
+                                        Text(stage.stage.type.localizedString)
+                                    } value: {
+                                        MultilingualTextForCountdown(
+                                            startDate: .init(_jp: stage.stage.startAt, en: nil, tw: nil, cn: nil, kr: nil),
+                                            endDate: .init(_jp: stage.stage.endAt, en: nil, tw: nil, cn: nil, kr: nil)
+                                        )
+                                    }
                                 }
-                            }
-                            
-                            if isExpanded {
-                                if let stages {
-                                    ForEach(stages.map { IdentifiableStage(stage: $0) }) { stage in
-                                        ListItem {
-                                            Text(stage.stage.type.localizedString)
-                                        } value: {
-                                            MultilingualTextForCountdown(
-                                                startDate: .init(_jp: stage.stage.startAt, en: nil, tw: nil, cn: nil, kr: nil),
-                                                endDate: .init(_jp: stage.stage.endAt, en: nil, tw: nil, cn: nil, kr: nil)
-                                            )
-                                        }
-                                    }
-                                    .insert {
-                                        Divider()
-                                    }
-                                } else {
-                                    HStack {
-                                        Spacer()
-                                        ProgressView()
-                                            .controlSize(.large)
-                                        Spacer()
-                                    }
+                                .insert {
+                                    Divider()
+                                }
+                            } else {
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                        .controlSize(.large)
+                                    Spacer()
                                 }
                             }
                         }
                     }
-                    .frame(maxWidth: infoContentMaxWidth)
-                } header: {
-                    HStack {
-                        Text("Event.stages")
-                            .font(.title2)
-                            .bold()
-                        Spacer()
-                    }
-                    .frame(maxWidth: 615)
                 }
-            }
-            .task {
-                withDoriCache(id: "EventFestivalStages_\(information.event.id)") {
-                    await _DoriAPI.Events.festivalStages(of: information.event.id)
-                }.onUpdate {
-                    stages = $0
+                .frame(maxWidth: infoContentMaxWidth)
+            } header: {
+                HStack {
+                    Text("Event.stages")
+                        .font(.title2)
+                        .bold()
+                    Spacer()
+                }
+                .frame(maxWidth: 615)
+                .detailSectionHeader()
+                .task {
+                    withDoriCache(id: "EventFestivalStages_\(information.event.id)") {
+                        await _DoriAPI.Events.festivalStages(of: information.event.id)
+                    }.onUpdate {
+                        stages = $0
+                    }
                 }
             }
         }

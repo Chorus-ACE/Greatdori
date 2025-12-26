@@ -416,6 +416,12 @@ extension URL {
 
 // MARK: View
 public extension View {
+    func detailSectionHeader() -> some View {
+        self
+            .padding(.bottom, -40)
+            .offset(y: 5)
+    }
+    
     // MARK: hidden
     @ViewBuilder
     func hidden(_ isHidden: Bool = true) -> some View {

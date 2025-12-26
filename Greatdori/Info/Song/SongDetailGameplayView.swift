@@ -21,123 +21,122 @@ struct SongDetailGameplayView: View {
     var information: ExtendedSong
     var dateFormatter: DateFormatter { let df = DateFormatter(); df.dateStyle = .long; df.timeStyle = .short; return df }
     var body: some View {
-        LazyVStack(pinnedViews: .sectionHeaders) {
-            Section(content: {
-                CustomGroupBox {
-                    VStack {
-                        if let band = information.band {
-                            //MARK: Band
-                            Group {
-                                ListItem(title: {
-                                    Text("Song.gameplay.band")
-                                        .bold()
-                                }, value: {
-                                    MultilingualText(band.bandName)
-                                    //                            Text(DoriCache.preCache.mainBands.first{$0.id == bandID}?.bandName.forPreferredLocale(allowsFallback: true) ?? "Unknown")
-                                    if DoriCache.preCache.mainBands.contains(where: { $0.id == band.id }) || !DoriCache.PreCache.isAvailable {
-                                        WebImage(url: band.iconImageURL)
-                                            .resizable()
-                                            .interpolation(.high)
-                                            .antialiased(true)
-                                            .frame(width: 30, height: 30)
-                                    }
-                                    
-                                })
-                                Divider()
-                            }
-                        }
-                        
-                        // MARK: Length
+        Section {
+            CustomGroupBox {
+                VStack {
+                    if let band = information.band {
+                        //MARK: Band
                         Group {
                             ListItem(title: {
-                                Text("Song.gameplay.difficulty")
+                                Text("Song.gameplay.band")
                                     .bold()
                             }, value: {
-                                SongDifficultiesIndicator(information.song.difficulty)
+                                MultilingualText(band.bandName)
+                                //                            Text(DoriCache.preCache.mainBands.first{$0.id == bandID}?.bandName.forPreferredLocale(allowsFallback: true) ?? "Unknown")
+                                if DoriCache.preCache.mainBands.contains(where: { $0.id == band.id }) || !DoriCache.PreCache.isAvailable {
+                                    WebImage(url: band.iconImageURL)
+                                        .resizable()
+                                        .interpolation(.high)
+                                        .antialiased(true)
+                                        .frame(width: 30, height: 30)
+                                }
+                                
                             })
                             Divider()
-                        }
-                        
-                        // MARK: Length
-                        Group {
-                            ListItem(title: {
-                                Text("Song.gameplay.length")
-                                    .bold()
-                            }, value: {
-                                Text(formattedSongLength(information.song.length))
-                            })
-                            Divider()
-                        }
-                        
-                        // MARK: Countdown
-                        Group {
-                            ListItem(title: {
-                                Text("Song.gameplay.countdown")
-                                    .bold()
-                            }, value: {
-                                MultilingualTextForCountdownAlt(date: information.song.publishedAt)
-                            })
-                            Divider()
-                        }
-                        
-                        // MARK: Release Date
-                        Group {
-                            ListItem(title: {
-                                Text("Song.gameplay.release-date")
-                                    .bold()
-                            }, value: {
-                                MultilingualText(information.song.publishedAt.map{dateFormatter.string(for: $0)}, showLocaleKey: true)
-                            })
-                            Divider()
-                        }
-                        
-                        if let specialReleaseDate = information.song.difficulty[.special]?.publishedAt {
-                            // MARK: Release Date
-                            Group {
-                                ListItem(title: {
-                                    Text("Song.gameplay.release-date-special")
-                                        .bold()
-                                }, value: {
-                                    MultilingualText(specialReleaseDate.map{dateFormatter.string(for: $0)}, showLocaleKey: true)
-                                })
-                                Divider()
-                            }
-                        }
-                        
-                        if !information.song.closedAt.map({$0?.corrected()}).isEmpty {
-                            // MARK: Close Date
-                            Group {
-                                ListItem(title: {
-                                    Text("Song.gameplay.close-date")
-                                        .bold()
-                                }, value: {
-                                    MultilingualText(information.song.closedAt.map{ $0?.corrected() == nil ? String(localized: "Date.unavailable") :  dateFormatter.string(for: $0)}, showLocaleKey: true)
-                                })
-                                Divider()
-                            }
-                        }
-                        
-                        // MARK: Release Date
-                        Group {
-                            ListItem(title: {
-                                Text("Song.gameplay.how-to-get")
-                                    .bold()
-                            }, value: {
-                                MultilingualText(information.song.howToGet)
-                            })
                         }
                     }
+                    
+                    // MARK: Length
+                    Group {
+                        ListItem(title: {
+                            Text("Song.gameplay.difficulty")
+                                .bold()
+                        }, value: {
+                            SongDifficultiesIndicator(information.song.difficulty)
+                        })
+                        Divider()
+                    }
+                    
+                    // MARK: Length
+                    Group {
+                        ListItem(title: {
+                            Text("Song.gameplay.length")
+                                .bold()
+                        }, value: {
+                            Text(formattedSongLength(information.song.length))
+                        })
+                        Divider()
+                    }
+                    
+                    // MARK: Countdown
+                    Group {
+                        ListItem(title: {
+                            Text("Song.gameplay.countdown")
+                                .bold()
+                        }, value: {
+                            MultilingualTextForCountdownAlt(date: information.song.publishedAt)
+                        })
+                        Divider()
+                    }
+                    
+                    // MARK: Release Date
+                    Group {
+                        ListItem(title: {
+                            Text("Song.gameplay.release-date")
+                                .bold()
+                        }, value: {
+                            MultilingualText(information.song.publishedAt.map{dateFormatter.string(for: $0)}, showLocaleKey: true)
+                        })
+                        Divider()
+                    }
+                    
+                    if let specialReleaseDate = information.song.difficulty[.special]?.publishedAt {
+                        // MARK: Release Date
+                        Group {
+                            ListItem(title: {
+                                Text("Song.gameplay.release-date-special")
+                                    .bold()
+                            }, value: {
+                                MultilingualText(specialReleaseDate.map{dateFormatter.string(for: $0)}, showLocaleKey: true)
+                            })
+                            Divider()
+                        }
+                    }
+                    
+                    if !information.song.closedAt.map({$0?.corrected()}).isEmpty {
+                        // MARK: Close Date
+                        Group {
+                            ListItem(title: {
+                                Text("Song.gameplay.close-date")
+                                    .bold()
+                            }, value: {
+                                MultilingualText(information.song.closedAt.map{ $0?.corrected() == nil ? String(localized: "Date.unavailable") :  dateFormatter.string(for: $0)}, showLocaleKey: true)
+                            })
+                            Divider()
+                        }
+                    }
+                    
+                    // MARK: Release Date
+                    Group {
+                        ListItem(title: {
+                            Text("Song.gameplay.how-to-get")
+                                .bold()
+                        }, value: {
+                            MultilingualText(information.song.howToGet)
+                        })
+                    }
                 }
-                .frame(maxWidth: infoContentMaxWidth)
-            }, header: {
-                HStack {
-                    Text("Song.gameplay")
-                        .font(.title2)
-                        .bold()
-                    Spacer()
-                }
-                .frame(maxWidth: 615)
-            })
+            }
+            .frame(maxWidth: infoContentMaxWidth)
+        } header: {
+            HStack {
+                Text("Song.gameplay")
+                    .font(.title2)
+                    .bold()
+                Spacer()
+            }
+            .frame(maxWidth: 615)
+            .detailSectionHeader()
         }
     }
 }

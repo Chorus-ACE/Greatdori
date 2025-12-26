@@ -24,90 +24,89 @@ struct GachaDetailPossibilityView: View {
     @State var possibility: Double = 99
     @State var plays: Int = 1
     var body: some View {
-        LazyVStack(pinnedViews: .sectionHeaders) {
-            Section(content: {
-                VStack {
-                    CustomGroupBox {
-                        VStack {
-                            ListItem(title: {
-                                Text("Gacha.possibility.locale")
-                            }, value: {
-                                LocalePicker($locale)
+        Section {
+            VStack {
+                CustomGroupBox {
+                    VStack {
+                        ListItem(title: {
+                            Text("Gacha.possibility.locale")
+                        }, value: {
+                            LocalePicker($locale)
+                        })
+                        
+                        Divider()
+                        
+                        ListItem(title: {
+                            Text("Gacha.possibility.card")
+                        }, value: {
+                            ItemSelectorButton(selection: $selectedCard, updateList: {
+                                information.cardDetails.flatMap({ $0.value })
                             })
-                            
-                            Divider()
-                            
-                            ListItem(title: {
-                                Text("Gacha.possibility.card")
-                            }, value: {
-                                ItemSelectorButton(selection: $selectedCard, updateList: {
-                                    information.cardDetails.flatMap({ $0.value })
-                                })
+                        })
+                        
+                        Divider()
+                        
+                        ListItem(title: {
+                            Text("Gacha.possibility.calculate")
+                        }, value: {
+                            Picker(selection: $calculatePlaysByPossibility, content: {
+                                Text("Gacha.possibility.calculate.plays-by-possibility")
+                                    .tag(true)
+                                Text("Gacha.possibility.calculate.possibility-by-plays")
+                                    .tag(false)
+                            }, label: {
+                                EmptyView()
                             })
-                            
-                            Divider()
-                            
+                            .labelsHidden()
+                        })
+                        
+                        Divider()
+                        
+                        if calculatePlaysByPossibility {
                             ListItem(title: {
-                                Text("Gacha.possibility.calculate")
+                                Text("Gacha.possibility.possibility")
                             }, value: {
-                                Picker(selection: $calculatePlaysByPossibility, content: {
-                                    Text("Gacha.possibility.calculate.plays-by-possibility")
-                                        .tag(true)
-                                    Text("Gacha.possibility.calculate.possibility-by-plays")
-                                        .tag(false)
-                                }, label: {
-                                    EmptyView()
-                                })
-                                .labelsHidden()
+                                HStack {
+                                    TextField("", value: $possibility, formatter: PossibilityNumberFormatter())
+                                        .labelsHidden()
+                                        .frame(maxWidth: 100)
+                                    Stepper("", value: $possibility, in: 0...99)
+                                        .labelsHidden()
+                                }
                             })
-                            
-                            Divider()
-                            
-                            if calculatePlaysByPossibility {
-                                ListItem(title: {
-                                    Text("Gacha.possibility.possibility")
-                                }, value: {
-                                    HStack {
-                                        TextField("", value: $possibility, formatter: PossibilityNumberFormatter())
-                                            .labelsHidden()
-                                            .frame(maxWidth: 100)
-                                        Stepper("", value: $possibility, in: 0...99)
-                                            .labelsHidden()
-                                    }
-                                })
-                            } else {
-                                ListItem(title: {
-                                    Text("Gacha.possibility.plays")
-                                }, value: {
-                                    HStack {
-                                        TextField("", value: $plays, formatter: PlaysNumberFormatter())
-                                            .labelsHidden()
-                                            .frame(maxWidth: 100)
-                                        Stepper("", value: $plays, in: 0...Int.max)
-                                            .labelsHidden()
-                                    }
-                                })
-                            }
+                        } else {
+                            ListItem(title: {
+                                Text("Gacha.possibility.plays")
+                            }, value: {
+                                HStack {
+                                    TextField("", value: $plays, formatter: PlaysNumberFormatter())
+                                        .labelsHidden()
+                                        .frame(maxWidth: 100)
+                                    Stepper("", value: $plays, in: 0...Int.max)
+                                        .labelsHidden()
+                                }
+                            })
                         }
                     }
-                    CustomGroupBox {
-                        HStack {
-                            Text(calculateProbability())
-                            Spacer(minLength: 0)
-                        }
-                        .multilineTextAlignment(.leading)
+                }
+                CustomGroupBox {
+                    HStack {
+                        Text(calculateProbability())
+                        Spacer(minLength: 0)
                     }
+                    .multilineTextAlignment(.leading)
                 }
-                .frame(maxWidth: infoContentMaxWidth)
-            }, header: {
-                HStack {
-                    Text("Gacha.possibility")
-                        .font(.title2)
-                        .bold()
-                    Spacer()
-                }
-                .frame(maxWidth: 615)
-            })
+            }
+            .frame(maxWidth: infoContentMaxWidth)
+        } header: {
+            HStack {
+                Text("Gacha.possibility")
+                    .font(.title2)
+                    .bold()
+                Spacer()
+            }
+            .frame(maxWidth: 615)
+            .detailSectionHeader()
         }
     }
     

@@ -119,12 +119,6 @@ struct SongDetailOverviewView: View {
                                 Text("\(String(information.id))")
                             })
                         }
-                        //
-                        //                    }
-                        //                }
-                        //            }
-                        //        }
-                        //        .frame(maxWidth: infoContentMaxWidth)
                     }
                 }
             }

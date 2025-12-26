@@ -24,185 +24,184 @@ struct EventDetailRewardsView: View {
     @State private var selectedCategory = RewardCategory.point
     @State private var itemList: [_DoriFrontend.ExtendedItem]?
     var body: some View {
-        LazyVStack(pinnedViews: .sectionHeaders) {
-            Section {
-                if let itemList {
-                    switch selectedCategory {
-                    case .point:
-                        if let rewards = information.event.pointRewards.forLocale(locale), !rewards.isEmpty {
-                            let rewardPointsList = rewards.enumerated().filter { isExpanded || (rewards.contains(where: { $0.reward.type == .situation || $0.reward.type == .stamp }) ? [.situation, .stamp].contains($0.element.reward.type) : $0.offset < 5) }.map { $0.element }
-                            LazyVGrid(columns: [.init(.adaptive(minimum: 200))], spacing: 10) {
-                                ForEach(rewardPointsList, id: \.point) { _reward in
-                                    if let reward = itemList.first(where: { $0.item == _reward.reward }) {
-                                        EventDetailRewardsPointsItemUnit(reward: reward, _reward: _reward, locale: locale)
-                                    }
+        Section {
+            if let itemList {
+                switch selectedCategory {
+                case .point:
+                    if let rewards = information.event.pointRewards.forLocale(locale), !rewards.isEmpty {
+                        let rewardPointsList = rewards.enumerated().filter { isExpanded || (rewards.contains(where: { $0.reward.type == .situation || $0.reward.type == .stamp }) ? [.situation, .stamp].contains($0.element.reward.type) : $0.offset < 5) }.map { $0.element }
+                        LazyVGrid(columns: [.init(.adaptive(minimum: 200))], spacing: 10) {
+                            ForEach(rewardPointsList, id: \.point) { _reward in
+                                if let reward = itemList.first(where: { $0.item == _reward.reward }) {
+                                    EventDetailRewardsPointsItemUnit(reward: reward, _reward: _reward, locale: locale)
                                 }
                             }
-                        } else {
-                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
                         }
-                    case .ranking:
-                        if let rewards = information.event.rankingRewards.forLocale(locale), !rewards.isEmpty {
-                            VStack {
-                                ForEach(rewards.grouped().prefix(isExpanded ? .max : 1), id: \.rankRange) { range, rewards in
-                                    CustomGroupBox {
-                                        HStack(alignment: .top) {
-                                            Text(verbatim: "#\(range.lowerBound.formatted())\(range.upperBound > range.lowerBound ? " - \(range.upperBound.formatted())" : "")")
-                                                .bold()
-                                            Spacer()
-                                            WrappingHStack(alignment: .trailing) {
-                                                ForEach(rewards, id: \.self) { _reward in
-                                                    if let reward = itemList.first(where: { $0.item == _reward.reward }) {
-                                                        EventDetailRewardsRankItemUnit(reward: reward, locale: locale, range: range)
-                                                    }
+                    } else {
+                        DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
+                    }
+                case .ranking:
+                    if let rewards = information.event.rankingRewards.forLocale(locale), !rewards.isEmpty {
+                        VStack {
+                            ForEach(rewards.grouped().prefix(isExpanded ? .max : 1), id: \.rankRange) { range, rewards in
+                                CustomGroupBox {
+                                    HStack(alignment: .top) {
+                                        Text(verbatim: "#\(range.lowerBound.formatted())\(range.upperBound > range.lowerBound ? " - \(range.upperBound.formatted())" : "")")
+                                            .bold()
+                                        Spacer()
+                                        WrappingHStack(alignment: .trailing) {
+                                            ForEach(rewards, id: \.self) { _reward in
+                                                if let reward = itemList.first(where: { $0.item == _reward.reward }) {
+                                                    EventDetailRewardsRankItemUnit(reward: reward, locale: locale, range: range)
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                        } else {
-                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
                         }
-                    case .musicRanking:
-                        if let musics = information.event.musics?.forLocale(locale), !musics.isEmpty {
-                            let allElementsEqual = musics.allEqual(by: \.rankingRewards)
-                            CustomGroupBox(showGroupBox: !allElementsEqual) {
-                                ForEach(musics.prefix(allElementsEqual ? 1 : .max)) { music in
-                                        VStack {
-                                            if !allElementsEqual {
-                                                if let song = information.eventSongs?.forLocale(locale)?.first(where: { $0.id == music.id }),
-                                                   let title = song.musicTitle.forLocale(locale) {
-                                                    HStack {
-                                                        Text(title)
-                                                            .bold()
-                                                        Spacer()
-                                                    }
+                    } else {
+                        DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
+                    }
+                case .musicRanking:
+                    if let musics = information.event.musics?.forLocale(locale), !musics.isEmpty {
+                        let allElementsEqual = musics.allEqual(by: \.rankingRewards)
+                        CustomGroupBox(showGroupBox: !allElementsEqual) {
+                            ForEach(musics.prefix(allElementsEqual ? 1 : .max)) { music in
+                                    VStack {
+                                        if !allElementsEqual {
+                                            if let song = information.eventSongs?.forLocale(locale)?.first(where: { $0.id == music.id }),
+                                               let title = song.musicTitle.forLocale(locale) {
+                                                HStack {
+                                                    Text(title)
+                                                        .bold()
+                                                    Spacer()
                                                 }
                                             }
-                                            ForEach(music.rankingRewards.grouped().prefix(isExpanded ? .max : 1), id: \.rankRange) { range, rewards in
-                                                if !allElementsEqual {
-                                                    Divider()
-                                                }
-                                                CustomGroupBox(showGroupBox: allElementsEqual) {
-                                                    HStack(alignment: .top) {
-                                                        Text(verbatim: "#\(range.lowerBound)\(range.upperBound > range.lowerBound ? " - \(range.upperBound)" : "")")
-                                                            .bold()
-                                                        Spacer()
-                                                        WrappingHStack(alignment: .trailing) {
-                                                            ForEach(rewards, id: \.self) { _reward in
-                                                                if let reward = itemList.first(where: { $0.item == _reward.reward }) {
-                                                                    EventDetailRewardsRankItemUnit(reward: reward, locale: locale, range: range)
-                                                                }
+                                        }
+                                        ForEach(music.rankingRewards.grouped().prefix(isExpanded ? .max : 1), id: \.rankRange) { range, rewards in
+                                            if !allElementsEqual {
+                                                Divider()
+                                            }
+                                            CustomGroupBox(showGroupBox: allElementsEqual) {
+                                                HStack(alignment: .top) {
+                                                    Text(verbatim: "#\(range.lowerBound)\(range.upperBound > range.lowerBound ? " - \(range.upperBound)" : "")")
+                                                        .bold()
+                                                    Spacer()
+                                                    WrappingHStack(alignment: .trailing) {
+                                                        ForEach(rewards, id: \.self) { _reward in
+                                                            if let reward = itemList.first(where: { $0.item == _reward.reward }) {
+                                                                EventDetailRewardsRankItemUnit(reward: reward, locale: locale, range: range)
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
-                                }
+                                    }
                             }
-                        } else {
-                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
                         }
-                    case .team:
-                        if let rewards = information.event.teamRewards, !rewards.isEmpty {
-                            VStack {
-                                ForEach(rewards.grouped(), id: \.result) { result, rewards in
-                                    CustomGroupBox {
-                                        HStack(alignment: .top) {
-                                            Text(result.localizedString)
-                                                .bold()
-                                            Spacer()
-                                            WrappingHStack(alignment: .trailing) {
-                                                ForEach(rewards, id: \.self) { _reward in
-                                                    if let reward = itemList.first(where: { $0.item == _reward.item }) {
-                                                        EventDetailRewardsRankItemUnit(reward: reward, locale: locale)
-                                                    }
+                    } else {
+                        DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
+                    }
+                case .team:
+                    if let rewards = information.event.teamRewards, !rewards.isEmpty {
+                        VStack {
+                            ForEach(rewards.grouped(), id: \.result) { result, rewards in
+                                CustomGroupBox {
+                                    HStack(alignment: .top) {
+                                        Text(result.localizedString)
+                                            .bold()
+                                        Spacer()
+                                        WrappingHStack(alignment: .trailing) {
+                                            ForEach(rewards, id: \.self) { _reward in
+                                                if let reward = itemList.first(where: { $0.item == _reward.item }) {
+                                                    EventDetailRewardsRankItemUnit(reward: reward, locale: locale)
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                        } else {
-                            DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
                         }
-                    }
-                } else {
-                    CustomGroupBox {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
+                    } else {
+                        DetailUnavailableView(title: "Details.unavailable.rewards", symbol: "gift")
                     }
                 }
-            } header: {
-                HStack(spacing: 7) {
-                    Text("Event.rewards")
-                        .font(.title2)
-                        .bold()
-                    DetailSectionOptionPicker(selection: $selectedCategory, options: [.point, .ranking, information.event.musics != nil ? .musicRanking : nil, information.event.teamRewards != nil ? .team : nil].compactMap { $0 }, labels: [.point: String(localized: "Event.rewards.point"), .ranking: String(localized: "Event.rewards.ranking"), .musicRanking: String(localized: "Event.rewards.music-ranking"), .team: String(localized: "Event.rewards.team")])
-                    DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
-                    Spacer()
-                    Button(action: {
-                        isExpanded.toggle()
-                    }, label: {
-                        Text(isExpanded ? "Details.show-less" : "Details.show-all")
-                            .foregroundStyle(.secondary)
-                    })
-                    .buttonStyle(.plain)
-                    .disabled(selectedCategory == .team)
+            } else {
+                CustomGroupBox {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                }
+            }
+        } header: {
+            HStack(spacing: 7) {
+                Text("Event.rewards")
+                    .font(.title2)
+                    .bold()
+                DetailSectionOptionPicker(selection: $selectedCategory, options: [.point, .ranking, information.event.musics != nil ? .musicRanking : nil, information.event.teamRewards != nil ? .team : nil].compactMap { $0 }, labels: [.point: String(localized: "Event.rewards.point"), .ranking: String(localized: "Event.rewards.ranking"), .musicRanking: String(localized: "Event.rewards.music-ranking"), .team: String(localized: "Event.rewards.team")])
+                DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
+                Spacer()
+                Button(action: {
+                    isExpanded.toggle()
+                }, label: {
+                    Text(isExpanded ? "Details.show-less" : "Details.show-all")
+                        .foregroundStyle(.secondary)
+                })
+                .buttonStyle(.plain)
+                .disabled(selectedCategory == .team)
+            }
+            .detailSectionHeader()
+            .onAppear {
+                if itemList == nil {
+                    var partialResult: [_DoriAPI.Item] = []
+                    for locale in DoriLocale.allCases {
+                        partialResult += information.event.pointRewards.forLocale(locale)?.map {
+                            $0.reward
+                        } ?? []
+                        partialResult += information.event.rankingRewards.forLocale(locale)?.map {
+                            $0.reward
+                        } ?? []
+                        partialResult += information.event.musics?.forLocale(locale)?.flatMap {
+                            $0.rankingRewards.map { $0.reward }
+                        } ?? []
+                    }
+                    partialResult += information.event.teamRewards?.map {
+                        $0.item
+                    } ?? []
+                    
+                    let resultSet = Set(partialResult)
+                    partialResult = Array(resultSet)
+                    
+                    var hasher = StableHasher()
+                    var hash = 0
+                    for member in resultSet {
+                        var hasher = StableHasher()
+                        var _id = member.id
+                        _id.withUTF8 { buffer in
+                            unsafe hasher.combine(bytes: UnsafeRawBufferPointer(buffer))
+                        }
+                        hasher.combine(UInt(truncatingIfNeeded: member.itemID ?? 0))
+                        hasher.combine(UInt(truncatingIfNeeded: member.quantity))
+                        hash ^= hasher.finalize()
+                    }
+                    hasher.combine(UInt(truncatingIfNeeded: hash))
+                    let itemHash = hasher.finalize()
+                    
+                    withDoriCache(id: "ExtendedItems_\(itemHash)") {
+                        await _DoriFrontend.Misc.extendedItems(from: partialResult)
+                    }.onUpdate {
+                        if let items = $0 {
+                            itemList = items
+                        }
+                    }
                 }
             }
         }
         .frame(maxWidth: infoContentMaxWidth)
-        .onAppear {
-            if itemList == nil {
-                var partialResult: [_DoriAPI.Item] = []
-                for locale in DoriLocale.allCases {
-                    partialResult += information.event.pointRewards.forLocale(locale)?.map {
-                        $0.reward
-                    } ?? []
-                    partialResult += information.event.rankingRewards.forLocale(locale)?.map {
-                        $0.reward
-                    } ?? []
-                    partialResult += information.event.musics?.forLocale(locale)?.flatMap {
-                        $0.rankingRewards.map { $0.reward }
-                    } ?? []
-                }
-                partialResult += information.event.teamRewards?.map {
-                    $0.item
-                } ?? []
-                
-                let resultSet = Set(partialResult)
-                partialResult = Array(resultSet)
-                
-                var hasher = StableHasher()
-                var hash = 0
-                for member in resultSet {
-                    var hasher = StableHasher()
-                    var _id = member.id
-                    _id.withUTF8 { buffer in
-                        unsafe hasher.combine(bytes: UnsafeRawBufferPointer(buffer))
-                    }
-                    hasher.combine(UInt(truncatingIfNeeded: member.itemID ?? 0))
-                    hasher.combine(UInt(truncatingIfNeeded: member.quantity))
-                    hash ^= hasher.finalize()
-                }
-                hasher.combine(UInt(truncatingIfNeeded: hash))
-                let itemHash = hasher.finalize()
-                
-                withDoriCache(id: "ExtendedItems_\(itemHash)") {
-                    await _DoriFrontend.Misc.extendedItems(from: partialResult)
-                }.onUpdate {
-                    if let items = $0 {
-                        itemList = items
-                    }
-                }
-            }
-        }
     }
     
     private enum RewardCategory {

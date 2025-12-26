@@ -21,7 +21,7 @@ struct ComicDetailOverviewView: View {
     var dateFormatter: DateFormatter { let df = DateFormatter(); df.dateStyle = .long; df.timeStyle = .short; return df }
     var body: some View {
         CustomGroupBox {
-            LazyVStack {
+            VStack {
                 Group {
                     ListItem {
                         Text("Comic.title")

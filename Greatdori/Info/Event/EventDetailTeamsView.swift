@@ -21,50 +21,49 @@ struct EventDetailTeamsView: View {
     var information: ExtendedEvent
     var body: some View {
         if let teams = information.event.teamList, teams.count >= 2 {
-            LazyVStack(pinnedViews: .sectionHeaders) {
-                Section {
-                    CustomGroupBox {
-                        HStack {
-                            Spacer()
-                            VStack {
-                                Text(teams[0].themeTitle)
-                                    .font(.title3)
-                                    .bold()
-                                    .multilineTextAlignment(.center)
-                                HStack {
-                                    VStack {
-                                        WebImage(url: teams[0].iconImageURL(with: information.event))
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(height: 100)
-                                        Text(teams[0].teamName)
-                                    }
-                                    Text(verbatim: "vs")
-                                        .padding(.horizontal, 20)
-                                    VStack {
-                                        WebImage(url: teams[1].iconImageURL(with: information.event))
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(height: 100)
-                                        Text(teams[1].teamName)
-                                    }
+            Section {
+                CustomGroupBox {
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Text(teams[0].themeTitle)
+                                .font(.title3)
+                                .bold()
+                                .multilineTextAlignment(.center)
+                            HStack {
+                                VStack {
+                                    WebImage(url: teams[0].iconImageURL(with: information.event))
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: 100)
+                                    Text(teams[0].teamName)
+                                }
+                                Text(verbatim: "vs")
+                                    .padding(.horizontal, 20)
+                                VStack {
+                                    WebImage(url: teams[1].iconImageURL(with: information.event))
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: 100)
+                                    Text(teams[1].teamName)
                                 }
                             }
-                            Spacer()
                         }
-                    }
-                    .frame(maxWidth: infoContentMaxWidth)
-                } header: {
-                    HStack {
-                        Text("Event.teams")
-                            .font(.title2)
-                            .bold()
                         Spacer()
                     }
-                    .frame(maxWidth: 615)
                 }
+                .textSelection(.enabled)
+                .frame(maxWidth: infoContentMaxWidth)
+            } header: {
+                HStack {
+                    Text("Event.teams")
+                        .font(.title2)
+                        .bold()
+                    Spacer()
+                }
+                .frame(maxWidth: 615)
+                .detailSectionHeader()
             }
-            .textSelection(.enabled)
         }
     }
 }

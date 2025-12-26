@@ -82,5 +82,3 @@ struct DetailUnavailableView: View {
         }
     }
 }
-
-

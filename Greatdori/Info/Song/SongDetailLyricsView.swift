@@ -20,58 +20,57 @@ struct SongDetailLyricsView: View {
     var lyrics: _DoriFrontend.Songs.Lyrics
     @State private var fontIsArtistic = false
     var body: some View {
-        LazyVStack(pinnedViews: .sectionHeaders) {
-            Section {
-                CustomGroupBox {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 5) {
-                            ForEach(lyrics.lyrics) { lyricLine in
-                                VStack(alignment: .leading, spacing: 0) {
-                                    if fontIsArtistic {
-                                        Group {
-                                            if let mainStyle = lyrics.mainStyle {
-                                                TextStyleRender(
-                                                    text: lyricLine.original,
-                                                    partialStyle: mergingMainStyle(
-                                                        mainStyle,
-                                                        with: lyricLine.partialStyle,
-                                                        for: lyricLine
-                                                    )
+        Section {
+            CustomGroupBox {
+                HStack {
+                    VStack(alignment: .leading, spacing: 5) {
+                        ForEach(lyrics.lyrics) { lyricLine in
+                            VStack(alignment: .leading, spacing: 0) {
+                                if fontIsArtistic {
+                                    Group {
+                                        if let mainStyle = lyrics.mainStyle {
+                                            TextStyleRender(
+                                                text: lyricLine.original,
+                                                partialStyle: mergingMainStyle(
+                                                    mainStyle,
+                                                    with: lyricLine.partialStyle,
+                                                    for: lyricLine
                                                 )
-                                            } else {
-                                                TextStyleRender(
-                                                    text: lyricLine.original,
-                                                    partialStyle: lyricLine.partialStyle
-                                                )
-                                            }
+                                            )
+                                        } else {
+                                            TextStyleRender(
+                                                text: lyricLine.original,
+                                                partialStyle: lyricLine.partialStyle
+                                            )
                                         }
-                                        .font(.system(size: 20))
-                                    } else {
-                                        Text(lyricLine.original)
                                     }
+                                    .font(.system(size: 20))
+                                } else {
+                                    Text(lyricLine.original)
                                 }
                             }
                         }
-                        Spacer()
                     }
-                }
-                .frame(maxWidth: infoContentMaxWidth)
-            } header: {
-                HStack {
-                    Text("Song.lyrics")
-                        .font(.title2)
-                        .bold()
                     Spacer()
-                    Button(action: {
-                        fontIsArtistic.toggle()
-                    }, label: {
-                        Text("Song.lyrics.artistic")
-                            .foregroundStyle(fontIsArtistic ? .accent : .secondary)
-                    })
-                    .buttonStyle(.plain)
                 }
-                .frame(maxWidth: 615)
             }
+            .frame(maxWidth: infoContentMaxWidth)
+        } header: {
+            HStack {
+                Text("Song.lyrics")
+                    .font(.title2)
+                    .bold()
+                Spacer()
+                Button(action: {
+                    fontIsArtistic.toggle()
+                }, label: {
+                    Text("Song.lyrics.artistic")
+                        .foregroundStyle(fontIsArtistic ? .accent : .secondary)
+                })
+                .buttonStyle(.plain)
+            }
+            .frame(maxWidth: 615)
+            .detailSectionHeader()
         }
     }
 }

@@ -76,7 +76,7 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
                 ScrollView {
                     HStack {
                         Spacer(minLength: 0)
-                        LazyVStack(spacing: 40, pinnedViews: .sectionHeaders) {
+                        LazyVStack(spacing: 35, pinnedViews: .sectionHeaders) {
                             makeContent(information)
                         }
                         .padding()
@@ -606,45 +606,44 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
     @Environment(\.appendingView) private var appendingView
     
     var body: some View {
-        LazyVStack(pinnedViews: .sectionHeaders) {
-            Section {
-                Group {
-                    if !(localizedElements.forLocale(locale)?.isEmpty ?? true) || appendingView != nil {
-                        if let elements = localizedElements.forLocale(locale) {
-                            ForEach((showAll ? elements : Array(elements.prefix(3))), id: \.self) { item in
-                                makeEachContent(item)
-                                    .buttonStyle(.plain)
-                            }
+        Section {
+            VStack {
+                if !(localizedElements.forLocale(locale)?.isEmpty ?? true) || appendingView != nil {
+                    if let elements = localizedElements.forLocale(locale) {
+                        ForEach((showAll ? elements : Array(elements.prefix(3))), id: \.self) { item in
+                            makeEachContent(item)
+                                .buttonStyle(.plain)
                         }
-                        if let appendingView {
-                            appendingView()
-                        }
-                    } else {
-                        DetailUnavailableView(title: "Details.unavailable.\(Element.singularName)", symbol: Element.symbol)
                     }
+                    if let appendingView {
+                        appendingView()
+                    }
+                } else {
+                    DetailUnavailableView(title: "Details.unavailable.\(Element.singularName)", symbol: Element.symbol)
                 }
-                .frame(maxWidth: infoContentMaxWidth)
-            } header: {
-                HStack {
-                    Text(Element.pluralName)
-                        .font(.title2)
-                        .bold()
-                    if showLocalePicker {
-                        DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
-                    }
-                    Spacer()
-                    if (localizedElements.forLocale(locale)?.count ?? 0) > 3 {
-                        Button(action: {
-                            showAll.toggle()
-                        }, label: {
-                            Text(showAll ? "Details.show-less" : "Details.show-all.\(localizedElements.forLocale(locale)?.count ?? 0)")
-                                .foregroundStyle(.secondary)
-                        })
-                        .buttonStyle(.plain)
-                    }
-                }
-                .frame(maxWidth: 615)
             }
+            .frame(maxWidth: infoContentMaxWidth)
+        } header: {
+            HStack {
+                Text(Element.pluralName)
+                    .font(.title2)
+                    .bold()
+                if showLocalePicker {
+                    DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
+                }
+                Spacer()
+                if (localizedElements.forLocale(locale)?.count ?? 0) > 3 {
+                    Button(action: {
+                        showAll.toggle()
+                    }, label: {
+                        Text(showAll ? "Details.show-less" : "Details.show-all.\(localizedElements.forLocale(locale)?.count ?? 0)")
+                            .foregroundStyle(.secondary)
+                    })
+                    .buttonStyle(.plain)
+                }
+            }
+            .frame(maxWidth: 615)
+            .detailSectionHeader()
         }
     }
 }
@@ -666,7 +665,7 @@ struct DetailInfoBase<Head: View>: View {
             makeHead()
                 .padding(.vertical, 2)
             CustomGroupBox(cornerRadius: 20) {
-                LazyVStack {
+                VStack {
                     ForEach(Array(detailInfo.enumerated()), id: \.element.id) { index, info in
                         info._makeView()
                             .buttonStyle(.plain)
@@ -769,7 +768,6 @@ struct DetailInfoBuilder {
         components.flatMap { $0 }
     }
 }
-
 
 extension EnvironmentValues {
     @Entry var appendingView: (() -> AnyView)? = nil

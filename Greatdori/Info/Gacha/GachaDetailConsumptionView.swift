@@ -19,42 +19,41 @@ import SDWebImageSwiftUI
 struct GachaDetailConsumptionView: View {
     var information: ExtendedGacha
     var body: some View {
-        LazyVStack(pinnedViews: .sectionHeaders) {
-            Section {
-                CustomGroupBox {
-                    VStack {
-                        Table(information.gacha.paymentMethods) {
-                            TableColumn("Gacha.costs.type") { paymentMethod in
-                                Text("Gacha.costs.type.plays.\(paymentMethod.count)")
-                            }
-                            TableColumn("Gacha.costs.costs") { paymentMethod in
-                                HStack {
-                                    WebImage(url: paymentMethod.paymentMethod.iconImageURL)
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                    Text(verbatim: "\(paymentMethod.paymentMethod.localizedString) x\(paymentMethod.count)")
-                                }
-                            }
-                            TableColumn("Gacha.costs.note") { paymentMethod in
-                                if paymentMethod.behavior != .normal {
-                                    Text(verbatim: "\(paymentMethod.behavior.localizedString)" + (paymentMethod.maxSpinLimit != nil ? ", " + String(localized: "Gacha.costs.note.maximum.\(paymentMethod.maxSpinLimit!)") : ""))
-                                }
+        Section {
+            CustomGroupBox {
+                VStack {
+                    Table(information.gacha.paymentMethods) {
+                        TableColumn("Gacha.costs.type") { paymentMethod in
+                            Text("Gacha.costs.type.plays.\(paymentMethod.count)")
+                        }
+                        TableColumn("Gacha.costs.costs") { paymentMethod in
+                            HStack {
+                                WebImage(url: paymentMethod.paymentMethod.iconImageURL)
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                Text(verbatim: "\(paymentMethod.paymentMethod.localizedString) x\(paymentMethod.count)")
                             }
                         }
-                        .scrollDisabled(true)
-                        .frame(height: 30*CGFloat(information.gacha.paymentMethods.count + 1))
+                        TableColumn("Gacha.costs.note") { paymentMethod in
+                            if paymentMethod.behavior != .normal {
+                                Text(verbatim: "\(paymentMethod.behavior.localizedString)" + (paymentMethod.maxSpinLimit != nil ? ", " + String(localized: "Gacha.costs.note.maximum.\(paymentMethod.maxSpinLimit!)") : ""))
+                            }
+                        }
                     }
+                    .scrollDisabled(true)
+                    .frame(height: 30*CGFloat(information.gacha.paymentMethods.count + 1))
                 }
-                .frame(maxWidth: infoContentMaxWidth)
-            } header: {
-                HStack {
-                    Text("Gacha.costs")
-                        .font(.title2)
-                        .bold()
-                    Spacer()
-                }
-                .frame(maxWidth: 615)
             }
+            .frame(maxWidth: infoContentMaxWidth)
+        } header: {
+            HStack {
+                Text("Gacha.costs")
+                    .font(.title2)
+                    .bold()
+                Spacer()
+            }
+            .frame(maxWidth: 615)
+            .detailSectionHeader()
         }
     }
 }

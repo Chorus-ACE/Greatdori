@@ -22,39 +22,38 @@ struct EventDetailGoalsView: View {
         if let missions = information.event.liveTryMissions,
            let missionDetails = information.event.liveTryMissionDetails,
            let missionTypeSeqs = information.event.liveTryMissionTypeSequences {
-            LazyVStack(pinnedViews: .sectionHeaders) {
-                Section {
-                    VStack {
-                        let typedMissions = missions.reduce(into: [Event.LiveTryMissionType: [Event.LiveTryMission]]()) {
-                            $0.updateValue(($0[$1.value.missionType] ?? []) + [$1.value], forKey: $1.value.missionType)
-                        }.mapValues {
-                            $0.sorted {
-                                ($0.missionDifficultyType == $1.missionDifficultyType
-                                 && $0.level < $1.level)
-                                || $0.missionDifficultyType.rawValue > $1.missionDifficultyType.rawValue
-                            }
-                        }
-                        ForEach(typedMissions.sorted {
-                            (missionTypeSeqs[$0.key] ?? 0)
-                            < (missionTypeSeqs[$1.key] ?? 0)
-                        }, id: \.key) { type, missions in
-                            SingleTypeGoalsView(
-                                type: type,
-                                missions: missions,
-                                missionDetails: missionDetails
-                            )
+            Section {
+                VStack {
+                    let typedMissions = missions.reduce(into: [Event.LiveTryMissionType: [Event.LiveTryMission]]()) {
+                        $0.updateValue(($0[$1.value.missionType] ?? []) + [$1.value], forKey: $1.value.missionType)
+                    }.mapValues {
+                        $0.sorted {
+                            ($0.missionDifficultyType == $1.missionDifficultyType
+                             && $0.level < $1.level)
+                            || $0.missionDifficultyType.rawValue > $1.missionDifficultyType.rawValue
                         }
                     }
-                    .frame(maxWidth: infoContentMaxWidth)
-                } header: {
-                    HStack {
-                        Text("Event.goals")
-                            .font(.title2)
-                            .bold()
-                        Spacer()
+                    ForEach(typedMissions.sorted {
+                        (missionTypeSeqs[$0.key] ?? 0)
+                        < (missionTypeSeqs[$1.key] ?? 0)
+                    }, id: \.key) { type, missions in
+                        SingleTypeGoalsView(
+                            type: type,
+                            missions: missions,
+                            missionDetails: missionDetails
+                        )
                     }
-                    .frame(maxWidth: 615)
                 }
+                .frame(maxWidth: infoContentMaxWidth)
+            } header: {
+                HStack {
+                    Text("Event.goals")
+                        .font(.title2)
+                        .bold()
+                    Spacer()
+                }
+                .frame(maxWidth: 615)
+                .detailSectionHeader()
             }
         }
     }

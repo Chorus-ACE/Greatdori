@@ -113,107 +113,106 @@ struct DetailArtsSection: View {
     let itemMinimumWidth: CGFloat = 280
     let itemMaximumWidth: CGFloat = 440
     var body: some View {
-        LazyVStack(pinnedViews: .sectionHeaders) {
-            Section(content: {
-                Group {
-                    if let tab, let tabContent = information.first(where: {$0.id == tab}), !tabContent.content.isEmpty, tabContent.content.contains(where: { !hiddenItems.contains($0.id) }) {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: itemMinimumWidth, maximum: itemMaximumWidth))]) {
-                            ForEach(tabContent.content, id: \.self) { item in
-                                if !hiddenItems.contains(item.id) {
-                                    Button(action: {
-                                        #if os(iOS)
-                                        if let image = nativeImages[item.id], let frame = imageFrames[item.id] {
-                                            quickLookOnFocusItem = .init(
-                                                image: image,
-                                                title: .init(localized: tabContent.tabName),
-                                                subtitle: .init(localized: item.title),
-                                                imageFrame: frame
-                                            )
-                                        }
-                                        #else
-                                        // Build visible items and open Quick Look at the tapped item
-                                        let visibleItems = tabContent.content.filter { !hiddenItems.contains($0.id) }
-                                        previewController.fileURLs = visibleItems.map(\.url)
-                                        if let selectedIndex = visibleItems.firstIndex(where: { $0.id == item.id }) {
-                                            previewController.showPanel(startingAt: selectedIndex)
-                                        } else {
-                                            previewController.showPanel()
-                                        }
-                                        #endif
-                                    }, label: {
-                                        CustomGroupBox {
-                                            VStack {
-                                                Spacer(minLength: 0)
-                                                WebImage(url: item.url) { image in
-                                                    image
-                                                        .resizable()
-                                                        .antialiased(true)
-                                                        .aspectRatio(item.forceApplyRatio ? (item.ratio ?? tabContent.ratio) : nil, contentMode: .fit)
-                                                } placeholder: {
-                                                    RoundedRectangle(cornerRadius: 10)
-                                                        .fill(getPlaceholderColor())
-                                                        .aspectRatio(item.ratio ?? tabContent.ratio, contentMode: .fit)
-                                                }
-                                                .interpolation(.high)
-                                                .onSuccess { image, _, _ in
-                                                    DispatchQueue.main.async { // yield
-                                                        nativeImages.updateValue(image, forKey: item.id)
-                                                    }
-                                                }
-                                                .onFailure { _ in
-                                                    DispatchQueue.main.async { // yield
-                                                        hiddenItems.append(item.id)
-                                                    }
-                                                }
-                                                .background {
-                                                    GeometryReader { geometry in
-                                                        let frame = geometry.frame(in: .global)
-                                                        Color.clear
-                                                            .onChange(of: frame) {
-                                                                imageFrames.updateValue(frame, forKey: item.id)
-                                                            }
-                                                    }
-                                                }
-                                                HighlightableText(String(localized: item.title))
-                                                    .multilineTextAlignment(.center)
-                                                Spacer(minLength: 0)
+        Section {
+            Group {
+                if let tab, let tabContent = information.first(where: {$0.id == tab}), !tabContent.content.isEmpty, tabContent.content.contains(where: { !hiddenItems.contains($0.id) }) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: itemMinimumWidth, maximum: itemMaximumWidth))]) {
+                        ForEach(tabContent.content, id: \.self) { item in
+                            if !hiddenItems.contains(item.id) {
+                                Button(action: {
+                                    #if os(iOS)
+                                    if let image = nativeImages[item.id], let frame = imageFrames[item.id] {
+                                        quickLookOnFocusItem = .init(
+                                            image: image,
+                                            title: .init(localized: tabContent.tabName),
+                                            subtitle: .init(localized: item.title),
+                                            imageFrame: frame
+                                        )
+                                    }
+                                    #else
+                                    // Build visible items and open Quick Look at the tapped item
+                                    let visibleItems = tabContent.content.filter { !hiddenItems.contains($0.id) }
+                                    previewController.fileURLs = visibleItems.map(\.url)
+                                    if let selectedIndex = visibleItems.firstIndex(where: { $0.id == item.id }) {
+                                        previewController.showPanel(startingAt: selectedIndex)
+                                    } else {
+                                        previewController.showPanel()
+                                    }
+                                    #endif
+                                }, label: {
+                                    CustomGroupBox {
+                                        VStack {
+                                            Spacer(minLength: 0)
+                                            WebImage(url: item.url) { image in
+                                                image
+                                                    .resizable()
+                                                    .antialiased(true)
+                                                    .aspectRatio(item.forceApplyRatio ? (item.ratio ?? tabContent.ratio) : nil, contentMode: .fit)
+                                            } placeholder: {
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(getPlaceholderColor())
+                                                    .aspectRatio(item.ratio ?? tabContent.ratio, contentMode: .fit)
                                             }
+                                            .interpolation(.high)
+                                            .onSuccess { image, _, _ in
+                                                DispatchQueue.main.async { // yield
+                                                    nativeImages.updateValue(image, forKey: item.id)
+                                                }
+                                            }
+                                            .onFailure { _ in
+                                                DispatchQueue.main.async { // yield
+                                                    hiddenItems.append(item.id)
+                                                }
+                                            }
+                                            .background {
+                                                GeometryReader { geometry in
+                                                    let frame = geometry.frame(in: .global)
+                                                    Color.clear
+                                                        .onChange(of: frame) {
+                                                            imageFrames.updateValue(frame, forKey: item.id)
+                                                        }
+                                                }
+                                            }
+                                            HighlightableText(String(localized: item.title))
+                                                .multilineTextAlignment(.center)
+                                            Spacer(minLength: 0)
                                         }
-                                        .accessibilityAddTraits(.isImage)
-                                    })
-                                    .buttonStyle(.plain)
-                                    .imageContextMenu([.init(url: item.url, description: item.title)])
-                                }
+                                    }
+                                    .accessibilityAddTraits(.isImage)
+                                })
+                                .buttonStyle(.plain)
+                                .imageContextMenu([.init(url: item.url, description: item.title)])
                             }
                         }
-                    } else {
-                        DetailUnavailableView(title: "Details.arts.unavailable", symbol: "photo.on.rectangle.angled")
                     }
+                } else {
+                    DetailUnavailableView(title: "Details.arts.unavailable", symbol: "photo.on.rectangle.angled")
                 }
-                .frame(maxWidth: infoContentMaxWidth)
-            }, header: {
-                HStack {
-                    Text("Details.arts")
-                        .font(.title2)
-                        .bold()
-                    if information.count > 1 || !(information.first?.tabName.key.isEmpty ?? true) {
-                        DetailSectionOptionPicker(selection: $tab, options: information.map(\.id), labels: information.reduce(into: [String?: String]()) { $0.updateValue(String(localized: $1.tabName), forKey: $1.id) })
-                    }
-                    Spacer()
-                }
-                .frame(maxWidth: 615)
-            })
-        }
-        .onAppear {
-            if tab == nil {
-                tab = information.first!.id
             }
+            .frame(maxWidth: infoContentMaxWidth)
+        } header: {
+            HStack {
+                Text("Details.arts")
+                    .font(.title2)
+                    .bold()
+                if information.count > 1 || !(information.first?.tabName.key.isEmpty ?? true) {
+                    DetailSectionOptionPicker(selection: $tab, options: information.map(\.id), labels: information.reduce(into: [String?: String]()) { $0.updateValue(String(localized: $1.tabName), forKey: $1.id) })
+                }
+                Spacer()
+            }
+            .frame(maxWidth: 615)
+            .detailSectionHeader()
+            .onAppear {
+                if tab == nil {
+                    tab = information.first!.id
+                }
+            }
+            #if os(iOS)
+            .fullScreenCover(item: $quickLookOnFocusItem) { item in
+                ImageLookView(image: item.image, title: item.title, subtitle: item.subtitle, imageFrame: item.imageFrame)
+            }
+            #endif
         }
-        #if os(iOS)
-        .fullScreenCover(item: $quickLookOnFocusItem) { item in
-            ImageLookView(image: item.image, title: item.title, subtitle: item.subtitle, imageFrame: item.imageFrame)
-        }
-        #endif
     }
     
     struct ImageLookItem: Identifiable {

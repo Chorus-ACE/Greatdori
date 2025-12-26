@@ -20,39 +20,38 @@ struct ExternalLinksSection: View {
     @Environment(\.openURL) var openURL
     var body: some View {
         if !links.isEmpty {
-            LazyVStack(pinnedViews: .sectionHeaders) {
-                Section {
-                    CustomGroupBox {
-                        VStack {
-                            ForEach(links, id: \.self) { item in
-                                Button(action: {
-                                    openURL(item.url)
-                                }, label: {
-                                    HStack {
-                                        Text(item.name)
-                                        Spacer()
-                                        Image(systemName: "arrow.up.forward.app")
-                                            .foregroundStyle(.secondary)
-                                    }
-                                    .contentShape(Rectangle())
-                                })
-                                .buttonStyle(.plain)
-                            }
-                            .insert {
-                                Divider()
-                            }
+            Section {
+                CustomGroupBox {
+                    VStack {
+                        ForEach(links, id: \.self) { item in
+                            Button(action: {
+                                openURL(item.url)
+                            }, label: {
+                                HStack {
+                                    Text(item.name)
+                                    Spacer()
+                                    Image(systemName: "arrow.up.forward.app")
+                                        .foregroundStyle(.secondary)
+                                }
+                                .contentShape(Rectangle())
+                            })
+                            .buttonStyle(.plain)
+                        }
+                        .insert {
+                            Divider()
                         }
                     }
-                    .frame(maxWidth: infoContentMaxWidth)
-                } header: {
-                    HStack {
-                        Text("External-links")
-                            .font(.title2)
-                            .bold()
-                        Spacer()
-                    }
-                    .frame(maxWidth: 615)
                 }
+                .frame(maxWidth: infoContentMaxWidth)
+            } header: {
+                HStack {
+                    Text("External-links")
+                        .font(.title2)
+                        .bold()
+                    Spacer()
+                }
+                .frame(maxWidth: 615)
+                .detailSectionHeader()
             }
         }
     }

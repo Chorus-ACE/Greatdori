@@ -21,31 +21,30 @@ struct EventDetailStoriesView: View {
     @State private var locale = DoriLocale.primaryLocale
     var body: some View {
         if !information.event.stories.isEmpty {
-            LazyVStack(pinnedViews: .sectionHeaders) {
-                Section {
-                    if information.event.stories[0].caption.forLocale(locale) != nil {
-                        ForEach(Array(information.event.stories.enumerated()), id: \.element.scenarioID) { index, story in
-                            StoryCardView(
-                                story: .init(story),
-                                type: .event,
-                                locale: locale,
-                                unsafeAssociatedID: String(information.event.id),
-                                unsafeSecondaryAssociatedID: String(index),
-                                notes: story.releaseConditions.forLocale(locale)
-                            )
-                        }
-                    } else {
-                        DetailUnavailableView(title: "Details.unavailable.story", symbol: "star.hexagon")
+            Section {
+                if information.event.stories[0].caption.forLocale(locale) != nil {
+                    ForEach(Array(information.event.stories.enumerated()), id: \.element.scenarioID) { index, story in
+                        StoryCardView(
+                            story: .init(story),
+                            type: .event,
+                            locale: locale,
+                            unsafeAssociatedID: String(information.event.id),
+                            unsafeSecondaryAssociatedID: String(index),
+                            notes: story.releaseConditions.forLocale(locale)
+                        )
                     }
-                } header: {
-                    HStack {
-                        Text("Event.story")
-                            .font(.title2)
-                            .bold()
-                        DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
-                        Spacer()
-                    }
+                } else {
+                    DetailUnavailableView(title: "Details.unavailable.story", symbol: "star.hexagon")
                 }
+            } header: {
+                HStack {
+                    Text("Event.story")
+                        .font(.title2)
+                        .bold()
+                    DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
+                    Spacer()
+                }
+                .detailSectionHeader()
             }
             .frame(maxWidth: infoContentMaxWidth)
         }

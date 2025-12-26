@@ -21,42 +21,41 @@ struct ComicDetailComicView: View {
     @State var locale: DoriLocale = .primaryLocale
     @State var comicLoadingHadFailed = false
     var body: some View {
-        LazyVStack(pinnedViews: .sectionHeaders) {
-            Section {
-                WebImage(url: information.imageURL(in: locale, allowsFallback: false), content: { image in
-                    image
-                        .resizable()
-                        .scaledToFit()
-                }, placeholder: {
-                    if !comicLoadingHadFailed {
-                        CustomGroupBox {
-                            HStack {
-                                Spacer()
-                                ProgressView()
-                                Spacer()
-                            }
+        Section {
+            WebImage(url: information.imageURL(in: locale, allowsFallback: false), content: { image in
+                image
+                    .resizable()
+                    .scaledToFit()
+            }, placeholder: {
+                if !comicLoadingHadFailed {
+                    CustomGroupBox {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
                         }
-                    } else {
-                        DetailUnavailableView(title: "Details.unavailable.\(Comic.singularName)", symbol: Comic.symbol)
                     }
-                }).onFailure { _ in
-                    comicLoadingHadFailed = true
+                } else {
+                    DetailUnavailableView(title: "Details.unavailable.\(Comic.singularName)", symbol: Comic.symbol)
                 }
-                .imageContextMenu([.init(url: information.imageURL(in: locale, allowsFallback: false) ?? .init(filePath: "/"))])
-                .frame(maxWidth: infoContentMaxWidth)
-                .onChange(of: locale) {
-                    comicLoadingHadFailed = false
-                }
-            } header: {
-                HStack {
-                    Text("Comic.comic")
-                        .font(.title2)
-                        .bold()
-                    DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
-                    Spacer()
-                }
-                .frame(maxWidth: 615)
+            }).onFailure { _ in
+                comicLoadingHadFailed = true
             }
+            .imageContextMenu([.init(url: information.imageURL(in: locale, allowsFallback: false) ?? .init(filePath: "/"))])
+            .frame(maxWidth: infoContentMaxWidth)
+            .onChange(of: locale) {
+                comicLoadingHadFailed = false
+            }
+        } header: {
+            HStack {
+                Text("Comic.comic")
+                    .font(.title2)
+                    .bold()
+                DetailSectionOptionPicker(selection: $locale, options: DoriLocale.allCases)
+                Spacer()
+            }
+            .frame(maxWidth: 615)
+            .detailSectionHeader()
         }
     }
 }

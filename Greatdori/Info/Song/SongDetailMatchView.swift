@@ -22,78 +22,75 @@ struct SongDetailMatchView: View {
     @Environment(\.openURL) private var openURL
     @State private var isReportPresented = false
     var body: some View {
-        Group {
-            if let songMatches,
-               let matchResult = songMatches.first(where: { $0.key == song.id })?.value,
-               case let .success(results) = matchResult, !results.isEmpty {
-                LazyVStack(pinnedViews: .sectionHeaders) {
-                    Section {
-                        ForEach(results, id: \.self) { result in
-                            Button(action: {
-                                if let url = result.appleMusicURL {
-                                    openURL(url)
-                                } else if let url = result.shazamURL {
-                                    openURL(url)
-                                }
-                            }, label: {
-                                CustomGroupBox {
+        if let songMatches,
+           let matchResult = songMatches.first(where: { $0.key == song.id })?.value,
+           case let .success(results) = matchResult, !results.isEmpty {
+            Section {
+                ForEach(results, id: \.self) { result in
+                    Button(action: {
+                        if let url = result.appleMusicURL {
+                            openURL(url)
+                        } else if let url = result.shazamURL {
+                            openURL(url)
+                        }
+                    }, label: {
+                        CustomGroupBox {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    WebImage(url: result.artworkURL) { image in
+                                        image
+                                    } placeholder: {
+                                        Rectangle()
+                                            .fill(Color.secondary)
+                                    }
+                                    .resizable()
+                                    .cornerRadius(5)
+                                    .scaledToFit()
+                                    .frame(width: 100, height: 100)
+                                    .padding(.trailing, 3)
+                                    
                                     VStack(alignment: .leading) {
-                                        HStack {
-                                            WebImage(url: result.artworkURL) { image in
-                                                image
-                                            } placeholder: {
-                                                Rectangle()
-                                                    .fill(Color.secondary)
-                                            }
-                                            .resizable()
-                                            .cornerRadius(5)
-                                            .scaledToFit()
-                                            .frame(width: 100, height: 100)
-                                            .padding(.trailing, 3)
-                                            
-                                            VStack(alignment: .leading) {
-                                                Text(result.title(preferEN: DoriLocale.primaryLocale == .en))
-                                                Group {
-                                                    Text(result.artist(preferEN: DoriLocale.primaryLocale == .en)) + Text(verbatim: " · ") + Text(result.appleMusicURL != nil ? "Song.shazam.apple-music" : "Song.shazam.shazam")
-                                                }
-                                                .lineLimit(3)
-                                                .foregroundStyle(.secondary)
-                                            }
-                                            Spacer()
-                                            if result.appleMusicURL != nil || result.shazamURL != nil {
-                                                Image(systemName: "arrow.up.forward.app")
-                                                    .foregroundStyle(.secondary)
-                                                    .font(.title3)
-                                            }
+                                        Text(result.title(preferEN: DoriLocale.primaryLocale == .en))
+                                        Group {
+                                            Text(result.artist(preferEN: DoriLocale.primaryLocale == .en)) + Text(verbatim: " · ") + Text(result.appleMusicURL != nil ? "Song.shazam.apple-music" : "Song.shazam.shazam")
                                         }
+                                        .lineLimit(3)
+                                        .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    if result.appleMusicURL != nil || result.shazamURL != nil {
+                                        Image(systemName: "arrow.up.forward.app")
+                                            .foregroundStyle(.secondary)
+                                            .font(.title3)
                                     }
                                 }
-                            })
-                            .buttonStyle(.plain)
+                            }
                         }
-                        .frame(maxWidth: infoContentMaxWidth)
-                    } header: {
-                        HStack {
-                            Text("Song.shazam")
-                                .font(.title2)
-                                .bold()
-                            Spacer()
-                            Button(action: {
-                                isReportPresented = true
-                            }, label: {
-                                Text("Song.shazam.report")
-                                    .foregroundStyle(.secondary)
-                            })
-                            .buttonStyle(.plain)
+                    })
+                    .buttonStyle(.plain)
+                }
+                .frame(maxWidth: infoContentMaxWidth)
+            } header: {
+                HStack {
+                    Text("Song.shazam")
+                        .font(.title2)
+                        .bold()
+                    Spacer()
+                    Button(action: {
+                        isReportPresented = true
+                    }, label: {
+                        Text("Song.shazam.report")
+                            .foregroundStyle(.secondary)
+                    })
+                    .buttonStyle(.plain)
+                    .sheet(isPresented: $isReportPresented) {
+                        NavigationStack {
+                            SongMatchReportView(song: song)
                         }
-                        .frame(maxWidth: 615)
                     }
                 }
-                .sheet(isPresented: $isReportPresented) {
-                    NavigationStack {
-                        SongMatchReportView(song: song)
-                    }
-                }
+                .frame(maxWidth: 615)
+                .detailSectionHeader()
             }
         }
     }
