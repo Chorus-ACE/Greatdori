@@ -37,7 +37,11 @@ struct SongDetailView: View {
                     for locale in DoriLocale.allCases {
                         if let urls = information.song.jacketImageURLs(in: locale, allowsFallback: false) {
                             for (index, url) in urls.enumerated() {
-                                ArtsItem(title: .init(stringLiteral: "\(locale.rawValue.uppercased()) \(index + 1)"), url: url, ratio: 1)
+                                ArtsItem(
+                                    title: .init(stringLiteral: "\(locale.rawValue.uppercased())\(urls.count > 1 ? " \(index + 1)" : "")"),
+                                    url: url,
+                                    ratio: 1
+                                )
                             }
                         }
                     }
