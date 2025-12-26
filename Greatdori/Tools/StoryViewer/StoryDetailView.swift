@@ -126,7 +126,6 @@ struct StoryDetailView: View {
                                                         $0
                                                     }
                                                 }
-                                            //                                                .contentTransition(.symbolEffect(.replace.magic(fallback: .downUp.byLayer), options: .nonRepeating))
                                         })
                                         Button(action: {
                                             interactivePlayerIsInFullScreen = true
@@ -316,31 +315,35 @@ struct StoryDetailView: View {
             }
         }
         .onChange(of: interactivePlayerIsInFullScreen) {
-#if os(iOS)
+            #if os(iOS)
             if interactivePlayerIsInFullScreen {
                 setDeviceOrientation(to: .landscape, allowing: [.landscapeLeft, .landscapeRight])
             } else {
                 setDeviceOrientation(to: .portrait, allowing: .portrait)
             }
-#endif
+            #endif
         }
         .onAppear {
-#if os(iOS)
+            #if os(iOS)
             if Mute.shared.isMute {
                 isMuted = true
                 print("SILENT MODE: MUTE")
             }
-#endif
+            #endif
             if !ISVHadChosenOption {
                 isvLayoutSelectionSheetIsDisplaying = true
+                isMuted = true
             }
-            isvLayoutSelectionSheetIsDisplaying = false // MARK: !!!
         }
-        .sheet(isPresented: $isvLayoutSelectionSheetIsDisplaying, onDismiss: {
-            if !ISVHadChosenOption {
+        .sheet(isPresented: $isvLayoutSelectionSheetIsDisplaying) {
+            if ISVHadChosenOption {
+                if !Mute.shared.isMute {
+                    isMuted = false
+                }
+            } else {
                 isvLayoutSelectionSheetIsDisplaying = true
             }
-        }) {
+        } content: {
             ISVLayoutPickerSheet()
                 .interactiveDismissDisabled()
         }

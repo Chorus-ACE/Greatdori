@@ -16,12 +16,14 @@ import DoriKit
 import SwiftUI
 
 struct SettingsStoryView: View {
-    @Environment(\.colorScheme) var colorScheme
+    var hasSelectedLayout: Binding<Bool>?
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var fontManager = FontManager.shared
-    @AppStorage("ISVStyleTestFlag") var isvStyleTestFlag = 0
-    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
-    @State var storyViewerFonts: [DoriLocale: String] = [:]
-    @State var storyViewerUpdateIndex: Int = 0
+    @AppStorage("ISVStyleTestFlag") private var isvStyleTestFlag = 0
+    @AppStorage("ISVAlwaysFullScreen") private var isvAlwaysFullScreen = false
+    @State private var selectedLayout: Bool? // isFullScreen
+    @State private var storyViewerFonts: [DoriLocale: String] = [:]
+    @State private var storyViewerUpdateIndex: Int = 0
     var body: some View {
         Group {
             if isvStyleTestFlag > 0 { // See the initializer in AppDelegate
@@ -31,12 +33,17 @@ struct SettingsStoryView: View {
                         Image("LayoutDemo-\(isvAlwaysFullScreen ? "F" : "P")-\(colorScheme == .dark ? "D" : "L")")
                             .resizable()
                             .scaledToFit()
-                            .frame(maxHeight: 400)
+                            .frame(height: 400)
+                            .mask(alignment: .top) {
+                                Rectangle()
+                                    .frame(height: 300)
+                            }
+                            .padding(.bottom, -100)
                             .animation(.easeInOut, value: isvAlwaysFullScreen)
                         Spacer()
                     }
                     
-                    Picker("Settings.story-viewer.layout", selection: $isvAlwaysFullScreen) {
+                    Picker("Settings.story-viewer.layout", selection: $selectedLayout) {
                         ForEach(isvStyleTestFlag == 2 ? [true, false] : [false, true], id: \.self) { item in
                             VStack(alignment: .leading) {
                                 Text(item ? "Settings.story-viewer.layout.always-full-screen" : "Settings.story-viewer.layout.resizable")
@@ -49,6 +56,17 @@ struct SettingsStoryView: View {
                     }
                     .labelsHidden()
                     .pickerStyle(.inline)
+                    .onAppear {
+                        if _fastPath(hasSelectedLayout == nil) {
+                            selectedLayout = isvAlwaysFullScreen
+                        }
+                    }
+                    .onChange(of: selectedLayout) {
+                        if let selectedLayout {
+                            isvAlwaysFullScreen = selectedLayout
+                            hasSelectedLayout?.wrappedValue = true
+                        }
+                    }
                     .onChange(of: isvAlwaysFullScreen) {
                         Task {
                             await submitStats(

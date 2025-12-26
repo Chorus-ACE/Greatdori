@@ -16,51 +16,28 @@ import DoriKit
 import SwiftUI
 
 struct ISVLayoutPickerSheet: View {
-    @AppStorage("ISVHadChosenOption") var ISVHadChosenOption = false
-    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
-    @State var selection = "N"
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage("ISVHadChosenOption") private var ISVHadChosenOption = false
+    @State private var hasSelectedLayout = false
     var body: some View {
         NavigationStack {
-            /*
-            VStack {
-                Text("Story-viewer.layout-test-sheet.title")
-                    .font(.largeTitle)
-                    .bold()
-                //            Text()
-                Text("Story-viewer.layout-test-sheet.body")
-                
-                HStack {
-                    Text(verbatim: "1")
-                    Text(verbatim: "2")
-                }
-                Spacer()
-#if os(iOS)
-                Button(action: {
-                    
-                }, label: {
-                    Text(verbatim: "3")
-                })
-#endif
+            Form {
+                SettingsStoryView(hasSelectedLayout: $hasSelectedLayout)
             }
-             */
-            EmptyView()
-            .padding()
+            .formStyle(.grouped)
             .toolbar {
-#if os(macOS)
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(action: {
+                    Button("Story-viewer.layout-test-sheet.done", systemImage: "checkmark") {
                         submit()
-                    }, label: {
-                        Text(verbatim: "Story-viewer.layout-test-sheet.done")
-                    })
-                    .disabled(selection == "N")
+                    }
+                    .disabled(!hasSelectedLayout)
                 }
-#endif
             }
         }
     }
+    
     private func submit() {
-        isvAlwaysFullScreen = selection == "F"
         ISVHadChosenOption = true
+        dismiss()
     }
 }
