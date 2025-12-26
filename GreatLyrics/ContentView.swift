@@ -57,6 +57,10 @@ struct ContentView: View {
                         Image(_internalSystemName: "quote.bubble")
                     })
                     .tag("plain-lyrics")
+                    Label("File Merger", systemImage: "document.on.document")
+                        .tag("file-merger")
+                    Label("Playgrond", systemImage: "ant")
+                        .tag("playground")
                 } header: {
                     Text("Music")
                 }
@@ -73,6 +77,8 @@ struct ContentView: View {
                     case "reflection": NeoReflectionView()
                     case "musickit": MusicKitView()
                     case "plain-lyrics": LyricsEditorView()
+                    case "file-merger": FileMergerView()
+                    case "playground": PlaygroundView()
                     default: EmptyView()
                     }
                 }

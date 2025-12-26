@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Alamofire
 import AppKit
 import AVKit
 import DoriKit
@@ -112,10 +113,14 @@ struct LyricsEditorView: View {
             exportingFile = nil
         }
         .onAppear {
+            allLyrics = PlainLyricsStore.shared.load() ?? [:]
             Task {
                 allSongs = await Song.all() ?? []
             }
         }
+        .onChange(of: allLyrics, {
+            PlainLyricsStore.shared.save(allLyrics)
+        })
     }
 }
 
@@ -129,7 +134,10 @@ struct LyricsFocusView: View {
     @State var focusLyrics = ""
     @State var focusSource = ""
     
-    @State var playerRequiresRefresh = false
+    @State var isFetchingLyricsFromMusixmatch = false
+    @State var lyricsFetchField = ""
+    @State var isFetching = false
+    @State var fetchingHasFailed = false
     var body: some View {
         Group {
             if !focusPendingItems.isEmpty {
@@ -145,7 +153,7 @@ struct LyricsFocusView: View {
                                 HStack {
                                     CompactAudioPlayer(url: URL(string: "https://bestdori.com/assets/jp/sound/bgm\(addZeros(focusPendingItems[focusingItemIndex]))_rip/bgm\(addZeros(focusPendingItems[focusingItemIndex])).mp3")!)
                                     Spacer()
-                                    Text("#\(focusPendingItems[focusingItemIndex]) (\(focusingItemIndex+1)/\(focusPendingItems.count))")
+                                    Text("#\(String(focusPendingItems[focusingItemIndex])) (\(focusingItemIndex+1)/\(focusPendingItems.count))")
                                         .fontDesign(.monospaced)
                                     Button(action: {
                                         if focusingItemIndex > 0 {
@@ -173,12 +181,45 @@ struct LyricsFocusView: View {
                             
                             CustomGroupBox {
                                 HStack {
+                                    TextField("Musixmatch URL", text: $lyricsFetchField)
+                                    Button(action: {
+                                        Task {
+                                            fetchingHasFailed = false
+                                            isFetching = true
+                                            let fetchedLyrics = await fetchLyricsFromMusixmatch(URL(string: lyricsFetchField)!)
+                                            if let fetchedLyrics {
+                                                focusLyrics = fetchedLyrics
+                                                focusSource = "Musixmatch"
+                                            } else {
+                                                fetchingHasFailed = true
+                                            }
+                                            isFetching = false
+                                        }
+                                    }, label: {
+                                        HStack {
+                                            if isFetching {
+                                                ProgressView()
+                                                    .controlSize(.small)
+                                            }
+                                            if fetchingHasFailed {
+                                                Text("Parse (Error)")
+                                            } else {
+                                                Text("Parse")
+                                            }
+                                        }
+                                    })
+                                    .disabled(isFetching)
+                                    .disabled(URL(string: lyricsFetchField) == nil)
+                                }
+                            }
+                            CustomGroupBox {
+                                HStack {
                                     Text("Source")
                                         .foregroundStyle(focusSource.isEmpty ? .yellow : .primary)
                                     Spacer()
                                     TextField("", text: $focusSource)
                                     Menu(content: {
-                                        ForEach(["Musixmatch", "LyricFind", "Apple Music"] + [""], id: \.self) { item in
+                                        ForEach(["Musixmatch", "LyricFind"] + [""], id: \.self) { item in
                                             Button(action: {
                                                 focusSource = item
                                             }, label: {
@@ -199,15 +240,6 @@ struct LyricsFocusView: View {
                             }
                             CustomGroupBox {
                                 HStack {
-//                                    Button(action: {
-//                                        let previewSong = allSongs.first(where: { $0.id == focusPendingItems[focusingItemIndex] })
-//                                        let pasteboard = NSPasteboard.general
-//                                        pasteboard.clearContents()
-//                                        pasteboard.setString("\(previewSong?.title.forLocale(.jp) ?? "") Lyrics", forType: .string)
-//                                    }, label: {
-//                                        Text("Copy Keywords")
-//                                    })
-//                                    .keyboardShortcut("1", modifiers: [.command])
                                     Button(action: {
                                         let previewSong = allSongs.first(where: { $0.id == focusPendingItems[focusingItemIndex] })
                                         var components = URLComponents(string: "https://www.google.com/search")
@@ -218,9 +250,32 @@ struct LyricsFocusView: View {
                                             openURL(url)
                                         }
                                     }, label: {
-                                        Text("Go to Google")
+                                        Text("Search Google")
                                     })
                                     .keyboardShortcut("G", modifiers: [.command])
+                                    Button(action: {
+                                        let previewSong = allSongs.first(where: { $0.id == focusPendingItems[focusingItemIndex] })
+                                        var components = URLComponents(string: "https://www.google.com/search")
+                                        components?.queryItems = [
+                                            URLQueryItem(name: "q", value: "\(previewSong?.title.forLocale(.jp) ?? "") site:musixmatch.com")
+                                        ]
+                                        if let url = components?.url {
+                                            openURL(url)
+                                        }
+                                    }, label: {
+                                        Text("Search Musixmatch")
+                                    })
+                                    .keyboardShortcut("X", modifiers: [.command])
+                                    Button(action: {
+                                        focusingItemIndex = 0
+                                    }, label: {
+                                        Text("Go to First")
+                                    })
+                                    Button(action: {
+                                        focusingItemIndex = focusPendingItems.count-1
+                                    }, label: {
+                                        Text("Go to Last")
+                                    })
                                     Spacer()
                                 }
                             }
@@ -231,7 +286,7 @@ struct LyricsFocusView: View {
                     .padding()
                 }
                 .navigationTitle("\(allSongs.first(where: { $0.id == focusPendingItems[focusingItemIndex] })?.title.forLocale(.jp) ?? "Unknown Song")")
-                .navigationSubtitle(Text("#\(focusPendingItems[focusingItemIndex]) (\(focusingItemIndex+1)/\(focusPendingItems.count))"))
+                .navigationSubtitle(Text("#\(String(focusPendingItems[focusingItemIndex])) (\(focusingItemIndex+1)/\(focusPendingItems.count))"))
             } else {
                 ContentUnavailableView("No Pending Item", systemImage: "book", description: Text("Every item is ready for distribution."))
             }
@@ -240,15 +295,18 @@ struct LyricsFocusView: View {
             focusingItemIndex = 0
             focusPendingItems = []
             for (key, value) in allLyrics {
-                if value.lyrics.count < 50 || value.source.isEmpty {
+                if value.lyrics.count < 50 || value.source.isEmpty || value.source == "Uta-Net" {
                     focusPendingItems.append(key)
                 }
             }
             focusPendingItems.sort()
+            focusLyrics = allLyrics[focusPendingItems[focusingItemIndex]]!.lyrics
+            focusSource = allLyrics[focusPendingItems[focusingItemIndex]]!.source
         }
         .onChange(of: focusingItemIndex) {
             focusLyrics = allLyrics[focusPendingItems[focusingItemIndex]]!.lyrics
             focusSource = allLyrics[focusPendingItems[focusingItemIndex]]!.source
+            lyricsFetchField = ""
         }
         .onChange(of: focusLyrics, focusSource) {
             allLyrics.updateValue(PlainLyrics(lyrics: focusLyrics, source: focusSource), forKey: focusPendingItems[focusingItemIndex])
@@ -267,6 +325,8 @@ struct LyricsItemView: View {
     var interactless: Bool = false
     
     @State var songBand: Band? = nil
+    @State var headerName: String? = nil
+    @State var isEditing = false
     
     init(for song: Int, in results: Binding<[Int: PlainLyrics]>, songInfo: PreviewSong?, interactless: Bool = false) {
         self._results = results
@@ -296,14 +356,6 @@ struct LyricsItemView: View {
                 .interpolation(.high)
             }
             VStack(alignment: .leading) {
-                let headerName = {
-                    if let previewSong {
-                        return previewSong.tag == .anime ? "Cover" : songBand?.bandName.forPreferredLocale()?.uppercased() ?? nil
-                    } else {
-                        return nil
-                    }
-                }()
-                
                 if let headerName {
                     Text(headerName)
                         .bold()
@@ -314,9 +366,9 @@ struct LyricsItemView: View {
                 HStack {
                     if let previewSong {
                         Text(previewSong.title.forPreferredLocale() ?? "(No Title)")
-                        Text("#\(song)").foregroundStyle(.secondary)
+                        Text("#\(String(song))").foregroundStyle(.secondary)
                     } else {
-                        Text("#\(song)")
+                        Text("#\(String(song))")
                     }
                 }
                 if !interactless {
@@ -343,7 +395,7 @@ struct LyricsItemView: View {
                     }
                     if !interactless {
                         Button(action: {
-                            
+                            isEditing = true
                         }, label: {
                             Text("Edit")
                         })
@@ -354,9 +406,52 @@ struct LyricsItemView: View {
                 Spacer()
             }
         }
-//        .padding()
-        .onAppear {
+        .sheet(isPresented: $isEditing, content: {
+            LyricsEditView(allLyrics: $results, songID: song)
+        })
+        .onChange(of: song, initial: true) {
             songBand = DoriCache.preCache.bands.first { $0.id == previewSong?.bandID ?? -1 }
+            if let previewSong {
+                headerName = previewSong.tag == .anime ? "Cover" : songBand?.bandName.forPreferredLocale()?.uppercased() ?? nil
+            } else {
+                headerName = nil
+            }
+        }
+    }
+}
+
+struct LyricsEditView: View {
+    @Binding var allLyrics: [Int: PlainLyrics]
+//    @Binding var allSongs: [PreviewSong]
+    var songID: Int
+    
+    @State var focusLyrics = ""
+    @State var focusSource = ""
+    var body: some View {
+        Form {
+            TextField("Source", text: $focusSource)
+            NSTextViewWrapper(text: $focusLyrics)
+                .typesettingLanguage(.explicit(.init(identifier: "ja")))
+                .frame(height: 300)
+//            Menu(content: {
+//                ForEach(["Musixmatch", "LyricFind", "Uta-Net"] + [""], id: \.self) { item in
+//                    Button(action: {
+//                        focusSource = item
+//                    }, label: {
+//                        Text(item.isEmpty ? "(Clear)" : item)
+//                    })
+//                }
+//            }, label: {
+//                Text("Commons")
+//            })
+        }
+        .formStyle(.grouped)
+        .onAppear {
+            focusLyrics = allLyrics[songID]!.lyrics
+            focusSource = allLyrics[songID]!.source
+        }
+        .onChange(of: focusLyrics, focusSource) {
+            allLyrics.updateValue(PlainLyrics(lyrics: focusLyrics, source: focusSource), forKey: songID)
         }
     }
 }
@@ -409,5 +504,42 @@ struct NSTextViewWrapper: NSViewRepresentable {
             guard let textView = notification.object as? NSTextView else { return }
             parent.text = textView.string
         }
+    }
+}
+
+final class PlainLyricsStore {
+    @MainActor static let shared = PlainLyricsStore()
+
+    private let url: URL = {
+        let folder = FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        ).first!
+
+        let appFolder = folder.appendingPathComponent("YourAppName", isDirectory: true)
+        try? FileManager.default.createDirectory(
+            at: appFolder,
+            withIntermediateDirectories: true
+        )
+
+        return appFolder.appendingPathComponent("plain_lyrics.json")
+    }()
+
+    func save(_ value: [Int: PlainLyrics]) {
+        do {
+            let data = try JSONEncoder().encode(value)
+            try data.write(to: url, options: .atomic)
+        } catch {
+            print("Save failed:", error)
+        }
+    }
+
+    func load() -> [Int: PlainLyrics] {
+        guard let data = try? Data(contentsOf: url),
+              let value = try? JSONDecoder().decode([Int: PlainLyrics].self, from: data)
+        else {
+            return [:]
+        }
+        return value
     }
 }

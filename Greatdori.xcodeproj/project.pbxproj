@@ -281,6 +281,9 @@
 		E9CA1F762EFBF2BE005932E5 /* NeoReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F752EFBF2BE005932E5 /* NeoReflectionView.swift */; };
 		E9CA1F862EFD24FB005932E5 /* LyricsEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F852EFD24F2005932E5 /* LyricsEditor.swift */; };
 		E9CA1F882EFDAA8F005932E5 /* CompactAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F872EFDAA8F005932E5 /* CompactAudioPlayer.swift */; };
+		E9CA1F982EFE5DFA005932E5 /* FileMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F972EFE5DF7005932E5 /* FileMerger.swift */; };
+		E9CA1FCF2EFEAD3B005932E5 /* Playground.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1FCE2EFEAD37005932E5 /* Playground.swift */; };
+		E9CA1FD22EFEC7A0005932E5 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = E9CA1FD12EFEC7A0005932E5 /* SwiftSoup */; };
 		E9CD3A482E58975D00BF5EA9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A472E58975900BF5EA9 /* Extensions.swift */; };
 		E9CD3A4A2E58984400BF5EA9 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD3A492E58984200BF5EA9 /* Functions.swift */; };
 		E9DA971C2ED97ED90047B464 /* GachaDetailCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA971B2ED97ED90047B464 /* GachaDetailCardsView.swift */; };
@@ -767,6 +770,8 @@
 		E9CA1F752EFBF2BE005932E5 /* NeoReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeoReflectionView.swift; sourceTree = "<group>"; };
 		E9CA1F852EFD24F2005932E5 /* LyricsEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsEditor.swift; sourceTree = "<group>"; };
 		E9CA1F872EFDAA8F005932E5 /* CompactAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactAudioPlayer.swift; sourceTree = "<group>"; };
+		E9CA1F972EFE5DF7005932E5 /* FileMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileMerger.swift; sourceTree = "<group>"; };
+		E9CA1FCE2EFEAD37005932E5 /* Playground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playground.swift; sourceTree = "<group>"; };
 		E9CD3A472E58975900BF5EA9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E9CD3A492E58984200BF5EA9 /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		E9D96AA42E752BE7005E0F2C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -855,6 +860,7 @@
 				8C32BA382E8EA955002D183A /* SDWebImageSwiftUI in Frameworks */,
 				8C719D312EF28B8600E8645B /* ArgumentParser in Frameworks */,
 				8C499F8D2E4FD9CE0073FCB6 /* SwiftUIIntrospect in Frameworks */,
+				E9CA1FD22EFEC7A0005932E5 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1041,6 +1047,8 @@
 				E9CA1F732EFBDCE4005932E5 /* MusicKitView.swift */,
 				E9A8A8632EFBBF5F00B78FEE /* MusicKitHelper.swift */,
 				E9CA1F852EFD24F2005932E5 /* LyricsEditor.swift */,
+				E9CA1F972EFE5DF7005932E5 /* FileMerger.swift */,
+				E9CA1FCE2EFEAD37005932E5 /* Playground.swift */,
 				8C3FA2562E4B9EC6001526F2 /* Assets.xcassets */,
 			);
 			path = GreatLyrics;
@@ -1657,6 +1665,7 @@
 				8C499F8C2E4FD9CE0073FCB6 /* SwiftUIIntrospect */,
 				8C32BA372E8EA955002D183A /* SDWebImageSwiftUI */,
 				8C719D302EF28B8600E8645B /* ArgumentParser */,
+				E9CA1FD12EFEC7A0005932E5 /* SwiftSoup */,
 			);
 			productName = GreatLyrics;
 			productReference = 8C3FA2492E4B9EBF001526F2 /* GreatLyrics.app */;
@@ -1823,6 +1832,7 @@
 				E94944E02E92A19600E50D3F /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				8CE0BBAA2ED2FE1E00E22ED6 /* XCRemoteSwiftPackageReference "Swift-JWT" */,
 				E97810BA2EE9486D000AD397 /* XCRemoteSwiftPackageReference "Mute" */,
+				E9CA1FD02EFEC7A0005932E5 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8C0C995E2E296A4400549B5C /* Products */;
@@ -2127,9 +2137,11 @@
 				8C3FA2712E4BD487001526F2 /* StyleEditorView.swift in Sources */,
 				E9CA1F762EFBF2BE005932E5 /* NeoReflectionView.swift in Sources */,
 				E9CA1F742EFBDCE6005932E5 /* MusicKitView.swift in Sources */,
+				E9CA1F982EFE5DFA005932E5 /* FileMerger.swift in Sources */,
 				8C3FA26B2E4BCC20001526F2 /* StyleView.swift in Sources */,
 				E9CA1F862EFD24FB005932E5 /* LyricsEditor.swift in Sources */,
 				8C3FA26F2E4BCEC2001526F2 /* WrapIf.swift in Sources */,
+				E9CA1FCF2EFEAD3B005932E5 /* Playground.swift in Sources */,
 				8CFEF5C12E4DE6250017FF66 /* LyricsView.swift in Sources */,
 				8C3FA25C2E4B9EC6001526F2 /* GreatLyricsApp.swift in Sources */,
 				E9CA1F882EFDAA8F005932E5 /* CompactAudioPlayer.swift in Sources */,
@@ -5028,6 +5040,14 @@
 				minimumVersion = 0.6.1;
 			};
 		};
+		E9CA1FD02EFEC7A0005932E5 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.11.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5105,6 +5125,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E97810BA2EE9486D000AD397 /* XCRemoteSwiftPackageReference "Mute" */;
 			productName = Mute;
+		};
+		E9CA1FD12EFEC7A0005932E5 /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E9CA1FD02EFEC7A0005932E5 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
