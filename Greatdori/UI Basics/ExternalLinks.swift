@@ -17,32 +17,35 @@ import SwiftUI
 
 struct ExternalLinksSection: View {
     var links: [ExternalLink] = []
-    @Environment(\.openURL) var openURL
+    @Environment(\.openURL) private var openURL
     var body: some View {
         if !links.isEmpty {
             Section {
-                CustomGroupBox {
-                    VStack {
-                        ForEach(links, id: \.self) { item in
-                            Button(action: {
-                                openURL(item.url)
-                            }, label: {
-                                HStack {
-                                    Text(item.name)
-                                    Spacer()
-                                    Image(systemName: "arrow.up.forward.app")
-                                        .foregroundStyle(.secondary)
-                                }
-                                .contentShape(Rectangle())
-                            })
-                            .buttonStyle(.plain)
-                        }
-                        .insert {
-                            Divider()
+                HereTheWorld { // Super weird issue causing infinite hang. Use `HereTheWorld` to fix. MAGIC --ThreeManager785
+                    CustomGroupBox {
+                        VStack {
+                            ForEach(links) { item in
+                                Button(action: {
+                                    openURL(item.url)
+                                }, label: {
+                                    HStack {
+                                        Text(item.name)
+                                        Spacer()
+                                        Image(systemName: "arrow.up.forward.app")
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .contentShape(Rectangle())
+                                })
+                                .buttonStyle(.plain)
+                                .id(item.id)
+                            }
+                            .insert {
+                                Divider()
+                            }
                         }
                     }
+                    .frame(maxWidth: infoContentMaxWidth)
                 }
-                .frame(maxWidth: infoContentMaxWidth)
             } header: {
                 HStack {
                     Text("External-links")
@@ -57,7 +60,8 @@ struct ExternalLinksSection: View {
     }
 }
 
-struct ExternalLink: Hashable, Equatable {
+struct ExternalLink: Hashable, Identifiable {
+    let id: UUID = .init()
     let name: LocalizedStringResource
     let url: URL
 }
