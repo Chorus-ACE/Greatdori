@@ -13,6 +13,8 @@
 //===----------------------------------------------------------------------===//
 
 import Alamofire
+import Combine
+import SDWebImageSwiftUI
 import SwiftyJSON
 import SwiftUI
 
@@ -21,6 +23,8 @@ struct StationView: View {
     @State var informationIsAvailable = true
     @State var informationIsLoading = true
     @State var fetchError: Int? = nil
+    
+    let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
 
     var body: some View {
         Group {
@@ -36,12 +40,10 @@ struct StationView: View {
                             VStack {
                                 Section {
                                     ForEach(allAvailableGamplays, id: \.self) { item in
-                                        CustomGroupBox {
-                                            Text(item.roomNumber)
-                                        }
+                                        StationItemView(item: item)
                                     }
                                 }
-                                .frame(maxWidth: 600)
+                                .frame(maxWidth: infoContentMaxWidth)
                             }
                             Spacer(minLength: 0)
                         }
@@ -69,10 +71,14 @@ struct StationView: View {
                 await refreshGameplayInforation()
             }
         }
+        .onReceive(timer) { _ in
+            Task {
+                await refreshGameplayInforation()
+            }
+        }
     }
     
     func refreshGameplayInforation() async {
-        informationIsLoading = true
         informationIsAvailable = true
         //        do {
         let availableGameplayResults = await getAllAvailableGameplays()
@@ -88,6 +94,53 @@ struct StationView: View {
     }
 }
 
+struct StationItemView: View {
+    var item: StationGameplay
+    var body: some View {
+        CustomGroupBox(cornerRadius: 20) {
+            HStack {
+                WebImage(url: item.userInfo?.avatarLink, content: { image in
+                    image
+                        .resizable()
+                }, placeholder: {
+//                    Circle()
+//                        .foregroundStyle(getPlaceholderColor())
+                    Image(systemName: "person.crop.circle")
+                        .resizable()
+                        .foregroundStyle(.secondary)
+                })
+                .mask {
+                    Circle()
+                }
+                .frame(width: 40, height: 40)
+                .iconBadge(item.quantity, ignoreOne: true)
+                VStack(alignment: .leading) {
+                    if let username = item.userInfo?.username {
+                        Text(username)
+                            .bold()
+                    }
+                    Text(item.roomNumber)
+                        .bold()
+                    Text(item.description)
+                }
+                .textSelection(.enabled)
+                Spacer()
+                VStack(alignment: .trailing) {
+                    HStack {
+                        if let source = item.sourceInfo {
+                            Text(source.name)
+                        }
+                        Text(Date(timeIntervalSince1970: Double(item.timestamp)/1000), style: .relative)
+                    }
+                    .foregroundStyle(.secondary)
+                    .font(.caption)
+                    Spacer()
+                }
+            }
+        }
+    }
+}
+
 func getAllAvailableGameplays() async -> Result<[StationGameplay], Int> {
     do {
         let data = try await fetchData(from: "https://api.bandoristation.com/?function=query_room_number")
@@ -98,11 +151,24 @@ func getAllAvailableGameplays() async -> Result<[StationGameplay], Int> {
                 var finalGameplays: [StationGameplay] = []
                 for gameplay in gameplays {
                     if let roomNumber = gameplay["number"].string, let description = gameplay["raw_message"].string, let roomType = gameplay["type"].string, let timestamp = gameplay["time"].int {
-                        finalGameplays.append(StationGameplay(roomNumber: roomNumber, description: description, roomType: roomType, timestamp: timestamp))
+                        
+                        var userInfo: StationGameplay.StationUser? = nil
+                        let jsonUserInfo = gameplay["user_info"]
+                        if let userType = jsonUserInfo["type"].string, let userID = jsonUserInfo["user_id"].int, let userName = jsonUserInfo["username"].string, let userAvatar = jsonUserInfo["avatar"].string {
+                            userInfo = StationGameplay.StationUser(type: userType, avatar: userAvatar, username: userName, id: userID)
+                        }
+                        
+                        var sourceInfo: StationGameplay.SourceInfo? = nil
+                        let jsonSourceInfo = gameplay["source_info"]
+                        if let sourceName = jsonSourceInfo["name"].string, let sourceType = jsonSourceInfo["type"].string {
+                            sourceInfo = StationGameplay.SourceInfo(name: sourceName, type: sourceType)
+                        }
+                        finalGameplays.append(StationGameplay(roomNumber: roomNumber, description: description, roomType: roomType, timestamp: timestamp, userInfo: userInfo, sourceInfo: sourceInfo))
                     }
                 }
-                return .success(finalGameplays)
-//                gameplays[""]
+                let historyGameplays = HistoryGameplayHolder.shared.historyGameplays
+                HistoryGameplayHolder.shared.historyGameplays = finalGameplays
+                return .success(finalGameplays.merge(with: historyGameplays).combiningReferenceRepeatingItems())
             } else {
                 return .failure(502)
             }
@@ -131,14 +197,69 @@ func fetchData(from url: String) async throws -> Data {
     }
 }
 
-struct StationGameplay: Hashable {
+struct StationGameplay: Hashable, Equatable {
     var roomNumber: String
     var description: String
-//    var source: String
     var roomType: String
     var timestamp: Int
-//    var userInfo: String
+    var userInfo: StationUser?
+    var sourceInfo: SourceInfo?
+    var quantity: Int = 1 // This number goes up if repeating items are found.
+    
+    struct StationUser: Hashable, Equatable {
+        var type: String
+        var avatar: String
+        var username: String
+        var id: Int
+        
+        var avatarLink: URL? {
+            URL(string: "https://asset.bandoristation.com/images/user-avatar/\(avatar)")
+        }
+    }
+    
+    struct SourceInfo: Hashable, Equatable {
+        var name: String
+        var type: String
+    }
+    
+    func isSameReference(as rhs: StationGameplay) -> Bool {
+        return self.roomNumber == rhs.roomNumber &&
+        self.roomType == rhs.roomType &&
+        self.userInfo == rhs.userInfo
+        // Same room, same type and same user counts as "referring to the same gameplay".
+    }
+    
+    func dropQuantity() -> Self {
+        var mutableSelf = self
+        mutableSelf.quantity = 0
+        return mutableSelf
+    }
+}
+
+extension Array<StationGameplay> {
+    func merge(with history: [StationGameplay]) -> Self {
+        return Array(Set(self.map({ $0 })).union(Set(history.map({ $0 })))).sorted(by: { $0.timestamp > $1.timestamp }) // New to Old
+    }
+    
+    // Must have order new to old, or else older items overtakes representing data.
+    func combiningReferenceRepeatingItems() -> Self {
+        var result: [StationGameplay] = []
+        for item in self {
+            if result.contains(where: { $0.isSameReference(as: item) }) {
+                result[result.firstIndex(where: { $0.isSameReference(as: item) })!].quantity += 1
+            } else {
+                result.append(item)
+            }
+        }
+        return result
+    }
 }
 
 extension String: @retroactive Error {}
 extension Int: @retroactive Error {}
+
+class HistoryGameplayHolder: @unchecked Sendable {
+    static let shared = HistoryGameplayHolder()
+    
+    var historyGameplays: [StationGameplay] = []
+}
