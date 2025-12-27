@@ -238,7 +238,13 @@ struct StationGameplay: Hashable, Equatable {
 
 extension Array<StationGameplay> {
     func merge(with history: [StationGameplay]) -> Self {
-        return Array(Set(self.map({ $0 })).union(Set(history.map({ $0 })))).sorted(by: { $0.timestamp > $1.timestamp }) // New to Old
+        var result = self.map { $0.dropQuantity() }
+        for play in history.map({ $0.dropQuantity() }) {
+            if !result.contains(play) {
+                result.append(play)
+            }
+        }
+        return result.sorted(by: { $0.timestamp > $1.timestamp })
     }
     
     // Must have order new to old, or else older items overtakes representing data.

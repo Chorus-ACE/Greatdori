@@ -337,9 +337,11 @@ struct StoryDetailView: View {
         }
         .sheet(isPresented: $isvLayoutSelectionSheetIsDisplaying) {
             if ISVHadChosenOption {
+                #if os(iOS)
                 if !Mute.shared.isMute {
                     isMuted = false
                 }
+                #endif
             } else {
                 isvLayoutSelectionSheetIsDisplaying = true
             }
