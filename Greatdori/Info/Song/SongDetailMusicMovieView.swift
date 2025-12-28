@@ -18,7 +18,7 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 struct SongDetailMusicMovieView: View {
-    let musicVideos: [String: _DoriAPI.Songs.Song.MusicVideoMetadata]?
+    let musicVideos: [String: DoriAPI.Songs.Song.MusicVideoMetadata]?
     var dateFormatter: DateFormatter { let df = DateFormatter(); df.dateStyle = .long; df.timeStyle = .short; return df }
     @State var selectedMV: String? = nil
     @State var locale: DoriLocale = .primaryLocale

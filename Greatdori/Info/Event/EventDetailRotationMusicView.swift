@@ -18,7 +18,7 @@ import SDWebImageSwiftUI
 
 struct EventDetailRotationMusicView: View {
     var information: ExtendedEvent
-    @State private var musics: [_DoriAPI.Events.RotationMusic]?
+    @State private var musics: [DoriAPI.Events.RotationMusic]?
     @State private var songList: [PreviewSong]?
     @State var isExpanded = false
     var body: some View {
@@ -85,7 +85,7 @@ struct EventDetailRotationMusicView: View {
 //            }
             .task {
                 withDoriCache(id: "EventFestivalRotationMusic_\(information.event.id)") {
-                    await _DoriAPI.Events.festivalRotationMusics(of: information.event.id)
+                    await DoriAPI.Events.festivalRotationMusics(of: information.event.id)
                 }.onUpdate {
                     musics = $0
                 }
@@ -101,7 +101,7 @@ struct EventDetailRotationMusicView: View {
 
 private struct IdentifiableRotationMusic: Identifiable, Hashable {
     var id: UUID = .init()
-    var music: _DoriAPI.Events.RotationMusic
+    var music: DoriAPI.Events.RotationMusic
 }
 
 extension Array<IdentifiableRotationMusic> {

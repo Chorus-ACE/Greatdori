@@ -25,8 +25,8 @@ import AppleArchive
 struct ChartSimulatorView: View {
     @State private var selectedSong: PreviewSong?
     @State private var isSongSelectorPresented = false
-    @State private var selectedDifficulty: _DoriAPI.Songs.DifficultyType = .easy
-    @State private var chart: [_DoriAPI.Songs.Chart]?
+    @State private var selectedDifficulty: DoriAPI.Songs.DifficultyType = .easy
+    @State private var chart: [DoriAPI.Songs.Chart]?
     @State private var chartScenes: [ChartViewerScene] = []
     @State private var showChartPlayer = false
     @State private var isChartPlayerAssetAvailable = ChartPlayerAssetManager.isAvailable
@@ -160,7 +160,7 @@ struct ChartSimulatorView: View {
     func loadChart() {
         guard let selectedSong else { return }
         Task {
-            chart = await _DoriAPI.Songs.charts(of: selectedSong.id, in: selectedDifficulty)
+            chart = await DoriAPI.Songs.charts(of: selectedSong.id, in: selectedDifficulty)
             if let chart {
                 let chartHeight = (chartLastBeat(chart) + 1) * 100
                 let renderHeight: Double = 500
@@ -179,11 +179,11 @@ struct ChartSimulatorView: View {
 // whereas Chart Player is like the one in GBP with moving notes.
 
 private class ChartViewerScene: SKScene {
-    let chart: [_DoriAPI.Songs.Chart]
+    let chart: [DoriAPI.Songs.Chart]
     let splitIndex: Int
     let configuration = ChartViewerConfiguration()
     
-    init(size: CGSize, chart: [_DoriAPI.Songs.Chart], splitIndex: Int) {
+    init(size: CGSize, chart: [DoriAPI.Songs.Chart], splitIndex: Int) {
         self.chart = chart
         self.splitIndex = splitIndex
         super.init(size: size)
@@ -235,7 +235,7 @@ private class ChartViewerScene: SKScene {
         
         init(
             width: CGFloat,
-            chart: [_DoriAPI.Songs.Chart],
+            chart: [DoriAPI.Songs.Chart],
             textures: ChartViewerConfiguration._TextureGroup
         ) {
             super.init()
@@ -538,7 +538,7 @@ private class ChartViewerConfiguration {
     }
 }
 
-private func chartLastBeat(_ chart: [_DoriAPI.Songs.Chart]) -> Double {
+private func chartLastBeat(_ chart: [DoriAPI.Songs.Chart]) -> Double {
     var lastBeat: Double = 0
     beatFinder: for data in chart.reversed() {
         switch data {
@@ -635,11 +635,11 @@ private final class ChartPlayerAssetManager {
 
 #if os(macOS)
 private struct ChartPlayerView: NSViewRepresentable {
-    var chart: [_DoriAPI.Songs.Chart]
+    var chart: [DoriAPI.Songs.Chart]
     var configuration: ChartPlayerConfiguration
     private let device: MTLDevice
     
-    init(chart: [_DoriAPI.Songs.Chart], configuration: ChartPlayerConfiguration = .init()) {
+    init(chart: [DoriAPI.Songs.Chart], configuration: ChartPlayerConfiguration = .init()) {
         self.chart = chart
         self.configuration = configuration
         self.device = MTLCreateSystemDefaultDevice()!
@@ -659,11 +659,11 @@ private struct ChartPlayerView: NSViewRepresentable {
 }
 #else
 private struct ChartPlayerView: UIViewRepresentable {
-    var chart: [_DoriAPI.Songs.Chart]
+    var chart: [DoriAPI.Songs.Chart]
     var configuration: ChartPlayerConfiguration
     private let device: MTLDevice
     
-    init(chart: [_DoriAPI.Songs.Chart], configuration: ChartPlayerConfiguration = .init()) {
+    init(chart: [DoriAPI.Songs.Chart], configuration: ChartPlayerConfiguration = .init()) {
         self.chart = chart
         self.configuration = configuration
         self.device = MTLCreateSystemDefaultDevice()!
@@ -687,7 +687,7 @@ private class ChartPlayerRenderer: NSObject, MTKViewDelegate {
     private let renderer: SKRenderer
     private let commandQueue: MTLCommandQueue
     
-    init(device: any MTLDevice, chart: [_DoriAPI.Songs.Chart], configuration: ChartPlayerConfiguration) {
+    init(device: any MTLDevice, chart: [DoriAPI.Songs.Chart], configuration: ChartPlayerConfiguration) {
         self.renderer = .init(device: device)
         self.renderer.scene = ChartPlayerScene(size: .zero, chart: chart, configuration: configuration)
         self.commandQueue = device.makeCommandQueue()!
@@ -719,10 +719,10 @@ private class ChartPlayerRenderer: NSObject, MTKViewDelegate {
 }
 
 private class ChartPlayerScene: SKScene {
-    let chart: [_DoriAPI.Songs.Chart]
+    let chart: [DoriAPI.Songs.Chart]
     let tex: ChartPlayerConfiguration._TextureGroup
     
-    init(size: CGSize, chart: [_DoriAPI.Songs.Chart], configuration: ChartPlayerConfiguration) {
+    init(size: CGSize, chart: [DoriAPI.Songs.Chart], configuration: ChartPlayerConfiguration) {
         self.chart = chart
         self.tex = configuration.textureGroup()
         super.init(size: size)

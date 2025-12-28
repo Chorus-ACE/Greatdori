@@ -18,7 +18,7 @@ import DoriKit
 // MARK: SongSearchView
 struct SongSearchView: View {
     let gridLayoutItemWidth: CGFloat = 225
-    @State private var songMatches: [Int: _DoriFrontend.Songs._NeoSongMatchResult]?
+    @State private var songMatches: [Int: DoriFrontend.Songs._NeoSongMatchResult]?
     var body: some View {
         SearchViewBase(forType: PreviewSong.self, initialLayout: SummaryLayout.horizontal, layoutOptions: verticalAndHorizontalLayouts) { layout, _, content, _ in
             if layout == .horizontal {
@@ -41,8 +41,8 @@ struct SongSearchView: View {
         }
         .onAppear {
             Task {
-                DoriCache.withCache(id: "_DoriFrontend.Songs._allMatches", trait: .invocationElidable) {
-                    await _DoriFrontend.Songs._allMatches()
+                DoriCache.withCache(id: "DoriFrontend.Songs._allMatches", trait: .invocationElidable) {
+                    await DoriFrontend.Songs._allMatches()
                 }.onUpdate {
                     self.songMatches = $0
                 }

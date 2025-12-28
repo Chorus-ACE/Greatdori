@@ -424,7 +424,7 @@ struct LyricsView: View {
     
     enum LyricField: Hashable {
         case original
-        case translation(_DoriAPI.Locale)
+        case translation(DoriAPI.Locale)
         case rubyRomaji
         case rubyKana
     }

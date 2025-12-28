@@ -20,8 +20,8 @@ import SDWebImageSwiftUI
 struct SongDetailView: View {
     var id: Int
     var allSongs: [PreviewSong]? = nil
-    @State var songMatches: [Int: _DoriFrontend.Songs._NeoSongMatchResult]?
-    @State private var lyrics: _DoriFrontend.Songs.Lyrics?
+    @State var songMatches: [Int: DoriFrontend.Songs._NeoSongMatchResult]?
+    @State private var lyrics: DoriFrontend.Songs.Lyrics?
     var body: some View {
         DetailViewBase(previewList: allSongs, initialID: id) { information in
             SongDetailOverviewView(information: information.song)
@@ -53,14 +53,14 @@ struct SongDetailView: View {
         }
         .id(lyrics?.hashValue ?? id)
         .onAppear {
-            DoriCache.withCache(id: "_DoriFrontend.Songs._allMatches", trait: .realTime) {
-                await _DoriFrontend.Songs._allMatches()
+            DoriCache.withCache(id: "DoriFrontend.Songs._allMatches", trait: .realTime) {
+                await DoriFrontend.Songs._allMatches()
             }.onUpdate {
                 self.songMatches = $0
             }
             if #available(iOS 26.0, macOS 26.0, *) {
                 DoriCache.withCache(id: "SongAttributedLyrics_\(id)") {
-                    await _DoriFrontend.Songs._lyrics(of: id)
+                    await DoriFrontend.Songs._lyrics(of: id)
                 }.onUpdate { lyrics in
                     self.lyrics = lyrics
                 }

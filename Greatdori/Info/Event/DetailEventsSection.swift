@@ -96,7 +96,7 @@ struct DetailsEventsSection: View {
         if sourcePreference == 0 {
             if let events {
                 eventsFromList = events.map {
-                    $0?.sorted(withDoriSorter: _DoriFrontend.Sorter(keyword: .releaseDate(in: applyLocaleFilter ? locale : .jp)))
+                    $0?.sorted(withDoriSorter: DoriFrontend.Sorter(keyword: .releaseDate(in: applyLocaleFilter ? locale : .jp)))
                 }
             }
         } else {

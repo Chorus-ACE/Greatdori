@@ -19,13 +19,13 @@ import SDWebImageSwiftUI
 struct PlayerSearchView: View {
     @AppStorage("PlayerSearchPlayerIDInput") var playerID = ""
     @State var selectedLocale = DoriLocale.primaryLocale
-    @State var profile: _DoriFrontend.Misc.ExtendedPlayerProfile?
+    @State var profile: DoriFrontend.Misc.ExtendedPlayerProfile?
     @State var isLoading = false
     var body: some View {
         List {
             Section {
                 Picker("服务器", selection: $selectedLocale) {
-                    ForEach(_DoriAPI.Locale.allCases, id: \.rawValue) { locale in
+                    ForEach(DoriAPI.Locale.allCases, id: \.rawValue) { locale in
                         Text(locale.rawValue.uppercased()).tag(locale)
                     }
                 }
@@ -35,7 +35,7 @@ struct PlayerSearchView: View {
                     isLoading = true
                     Task {
                         if let id = Int(playerID) {
-                            profile = await _DoriFrontend.Misc.extendedPlayerProfile(of: id, in: selectedLocale)
+                            profile = await DoriFrontend.Misc.extendedPlayerProfile(of: id, in: selectedLocale)
                         }
                         isLoading = false
                     }

@@ -121,7 +121,7 @@ struct HomeView: View {
 }
 
 struct HomeNewsView: View {
-    @State var news: [_DoriFrontend.News.ListItem]?
+    @State var news: [DoriFrontend.News.ListItem]?
     @State var allEvents: [PreviewEvent]?
     @State var allGacha: [PreviewGacha]?
     @State var allSongs: [PreviewSong]?
@@ -194,7 +194,7 @@ struct HomeNewsView: View {
         .foregroundStyle(.primary)
         .task {
             DoriCache.withCache(id: "Home_News", trait: .realTime) {
-                await _DoriFrontend.News.list()
+                await DoriFrontend.News.list()
             } .onUpdate {
                 news = $0
             }
@@ -231,8 +231,8 @@ struct HomeBirthdayView: View {
     @Environment(\.appearsActive) var appearsActive
     #endif
     @AppStorage("showBirthdayDate") var showBirthdayDate = showBirthdayDateDefaultValue
-    @State var birthdays: [_DoriFrontend.Characters.BirthdayCharacter]?
-    @State var systemBirthdays: [_DoriFrontend.Characters.BirthdayCharacter]?
+    @State var birthdays: [DoriFrontend.Characters.BirthdayCharacter]?
+    @State var systemBirthdays: [DoriFrontend.Characters.BirthdayCharacter]?
     var formatter = DateFormatter()
     var todaysDateFormatter = DateFormatter()
     var calendar = Calendar(identifier: .gregorian)
@@ -438,9 +438,9 @@ struct HomeBirthdayView: View {
     
     func updateBirthday() {
         Task {
-            birthdays = await _DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone())
+            birthdays = await DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone())
             if getBirthdayTimeZone() != TimeZone.autoupdatingCurrent {
-                systemBirthdays = await _DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone(from: .adaptive))
+                systemBirthdays = await DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone(from: .adaptive))
             } else {
                 systemBirthdays = nil
             }
@@ -449,7 +449,7 @@ struct HomeBirthdayView: View {
 }
 
 struct HomeEventsView: View {
-    @State var latestEvents: LocalizedData<_DoriFrontend.Events.PreviewEvent>?
+    @State var latestEvents: LocalizedData<DoriFrontend.Events.PreviewEvent>?
     @State var imageOpacity: Double = 0
     @State var placeholderOpacity: Double = 1
     var locale: DoriLocale = .jp
@@ -502,7 +502,7 @@ struct HomeEventsView: View {
         .foregroundStyle(.primary)
         .task {
             DoriCache.withCache(id: "Home_LatestEvents", trait: .realTime) {
-                await _DoriFrontend.Events.localizedLatestEvent()
+                await DoriFrontend.Events.localizedLatestEvent()
             } .onUpdate {
                 latestEvents = $0
                 withAnimation(.easeInOut(duration: loadingAnimationDuration), {

@@ -67,7 +67,7 @@ public struct NeoTranscript: Sendable, Hashable {
         self.voiceID = voiceID
     }
     
-    init(_ standarizedTranscript: _DoriAPI.Misc.StoryAsset.Transcript) {
+    init(_ standarizedTranscript: DoriAPI.Misc.StoryAsset.Transcript) {
         switch standarizedTranscript {
         case .notation(let text):
             self.init(isTelop: true, text: text)
@@ -79,11 +79,11 @@ public struct NeoTranscript: Sendable, Hashable {
     }
     
     // No Enough Access Level
-//    func standardlize() -> _DoriAPI.Misc.StoryAsset.Transcript {
+//    func standardlize() -> DoriAPI.Misc.StoryAsset.Transcript {
 //        if self.isTelop {
 //            return .notation(self.text)
 //        } else {
-//            return .talk(_DoriAPI.Misc.StoryAsset.Transcript.Talk(_characterID: characterID ?? -1, characterName: characterName ?? "", text: text, voiceID: voiceID))
+//            return .talk(DoriAPI.Misc.StoryAsset.Transcript.Talk(_characterID: characterID ?? -1, characterName: characterName ?? "", text: text, voiceID: voiceID))
 //        }
 //    }
 }

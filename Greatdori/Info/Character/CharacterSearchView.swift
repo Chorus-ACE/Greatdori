@@ -27,7 +27,7 @@ fileprivate let charVisualImageCornerRadius: CGFloat = 10
 struct CharacterSearchView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @Namespace var detailNavigation
-    @State var charactersDict: _DoriFrontend.Characters.CategorizedCharacters?
+    @State var charactersDict: DoriFrontend.Characters.CategorizedCharacters?
     @State var allCharacters: [PreviewCharacter]? = nil
     @State var bandArray: [Band?] = []
     @State var infoIsAvailable = true

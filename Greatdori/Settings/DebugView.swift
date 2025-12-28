@@ -54,7 +54,7 @@ struct DebugBirthdayView: View {
 }
 
 struct DebugBirthdayViewUnit: View {
-    @State var birthdays: [_DoriFrontend.Characters.BirthdayCharacter]?
+    @State var birthdays: [DoriFrontend.Characters.BirthdayCharacter]?
     var receivedToday: Date?
     var formatter = DateFormatter()
     init(receivedToday: Date? = Date.now) {
@@ -88,7 +88,7 @@ struct DebugBirthdayViewUnit: View {
             }
         }
         .task {
-            birthdays = await _DoriFrontend.Characters.recentBirthdayCharacters(aroundDate: receivedToday ?? Date.now)
+            birthdays = await DoriFrontend.Characters.recentBirthdayCharacters(aroundDate: receivedToday ?? Date.now)
         }
     }
 }
@@ -242,8 +242,8 @@ struct DebugOfflineAssetView: View {
 }
 
 struct DebugFilterExperimentView: View {
-    @State var filter: _DoriFrontend.Filter = .init()
-    @State var sorter: _DoriFrontend.Sorter = _DoriFrontend.Sorter(keyword: .id, direction: .descending)
+    @State var filter: DoriFrontend.Filter = .init()
+    @State var sorter: DoriFrontend.Sorter = DoriFrontend.Sorter(keyword: .id, direction: .descending)
     @State var updating = false
     @State var focusingList: Int = -1
     
@@ -277,8 +277,8 @@ struct DebugFilterExperimentView: View {
     
     @State var showFilterSheet = false
     @State var showOptimizedFilter = false
-    @State var optimizedKeys: [Int: [_DoriFrontend.Filter.Key]] = [:]
-    @State var optimizedSortingTypes: [Int: [_DoriFrontend.Sorter.Keyword]] = [:] // WIP
+    @State var optimizedKeys: [Int: [DoriFrontend.Filter.Key]] = [:]
+    @State var optimizedSortingTypes: [Int: [DoriFrontend.Sorter.Keyword]] = [:] // WIP
     @State var sortingItemsHaveEndingDate: [Int: Bool] = [:] // WIP
 //    @State var allKeys = Set(DoriFrontend.Filter.Key.allCases)
 //    @State var result: Array<>? = []
@@ -370,10 +370,10 @@ struct DebugFilterExperimentView: View {
         .fontDesign(.monospaced)
         .multilineTextAlignment(.leading)
         .sheet(isPresented: $showFilterSheet, content: {
-            FilterView(filter: $filter, includingKeys: showOptimizedFilter ? Set(optimizedKeys[focusingList]!) : Set(_DoriFrontend.Filter.Key.allCases))
+            FilterView(filter: $filter, includingKeys: showOptimizedFilter ? Set(optimizedKeys[focusingList]!) : Set(DoriFrontend.Filter.Key.allCases))
         })
         .inspector(isPresented: .constant(true), content: {
-            FilterView(filter: $filter, includingKeys: showOptimizedFilter ? Set(optimizedKeys[focusingList]!) : Set(_DoriFrontend.Filter.Key.allCases))
+            FilterView(filter: $filter, includingKeys: showOptimizedFilter ? Set(optimizedKeys[focusingList]!) : Set(DoriFrontend.Filter.Key.allCases))
         })
         .onAppear {
 //            focusingList = 0
@@ -413,25 +413,25 @@ struct DebugFilterExperimentView: View {
             updating = true
             Task {
                 if focusingList == 0 {
-                    eventList = await _DoriFrontend.Events.list() ?? []
+                    eventList = await DoriFrontend.Events.list() ?? []
                     eventListFiltered = eventList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 1 {
-                    gachaList = await _DoriFrontend.Gachas.list() ?? []
+                    gachaList = await DoriFrontend.Gachas.list() ?? []
                     gachaListFiltered = gachaList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 2 {
-                    cardList = await _DoriFrontend.Cards.list() ?? []
+                    cardList = await DoriFrontend.Cards.list() ?? []
                     cardListFiltered = cardList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 3 {
-                    songList = await _DoriFrontend.Songs.list() ?? []
+                    songList = await DoriFrontend.Songs.list() ?? []
                     songListFiltered = songList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 4 {
-                    comicList = await _DoriFrontend.Comics.list() ?? []
+                    comicList = await DoriFrontend.Comics.list() ?? []
                     comicListFiltered = comicList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 5 {
-                    campaignList = await _DoriFrontend.LoginCampaigns.list() ?? []
+                    campaignList = await DoriFrontend.LoginCampaigns.list() ?? []
                     campaignListFiltered = campaignList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 } else if focusingList == 6 {
-                    costumeList = await _DoriFrontend.Costumes.list() ?? []
+                    costumeList = await DoriFrontend.Costumes.list() ?? []
                     costumeListFiltered = costumeList.sorted(withDoriSorter: sorter).filter(withDoriFilter: filter)
                 }
                 updating = false
@@ -479,7 +479,7 @@ struct DebugFilterExperimentView: View {
         .toolbar {
             ToolbarItem {
                 if showOptimizedFilter {
-                    SorterPickerView(sorter: $sorter, allOptions: optimizedSortingTypes[focusingList] ?? _DoriFrontend.Sorter.Keyword.allCases, sortingItemsHaveEndingDate: sortingItemsHaveEndingDate[focusingList] ?? false)
+                    SorterPickerView(sorter: $sorter, allOptions: optimizedSortingTypes[focusingList] ?? DoriFrontend.Sorter.Keyword.allCases, sortingItemsHaveEndingDate: sortingItemsHaveEndingDate[focusingList] ?? false)
                 } else {
                     SorterPickerView(sorter: $sorter)
                 }

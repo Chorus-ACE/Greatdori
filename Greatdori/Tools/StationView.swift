@@ -86,7 +86,7 @@ struct StationView: View {
         // TODO: !!!!!!!!
 //        let task = Task {
 //            do {
-//                try await _DoriAPI.Station.receiveRooms { newRooms in
+//                try await DoriAPI.Station.receiveRooms { newRooms in
 //                    roomArray.append(contentsOf: newRooms)
 //                }
 //                print("Finished!")

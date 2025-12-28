@@ -20,7 +20,7 @@ import SwiftUI
 struct DetailsCostumesSection: View {
     var costumes: [PreviewCostume]
     var body: some View {
-        DetailSectionBase(elements: costumes.sorted(withDoriSorter: _DoriFrontend.Sorter(keyword: .releaseDate(in: .jp)))) { item in
+        DetailSectionBase(elements: costumes.sorted(withDoriSorter: DoriFrontend.Sorter(keyword: .releaseDate(in: .jp)))) { item in
             NavigationLink(destination: {
                 CostumeDetailView(id: item.id)
             }, label: {

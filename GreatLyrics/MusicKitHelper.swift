@@ -98,20 +98,20 @@ struct BlockMark: View {
     }
 }
 
-func matchMediaItems(for id: Int, sliceFrom sliceInterval: TimeInterval = 30) async throws -> [_DoriFrontend.Songs._NeoSongMatchResult.MatchItem] {
+func matchMediaItems(for id: Int, sliceFrom sliceInterval: TimeInterval = 30) async throws -> [DoriFrontend.Songs._NeoSongMatchResult.MatchItem] {
     do {
         let shazamResult = try await matchMediaItemsShazam(for: id, sliceFrom: sliceInterval)
         let results = await withTaskGroup(
-            of: _DoriFrontend.Songs._NeoSongMatchResult.MatchItem.self,
-            returning: [_DoriFrontend.Songs._NeoSongMatchResult.MatchItem].self
+            of: DoriFrontend.Songs._NeoSongMatchResult.MatchItem.self,
+            returning: [DoriFrontend.Songs._NeoSongMatchResult.MatchItem].self
         ) { group in
             for item in shazamResult {
                 group.addTask(priority: .userInitiated) {
-                    await _DoriFrontend.Songs._NeoSongMatchResult.MatchItem(from: item)
+                    await DoriFrontend.Songs._NeoSongMatchResult.MatchItem(from: item)
                 }
             }
 
-            var output: [_DoriFrontend.Songs._NeoSongMatchResult.MatchItem] = []
+            var output: [DoriFrontend.Songs._NeoSongMatchResult.MatchItem] = []
             for await result in group {
                 output.append(result)
             }
@@ -172,14 +172,14 @@ func matchMediaItems(for id: Int, sliceFrom sliceInterval: TimeInterval = 30) as
     }
 }
 
-func matchAllMediaItems(except ignoredSongs: [Int] = [], eachCompletion: @Sendable @escaping (Int, Result<[_DoriFrontend.Songs._NeoSongMatchResult.MatchItem], any Error>) -> Void) async {
+func matchAllMediaItems(except ignoredSongs: [Int] = [], eachCompletion: @Sendable @escaping (Int, Result<[DoriFrontend.Songs._NeoSongMatchResult.MatchItem], any Error>) -> Void) async {
     guard var songs = await Song.all() else { return }
     songs.removeAll { ignoredSongs.contains($0.id) }
     await withTaskGroup { group in
         var counter = 0
         for song in songs {
             group.addTask(priority: .userInitiated) {
-                let _result: Result<[_DoriFrontend.Songs._NeoSongMatchResult.MatchItem], any Error>
+                let _result: Result<[DoriFrontend.Songs._NeoSongMatchResult.MatchItem], any Error>
                 do {
                     let items = try await matchMediaItems(for: song.id)
                     _result = .success(items)
@@ -198,8 +198,8 @@ func matchAllMediaItems(except ignoredSongs: [Int] = [], eachCompletion: @Sendab
     }
 }
 
-extension _DoriFrontend.Songs._NeoSongMatchResult {
-    var castSome: [_DoriFrontend.Songs._NeoSongMatchResult.MatchItem] {
+extension DoriFrontend.Songs._NeoSongMatchResult {
+    var castSome: [DoriFrontend.Songs._NeoSongMatchResult.MatchItem] {
         get {
             if case .success(let items) = self {
                 items
@@ -212,7 +212,7 @@ extension _DoriFrontend.Songs._NeoSongMatchResult {
         }
     }
     
-    init(_ result: Result<[_DoriFrontend.Songs._NeoSongMatchResult.MatchItem], any Error>) {
+    init(_ result: Result<[DoriFrontend.Songs._NeoSongMatchResult.MatchItem], any Error>) {
         switch result {
         case .success(let items):
             self = .success(items)
@@ -222,7 +222,7 @@ extension _DoriFrontend.Songs._NeoSongMatchResult {
     }
 }
 
-extension _DoriFrontend.Songs._NeoSongMatchResult.MatchItem {
+extension DoriFrontend.Songs._NeoSongMatchResult.MatchItem {
     init(from item: SHMatchedMediaItem) async {
         let appleMusicID: Int? = item.appleMusicID == nil ? nil : Int(item.appleMusicID!)!
         let shazamID: Int? = item.shazamID == nil ? nil : Int(item.shazamID!)!
@@ -246,7 +246,7 @@ extension _DoriFrontend.Songs._NeoSongMatchResult.MatchItem {
     }
 }
 
-func getFullMetadata(from item: SHMatchedMediaItem) async -> _DoriFrontend.Songs._NeoSongMatchResult.MatchItem {
+func getFullMetadata(from item: SHMatchedMediaItem) async -> DoriFrontend.Songs._NeoSongMatchResult.MatchItem {
     let appleMusicID: Int? = item.appleMusicID == nil ? nil : Int(item.appleMusicID!)!
     let shazamID: Int? = item.shazamID == nil ? nil : Int(item.shazamID!)!
     let token = await MusicKitTokenManager.shared.token
@@ -290,13 +290,13 @@ struct PropertyListFileDocument: FileDocument {
 
 // MARK: Command Line Support
 func reflectNewSongs(into newFile: URL, from currentFile: URL) async throws {
-    var results: [Int: _DoriFrontend.Songs._NeoSongMatchResult]
+    var results: [Int: DoriFrontend.Songs._NeoSongMatchResult]
 
     do {
         _ = currentFile.startAccessingSecurityScopedResource()
         defer { currentFile.stopAccessingSecurityScopedResource() }
         let data = try Data(contentsOf: currentFile)
-        let codedResults = try PropertyListDecoder().decode([Int: _DoriFrontend.Songs._NeoSongMatchResult].self, from: data)
+        let codedResults = try PropertyListDecoder().decode([Int: DoriFrontend.Songs._NeoSongMatchResult].self, from: data)
         results = codedResults
     }
 

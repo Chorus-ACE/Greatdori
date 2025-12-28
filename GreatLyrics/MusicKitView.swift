@@ -25,7 +25,7 @@ struct MusicKitView: View {
     @State var musicIDInput = ""
     @State var musicIDInputIsValid = false
     @State var token: String = ""
-    @State var searchResult: [_DoriFrontend.Songs._NeoSongMatchResult.MatchItem] = []
+    @State var searchResult: [DoriFrontend.Songs._NeoSongMatchResult.MatchItem] = []
     @State var lastError: String = ""
     @State var region: String = "jp"
     @State var isLoading = false
@@ -174,7 +174,7 @@ struct MusicKitView: View {
 }
 
 extension AppleMusicSongMetadata {
-    fileprivate func convertToNeoSongSearchResult() -> _DoriFrontend.Songs._NeoSongMatchResult.MatchItem {
+    fileprivate func convertToNeoSongSearchResult() -> DoriFrontend.Songs._NeoSongMatchResult.MatchItem {
         .init(
             titleJP: title,
             artistJP: artist,

@@ -19,14 +19,14 @@ import SwiftUI
 
 // MARK: SongDifficultiesIndicator
 struct SongDifficultiesIndicator: View {
-    var information: [_DoriAPI.Songs.DifficultyType: Int]
-    var allAvailableDifficulties: [_DoriAPI.Songs.DifficultyType]
+    var information: [DoriAPI.Songs.DifficultyType: Int]
+    var allAvailableDifficulties: [DoriAPI.Songs.DifficultyType]
     
-    init(_ difficulty: [_DoriAPI.Songs.DifficultyType : _DoriAPI.Songs.Song.Difficulty]) {
+    init(_ difficulty: [DoriAPI.Songs.DifficultyType : DoriAPI.Songs.Song.Difficulty]) {
         self.information = difficulty.mapValues{ $0.playLevel }
         
-        var allAvailableDifficultiesTemp: [_DoriAPI.Songs.DifficultyType] = []
-        for difficulty in _DoriAPI.Songs.DifficultyType.allCases {
+        var allAvailableDifficultiesTemp: [DoriAPI.Songs.DifficultyType] = []
+        for difficulty in DoriAPI.Songs.DifficultyType.allCases {
             if information[difficulty] != nil {
                 allAvailableDifficultiesTemp.append(difficulty)
             }
@@ -34,11 +34,11 @@ struct SongDifficultiesIndicator: View {
         self.allAvailableDifficulties = allAvailableDifficultiesTemp
     }
     
-    init(_ difficulty: [_DoriAPI.Songs.DifficultyType : _DoriAPI.Songs.PreviewSong.Difficulty]) {
+    init(_ difficulty: [DoriAPI.Songs.DifficultyType : DoriAPI.Songs.PreviewSong.Difficulty]) {
         self.information = difficulty.mapValues{ $0.playLevel }
         
-        var allAvailableDifficultiesTemp: [_DoriAPI.Songs.DifficultyType] = []
-        for difficulty in _DoriAPI.Songs.DifficultyType.allCases {
+        var allAvailableDifficultiesTemp: [DoriAPI.Songs.DifficultyType] = []
+        for difficulty in DoriAPI.Songs.DifficultyType.allCases {
             if information[difficulty] != nil {
                 allAvailableDifficultiesTemp.append(difficulty)
             }
@@ -46,11 +46,11 @@ struct SongDifficultiesIndicator: View {
         self.allAvailableDifficulties = allAvailableDifficultiesTemp
     }
     
-    init (_ difficulty: [_DoriAPI.Songs.DifficultyType : Int]) {
+    init (_ difficulty: [DoriAPI.Songs.DifficultyType : Int]) {
         self.information = difficulty
         
-        var allAvailableDifficultiesTemp: [_DoriAPI.Songs.DifficultyType] = []
-        for difficulty in _DoriAPI.Songs.DifficultyType.allCases {
+        var allAvailableDifficultiesTemp: [DoriAPI.Songs.DifficultyType] = []
+        for difficulty in DoriAPI.Songs.DifficultyType.allCases {
             if information[difficulty] != nil {
                 allAvailableDifficultiesTemp.append(difficulty)
             }
@@ -73,7 +73,7 @@ struct SongDifficultiesIndicator: View {
 // MARK: SongDifficultyIndicator
 struct SongDifficultyIndicator: View {
     @Environment(\.colorScheme) var colorScheme
-    var difficulty: _DoriAPI.Songs.DifficultyType
+    var difficulty: DoriAPI.Songs.DifficultyType
     var level: Int
     let diameter: CGFloat = imageButtonSize*0.75
     

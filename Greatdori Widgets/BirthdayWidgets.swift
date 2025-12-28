@@ -77,13 +77,13 @@ private struct Provider: TimelineProvider {
     func getEntry(at date: Date) async -> BirthdayEntry? {
         var entry = BirthdayEntry(date: date)
         
-        guard let birthdays = await _DoriFrontend.Characters.recentBirthdayCharacters(
+        guard let birthdays = await DoriFrontend.Characters.recentBirthdayCharacters(
             aroundDate: date,
             timeZone: birthdayTimeZone()
         ) else { return nil }
         entry.birthdays = birthdays
         if birthdayTimeZone() != TimeZone.autoupdatingCurrent {
-            guard let birthdays = await _DoriFrontend.Characters.recentBirthdayCharacters(
+            guard let birthdays = await DoriFrontend.Characters.recentBirthdayCharacters(
                 aroundDate: date,
                 timeZone: birthdayTimeZone(from: .adaptive)
             ) else { return nil }
@@ -114,8 +114,8 @@ private struct Provider: TimelineProvider {
 private struct BirthdayEntry: TimelineEntry {
     let date: Date
     
-    var birthdays: [_DoriFrontend.Characters.BirthdayCharacter]?
-    var systemBirthdays: [_DoriFrontend.Characters.BirthdayCharacter]?
+    var birthdays: [DoriFrontend.Characters.BirthdayCharacter]?
+    var systemBirthdays: [DoriFrontend.Characters.BirthdayCharacter]?
     var avatarImageData: [Int /* Character ID */: Data] = [:]
 }
 

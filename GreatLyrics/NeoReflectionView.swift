@@ -21,8 +21,8 @@ import UniformTypeIdentifiers
 struct NeoReflectionView: View {
     @AppStorage("ReflectionBatchRetryFailedItem") private var batchRetryFailedItem = false
     @State private var singleMusicIDInput = ""
-    @State private var singleMatchResults: [_DoriFrontend.Songs._NeoSongMatchResult.MatchItem]?
-    @State private var batchMatchResults: [Int: _DoriFrontend.Songs._NeoSongMatchResult] = [:]
+    @State private var singleMatchResults: [DoriFrontend.Songs._NeoSongMatchResult.MatchItem]?
+    @State private var batchMatchResults: [Int: DoriFrontend.Songs._NeoSongMatchResult] = [:]
     @State private var batchResultFile: PropertyListFileDocument?
     @State private var isGettingBatchResult = false
     @State private var isBatchResultImporterPresented = false
@@ -109,7 +109,7 @@ struct NeoReflectionView: View {
                                 do {
                                     let (data, _) = try await URLSession.shared.data(from: URL(string: "https://kashi.greatdori.com/MappedSongs.plist")!)
                                     let codedResults = try PropertyListDecoder()
-                                        .decode([Int: _DoriFrontend.Songs._NeoSongMatchResult].self, from: data)
+                                        .decode([Int: DoriFrontend.Songs._NeoSongMatchResult].self, from: data)
                                     await MainActor.run {
                                         batchMatchResults = codedResults
                                     }
@@ -201,7 +201,7 @@ struct NeoReflectionView: View {
                 _ = url.startAccessingSecurityScopedResource()
                 defer { url.stopAccessingSecurityScopedResource() }
                 if let data = try? Data(contentsOf: url),
-                   let codedResults = try? PropertyListDecoder().decode([Int: _DoriFrontend.Songs._NeoSongMatchResult].self, from: data) {
+                   let codedResults = try? PropertyListDecoder().decode([Int: DoriFrontend.Songs._NeoSongMatchResult].self, from: data) {
                     batchMatchResults = codedResults
                 }
             }
@@ -219,11 +219,11 @@ struct NeoReflectionView: View {
 
 
 private struct NeoSongReflectionResultsView: View {
-    @Binding var results: [Int: _DoriFrontend.Songs._NeoSongMatchResult]
+    @Binding var results: [Int: DoriFrontend.Songs._NeoSongMatchResult]
     var song: Int
     var previewSong: PreviewSong?
     
-    init(for song: Int, in results: Binding<[Int : _DoriFrontend.Songs._NeoSongMatchResult]>, songInfo: PreviewSong?) {
+    init(for song: Int, in results: Binding<[Int : DoriFrontend.Songs._NeoSongMatchResult]>, songInfo: PreviewSong?) {
         self._results = results
         self.song = song
         self.previewSong = songInfo
@@ -394,9 +394,9 @@ private struct NeoSongReflectionResultsView: View {
     
     private struct ItemEditView: View {
         var index: Int
-        var item: _DoriFrontend.Songs._NeoSongMatchResult.MatchItem
+        var item: DoriFrontend.Songs._NeoSongMatchResult.MatchItem
         var song: Int
-        @Binding var allResults: [Int: _DoriFrontend.Songs._NeoSongMatchResult]
+        @Binding var allResults: [Int: DoriFrontend.Songs._NeoSongMatchResult]
         var saveFlag: Bool
         @State private var titleJP = ""
         @State private var titleEN = ""
@@ -439,7 +439,7 @@ private struct NeoSongReflectionResultsView: View {
                 shazamID = item.shazamID ?? 0
             }
             .onChange(of: saveFlag) {
-                allResults[song]!.castSome[index] = _DoriFrontend.Songs._NeoSongMatchResult.MatchItem.init(
+                allResults[song]!.castSome[index] = DoriFrontend.Songs._NeoSongMatchResult.MatchItem.init(
                     titleJP: titleJP,
                     titleEN: titleEN.isEmpty ? nil : titleEN,
                     artistJP: artistJP,
@@ -454,9 +454,9 @@ private struct NeoSongReflectionResultsView: View {
 }
 
 private struct NeoMediaItemPreview: View {
-    var item: _DoriFrontend.Songs._NeoSongMatchResult.MatchItem
+    var item: DoriFrontend.Songs._NeoSongMatchResult.MatchItem
     
-    init(_ item: _DoriFrontend.Songs._NeoSongMatchResult.MatchItem) {
+    init(_ item: DoriFrontend.Songs._NeoSongMatchResult.MatchItem) {
         self.item = item
     }
     

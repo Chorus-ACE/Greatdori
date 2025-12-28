@@ -22,7 +22,7 @@ struct EventDetailRewardsView: View {
     @State private var locale: DoriLocale = .primaryLocale // FIXME: primaryLocale
     @State private var isExpanded = false
     @State private var selectedCategory = RewardCategory.point
-    @State private var itemList: [_DoriFrontend.ExtendedItem]?
+    @State private var itemList: [DoriFrontend.ExtendedItem]?
     var body: some View {
         Section {
             if let itemList {
@@ -157,7 +157,7 @@ struct EventDetailRewardsView: View {
             .detailSectionHeader()
             .onAppear {
                 if itemList == nil {
-                    var partialResult: [_DoriAPI.Item] = []
+                    var partialResult: [DoriAPI.Item] = []
                     for locale in DoriLocale.allCases {
                         partialResult += information.event.pointRewards.forLocale(locale)?.map {
                             $0.reward
@@ -192,7 +192,7 @@ struct EventDetailRewardsView: View {
                     let itemHash = hasher.finalize()
                     
                     withDoriCache(id: "ExtendedItems_\(itemHash)") {
-                        await _DoriFrontend.Misc.extendedItems(from: partialResult)
+                        await DoriFrontend.Misc.extendedItems(from: partialResult)
                     }.onUpdate {
                         if let items = $0 {
                             itemList = items
@@ -213,7 +213,7 @@ struct EventDetailRewardsView: View {
 }
 
 struct EventDetailRewardsPointsItemUnit: View {
-    var reward: _DoriFrontend.ExtendedItem
+    var reward: DoriFrontend.ExtendedItem
     var _reward: Event.PointReward
     var locale: DoriLocale
     var body: some View {
@@ -267,7 +267,7 @@ struct EventDetailRewardsPointsItemUnit: View {
 }
 
 struct EventDetailRewardsRankItemUnit: View {
-    var reward: _DoriFrontend.ExtendedItem
+    var reward: DoriFrontend.ExtendedItem
     var locale: DoriLocale
     
     var range: ClosedRange<Int>?
@@ -277,7 +277,7 @@ struct EventDetailRewardsRankItemUnit: View {
     @State private var isHovering = false
     @State private var audioPlayer: AVPlayer?
     
-    init(reward: _DoriFrontend.ExtendedItem, locale: DoriLocale, range: ClosedRange<Int>? = nil) {
+    init(reward: DoriFrontend.ExtendedItem, locale: DoriLocale, range: ClosedRange<Int>? = nil) {
         self.reward = reward
         self.locale = locale
         self.range = range

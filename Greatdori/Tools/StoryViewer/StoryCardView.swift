@@ -27,14 +27,14 @@ struct StoryCardView: View {
     var storyNote: String?
     
     var type: StoryType
-    var locale: _DoriAPI.Locale
+    var locale: DoriAPI.Locale
     var unsafeAssociatedID: String
     var unsafeSecondaryAssociatedID: String?
     var notes: String?
     var images: [URL] = []
     var characterIDs: [Int]?
     
-    init(story: _DoriAPI.Story, type: StoryType, locale: _DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil, notes: String? = nil) {
+    init(story: DoriAPI.Story, type: StoryType, locale: DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil, notes: String? = nil) {
         self.scenarioID = story.scenarioID
         self.caption = story.caption.forLocale(locale) ?? ""
         self.title = story.title
@@ -48,7 +48,7 @@ struct StoryCardView: View {
         self.storyNote = nil
         self.characterIDs = nil
     }
-    init(story: CustomStory, type: StoryType, locale: _DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil, notes: String? = nil, images: [URL] = [], characterIDs: [Int]? = nil) {
+    init(story: CustomStory, type: StoryType, locale: DoriAPI.Locale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String? = nil, notes: String? = nil, images: [URL] = [], characterIDs: [Int]? = nil) {
         self.scenarioID = story.scenarioID
         self.caption = story.caption
         self.title = story.title

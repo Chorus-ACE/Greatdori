@@ -88,7 +88,7 @@ struct CommunityView: View {
     }
     
     func getPosts() async {
-        posts = await _DoriAPI.Posts.communityAll(offset: pageOffset)
+        posts = await DoriAPI.Posts.communityAll(offset: pageOffset)
     }
     func continueLoadPosts() {
         guard !isLoadingMore else { return }
@@ -96,7 +96,7 @@ struct CommunityView: View {
             pageOffset = posts.nextOffset
             Task {
                 isLoadingMore = true
-                if let newPosts = await _DoriAPI.Posts.communityAll(offset: pageOffset) {
+                if let newPosts = await DoriAPI.Posts.communityAll(offset: pageOffset) {
                     self.posts!.content += newPosts.content
                 }
                 isLoadingMore = false
@@ -277,7 +277,7 @@ private struct PostSectionView: View {
     }
 }
 
-extension _DoriAPI.Posts.Post {
+extension DoriAPI.Posts.Post {
     func getPostTypeSymbol() -> String {
         if self.categoryID == "chart" {
             return "apple.classical.pages"

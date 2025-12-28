@@ -17,7 +17,7 @@ import SwiftUI
 
 struct EventDetailStageView: View {
     var information: ExtendedEvent
-    @State private var stages: [_DoriAPI.Events.FestivalStage]?
+    @State private var stages: [DoriAPI.Events.FestivalStage]?
     @State var isExpanded = false
     var body: some View {
         if information.event.eventType == .festival {
@@ -78,7 +78,7 @@ struct EventDetailStageView: View {
                 .detailSectionHeader()
                 .task {
                     withDoriCache(id: "EventFestivalStages_\(information.event.id)") {
-                        await _DoriAPI.Events.festivalStages(of: information.event.id)
+                        await DoriAPI.Events.festivalStages(of: information.event.id)
                     }.onUpdate {
                         stages = $0
                     }
@@ -90,5 +90,5 @@ struct EventDetailStageView: View {
 
 private struct IdentifiableStage: Identifiable {
     var id: UUID = .init()
-    var stage: _DoriAPI.Events.FestivalStage
+    var stage: DoriAPI.Events.FestivalStage
 }

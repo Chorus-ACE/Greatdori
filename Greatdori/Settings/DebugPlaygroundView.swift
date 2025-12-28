@@ -31,7 +31,7 @@ struct DebugPlaygroundView: View {
     }
 }
 
-//extension _DoriAPI.Songs.Song.MusicVideoMetadata: Sequence {}
+//extension DoriAPI.Songs.Song.MusicVideoMetadata: Sequence {}
 
 func scheduleLocalNotification() {
     let content = UNMutableNotificationContent()

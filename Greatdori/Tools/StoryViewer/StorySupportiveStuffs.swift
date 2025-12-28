@@ -48,7 +48,7 @@ public struct CustomStory: Sendable, Identifiable, Hashable, DoriCache.Cacheable
     public var id: String { scenarioID }
 }
 
-extension _DoriAPI.Story {
+extension DoriAPI.Story {
     func convertToLocalizedData() -> LocalizedData<CustomStory> {
         var result = LocalizedData<CustomStory>()
         for locale in DoriLocale.allCases {
@@ -69,7 +69,7 @@ extension _DoriAPI.Story {
     }
 }
 
-extension Array<_DoriAPI.Story> {
+extension Array<DoriAPI.Story> {
     func convertToLocalizedData() -> LocalizedData<[CustomStory]> {
         var result = LocalizedData<[CustomStory]>()
         for story in self {

@@ -17,7 +17,7 @@ import SwiftUI
 
 @available(iOS 26.0, macOS 26.0, *)
 struct SongDetailLyricsView: View {
-    var lyrics: _DoriFrontend.Songs.Lyrics
+    var lyrics: DoriFrontend.Songs.Lyrics
     @State private var fontIsArtistic = false
     var body: some View {
         Section {
@@ -76,12 +76,12 @@ struct SongDetailLyricsView: View {
 }
 
 private func mergingMainStyle(
-    _ mainStyle: _DoriFrontend.Songs.Lyrics.Style,
-    with partialStyle: [ClosedRange<Int>: _DoriFrontend.Songs.Lyrics.Style],
-    for line: _DoriFrontend.Songs.Lyrics.LyricLine
-) -> [ClosedRange<Int>: _DoriFrontend.Songs.Lyrics.Style] {
+    _ mainStyle: DoriFrontend.Songs.Lyrics.Style,
+    with partialStyle: [ClosedRange<Int>: DoriFrontend.Songs.Lyrics.Style],
+    for line: DoriFrontend.Songs.Lyrics.LyricLine
+) -> [ClosedRange<Int>: DoriFrontend.Songs.Lyrics.Style] {
     var mainRangeSet = Set(0..<line.original.count)
-    var result = [ClosedRange<Int>: _DoriFrontend.Songs.Lyrics.Style]()
+    var result = [ClosedRange<Int>: DoriFrontend.Songs.Lyrics.Style]()
     for (range, style) in partialStyle {
         result.updateValue(style, forKey: range)
         mainRangeSet.subtract(Set(range))
@@ -102,16 +102,16 @@ private func mergingMainStyle(
 @available(iOS 26.0, macOS 26.0, *)
 private struct TextStyleRender: View {
     var text: String
-    var partialStyle: [ClosedRange<Int>: _DoriFrontend.Songs.Lyrics.Style]
+    var partialStyle: [ClosedRange<Int>: DoriFrontend.Songs.Lyrics.Style]
     @Environment(\.font) var envFont
     @Environment(\.fontResolutionContext) var envFontContext
     @State var factor: CGFloat = 14
     
-    init(text: String, style: _DoriFrontend.Songs.Lyrics.Style) {
+    init(text: String, style: DoriFrontend.Songs.Lyrics.Style) {
         self.text = text
         self.partialStyle = [.init(0..<text.count): style]
     }
-    init(text: String, partialStyle: [ClosedRange<Int>: _DoriFrontend.Songs.Lyrics.Style]) {
+    init(text: String, partialStyle: [ClosedRange<Int>: DoriFrontend.Songs.Lyrics.Style]) {
         self.text = text
         self.partialStyle = partialStyle
     }
@@ -137,7 +137,7 @@ private struct TextStyleRender: View {
 @available(iOS 26.0, macOS 26.0, *)
 private struct _StyleRenderer: TextRenderer {
     var factor: CGFloat
-    var partialStyle: [ClosedRange<Int>: _DoriFrontend.Songs.Lyrics.Style]
+    var partialStyle: [ClosedRange<Int>: DoriFrontend.Songs.Lyrics.Style]
     func draw(layout: Text.Layout, in ctx: inout GraphicsContext) {
         if partialStyle.isEmpty {
             for line in layout {

@@ -16,7 +16,7 @@ import SwiftUI
 import DoriKit
 
 struct CommunityPostsView: View {
-    @State var posts: _DoriAPI.Posts.PagedPosts?
+    @State var posts: DoriAPI.Posts.PagedPosts?
     @State var availability = true
     @State var pageOffset = 0
     @State var isLoadingMore = false
@@ -67,14 +67,14 @@ struct CommunityPostsView: View {
     }
     
     func getPosts() async {
-        posts = await _DoriAPI.Posts.communityPosts(offset: pageOffset)
+        posts = await DoriAPI.Posts.communityPosts(offset: pageOffset)
     }
     func continueLoadPosts() {
         if let posts, posts.hasMore {
             pageOffset = posts.nextOffset
             Task {
                 isLoadingMore = true
-                if let newPosts = await _DoriAPI.Posts.communityPosts(offset: pageOffset) {
+                if let newPosts = await DoriAPI.Posts.communityPosts(offset: pageOffset) {
                     self.posts!.content += newPosts.content
                 }
                 isLoadingMore = false

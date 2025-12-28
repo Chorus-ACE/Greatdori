@@ -19,7 +19,7 @@ import SwiftUI
 // MARK: EventDetailOverviewView
 struct EventDetailOverviewView: View {
     let information: ExtendedEvent
-    @State var eventCharacterPercentageDict: [Int: [_DoriAPI.Events.EventCharacter]] = [:]
+    @State var eventCharacterPercentageDict: [Int: [DoriAPI.Events.EventCharacter]] = [:]
     @State var eventCharacterNameDict: [Int: LocalizedData<String>] = [:]
     @State var cardsArray: [PreviewCard] = []
     @State var cardsArraySeperated: [[PreviewCard?]] = []

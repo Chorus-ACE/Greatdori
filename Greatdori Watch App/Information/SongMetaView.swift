@@ -16,10 +16,10 @@ import SwiftUI
 import DoriKit
 
 struct SongMetaView: View {
-    @State var meta: [_DoriFrontend.Songs.SongWithMeta]?
+    @State var meta: [DoriFrontend.Songs.SongWithMeta]?
     @State var allSkills: [Skill]?
     @State var selectedSkill: Skill?
-    @State var sort = _DoriFrontend.Songs.MetaSort.efficiency
+    @State var sort = DoriFrontend.Songs.MetaSort.efficiency
     @State var locale = DoriLocale.primaryLocale
     @State var skillLevel = 4
     @State var perfectRate = 100.0
@@ -86,10 +86,10 @@ struct SongMetaView: View {
             }
         }
     }
-    func _getMeta(skill: _DoriAPI.Skills.Skill) async {
+    func _getMeta(skill: DoriAPI.Skills.Skill) async {
         availability = true
         withDoriCache(id: "MetaList_\(sort.rawValue)") {
-            await _DoriFrontend.Songs.allMeta(
+            await DoriFrontend.Songs.allMeta(
                 with: skill,
                 in: locale,
                 skillLevel: skillLevel,
@@ -109,7 +109,7 @@ struct SongMetaView: View {
 }
 
 private struct SongMetaDetailView: View {
-    var meta: _DoriFrontend.Songs.SongWithMeta
+    var meta: DoriFrontend.Songs.SongWithMeta
     var body: some View {
         List {
             Section {

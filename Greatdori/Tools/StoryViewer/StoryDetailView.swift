@@ -28,8 +28,8 @@ struct StoryDetailView: View {
     var unsafeAssociatedID: String // WTF --@WindowsMEMZ
     var unsafeSecondaryAssociatedID: String?
     @State var isvLayoutSelectionSheetIsDisplaying = false
-    @State var locale: _DoriAPI.Locale
-    @State var asset: _DoriAPI.Misc.StoryAsset?
+    @State var locale: DoriAPI.Locale
+    @State var asset: DoriAPI.Misc.StoryAsset?
     @State var ir: StoryIR?
     @State var transcript: [NeoTranscript]?
     @State var isAssetUnavailable = false
@@ -359,35 +359,35 @@ struct StoryDetailView: View {
         
         let newAsset = switch type {
         case .event:
-            await _DoriAPI.Misc.eventStoryAsset(
+            await DoriAPI.Misc.eventStoryAsset(
                 eventID: Int(unsafeAssociatedID)!,
                 scenarioID: scenarioID,
                 locale: locale
             )
         case .main:
-            await _DoriAPI.Misc.mainStoryAsset(
+            await DoriAPI.Misc.mainStoryAsset(
                 scenarioID: scenarioID,
                 locale: locale
             )
         case .band:
-            await _DoriAPI.Misc.bandStoryAsset(
+            await DoriAPI.Misc.bandStoryAsset(
                 bandID: Int(unsafeAssociatedID)!,
                 scenarioID: scenarioID,
                 locale: locale
             )
         case .card:
-            await _DoriAPI.Misc.cardStoryAsset(
+            await DoriAPI.Misc.cardStoryAsset(
                 resourceSetName: unsafeAssociatedID,
                 scenarioID: scenarioID,
                 locale: locale
             )
         case .actionSet:
-            await _DoriAPI.Misc.actionSetStoryAsset(
+            await DoriAPI.Misc.actionSetStoryAsset(
                 actionSetID: Int(unsafeAssociatedID)!,
                 locale: locale
             )
         case .afterLive:
-            await _DoriAPI.Misc.afterLiveStoryAsset(
+            await DoriAPI.Misc.afterLiveStoryAsset(
                 talkID: Int(unsafeAssociatedID)!,
                 scenarioID: scenarioID,
                 locale: locale
@@ -404,7 +404,7 @@ struct StoryDetailView: View {
         }
     }
     
-    func getIR(scenarioID: String, voiceAssetBundleName: String?, type: StoryType, locale: DoriLocale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String?, asset: _DoriAPI.Misc.StoryAsset) -> StoryIR {
+    func getIR(scenarioID: String, voiceAssetBundleName: String?, type: StoryType, locale: DoriLocale, unsafeAssociatedID: String, unsafeSecondaryAssociatedID: String?, asset: DoriAPI.Misc.StoryAsset) -> StoryIR {
         let voiceBundlePath = {
             switch type {
             case .event:
@@ -515,10 +515,10 @@ struct StoryDetailView: View {
      var scenarioID: String
      var voiceAssetBundleName: String?
      var type: StoryType
-     var locale: _DoriAPI.Locale
+     var locale: DoriAPI.Locale
      var unsafeAssociatedID: String // WTF
      var unsafeSecondaryAssociatedID: String?
-     @Binding var asset: _DoriAPI.Misc.StoryAsset?
+     @Binding var asset: DoriAPI.Misc.StoryAsset?
      var body: some View {
      if let asset {
      InteractiveStoryView(asset: asset, voiceBundlePath: {

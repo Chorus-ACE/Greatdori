@@ -214,9 +214,9 @@ struct SettingsAccountsAddView: View {
                 default:
                     EmptyView()
                 }
-            } else if let apiError = error as? _DoriAPI.Station.APIError, apiError == .wrongPassword {
+            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .wrongPassword {
                 Text("Settings.account.new.error.wrong-password")
-            } else if let apiError = error as? _DoriAPI.Station.APIError, apiError == .tooManyRequests {
+            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .tooManyRequests {
                 Text("Settings.account.new.error.too-many-requests")
             } else {
                 Text("Settings.account.new.error.\("\(error)")")
@@ -240,7 +240,7 @@ struct SettingsAccountsAddView: View {
             }
             
             if platform == .bandoriStation {
-                let loginResponse = try await _DoriAPI.Station.login(username: account, password: password)
+                let loginResponse = try await DoriAPI.Station.login(username: account, password: password)
                 if case .success(let token, let userInfo) = loginResponse {
                     accountAddress = "TODO: NO USERNAME"
                     accountToken = token.value
@@ -255,8 +255,8 @@ struct SettingsAccountsAddView: View {
             }
             
             // FIXME: Debate use, temp
-            //            _DoriAPI.Station.login(with: _DoriAPI.Station.Credential(username: account, password: password))
-            //            _DoriAPI.Station.login(username: account, password: password)
+            //            DoriAPI.Station.login(with: DoriAPI.Station.Credential(username: account, password: password))
+            //            DoriAPI.Station.login(username: account, password: password)
             
             if let accountAddress, let accountUsername, let accountPassword, let accountToken {
                 var currentAccounts = try AccountManager.shared.load()

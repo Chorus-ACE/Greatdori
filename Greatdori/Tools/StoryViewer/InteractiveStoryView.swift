@@ -81,7 +81,7 @@ struct InteractiveStoryView: View {
         self.fullScreenToggleIsAvailable = fullScreenToggleIsAvailable
         self.mutingIsAvailable = mutingIsAvailable
     }
-    init(asset: _DoriAPI.Misc.StoryAsset, voiceBundlePath: String, locale: DoriLocale) {
+    init(asset: DoriAPI.Misc.StoryAsset, voiceBundlePath: String, locale: DoriLocale) {
         let ir = DoriStoryBuilder.Conversion.zeileIR(
             fromBandori: asset,
             in: locale,

@@ -78,7 +78,7 @@ extension StoryViewerView {
         @State var eventList: [PreviewEvent]?
         @State var eventListAvailability = true
         @State var selectedEvent: PreviewEvent?
-        @State var stories: [_DoriAPI.Events.EventStory]?
+        @State var stories: [DoriAPI.Events.EventStory]?
         @State var storyAvailability = true
         var body: some View {
             if let eventList {
@@ -169,7 +169,7 @@ extension StoryViewerView {
         func getStories() async {
             storyAvailability = true
             withDoriCache(id: "EventStories") {
-                await _DoriAPI.Events.allStories()
+                await DoriAPI.Events.allStories()
             }.onUpdate {
                 if let stories = $0 {
                     self.stories = stories
@@ -182,13 +182,13 @@ extension StoryViewerView {
     
     struct MainStoryViewer: View {
         @State var isFirstShowing = true
-        @State var stories: [_DoriAPI.Story]?
+        @State var stories: [DoriAPI.Story]?
         @State var storyAvailability = true
         var body: some View {
             if let stories {
                 Section {
                     ForEach(Array(stories.enumerated()), id: \.element.id) { (index, story) in
-                        StoryCardView(story: story, type: .main, locale: _DoriAPI.preferredLocale, unsafeAssociatedID: String(index + 1))
+                        StoryCardView(story: story, type: .main, locale: DoriAPI.preferredLocale, unsafeAssociatedID: String(index + 1))
                     }
                 }
             } else {
@@ -213,7 +213,7 @@ extension StoryViewerView {
         func getStories() async {
             storyAvailability = true
             DoriCache.withCache(id: "MainStories") {
-                await _DoriAPI.Misc.mainStories()
+                await DoriAPI.Misc.mainStories()
             }.onUpdate {
                 if let stories = $0 {
                     self.stories = stories
@@ -226,16 +226,16 @@ extension StoryViewerView {
     
     struct BandStoryViewer: View {
         @State var isFirstShowing = true
-        @State var bands: [_DoriAPI.Bands.Band]?
-        @State var selectedBand: _DoriAPI.Bands.Band?
-        @State var stories: [_DoriAPI.Misc.BandStory]?
+        @State var bands: [DoriAPI.Bands.Band]?
+        @State var selectedBand: DoriAPI.Bands.Band?
+        @State var stories: [DoriAPI.Misc.BandStory]?
         @State var storyAvailability = true
-        @State var selectedStoryGroup: _DoriAPI.Misc.BandStory?
+        @State var selectedStoryGroup: DoriAPI.Misc.BandStory?
         var body: some View {
             if let bands, let stories {
                 Section {
                     Picker("乐团", selection: $selectedBand) {
-                        Text("(选择乐团)").tag(Optional<_DoriAPI.Bands.Band>.none)
+                        Text("(选择乐团)").tag(Optional<DoriAPI.Bands.Band>.none)
                         ForEach(bands) { band in
                             Text(band.bandName.forPreferredLocale() ?? "").tag(band)
                         }
@@ -245,7 +245,7 @@ extension StoryViewerView {
                     }
                     if let selectedBand {
                         Picker("故事", selection: $selectedStoryGroup) {
-                            Text("(选择故事)").tag(Optional<_DoriAPI.Misc.BandStory>.none)
+                            Text("(选择故事)").tag(Optional<DoriAPI.Misc.BandStory>.none)
                             ForEach(stories.filter { $0.bandID == selectedBand.id }) { story in
                                 Text(verbatim: "\(story.mainTitle.forPreferredLocale() ?? ""): \(story.subTitle.forPreferredLocale() ?? "")").tag(story)
                             }
@@ -280,13 +280,13 @@ extension StoryViewerView {
             storyAvailability = true
             Task {
                 DoriCache.withCache(id: "BandList") {
-                    await _DoriAPI.Bands.main()
+                    await DoriAPI.Bands.main()
                 }.onUpdate {
                     self.bands = $0
                 }
             }
             DoriCache.withCache(id: "BandStories") {
-                await _DoriAPI.Misc.bandStories()
+                await DoriAPI.Misc.bandStories()
             }.onUpdate {
                 if let stories = $0 {
                     self.stories = stories
@@ -298,8 +298,8 @@ extension StoryViewerView {
     }
     
     struct CardStoryViewer: View {
-        @State var selectedCard: _DoriFrontend.Cards.CardWithBand?
-        @State var selectedCardDetail: _DoriFrontend.Cards.ExtendedCard?
+        @State var selectedCard: DoriFrontend.Cards.CardWithBand?
+        @State var selectedCardDetail: DoriFrontend.Cards.ExtendedCard?
         @State var cardDetailAvailability = true
         var body: some View {
             Section {
@@ -368,7 +368,7 @@ extension StoryViewerView {
             if let selectedCard {
                 cardDetailAvailability = true
                 DoriCache.withCache(id: "CardDetail_\(selectedCard.id)") {
-                    await _DoriFrontend.Cards.extendedInformation(of: selectedCard.id)
+                    await DoriFrontend.Cards.extendedInformation(of: selectedCard.id)
                 }.onUpdate {
                     if let information = $0 {
                         self.selectedCardDetail = information
@@ -382,10 +382,10 @@ extension StoryViewerView {
     
     struct ActionSetStoryViewer: View {
         @State var isFirstShowing = true
-        @State var filter = _DoriFrontend.Filter()
+        @State var filter = DoriFrontend.Filter()
         @State var isFilterSettingsPresented = false
-        @State var characters: [_DoriFrontend.Characters.PreviewCharacter]?
-        @State var actionSets: [_DoriAPI.Misc.ActionSet]?
+        @State var characters: [DoriFrontend.Characters.PreviewCharacter]?
+        @State var actionSets: [DoriAPI.Misc.ActionSet]?
         @State var actionSetAvailability = true
         var body: some View {
             if let actionSets {
@@ -413,7 +413,7 @@ extension StoryViewerView {
                                     title: characters.filter { actionSet.characterIDs.contains($0.id) }.map { $0.characterName.forPreferredLocale() ?? "" }.joined(separator: "×"),
                                     scenarioID: "",
                                     type: .actionSet,
-                                    locale: _DoriAPI.preferredLocale,
+                                    locale: DoriAPI.preferredLocale,
                                     unsafeAssociatedID: String(actionSet.id)
                                 )
                             }) {
@@ -447,13 +447,13 @@ extension StoryViewerView {
             actionSetAvailability = true
             Task {
                 DoriCache.withCache(id: "CharacterList") {
-                    await _DoriFrontend.Characters.categorizedCharacters()
+                    await DoriFrontend.Characters.categorizedCharacters()
                 }.onUpdate {
                     self.characters = $0?.values.flatMap { $0 }
                 }
             }
             DoriCache.withCache(id: "ActionSet") {
-                await _DoriAPI.Misc.actionSets()
+                await DoriAPI.Misc.actionSets()
             }.onUpdate {
                 if let actionSets = $0 {
                     self.actionSets = actionSets.filter {
@@ -468,9 +468,9 @@ extension StoryViewerView {
     
     struct AfterLiveStoryViewer: View {
         @State var isFirstShowing = true
-        @State var stories: [_DoriAPI.Misc.AfterLiveTalk]?
+        @State var stories: [DoriAPI.Misc.AfterLiveTalk]?
         @State var storyAvailability = true
-        @State var filter = _DoriFrontend.Filter()
+        @State var filter = DoriFrontend.Filter()
         @State var isFilterSettingsPresented = false
         var body: some View {
             if let stories {
@@ -497,7 +497,7 @@ extension StoryViewerView {
                                 title: story.description.forPreferredLocale() ?? "",
                                 scenarioID: story.scenarioID,
                                 type: .afterLive,
-                                locale: _DoriAPI.preferredLocale,
+                                locale: DoriAPI.preferredLocale,
                                 unsafeAssociatedID: String(story.id)
                             )
                         }) {
@@ -534,7 +534,7 @@ extension StoryViewerView {
         func getStories() async {
             storyAvailability = true
             DoriCache.withCache(id: "AfterLiveStories") {
-                await _DoriAPI.Misc.afterLiveTalks()
+                await DoriAPI.Misc.afterLiveTalks()
             }.onUpdate {
                 if let stories = $0 {
                     self.stories = stories.filter {
@@ -555,9 +555,9 @@ extension StoryViewerView {
 }
 
 private struct StoryCardView: View {
-    var story: _DoriAPI.Story
+    var story: DoriAPI.Story
     var type: StoryType
-    var locale: _DoriAPI.Locale
+    var locale: DoriAPI.Locale
     var unsafeAssociatedID: String
     var unsafeSecondaryAssociatedID: String?
     var body: some View {
@@ -588,10 +588,10 @@ private struct StoryDetailView: View {
     var scenarioID: String
     var voiceAssetBundleName: String?
     var type: StoryType
-    var locale: _DoriAPI.Locale
+    var locale: DoriAPI.Locale
     var unsafeAssociatedID: String // WTF
     var unsafeSecondaryAssociatedID: String?
-    @State var transcript: [_DoriAPI.Misc.StoryAsset.Transcript]?
+    @State var transcript: [DoriAPI.Misc.StoryAsset.Transcript]?
     var body: some View {
         Form {
             if let transcript {
@@ -658,35 +658,35 @@ private struct StoryDetailView: View {
     func loadTranscript() async {
         let asset = switch type {
         case .event:
-            await _DoriAPI.Misc.eventStoryAsset(
+            await DoriAPI.Misc.eventStoryAsset(
                 eventID: Int(unsafeAssociatedID)!,
                 scenarioID: scenarioID,
                 locale: locale
             )
         case .main:
-            await _DoriAPI.Misc.mainStoryAsset(
+            await DoriAPI.Misc.mainStoryAsset(
                 scenarioID: scenarioID,
                 locale: locale
             )
         case .band:
-            await _DoriAPI.Misc.bandStoryAsset(
+            await DoriAPI.Misc.bandStoryAsset(
                 bandID: Int(unsafeAssociatedID)!,
                 scenarioID: scenarioID,
                 locale: locale
             )
         case .card:
-            await _DoriAPI.Misc.cardStoryAsset(
+            await DoriAPI.Misc.cardStoryAsset(
                 resourceSetName: unsafeAssociatedID,
                 scenarioID: scenarioID,
                 locale: locale
             )
         case .actionSet:
-            await _DoriAPI.Misc.actionSetStoryAsset(
+            await DoriAPI.Misc.actionSetStoryAsset(
                 actionSetID: Int(unsafeAssociatedID)!,
                 locale: locale
             )
         case .afterLive:
-            await _DoriAPI.Misc.afterLiveStoryAsset(
+            await DoriAPI.Misc.afterLiveStoryAsset(
                 talkID: Int(unsafeAssociatedID)!,
                 scenarioID: scenarioID,
                 locale: locale

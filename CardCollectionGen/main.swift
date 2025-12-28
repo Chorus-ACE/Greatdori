@@ -69,7 +69,7 @@ let ids = formattedCardInfoString
     }
 print("Please wait...", terminator: .init())
 fflush(stdout)
-if let cards = await _DoriAPI.Cards.all() {
+if let cards = await DoriAPI.Cards.all() {
     var relatedCards = cards.flatMap { card in
         ids.filter { $0.id == card.id }.map {
             (card: card, trained: $0.trained)
@@ -144,6 +144,6 @@ struct Collection: Codable {
     var cards: [Card]
 }
 struct Card: Codable {
-    var localizedName: _DoriAPI.LocalizedData<String>
+    var localizedName: DoriAPI.LocalizedData<String>
     var fileName: String
 }

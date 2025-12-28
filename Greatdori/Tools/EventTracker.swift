@@ -430,13 +430,13 @@ struct EventTrackerView: View {
             trackerData = nil
             trackerIsAvailable = true
             if selectedTier > 10 {
-                if let trackerData = await _DoriFrontend.Events.trackerData(for: event, in: locale, tier: selectedTier, smooth: true) {
+                if let trackerData = await DoriFrontend.Events.trackerData(for: event, in: locale, tier: selectedTier, smooth: true) {
                     self.trackerData = .tracker(trackerData)
                 } else {
                     trackerIsAvailable = false
                 }
             } else {
-                if let topData = await _DoriFrontend.Events.topData(of: event.id, in: locale) {
+                if let topData = await DoriFrontend.Events.topData(of: event.id, in: locale) {
                     self.trackerData = .top(topData)
                 } else {
                     trackerIsAvailable = false
@@ -445,7 +445,7 @@ struct EventTrackerView: View {
         }
     }
     
-    func stride(of trackerData: _DoriFrontend.Events.TrackerData) -> Double {
+    func stride(of trackerData: DoriFrontend.Events.TrackerData) -> Double {
         let cutoffs = trackerData.cutoffs
         let predictions = trackerData.predictions
         var maxValue = 0.0
@@ -459,7 +459,7 @@ struct EventTrackerView: View {
         let result = "1" + String(repeating: "0", count: count - 1)
         return Double(result)!
     }
-    func stride(of topData: [_DoriFrontend.Events.TopData]) -> Double {
+    func stride(of topData: [DoriFrontend.Events.TopData]) -> Double {
         var maxValue = 0.0
         for data in topData {
             for point in data.points where Double(point.value) > maxValue {
@@ -486,6 +486,6 @@ private func formatNumber(_ number: Double) -> String {
 }
 
 private enum TrackerData {
-    case tracker(_DoriFrontend.Events.TrackerData)
-    case top([_DoriFrontend.Events.TopData])
+    case tracker(DoriFrontend.Events.TrackerData)
+    case top([DoriFrontend.Events.TopData])
 }

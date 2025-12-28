@@ -46,8 +46,8 @@ extension AssetItem {
     }
 }
 extension Array<AssetItem> {
-    init(_ info: _DoriAPI.Assets.AssetList, path: _DoriAPI.Assets.PathDescriptor) {
-        func resolveInfo(_ info: _DoriAPI.Assets.AssetList, path: _DoriAPI.Assets.PathDescriptor) -> [AssetItem] {
+    init(_ info: DoriAPI.Assets.AssetList, path: DoriAPI.Assets.PathDescriptor) {
+        func resolveInfo(_ info: DoriAPI.Assets.AssetList, path: DoriAPI.Assets.PathDescriptor) -> [AssetItem] {
             var result = [AssetItem]()
             let keys = info.keys.sorted()
             for key in keys {

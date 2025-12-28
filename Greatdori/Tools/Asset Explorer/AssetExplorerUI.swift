@@ -25,17 +25,17 @@ struct AssetExplorerView: View {
 
 struct LocaleAssetView: View {
     var locale: DoriLocale
-    @State private var assetList: _DoriAPI.Assets.AssetList?
+    @State private var assetList: DoriAPI.Assets.AssetList?
     var body: some View {
         if let assetList {
-            AssetListView(items: .init(assetList, path: _DoriAPI.Assets.PathDescriptor(locale: locale)), locale: locale)
+            AssetListView(items: .init(assetList, path: DoriAPI.Assets.PathDescriptor(locale: locale)), locale: locale)
                 .navigationTitle(locale.rawValue)
         } else {
             ProgressView()
                 .controlSize(.large)
                 .onAppear {
                     Task {
-                        assetList = await _DoriAPI.Assets.info(in: locale)
+                        assetList = await DoriAPI.Assets.info(in: locale)
                     }
                 }
         }
@@ -45,7 +45,7 @@ struct LocaleAssetView: View {
 struct AssetListView: View {
     @State var items: [AssetItem]?
     @State var filteredItems: [AssetItem]?
-    var currentPath: _DoriAPI.Assets.PathDescriptor?
+    var currentPath: DoriAPI.Assets.PathDescriptor?
     var locale: DoriLocale?
     
     @State var searchField = ""
@@ -209,7 +209,7 @@ struct AssetListView: View {
                     ProgressView()
                         .onAppear {
                             Task {
-                                if let contents = await _DoriAPI.Assets.contentsOf(currentPath) {
+                                if let contents = await DoriAPI.Assets.contentsOf(currentPath) {
                                     items = contents.map {
                                         .init(type: .file, name: $0) {}
                                     }
@@ -287,7 +287,7 @@ struct AssetListView: View {
         }
     }
     
-    func downloadItem(_ item: AssetItem, withPath path: _DoriAPI.Assets.PathDescriptor) {
+    func downloadItem(_ item: AssetItem, withPath path: DoriAPI.Assets.PathDescriptor) {
         contentLoadingItem = item
         #if os(macOS)
         let downloadURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!.appending(path: item.name)
