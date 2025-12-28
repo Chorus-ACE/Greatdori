@@ -38,13 +38,22 @@ struct StationView: View {
                         HStack {
                             Spacer(minLength: 0)
                             VStack {
-                                Section {
+                                Section(content: {
                                     ForEach(allAvailableGamplays, id: \.self) { item in
                                         StationItemView(item: item)
                                     }
-                                }
+                                    .animation(.easeInOut(duration: 0.5), value: allAvailableGamplays)
+                                }, footer: {
+                                    HStack {
+                                        Text("Station.footer")
+                                            .foregroundStyle(.secondary)
+                                            .font(.footnote)
+                                        Spacer()
+                                    }
+                                })
                                 .frame(maxWidth: infoContentMaxWidth)
                             }
+                            .padding(.vertical)
                             Spacer(minLength: 0)
                         }
                     }
@@ -96,48 +105,151 @@ struct StationView: View {
 
 struct StationItemView: View {
     var item: StationGameplay
+    @State var itemTipStatus = 0
+    @State var reporingSheetIsDisplaying = false
+    @State var blockingSheetIsDisplaying = false
+    @State var reasonOfReport = ""
     var body: some View {
-        CustomGroupBox(cornerRadius: 20) {
-            HStack {
-                WebImage(url: item.userInfo?.avatarLink, content: { image in
-                    image
-                        .resizable()
-                }, placeholder: {
-//                    Circle()
-//                        .foregroundStyle(getPlaceholderColor())
-                    Image(systemName: "person.crop.circle")
-                        .resizable()
-                        .foregroundStyle(.secondary)
-                })
-                .mask {
-                    Circle()
-                }
-                .frame(width: 40, height: 40)
-                .iconBadge(item.quantity, ignoreOne: true)
-                VStack(alignment: .leading) {
-                    if let username = item.userInfo?.username {
-                        Text(username)
-                            .bold()
+        Button(action: {
+            copyStringToClipboard(String(item.roomNumber))
+            itemTipStatus = 1
+        }, label: {
+            CustomGroupBox(cornerRadius: 20) {
+                HStack {
+                    WebImage(url: item.userInfo?.avatarLink(), content: { image in
+                        image
+                            .resizable()
+                    }, placeholder: {
+                        Image(systemName: "person.crop.circle")
+                            .resizable()
+                            .foregroundStyle(.gray)
+                    })
+                    .mask {
+                        Circle()
                     }
-                    Text(item.roomNumber)
-                        .bold()
-                    Text(item.description)
-                }
-                .textSelection(.enabled)
-                Spacer()
-                VStack(alignment: .trailing) {
-                    HStack {
-                        if let source = item.sourceInfo {
-                            Text(source.name)
+                    .frame(width: 40, height: 40)
+                    .iconBadge(item.quantity, ignoreOne: true)
+                    VStack(alignment: .leading) {
+                        if let username = item.userInfo?.username {
+                            HStack {
+                                Text(username)
+                                    .bold()
+                                if let bandPower = item.userInfo?.bandPower, bandPower > 0 {
+                                    Text("Station.item.band-power.\(bandPower)")
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
                         }
-                        Text(Date(timeIntervalSince1970: Double(item.timestamp)/1000), style: .relative)
+                        HStack {
+                            Text(item.roomNumber)
+                                .bold()
+                            Group {
+                                switch item.roomType {
+                                case "7":
+                                    Text("Station.item.type.7")
+                                case "12":
+                                    Text("Station.item.type.12")
+                                case "18":
+                                    Text("Station.item.type.18")
+                                case "25":
+                                    Text("Station.item.type.25")
+                                default:
+                                    EmptyView()
+                                }
+                            }
+                            .foregroundStyle(.secondary)
+                        }
+                        Text(item.description)
                     }
-                    .foregroundStyle(.secondary)
-                    .font(.caption)
+                    .textSelection(.enabled)
                     Spacer()
+                    VStack(alignment: .trailing) {
+                        HStack {
+                            if let source = item.sourceInfo {
+                                Text(source.name)
+                            }
+                            Text(Date(timeIntervalSince1970: Double(item.timestamp)/1000), style: .relative)
+                        }
+                        .foregroundStyle(.secondary)
+                        .font(.caption)
+                        Spacer(minLength: 0)
+                        ZStack(alignment: .trailing, content: {
+                            Label("Station.item.block.success", systemImage: "nosign")
+                                .foregroundStyle(.red)
+                                .opacity(itemTipStatus == 3 ? 1 : 0)
+                            Label("Station.item.report.success", systemImage: "flag")
+                                .foregroundStyle(.red)
+                                .opacity(itemTipStatus == 2 ? 1 : 0)
+                            Label("Station.item.copy.success", systemImage: "checkmark.circle")
+                                .foregroundStyle(.green)
+                                .opacity(itemTipStatus == 1 ? 1 : 0)
+                            HStack {
+                                Button(action: {
+                                    blockingSheetIsDisplaying = true
+                                }, label: {
+                                    Label("Station.item.block", systemImage: "nosign")
+                                        .foregroundStyle(.secondary)
+                                        .labelStyle(.iconOnly)
+                                })
+                                Button(action: {
+                                    reasonOfReport = ""
+                                    reporingSheetIsDisplaying = true
+                                }, label: {
+                                    Label("Station.item.report", systemImage: "flag")
+                                        .foregroundStyle(.secondary)
+                                        .labelStyle(.iconOnly)
+                                })
+                                Button(action: {
+                                    copyStringToClipboard(String(item.roomNumber))
+                                    itemTipStatus = 1
+                                }, label: {
+                                    Label("Station.item.copy", systemImage: "document.on.document")
+                                        .labelStyle(.iconOnly)
+                                })
+                            }
+                            .buttonStyle(.plain)
+                            .opacity(itemTipStatus == 0 ? 1 : 0)
+                        })
+                        .animation(.easeIn(duration: 0.2), value: itemTipStatus)
+                        .onChange(of: itemTipStatus, {
+                            if itemTipStatus != 0 {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    itemTipStatus = 0
+                                }
+                            }
+                        })
+                    }
                 }
             }
-        }
+        })
+        .buttonStyle(.plain)
+        .alert("Station.item.report.alert.title.\(item.userInfo?.username ?? "nil")", isPresented: $reporingSheetIsDisplaying, actions: {
+            TextField("Station.item.report.alert.reason", text: $reasonOfReport)
+            Button(role: .cancel, action: {}, label: {
+                Text("Station.item.report.alert.cancel")
+            })
+            Button(optionalRole: .destructive, action: {
+                itemTipStatus = 2
+            }, label: {
+                Text("Station.item.report.alert.confirm")
+            })
+//            .keyboardShortcut(.defaultAction)
+        }, message: {
+            Text("Station.item.report.alert.message")
+        })
+        .alert("Station.item.block.alert.title.\(item.userInfo?.username ?? "nil")", isPresented: $blockingSheetIsDisplaying, actions: {
+            Button(role: .cancel, action: {}, label: {
+                Text("Station.item.block.alert.cancel")
+            })
+            Button(optionalRole: .destructive, action: {
+                itemTipStatus = 3
+            }, label: {
+                Text("Station.item.block.alert.confirm")
+            })
+//            .keyboardShortcut(.defaultAction)
+        }, message: {
+            Text("Station.item.block.alert.message")
+        })
     }
 }
 
@@ -152,10 +264,19 @@ func getAllAvailableGameplays() async -> Result<[StationGameplay], Int> {
                 for gameplay in gameplays {
                     if let roomNumber = gameplay["number"].string, let description = gameplay["raw_message"].string, let roomType = gameplay["type"].string, let timestamp = gameplay["time"].int {
                         
+                        var shorterDesc = description
+                        
+                        if description.hasPrefix(String(roomNumber)) {
+                            shorterDesc.removeFirst(roomNumber.count)
+                        }
+                        if shorterDesc.hasPrefix(" ") {
+                            shorterDesc.removeFirst()
+                        }
+                        
                         var userInfo: StationGameplay.StationUser? = nil
                         let jsonUserInfo = gameplay["user_info"]
                         if let userType = jsonUserInfo["type"].string, let userID = jsonUserInfo["user_id"].int, let userName = jsonUserInfo["username"].string, let userAvatar = jsonUserInfo["avatar"].string {
-                            userInfo = StationGameplay.StationUser(type: userType, avatar: userAvatar, username: userName, id: userID)
+                            userInfo = StationGameplay.StationUser(type: userType, avatar: userAvatar, username: userName, id: userID, bandPower: jsonUserInfo["bandori_player_brief_info"]["band_power"].int)
                         }
                         
                         var sourceInfo: StationGameplay.SourceInfo? = nil
@@ -163,7 +284,7 @@ func getAllAvailableGameplays() async -> Result<[StationGameplay], Int> {
                         if let sourceName = jsonSourceInfo["name"].string, let sourceType = jsonSourceInfo["type"].string {
                             sourceInfo = StationGameplay.SourceInfo(name: sourceName, type: sourceType)
                         }
-                        finalGameplays.append(StationGameplay(roomNumber: roomNumber, description: description, roomType: roomType, timestamp: timestamp, userInfo: userInfo, sourceInfo: sourceInfo))
+                        finalGameplays.append(StationGameplay(roomNumber: roomNumber, description: shorterDesc, roomType: roomType, timestamp: timestamp, userInfo: userInfo, sourceInfo: sourceInfo))
                     }
                 }
                 let historyGameplays = HistoryGameplayHolder.shared.historyGameplays
@@ -211,9 +332,16 @@ struct StationGameplay: Hashable, Equatable {
         var avatar: String
         var username: String
         var id: Int
+        var bandPower: Int?
         
-        var avatarLink: URL? {
-            URL(string: "https://asset.bandoristation.com/images/user-avatar/\(avatar)")
+        func avatarLink(isQQ: Bool? = nil) -> URL {
+            // Use prefix check instead of type check is to avoid Tsugu and other active user from losing their avatar pic
+            let condition = isQQ ?? username.hasPrefix("QQ用户")
+            if condition {
+                return URL(string: "https://q1.qlogo.cn/g?b=qq&nk=\(id)&s=640")!
+            } else {
+                return URL(string: "https://asset.bandoristation.com/images/user-avatar/\(avatar)")!
+            }
         }
     }
     
@@ -238,8 +366,8 @@ struct StationGameplay: Hashable, Equatable {
 
 extension Array<StationGameplay> {
     func merge(with history: [StationGameplay]) -> Self {
-        var result = self.map { $0.dropQuantity() }
-        for play in history.map({ $0.dropQuantity() }) {
+        var result = self
+        for play in history {
             if !result.contains(play) {
                 result.append(play)
             }

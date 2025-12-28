@@ -451,23 +451,26 @@ struct IconBadgeModifier: ViewModifier {
     let backgroundColor: Color?
     let foregroundColor: Color
     let height: CGFloat
+    let withAnimation: Bool
     let ignoreOne: Bool
     
-    init(count: Int, backgroundColor: Color?, foregroundColor: Color, height: CGFloat, ignoreOne: Bool) {
+    init(count: Int, backgroundColor: Color?, foregroundColor: Color, height: CGFloat, withAnimation: Bool, ignoreOne: Bool) {
         self.count = count
         self.text = nil
         self.backgroundColor = backgroundColor
         self.foregroundColor = foregroundColor
         self.height = height
+        self.withAnimation = withAnimation
         self.ignoreOne = ignoreOne
     }
     
-    init(text: String, backgroundColor: Color?, foregroundColor: Color, height: CGFloat) {
+    init(text: String, backgroundColor: Color?, foregroundColor: Color, height: CGFloat, withAnimation: Bool) {
         self.count = 0
         self.text = text
         self.backgroundColor = backgroundColor
         self.foregroundColor = foregroundColor
         self.height = height
+        self.withAnimation = withAnimation
         self.ignoreOne = false
     }
 
@@ -480,6 +483,8 @@ struct IconBadgeModifier: ViewModifier {
                             Text(text)
                         } else {
                             Text(count, format: .number.notation(.compactName))
+                                .contentTransition(.numericText())
+                                .animation(.default, value: count)
                         }
                     }
                         .lineLimit(1)
@@ -506,6 +511,7 @@ extension View {
         backgroundColor: Color? = nil,
         foregroundColor: Color = .primary,
         height: CGFloat = 18,
+        withAnimation: Bool = false,
         ignoreOne: Bool = false
     ) -> some View {
         modifier(
@@ -514,6 +520,7 @@ extension View {
                 backgroundColor: backgroundColor,
                 foregroundColor: foregroundColor,
                 height: height,
+                withAnimation: withAnimation,
                 ignoreOne: ignoreOne
             )
         )
@@ -524,6 +531,7 @@ extension View {
         backgroundColor: Color? = nil,
         foregroundColor: Color = .primary,
         height: CGFloat = 18,
+        withAnimation: Bool = false,
         ignoreOne: Bool = false
     ) -> some View {
         modifier(
@@ -531,7 +539,8 @@ extension View {
                 text: text,
                 backgroundColor: backgroundColor,
                 foregroundColor: foregroundColor,
-                height: height
+                height: height,
+                withAnimation: withAnimation
             )
         )
     }

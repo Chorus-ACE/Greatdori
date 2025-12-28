@@ -277,6 +277,7 @@
 		E9BDEFA32EEBE1B2009568F5 /* TranscriptMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDEFA22EEBE193009568F5 /* TranscriptMapping.swift */; };
 		E9BDF0002EEBFF46009568F5 /* ISVLayoutPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDEFFF2EEBFF44009568F5 /* ISVLayoutPickerSheet.swift */; };
 		E9BDF0022EEC1BF5009568F5 /* SettingsStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BDF0012EEC1BF1009568F5 /* SettingsStoryView.swift */; };
+		E9C8ED8A2F01068E0080DBF7 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C8ED892F0106870080DBF7 /* KeychainManager.swift */; };
 		E9CA1F742EFBDCE6005932E5 /* MusicKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F732EFBDCE4005932E5 /* MusicKitView.swift */; };
 		E9CA1F762EFBF2BE005932E5 /* NeoReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F752EFBF2BE005932E5 /* NeoReflectionView.swift */; };
 		E9CA1F862EFD24FB005932E5 /* LyricsEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA1F852EFD24F2005932E5 /* LyricsEditor.swift */; };
@@ -766,6 +767,7 @@
 		E9BDEFA22EEBE193009568F5 /* TranscriptMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptMapping.swift; sourceTree = "<group>"; };
 		E9BDEFFF2EEBFF44009568F5 /* ISVLayoutPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISVLayoutPickerSheet.swift; sourceTree = "<group>"; };
 		E9BDF0012EEC1BF1009568F5 /* SettingsStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoryView.swift; sourceTree = "<group>"; };
+		E9C8ED892F0106870080DBF7 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		E9CA1F732EFBDCE4005932E5 /* MusicKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicKitView.swift; sourceTree = "<group>"; };
 		E9CA1F752EFBF2BE005932E5 /* NeoReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeoReflectionView.swift; sourceTree = "<group>"; };
 		E9CA1F852EFD24F2005932E5 /* LyricsEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsEditor.swift; sourceTree = "<group>"; };
@@ -1549,6 +1551,7 @@
 				8CC046DB2E6C8F5D009FDC13 /* AppFlags.swift */,
 				E91787142EC95C6E00C33779 /* SettingsDocument.swift */,
 				E944DCB42ECB253A0005EE55 /* Acknowledgements.swift */,
+				E9C8ED892F0106870080DBF7 /* KeychainManager.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2028,6 +2031,7 @@
 				8C480C0E2EC62F5900A8AE70 /* ZeileEditorFileEditView.swift in Sources */,
 				E90769D92E546D5B00C9871C /* SettingsView.swift in Sources */,
 				E9EE03812E4F5DB30088843B /* FilterView.swift in Sources */,
+				E9C8ED8A2F01068E0080DBF7 /* KeychainManager.swift in Sources */,
 				E9BDD6362EED3B74009568F5 /* AssetExplorerFileViewer.swift in Sources */,
 				8C480C0C2EC61DEB00A8AE70 /* ZeileEditorSidebar.swift in Sources */,
 				E94219352E8AA78800F24974 /* GachaSearchView.swift in Sources */,

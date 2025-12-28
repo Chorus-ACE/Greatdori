@@ -12373,7 +12373,7 @@
         }
       }
     },
-    "Settings.accounts" : {
+    "Settings.account" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12391,6 +12391,136 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "帳號"
+          }
+        }
+      }
+    },
+    "Settings.account.add" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add New Account"
+          }
+        }
+      }
+    },
+    "Settings.account.bandori-station" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BandoriStation"
+          }
+        }
+      }
+    },
+    "Settings.account.bandori-station.usage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BandoriStation allows you to submit new multi-live gameplay and report inappropriate message in the searcher."
+          }
+        }
+      }
+    },
+    "Settings.account.new" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Account"
+          }
+        }
+      }
+    },
+    "Settings.account.new.add" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        }
+      }
+    },
+    "Settings.account.new.auto-renew" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto Renew"
+          }
+        }
+      }
+    },
+    "Settings.account.new.auto-renew.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatically renew the login session after last session expires. If turned on, your password will be saved."
+          }
+        }
+      }
+    },
+    "Settings.account.new.cancel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "Settings.account.new.password" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
+          }
+        }
+      }
+    },
+    "Settings.account.new.platform" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Platform"
+          }
+        }
+      }
+    },
+    "Settings.account.new.username" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account"
+          }
+        }
+      }
+    },
+    "Settings.account.none" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Account"
+          }
+        }
+      }
+    },
+    "Settings.account.platform.bandori-station" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BandoriStation"
           }
         }
       }
@@ -14452,18 +14582,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Font file should be in TTF, OTF, TTC or OTC. Please ensure that you have a license for the font installed. Greatdori! is not responsible for any consequences caused by font usage."
+            "value" : "Font file should be in TTF, OTF, TTC or OTC."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "文件字体应为TTF、OTF、TTC或OTC。请确保你有安装字体的许可。Greatdori!不为字体使用所造成的后果负责。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "字體文件應該是 TTF, OTF, TTC 或者 OTC。請確保你擁有使用所安裝字體的權限。Greatdori! 不為使用字體造成的任何問題負責。"
           }
         }
@@ -17874,6 +18004,216 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "BandoriStation 上目前沒有協力演出。"
+          }
+        }
+      }
+    },
+    "Station.footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Powered by BandoriStation."
+          }
+        }
+      }
+    },
+    "Station.item.band-power.%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Power %lld"
+          }
+        }
+      }
+    },
+    "Station.item.block" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Block"
+          }
+        }
+      }
+    },
+    "Station.item.block.alert.cancel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "Station.item.block.alert.confirm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Block"
+          }
+        }
+      }
+    },
+    "Station.item.block.alert.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You will not see gameplays submitted by this user anymore unless unblocked."
+          }
+        }
+      }
+    },
+    "Station.item.block.alert.title.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Block %@?"
+          }
+        }
+      }
+    },
+    "Station.item.block.success" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocked"
+          }
+        }
+      }
+    },
+    "Station.item.copy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy"
+          }
+        }
+      }
+    },
+    "Station.item.copy.success" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copied"
+          }
+        }
+      }
+    },
+    "Station.item.report" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report"
+          }
+        }
+      }
+    },
+    "Station.item.report.alert.cancel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "Station.item.report.alert.confirm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report"
+          }
+        }
+      }
+    },
+    "Station.item.report.alert.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This report will be sent to BandoriStation."
+          }
+        }
+      }
+    },
+    "Station.item.report.alert.reason" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reason of Report"
+          }
+        }
+      }
+    },
+    "Station.item.report.alert.title.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report %@?"
+          }
+        }
+      }
+    },
+    "Station.item.report.success" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reported"
+          }
+        }
+      }
+    },
+    "Station.item.type.7" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "70K"
+          }
+        }
+      }
+    },
+    "Station.item.type.12" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "120K"
+          }
+        }
+      }
+    },
+    "Station.item.type.18" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "180K"
+          }
+        }
+      }
+    },
+    "Station.item.type.25" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "250K"
           }
         }
       }
