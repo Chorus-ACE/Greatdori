@@ -32,16 +32,16 @@ struct StationView: View {
                     ExtendedConstraints {
                         ProgressView()
                     }
-                } else if !allAvailableGamplays.isEmpty {
+                } else if !displayingGameplays.isEmpty {
                     ScrollView {
                         HStack {
                             Spacer(minLength: 0)
                             VStack {
                                 Section(content: {
-                                    ForEach(allAvailableGamplays, id: \.self) { item in
+                                    ForEach(displayingGameplays, id: \.self) { item in
                                         StationItemView(item: item)
                                     }
-                                    .animation(.easeInOut(duration: 0.5), value: allAvailableGamplays)
+                                    .animation(.easeInOut(duration: 0.5), value: displayingGameplays)
                                 }, footer: {
                                     HStack {
                                         Text("Station.footer")
@@ -75,11 +75,6 @@ struct StationView: View {
         .navigationTitle("Station")
         .withSystemBackground()
         .onAppear {
-            Task {
-                await refreshGameplayInforation()
-            }
-        }
-        .onReceive(timer) { _ in
             Task {
                 await refreshGameplayInforation()
             }
