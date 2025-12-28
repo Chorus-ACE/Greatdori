@@ -263,7 +263,7 @@
 		E98B8B532E7E922A00B4C8A8 /* NavigationComponentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */; };
 		E992283E2EF2AA0C00C123DC /* WhatsNewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E992283D2EF2AA0900C123DC /* WhatsNewView.swift */; };
 		E99B3D912EC29A700045EFC9 /* SettingsAccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B3D902EC29A670045EFC9 /* SettingsAccountsView.swift */; };
-		E99B57652EC1E7DF0045EFC9 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B57642EC1E7DD0045EFC9 /* Station.swift */; };
+		E99B57652EC1E7DF0045EFC9 /* StationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B57642EC1E7DD0045EFC9 /* StationView.swift */; };
 		E9A126FC2E8CB62000BBD39E /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A126FB2E8CB61900BBD39E /* EventTracker.swift */; };
 		E9A8A8642EFBBF6300B78FEE /* MusicKitHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A8A8632EFBBF5F00B78FEE /* MusicKitHelper.swift */; };
 		E9AE639E2EB745B100490B75 /* SettingsFontsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AE639D2EB745B100490B75 /* SettingsFontsView.swift */; };
@@ -753,7 +753,7 @@
 		E98B8B522E7E922700B4C8A8 /* NavigationComponentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationComponentsView.swift; sourceTree = "<group>"; };
 		E992283D2EF2AA0900C123DC /* WhatsNewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewView.swift; sourceTree = "<group>"; };
 		E99B3D902EC29A670045EFC9 /* SettingsAccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountsView.swift; sourceTree = "<group>"; };
-		E99B57642EC1E7DD0045EFC9 /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
+		E99B57642EC1E7DD0045EFC9 /* StationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationView.swift; sourceTree = "<group>"; };
 		E9A126FB2E8CB61900BBD39E /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
 		E9A8A8632EFBBF5F00B78FEE /* MusicKitHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicKitHelper.swift; sourceTree = "<group>"; };
 		E9AE639D2EB745B100490B75 /* SettingsFontsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFontsView.swift; sourceTree = "<group>"; };
@@ -1524,7 +1524,7 @@
 				E9A126FB2E8CB61900BBD39E /* EventTracker.swift */,
 				8CD28FEF2E9F6C6900831458 /* ChartSimulator.swift */,
 				E92F02A12EDC430A00CB341F /* StoryViewer */,
-				E99B57642EC1E7DD0045EFC9 /* Station.swift */,
+				E99B57642EC1E7DD0045EFC9 /* StationView.swift */,
 				E949D28D2E93D9F100E50D3F /* Live2DViewer.swift */,
 				E9BDD6372EED3B7D009568F5 /* Asset Explorer */,
 			);
@@ -2058,7 +2058,7 @@
 				8C480C0A2EC6198D00A8AE70 /* UTType+ZeileTypes.swift in Sources */,
 				8C0C99842E296A5500549B5C /* GreatdoriApp.swift in Sources */,
 				8C902FAA2EA4D31900202812 /* UIBasic.metal in Sources */,
-				E99B57652EC1E7DF0045EFC9 /* Station.swift in Sources */,
+				E99B57652EC1E7DF0045EFC9 /* StationView.swift in Sources */,
 				E97810972EE82C06000AD397 /* ComicDetailComicView.swift in Sources */,
 				8C2BD6442E9248B600D003D1 /* ItemSelector.swift in Sources */,
 				E94219312E8AA74B00F24974 /* DetailsGachasSection.swift in Sources */,

@@ -19,12 +19,11 @@ import SwiftyJSON
 import SwiftUI
 
 struct StationView: View {
-    @State var allAvailableGamplays: [StationGameplay] = []
+    @State var allGamplays: [StationGameplay] = []
+    @State var displayingGameplays: [StationGameplay] = []
     @State var informationIsAvailable = true
     @State var informationIsLoading = true
     @State var fetchError: Int? = nil
-    
-    let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
 
     var body: some View {
         Group {
@@ -89,16 +88,17 @@ struct StationView: View {
     
     func refreshGameplayInforation() async {
         informationIsAvailable = true
-        //        do {
-        let availableGameplayResults = await getAllAvailableGameplays()
-        switch availableGameplayResults {
-        case .success(let data):
-            allAvailableGamplays = data
-            informationIsAvailable = true
-        case .failure(let error):
-            fetchError = error
-            informationIsAvailable = false
-        }
+        // TODO: !!!!!!!!
+//        let task = Task {
+//            do {
+//                try await _DoriAPI.Station.receiveRooms { newRooms in
+//                    roomArray.append(contentsOf: newRooms)
+//                }
+//                print("Finished!")
+//            } catch {
+//                let 
+//            }
+//        }
         informationIsLoading = false
     }
 }

@@ -272,15 +272,20 @@ struct SettingsAccountsAddView: View {
                 } else {
                     throw SimpleError(id: 4001, message: "Cannot write token.")
                 }
-                if autoRenew, let passwordData = accountPassword.data(using: .utf8) {
-                    try keychainSave(service: "Greatdori-Password-\(platform.rawValue)", account: accountAddress, data: passwordData)
-                } else {
-                    throw SimpleError(id: 4002, message: "Cannot write password.")
+                if autoRenew {
+                    if let passwordData = accountPassword.data(using: .utf8) {
+                        try keychainSave(service: "Greatdori-Password-\(platform.rawValue)", account: accountAddress, data: passwordData)
+                    } else {
+                        throw SimpleError(id: 4002, message: "Cannot write password.")
+                    }
                 }
                 try AccountManager.shared.save(currentAccounts)
             } else {
                 throw SimpleError(id: 4002, message: "No address given.")
             }
+            
+            accountIsAdding = false
+            dismiss()
         } catch {
             errorAlertIsDisplaying = true
             accountAddingError = error
@@ -305,7 +310,7 @@ private struct SimpleError: Error, CustomStringConvertible {
     
     var description: String {
         if let message {
-            return "\(message) (\(String(id))"
+            return "\(message) (\(String(id)))"
         } else {
             return "Error \(String(id))"
         }
