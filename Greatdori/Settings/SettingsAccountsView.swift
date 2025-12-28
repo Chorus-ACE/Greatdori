@@ -243,7 +243,7 @@ struct SettingsAccountsAddView: View {
                 let loginResponse = try await _DoriAPI.Station.login(username: account, password: password)
                 if case .success(let token, let userInfo) = loginResponse {
                     accountAddress = "TODO: NO USERNAME"
-                    accountToken = token
+                    accountToken = token.value
                     accountPassword = password
                     accountUsername = "TODO: NO USERNAME"
                     accountUID = String(userInfo.id)
