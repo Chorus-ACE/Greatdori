@@ -80,6 +80,7 @@ struct GreatdoriAccount: Codable, Hashable {
     var platform: Platform
     var account: String
     var username: String
+    var uid: String?
     var isAutoRenewable: Bool
     
     var avatarURL: URL? {

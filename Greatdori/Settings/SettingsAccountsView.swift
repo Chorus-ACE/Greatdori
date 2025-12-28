@@ -82,7 +82,7 @@ struct SettingsAccountsPreview: View {
             .frame(width: 40, height: 40)
             VStack(alignment: .leading) {
                 Text(account.username)
-                Text(account.account)
+                Text(account.uid ?? account.account)
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -214,8 +214,12 @@ struct SettingsAccountsAddView: View {
                 default:
                     EmptyView()
                 }
+            } else if let apiError = error as? _DoriAPI.Station.APIError, apiError == .wrongPassword {
+                Text("Settings.account.new.error.wrong-password")
+            } else if let apiError = error as? _DoriAPI.Station.APIError, apiError == .tooManyRequests {
+                Text("Settings.account.new.error.too-many-requests")
             } else {
-                Text("\(error)")
+                Text("Settings.account.new.error.\("\(error)")")
             }
         })
     }
@@ -228,6 +232,7 @@ struct SettingsAccountsAddView: View {
         var accountPassword: String? = nil
         var accountAddress: String? = nil
         var accountToken: String? = nil
+        var accountUID: String? = nil
         
         do {
             guard !account.isEmpty && !password.isEmpty else {
@@ -237,10 +242,11 @@ struct SettingsAccountsAddView: View {
             if platform == .bandoriStation {
                 let loginResponse = try await _DoriAPI.Station.login(username: account, password: password)
                 if case .success(let token, let userInfo) = loginResponse {
-                    accountAddress = try await _DoriAPI.Station.currentEmail(fromUserToken: token)
+                    accountAddress = "TODO: NO USERNAME"
                     accountToken = token
                     accountPassword = password
                     accountUsername = "TODO: NO USERNAME"
+                    accountUID = String(userInfo.id)
                 } else {
                     throw SimpleError(id: 3001)
                 }
@@ -259,7 +265,7 @@ struct SettingsAccountsAddView: View {
                     throw SimpleError(id: 1000)
                 }
                 
-                currentAccounts.append(GreatdoriAccount(platform: platform, account: accountAddress, username: accountUsername, isAutoRenewable: autoRenew))
+                currentAccounts.append(GreatdoriAccount(platform: platform, account: accountAddress, username: accountUsername, uid: accountUID, isAutoRenewable: autoRenew))
                 
                 if let tokenData = accountToken.data(using: .utf8) {
                     try keychainSave(service: "Greatdori-Token-\(platform.rawValue)", account: accountAddress, data: tokenData)
@@ -293,7 +299,15 @@ func getRandomExmapleEmailAddress() -> String {
     }
 }
 
-private struct SimpleError: Error {
+private struct SimpleError: Error, CustomStringConvertible {
     var id: Int
     var message: String? = nil
+    
+    var description: String {
+        if let message {
+            return "\(message) (\(String(id))"
+        } else {
+            return "Error \(String(id))"
+        }
+    }
 }

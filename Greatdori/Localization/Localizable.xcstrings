@@ -12485,6 +12485,16 @@
         }
       }
     },
+    "Settings.account.new.error.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown error: %@"
+          }
+        }
+      }
+    },
     "Settings.account.new.error.cancel" : {
       "localizations" : {
         "en" : {
@@ -12530,7 +12540,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retry…"
+            "value" : "Retry"
           }
         }
       }
@@ -12541,6 +12551,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "An Error Occurred While Adding Account"
+          }
+        }
+      }
+    },
+    "Settings.account.new.error.too-many-requests" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too many requests are sent. Try again later."
+          }
+        }
+      }
+    },
+    "Settings.account.new.error.wrong-password" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account or password is incorrect."
           }
         }
       }
