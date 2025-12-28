@@ -24,6 +24,7 @@ struct SettingsAccountsView: View {
             Section(content: {
                 if !allAccounts.filter({ $0.platform == .bandoriStation }).isEmpty {
                     ForEach(allAccounts.filter({ $0.platform == .bandoriStation }), id: \.account) { item in
+                        SettingsAccountsPreview(account: item)
                     }
                 } else {
                     Text("Settings.account.none")
@@ -65,7 +66,6 @@ struct SettingsAccountsView: View {
 
 struct SettingsAccountsPreview: View {
     var account: GreatdoriAccount
-    var isSelected: Bool
     var body: some View {
         HStack {
             WebImage(url: account.avatarURL, content: { image in
@@ -86,10 +86,9 @@ struct SettingsAccountsPreview: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            if isSelected {
-                Image(systemName: "checkmark")
-                    .foregroundStyle(.tint)
-                    .font(.title3)
+            if account.isAutoRenewable {
+                Image(systemName: "clock")
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -97,12 +96,17 @@ struct SettingsAccountsPreview: View {
 
 struct SettingsAccountsAddView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.openURL) var openURL
     @State var platform: GreatdoriAccount.Platform = .bandoriStation
     @State var account = ""
     @State var password = ""
     @State var autoRenew = false
+    @State var accountIsAdding = false
+    @State var errorAlertIsDisplaying = false
+    @State var accountAddingError: Error? = nil
     
     private var demoEmailAddress: String = getRandomExmapleEmailAddress()
+    let knownSimpleErrorIDs = [1000, 3001]
     var body: some View {
         Form {
             Section {
@@ -132,6 +136,15 @@ struct SettingsAccountsAddView: View {
         .formStyle(.grouped)
         .navigationTitle("Settings.account.new")
         .toolbar {
+            if isMACOS && accountIsAdding {
+                ToolbarItem(placement: .destructiveAction) {
+                    HStack {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text("Settings.account.new.adding")
+                    }
+                }
+            }
             ToolbarItem(placement: .cancellationAction) {
                 Button(action: {
                     dismiss()
@@ -146,16 +159,126 @@ struct SettingsAccountsAddView: View {
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button(action: {
-                    
+                    Task {
+                        await addAccount()
+                    }
                 }, label: {
-                    Label("Settings.account.new.add", systemImage: "plus")
-                        .wrapIf(isMACOS, in: {
-                            $0.labelStyle(.titleOnly)
-                        }, else: {
-                            $0.labelStyle(.iconOnly)
-                        })
+                    if !isMACOS && accountIsAdding {
+                        ProgressView()
+                    } else {
+                        Label("Settings.account.new.add", systemImage: "plus")
+                            .wrapIf(isMACOS, in: {
+                                $0.labelStyle(.titleOnly)
+                            }, else: {
+                                $0.labelStyle(.iconOnly)
+                            })
+                    }
                 })
+                .disabled(account.isEmpty || password.isEmpty)
+                .disabled(accountIsAdding)
             }
+        }
+        .alert("Settings.account.new.error.title", isPresented: $errorAlertIsDisplaying, presenting: accountAddingError, actions: { error in
+            if let simpleError = error as? SimpleError, knownSimpleErrorIDs.contains(simpleError.id) {
+                switch simpleError.id {
+                case 3001:
+                    Button(action: {
+                        openURL(URL(string: "https://bandoristation.com/#/login")!)
+                    }, label: {
+                        Text("Settings.account.new.error.go-to-bandori-station")
+                    })
+                    .keyboardShortcut(.defaultAction)
+                default:
+                    EmptyView()
+                }
+            } else {
+                Button(action: {
+                    Task {
+                        await addAccount()
+                    }
+                }, label: {
+                    Text("Settings.account.new.error.retry")
+                })
+                .keyboardShortcut(.defaultAction)
+            }
+            Button(optionalRole: .cancel, action: {}, label: {
+                Text("Settings.account.new.error.cancel")
+            })
+        }, message: { error in
+            if let simpleError = error as? SimpleError, knownSimpleErrorIDs.contains(simpleError.id) {
+                switch simpleError.id {
+                case 1000:
+                    Text("Settings.account.new.error.existed")
+                case 3001:
+                    Text("Settings.account.new.error.email-not-verified")
+                default:
+                    EmptyView()
+                }
+            } else {
+                Text("\(error)")
+            }
+        })
+    }
+    
+    func addAccount() async {
+        accountAddingError = nil
+        accountIsAdding = true
+        
+        var accountUsername: String? = nil
+        var accountPassword: String? = nil
+        var accountAddress: String? = nil
+        var accountToken: String? = nil
+        
+        do {
+            guard !account.isEmpty && !password.isEmpty else {
+                throw SimpleError(id: 1001)
+            }
+            
+            if platform == .bandoriStation {
+                let loginResponse = try await _DoriAPI.Station.login(username: account, password: password)
+                if case .success(let token, let userInfo) = loginResponse {
+                    accountAddress = try await _DoriAPI.Station.currentEmail(fromUserToken: token)
+                    accountToken = token
+                    accountPassword = password
+                    accountUsername = "TODO: NO USERNAME"
+                } else {
+                    throw SimpleError(id: 3001)
+                }
+            } else {
+                throw SimpleError(id: 4000)
+            }
+            
+            // FIXME: Debate use, temp
+            //            _DoriAPI.Station.login(with: _DoriAPI.Station.Credential(username: account, password: password))
+            //            _DoriAPI.Station.login(username: account, password: password)
+            
+            if let accountAddress, let accountUsername, let accountPassword, let accountToken {
+                var currentAccounts = try AccountManager.shared.load()
+                
+                if currentAccounts.contains(where: { $0.platform == platform && $0.account == accountAddress }) {
+                    throw SimpleError(id: 1000)
+                }
+                
+                currentAccounts.append(GreatdoriAccount(platform: platform, account: accountAddress, username: accountUsername, isAutoRenewable: autoRenew))
+                
+                if let tokenData = accountToken.data(using: .utf8) {
+                    try keychainSave(service: "Greatdori-Token-\(platform.rawValue)", account: accountAddress, data: tokenData)
+                } else {
+                    throw SimpleError(id: 4001, message: "Cannot write token.")
+                }
+                if autoRenew, let passwordData = accountPassword.data(using: .utf8) {
+                    try keychainSave(service: "Greatdori-Password-\(platform.rawValue)", account: accountAddress, data: passwordData)
+                } else {
+                    throw SimpleError(id: 4002, message: "Cannot write password.")
+                }
+                try AccountManager.shared.save(currentAccounts)
+            } else {
+                throw SimpleError(id: 4002, message: "No address given.")
+            }
+        } catch {
+            errorAlertIsDisplaying = true
+            accountAddingError = error
+            accountIsAdding = false
         }
     }
 }
@@ -168,4 +291,9 @@ func getRandomExmapleEmailAddress() -> String {
     } else {
         return "username@example.com"
     }
+}
+
+private struct SimpleError: Error {
+    var id: Int
+    var message: String? = nil
 }

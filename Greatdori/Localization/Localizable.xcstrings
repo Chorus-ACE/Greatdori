@@ -12445,6 +12445,16 @@
         }
       }
     },
+    "Settings.account.new.adding" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adding Account"
+          }
+        }
+      }
+    },
     "Settings.account.new.auto-renew" : {
       "localizations" : {
         "en" : {
@@ -12471,6 +12481,66 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "Settings.account.new.error.cancel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "Settings.account.new.error.email-not-verified" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The account needs to verified email. (3001)"
+          }
+        }
+      }
+    },
+    "Settings.account.new.error.existed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The account added had existed before. (1000)"
+          }
+        }
+      }
+    },
+    "Settings.account.new.error.go-to-bandori-station" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to BandoriStation"
+          }
+        }
+      }
+    },
+    "Settings.account.new.error.retry" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry…"
+          }
+        }
+      }
+    },
+    "Settings.account.new.error.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An Error Occurred While Adding Account"
           }
         }
       }

@@ -332,7 +332,7 @@ struct SettingsFontsAdd: View {
                         if isMACOS {
                             HStack {
                                 ProgressView()
-                                    .scaleEffect(0.5)
+                                    .controlSize(.small)
                                 Text("Settings.fonts.new.installing")
                             }
                         } else {

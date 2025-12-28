@@ -21,7 +21,7 @@ func keychainSave(
     data: Data
 ) throws {
     let query: [String: Any] = [
-        kSecClass as String: kSecClassGenericPassword,
+        kSecClass as String: kSecClassInternetPassword,
         kSecAttrService as String: service,
         kSecAttrAccount as String: account,
         kSecValueData as String: data,
@@ -41,7 +41,7 @@ func keychainLoad(
     account: String
 ) throws -> Data? {
     let query: [String: Any] = [
-        kSecClass as String: kSecClassGenericPassword,
+        kSecClass as String: kSecClassInternetPassword,
         kSecAttrService as String: service,
         kSecAttrAccount as String: account,
         kSecReturnData as String: true,
