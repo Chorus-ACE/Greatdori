@@ -12,116 +12,109 @@
 //
 //===----------------------------------------------------------------------===//
 
+import DoriKit
 import Foundation
 import Security
 
-func keychainSave(
-    service: String,
-    account: String,
-    data: Data
-) throws {
-    let baseQuery: [String: Any] = [
-        kSecClass as String: kSecClassGenericPassword,
-        kSecAttrService as String: service,
-        kSecAttrAccount as String: account,
-        kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-    ]
-
-    var addQuery = baseQuery
-    addQuery[kSecValueData as String] = data
-
-    let status = SecItemAdd(addQuery as CFDictionary, nil)
-
-    if status == errSecDuplicateItem {
-        let attributesToUpdate: [String: Any] = [
-            kSecValueData as String: data
+class Keychain: @unchecked Sendable {
+    static let shared: Keychain = Keychain()
+    
+    func save(service: String, account: String, data: Data) throws {
+        let baseQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         ]
 
-        let updateStatus = SecItemUpdate(
-            baseQuery as CFDictionary,
-            attributesToUpdate as CFDictionary
-        )
+        var addQuery = baseQuery
+        addQuery[kSecValueData as String] = data
 
-        guard updateStatus == errSecSuccess else {
+        let status = SecItemAdd(addQuery as CFDictionary, nil)
+
+        if status == errSecDuplicateItem {
+            let attributesToUpdate: [String: Any] = [
+                kSecValueData as String: data
+            ]
+
+            let updateStatus = SecItemUpdate(
+                baseQuery as CFDictionary,
+                attributesToUpdate as CFDictionary
+            )
+
+            guard updateStatus == errSecSuccess else {
+                throw NSError(
+                    domain: "Keychain",
+                    code: Int(updateStatus),
+                    userInfo: [NSLocalizedDescriptionKey: "Keychain update failed (\(updateStatus))"]
+                )
+            }
+        } else if status != errSecSuccess {
             throw NSError(
                 domain: "Keychain",
-                code: Int(updateStatus),
-                userInfo: [NSLocalizedDescriptionKey: "Keychain update failed (\(updateStatus))"]
+                code: Int(status),
+                userInfo: [NSLocalizedDescriptionKey: "Keychain add failed (\(status))"]
             )
         }
-    } else if status != errSecSuccess {
-        throw NSError(
-            domain: "Keychain",
-            code: Int(status),
-            userInfo: [NSLocalizedDescriptionKey: "Keychain add failed (\(status))"]
-        )
     }
-}
+    
+    func load(service: String, account: String) throws -> Data? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account,
+            kSecReturnData as String: kCFBooleanTrue as Any,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
 
+        var result: AnyObject?
+        let status = unsafe SecItemCopyMatching(query as CFDictionary, &result)
 
-func keychainLoad(
-    service: String,
-    account: String
-) throws -> Data? {
-    let query: [String: Any] = [
-        kSecClass as String: kSecClassGenericPassword,
-        kSecAttrService as String: service,
-        kSecAttrAccount as String: account,
-        kSecReturnData as String: kCFBooleanTrue as Any,
-        kSecMatchLimit as String: kSecMatchLimitOne
-    ]
+        if status == errSecItemNotFound {
+            return nil
+        }
 
-    var result: AnyObject?
-    let status = SecItemCopyMatching(query as CFDictionary, &result)
+        guard status == errSecSuccess else {
+            throw NSError(
+                domain: "Keychain",
+                code: Int(status),
+                userInfo: [NSLocalizedDescriptionKey: "Keychain read failed (\(status))"]
+            )
+        }
 
-    if status == errSecItemNotFound {
-        return nil
+        guard let data = result as? Data else {
+            throw NSError(
+                domain: "Keychain",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Keychain returned non-Data result"]
+            )
+        }
+
+        return data
     }
-
-    guard status == errSecSuccess else {
-        throw NSError(
-            domain: "Keychain",
-            code: Int(status),
-            userInfo: [NSLocalizedDescriptionKey: "Keychain read failed (\(status))"]
-        )
-    }
-
-    guard let data = result as? Data else {
-        throw NSError(
-            domain: "Keychain",
-            code: -1,
-            userInfo: [NSLocalizedDescriptionKey: "Keychain returned non-Data result"]
-        )
-    }
-
-    return data
-}
-
-
-func keychainDelete(
-    service: String,
-    account: String
-) throws {
-    let query: [String: Any] = [
-        kSecClass as String: kSecClassGenericPassword,
-        kSecAttrService as String: service,
-        kSecAttrAccount as String: account
-    ]
-
-    let status = SecItemDelete(query as CFDictionary)
-
-    if status == errSecItemNotFound {
-        return
-    }
-
-    guard status == errSecSuccess else {
-        throw NSError(
-            domain: "Keychain",
-            code: Int(status),
-            userInfo: [
-                NSLocalizedDescriptionKey: "Keychain delete failed (\(status))"
-            ]
-        )
+    
+    func delete(service: String, account: String) throws {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account
+        ]
+        
+        let status = SecItemDelete(query as CFDictionary)
+        
+        if status == errSecItemNotFound {
+            return
+        }
+        
+        guard status == errSecSuccess else {
+            throw NSError(
+                domain: "Keychain",
+                code: Int(status),
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Keychain delete failed (\(status))"
+                ]
+            )
+        }
     }
 }
 
@@ -134,8 +127,55 @@ struct GreatdoriAccount: Codable, Hashable {
     var uid: String?
     var isAutoRenewable: Bool
     
-    var avatarURL: URL? {
-        return nil
+    func avatarURL() async -> URL? {
+        switch platform {
+        case .bandoriStation:
+            guard let literalUID = self.uid, let uid = Int(literalUID) else {
+                return nil
+            }
+            
+            do {
+                let info = try await DoriAPI.Station.userInformation(id: uid)
+                return info.avatarURL()
+            } catch {
+                return nil
+            }
+        }
+    }
+    
+    var identifider: String {
+        uid ?? account
+    }
+    
+    var description: String {
+        "\(self.username) (\(identifider))"
+    }
+    
+    
+    func accountTokenIsValid(rescueIfDead: Bool = true) async -> Bool? {
+        do {
+            let token = try self.readToken()
+            
+            switch platform {
+            case .bandoriStation:
+                do {
+                    let result = try await DoriAPI.Station.userInformation(userToken: DoriAPI.Station.UserToken(token))
+                    if !(result.username ?? "").isEmpty {
+                        return true
+                    } else if !rescueIfDead || !self.isAutoRenewable {
+                        return false
+                    } else {
+                        try await self.updateToken()
+                        return await accountTokenIsValid(rescueIfDead: false)
+                    }
+                } catch {
+                    return false
+                }
+            }
+        } catch {
+            print(error)
+            return nil
+        }
     }
     
     enum Platform: String, Codable, Hashable, CaseIterable {
@@ -147,6 +187,63 @@ struct GreatdoriAccount: Codable, Hashable {
             }
         }
     }
+    
+    public func writeToken(_ token: String) throws {
+        if let tokenData = token.data(using: .utf8) {
+            try Keychain.shared.save(service: "Greatdori-Token-\(self.platform.rawValue)", account: self.account, data: tokenData)
+        } else {
+            throw SimpleError(id: 4001, message: "Cannot write token.")
+        }
+    }
+    
+    public func writePassword(_ password: String) throws {
+        if let passwordData = password.data(using: .utf8) {
+            try Keychain.shared.save(service: "Greatdori-Password-\(self.platform.rawValue)", account: self.account, data: passwordData)
+        } else {
+            throw SimpleError(id: 4002, message: "Cannot write password.")
+        }
+    }
+    
+    public func readToken() throws -> String {
+        if let tokenData = try Keychain.shared.load(service: "Greatdori-Token-\(self.platform.rawValue)", account: self.account) {
+            if let token = String(data: tokenData, encoding: .utf8) {
+                return token
+            } else {
+                throw SimpleError(id: 4101, message: "Token is unparsable.")
+            }
+        } else {
+            throw SimpleError(id: 4102, message: "No token found.")
+        }
+    }
+    
+    public func readPassword() throws -> String? {
+        if let passwordData = try Keychain.shared.load(service: "Greatdori-Password-\(self.platform.rawValue)", account: self.account) {
+            if let password = String(data: passwordData, encoding: .utf8) {
+                return password
+            } else {
+                throw SimpleError(id: 4201, message: "Password is unparsable.")
+            }
+        } else {
+            return nil
+        }
+    }
+    
+    public func updateToken() async throws {
+        if let password = try self.readPassword() {
+            switch self.platform {
+            case .bandoriStation:
+                let loginResult = try await DoriAPI.Station.login(username: self.account, password: password)
+                switch loginResult {
+                case .success(let token, let userInfo):
+                    try self.writeToken(token.value)
+                default:
+                    throw SimpleError(id: -1)
+                }
+            }
+        } else {
+            throw SimpleError(id: 4300, message: "No password.")
+        }
+    }
 }
 
 final class AccountManager: @unchecked Sendable {
@@ -154,7 +251,7 @@ final class AccountManager: @unchecked Sendable {
     
     var platform: GreatdoriAccount.Platform
     
-    private init(platform: GreatdoriAccount.Platform) {
+    init(platform: GreatdoriAccount.Platform) {
         self.platform = platform
     }
     

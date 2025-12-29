@@ -12395,6 +12395,56 @@
         }
       }
     },
+    "Settings.account.action.remove" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
+          }
+        }
+      }
+    },
+    "Settings.account.action.remove.alert.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to remove account %1$@?"
+          }
+        }
+      }
+    },
+    "Settings.account.action.remove.alert.confirm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
+          }
+        }
+      }
+    },
+    "Settings.account.action.remove.alert.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This action cannot be undone."
+          }
+        }
+      }
+    },
+    "Settings.account.action.set-as-primary" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set as Primary"
+          }
+        }
+      }
+    },
     "Settings.account.add" : {
       "localizations" : {
         "en" : {
@@ -12405,22 +12455,32 @@
         }
       }
     },
-    "Settings.account.bandori-station" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "BandoriStation"
-          }
-        }
-      }
-    },
     "Settings.account.bandori-station.usage" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "BandoriStation allows you to submit new multi-live gameplays."
+          }
+        }
+      }
+    },
+    "Settings.account.item.auto-renew-is-on" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto Renew is on"
+          }
+        }
+      }
+    },
+    "Settings.account.item.primary" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primary Account"
           }
         }
       }
@@ -12561,6 +12621,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Too many requests are sent. Try again later."
+          }
+        }
+      }
+    },
+    "Settings.account.new.error.user-not-found" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "User does not exist."
           }
         }
       }

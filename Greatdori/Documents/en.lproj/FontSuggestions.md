@@ -2,8 +2,6 @@
 
 In order to manage fonts better, Greatdori! has a font manager by its own. You can easily import font file from the internet or local, or use system fonts.
 
-**IMPORTANT: Please make sure that you have permission for using the font.**
-
 Greatdori!'s font manager supports TTF, TTC, OTF and OTC files. Although WOFF2 is not supported, you can consider online converting services.
 
 Greatdori! Development Team had found all the fonts used in different regions. Due to license issues, we cannot provide files here. But we still want to provide our research results. If you have the licenses, you can consider importing them to Greatdori! for better a reading experience.
@@ -18,4 +16,4 @@ In JP, Kanji uses「新ゴ」, while all other characters (Kana, alphabets, numb
 
 We also recommend Noto Sans Family. Noto Sans is licensed by Open Font License. You can found it on https://fonts.google.com/noto or https://github.com/google/fonts .
 
-Last Update: Oct 8 2025
+Last Update: Dec 29 2025

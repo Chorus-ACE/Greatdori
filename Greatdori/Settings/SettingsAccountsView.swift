@@ -17,46 +17,15 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 struct SettingsAccountsView: View {
-    @State var bandoriStationAccounts: [GreatdoriAccount] = []
     @State var addSheetIsDisplaying = false
+    @State var updateIndex = 0
     var body: some View {
         Form {
-            Section(content: {
-                if !bandoriStationAccounts.isEmpty {
-                    ForEach(bandoriStationAccounts, id: \.account) { item in
-                        SettingsAccountsPreview(account: item)
-                    }
-                    .onDelete { bandoriStationAccounts.remove(atOffsets: $0) }
-                    .onMove { bandoriStationAccounts.move(fromOffsets: $0, toOffset: $1) }
-                } else {
-                    Text("Settings.account.none")
-                        .foregroundStyle(.secondary)
-                }
-            }, header: {
-                Text("Settings.account.bandori-station")
-            }, footer: {
-                Text("Settings.account.bandori-station.usage")
-            })
+            SettingsAccountsSectionView(platform: .bandoriStation, usage: "Settings.account.bandori-station.usage", updateIndex: $updateIndex)
         }
         .formStyle(.grouped)
-        .wrapIf(!isMACOS, in: {
-            $0.navigationTitle("Settings.account")
-        })
-        .onAppear {
-            do {
-                bandoriStationAccounts = try AccountManager.bandoriStation.load()
-            } catch {
-                print(error)
-            }
-        }
-        .onChange(of: bandoriStationAccounts) {
-            do {
-                try AccountManager.bandoriStation.save(bandoriStationAccounts)
-            } catch {
-                print(error)
-            }
-        }
-        .toolbar { // Had to place it here.
+        .navigationTitle("Settings.account")
+        .toolbar {
             Button(action: {
                 addSheetIsDisplaying = true
             }, label: {
@@ -64,11 +33,7 @@ struct SettingsAccountsView: View {
             })
         }
         .sheet(isPresented: $addSheetIsDisplaying, onDismiss: {
-            do {
-                bandoriStationAccounts = try AccountManager.bandoriStation.load()
-            } catch {
-                print(error)
-            }
+            updateIndex += 1
         }, content: {
             NavigationStack {
                 SettingsAccountsAddView()
@@ -77,11 +42,95 @@ struct SettingsAccountsView: View {
     }
 }
 
+struct SettingsAccountsSectionView: View {
+    var platform: GreatdoriAccount.Platform
+    var usage: LocalizedStringResource? = nil
+    @Binding var updateIndex: Int
+    @State var currentPlatformAccounts: [GreatdoriAccount] = []
+    @State var removeAccountAlertIsDisplaying = false
+    @State var removingItemName = ""
+    @State var removePendingItem = -1
+    var body: some View {
+        Section(content: {
+            if !currentPlatformAccounts.isEmpty {
+                ForEach(Array(currentPlatformAccounts.enumerated()), id: \.element.self) { index, item in
+                    SettingsAccountsPreview(account: item, isPrimary: index == 0)
+                        .contextMenu {
+                            if index != 0 || isMACOS {
+                                Button(action: {
+                                    currentPlatformAccounts.move(fromOffsets: [index], toOffset: 0)
+                                }, label: {
+                                    Label("Settings.account.action.set-as-primary", systemImage: "arrow.up.to.line")
+                                })
+                                .disabled(index == 0)
+                            }
+                            Button(role: .destructive, action: {
+                                removingItemName = item.description
+                                removePendingItem = index
+                                removeAccountAlertIsDisplaying = true
+                            }, label: {
+                                Label("Settings.account.action.remove", systemImage: "trash")
+//                                    .foregroundStyle(.red)
+                            })
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true, content: {
+                            Button(role: .destructive, action: {
+                                removingItemName = item.description
+                                removePendingItem = index
+                                removeAccountAlertIsDisplaying = true
+                            }, label: {
+                                Label("Settings.account.action.remove", systemImage: "trash")
+                                    .foregroundStyle(.red)
+                            })
+                        })
+                }
+                .onMove { currentPlatformAccounts.move(fromOffsets: $0, toOffset: $1) }
+            } else {
+                Text("Settings.account.none")
+                    .foregroundStyle(.secondary)
+            }
+        }, header: {
+            Text(platform.standardName)
+        }, footer: {
+            if let usage {
+                Text(usage)
+            }
+        })
+        .onChange(of: currentPlatformAccounts) {
+            do {
+                try AccountManager(platform: platform).save(currentPlatformAccounts)
+            } catch {
+                print(error)
+            }
+        }
+        .onChange(of: updateIndex, initial: true) {
+            do {
+                currentPlatformAccounts = try AccountManager(platform: platform).load()
+            } catch {
+                print(error)
+            }
+        }
+        .alert("Settings.account.action.remove.alert.\(removingItemName)", isPresented: $removeAccountAlertIsDisplaying, actions: {
+            Button(role: .destructive, action: {
+                currentPlatformAccounts.remove(at: removePendingItem)
+            }, label: {
+                Text("Settings.account.action.remove.alert.confirm")
+            })
+        }, message: {
+            Text("Settings.account.action.remove.alert.message")
+        })
+    }
+}
+
 struct SettingsAccountsPreview: View {
+    @Environment(\.accessibilityDifferentiateWithoutColor) var differentiateWithoutColor
     var account: GreatdoriAccount
+    var isPrimary: Bool = false
+    @State var accountAvatarURL: URL? = nil
+    @State var accountStatus: AccountStatus = .fetching
     var body: some View {
         HStack {
-            WebImage(url: account.avatarURL, content: { image in
+            WebImage(url: accountAvatarURL, content: { image in
                 image
                     .resizable()
             }, placeholder: {
@@ -96,18 +145,76 @@ struct SettingsAccountsPreview: View {
             VStack(alignment: .leading) {
                 Text(account.username)
                 Group {
-                    if let uid = account.uid {
-                        Text("#\(String(uid))")
+                    if isPrimary {
+                        Text(account.identifider) + Text("Typography.bold-dot-seperater").bold() + Text("Settings.account.item.primary")
                     } else {
-                        Text(account.account)
+                        Text(account.identifider)
                     }
                 }
                 .foregroundStyle(.secondary)
             }
             Spacer()
             if account.isAutoRenewable {
-                Image(systemName: "clock")
+                Image(systemName: "clock.arrow.trianglehead.clockwise.rotate.90.path.dotted")
                     .foregroundStyle(.secondary)
+                    .help("Settings.account.item.auto-renew-is-on")
+            }
+            Group {
+                if differentiateWithoutColor {
+                    Image(systemName: accountStatus.symbol)
+                } else {
+                    Circle()
+                        .frame(width: 10)
+                }
+            }
+            .foregroundStyle(accountStatus.color)
+            .padding(.trailing, 7)
+        }
+        .contentShape(Rectangle())
+        .onAppear {
+            Task {
+                accountAvatarURL = await account.avatarURL()
+            }
+            Task {
+                let tokenIsValid = await account.accountTokenIsValid()
+                if let tokenIsValid {
+                    accountStatus =  tokenIsValid ? .living : .dead
+                } else {
+                    accountStatus = .unknown
+                }
+            }
+        }
+    }
+    
+    enum AccountStatus: Codable {
+        case living
+        case dead
+        case fetching
+        case unknown
+        
+        var symbol: String {
+            switch self {
+            case .living:
+                return "checkmark.circle"
+            case .dead:
+                return "exclamationmark.circle"
+            case .fetching:
+                return "questionmark.circle"
+            case .unknown:
+                return "questionmark.circle"
+            }
+        }
+        
+        var color: Color {
+            switch self {
+            case .living:
+                return .green
+            case .dead:
+                return .red
+            case .fetching:
+                return .gray
+            case .unknown:
+                return .orange
             }
         }
     }
@@ -153,7 +260,9 @@ struct SettingsAccountsAddView: View {
             })
         }
         .formStyle(.grouped)
-        .navigationTitle("Settings.account.new")
+        .wrapIf(!isMACOS) {
+            $0.navigationTitle("Settings.account.new")
+        }
         .toolbar {
             if isMACOS && accountIsAdding {
                 ToolbarItem(placement: .destructiveAction) {
@@ -233,6 +342,8 @@ struct SettingsAccountsAddView: View {
                 default:
                     EmptyView()
                 }
+            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .userNotFound {
+                Text("Settings.account.new.error.user-not-found")
             } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .wrongPassword {
                 Text("Settings.account.new.error.wrong-password")
             } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .tooManyRequests {
@@ -276,31 +387,21 @@ struct SettingsAccountsAddView: View {
             
             if let accountAddress, let accountUsername, let accountPassword, let accountToken {
                 
-                var currentAccounts: [GreatdoriAccount] = []
-                
-                switch platform {
-                case .bandoriStation:
-                    currentAccounts = try AccountManager.bandoriStation.load()
-                }
+                var currentAccounts: [GreatdoriAccount] = try AccountManager(platform: platform).load()
                 
                 if currentAccounts.contains(where: { $0.platform == platform && $0.account == accountAddress }) {
                     throw SimpleError(id: 1000)
                 }
                 
-                currentAccounts.append(GreatdoriAccount(platform: platform, account: accountAddress, username: accountUsername, uid: accountUID, isAutoRenewable: autoRenew))
+                var newAccount = GreatdoriAccount(platform: platform, account: accountAddress, username: accountUsername, uid: accountUID, isAutoRenewable: autoRenew)
                 
-                if let tokenData = accountToken.data(using: .utf8) {
-                    try keychainSave(service: "Greatdori-Token-\(platform.rawValue)", account: accountAddress, data: tokenData)
-                } else {
-                    throw SimpleError(id: 4001, message: "Cannot write token.")
-                }
+                try newAccount.writeToken(accountToken)
+                
                 if autoRenew {
-                    if let passwordData = accountPassword.data(using: .utf8) {
-                        try keychainSave(service: "Greatdori-Password-\(platform.rawValue)", account: accountAddress, data: passwordData)
-                    } else {
-                        throw SimpleError(id: 4002, message: "Cannot write password.")
-                    }
+                    try newAccount.writePassword(password)
                 }
+                
+                currentAccounts.append(newAccount)
                 
                 switch platform {
                 case .bandoriStation:
@@ -330,11 +431,11 @@ func getRandomExmapleEmailAddress() -> String {
     }
 }
 
-private struct SimpleError: Error, CustomStringConvertible {
+public struct SimpleError: Error, CustomStringConvertible {
     var id: Int
     var message: String? = nil
     
-    var description: String {
+    public var description: String {
         if let message {
             return "\(message) (\(String(id)))"
         } else {
