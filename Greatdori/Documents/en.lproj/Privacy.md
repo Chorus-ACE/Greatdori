@@ -21,6 +21,10 @@ we and trusted third-parties collect information about your usage of the Greatdo
 including App settings, IP address, and contents you view and search for.
 This kind of data isn’t linked to you.
 
+## Advertisements
+Greatdori! will not sell your privacy data in any way, and will not use your data for commercial use.
+Greatdori! will not give your information to advertizer, and will not provide any personaled advertizements.
+
 ## Notifications
 You can enable notifications in the Greatdori! App manually.
 If you choose to enable notifications, we will collect a device identifier for pushing notifications.
