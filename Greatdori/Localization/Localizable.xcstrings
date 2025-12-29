@@ -4517,7 +4517,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分享…"
+            "value" : "共享…"
           }
         },
         "zh-Hant" : {
@@ -8621,7 +8621,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分享…"
+            "value" : "共享…"
           }
         },
         "zh-Hant" : {
@@ -12402,6 +12402,12 @@
             "state" : "translated",
             "value" : "Remove"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除"
+          }
         }
       }
     },
@@ -12410,7 +12416,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Are you sure you want to remove account %1$@?"
+            "value" : "Are you sure you want to remove account %@?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你确定要移除账户%@吗？"
           }
         }
       }
@@ -12422,6 +12434,12 @@
             "state" : "translated",
             "value" : "Remove"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除"
+          }
         }
       }
     },
@@ -12431,6 +12449,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This action cannot be undone."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该操作不可撤销。"
           }
         }
       }
@@ -12442,6 +12466,172 @@
             "state" : "translated",
             "value" : "Set as Primary"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置为首选账户"
+          }
+        }
+      }
+    },
+    "Settings.account.action.turn-off-auto-renew" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn Off Auto Renew"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭自动续期"
+          }
+        }
+      }
+    },
+    "Settings.account.action.turn-off-auto-renew.alert.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to turn off Auto Renew for %@?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你确定要为%@关闭自动续期吗？"
+          }
+        }
+      }
+    },
+    "Settings.account.action.turn-off-auto-renew.alert.confirm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn Off"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        }
+      }
+    },
+    "Settings.account.action.turn-off-auto-renew.alert.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your password will be no longer saved, and you will need to login again after current login session expires."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的密码将不再被保存，且在当前登录会话过期后，你将需要重新登录。"
+          }
+        }
+      }
+    },
+    "Settings.account.action.turn-on-auto-renew" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn On Auto Renew"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用自动续期"
+          }
+        }
+      }
+    },
+    "Settings.account.action.turn-on-auto-renew.alert.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn On Auto Renew for %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为%@启用自动续期"
+          }
+        }
+      }
+    },
+    "Settings.account.action.turn-on-auto-renew.alert.cancel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
+    },
+    "Settings.account.action.turn-on-auto-renew.alert.confirm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn On"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
+          }
+        }
+      }
+    },
+    "Settings.account.action.turn-on-auto-renew.alert.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto Renew automatically renew the login session after last session expires. Your password will be needed in order to re-open the session."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动续期在登录会话过期后帮助你自动开启新会话。你的密码将会被保存以用于重新开启会话。"
+          }
+        }
+      }
+    },
+    "Settings.account.action.turn-on-auto-renew.alert.password" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码"
+          }
         }
       }
     },
@@ -12451,6 +12641,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add New Account"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加新账户"
           }
         }
       }
@@ -12462,6 +12658,188 @@
             "state" : "translated",
             "value" : "BandoriStation allows you to submit new multi-live gameplays."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你可以通过Bandori车站提交协力游戏信息。"
+          }
+        }
+      }
+    },
+    "Settings.account.error.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown error: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知错误：%@"
+          }
+        }
+      }
+    },
+    "Settings.account.error.cancel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
+    },
+    "Settings.account.error.email-not-verified" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The account needs to verify email. (3001)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该账户需要验证邮箱。(3001)"
+          }
+        }
+      }
+    },
+    "Settings.account.error.existed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The account added had existed. (1000)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该账户已存在。(1000)"
+          }
+        }
+      }
+    },
+    "Settings.account.error.go-to-bandori-station" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to BandoriStation"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往Bandori车站"
+          }
+        }
+      }
+    },
+    "Settings.account.error.retry" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重试"
+          }
+        }
+      }
+    },
+    "Settings.account.error.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An Error Occurred While Logging Into Account"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录账户时发生错误"
+          }
+        }
+      }
+    },
+    "Settings.account.error.too-many-requests" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too many requests had been sent. Try again later."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发送请求过多。请稍后再试。"
+          }
+        }
+      }
+    },
+    "Settings.account.error.user-not-found" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "User does not exist."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户不存在。"
+          }
+        }
+      }
+    },
+    "Settings.account.error.wrong-password" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account or password is incorrect."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "账户或密码有误。"
+          }
+        }
+      }
+    },
+    "Settings.account.item.actions-needed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "错误"
+          }
         }
       }
     },
@@ -12471,6 +12849,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Auto Renew is on"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动续期已启动"
           }
         }
       }
@@ -12482,6 +12866,92 @@
             "state" : "translated",
             "value" : "Primary Account"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "首选账户"
+          }
+        }
+      }
+    },
+    "Settings.account.item.rescue.alert.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Login to %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录至%@"
+          }
+        }
+      }
+    },
+    "Settings.account.item.rescue.alert.cancel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
+    },
+    "Settings.account.item.rescue.alert.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The login session had been invalidated, and another login is required to re-open a new session."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录进程已被无效化。需要再次登录以开启新会话。"
+          }
+        }
+      }
+    },
+    "Settings.account.item.rescue.alert.password" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码"
+          }
+        }
+      }
+    },
+    "Settings.account.learn-more" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learn More About Account"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "了解关于账户"
+          }
         }
       }
     },
@@ -12491,6 +12961,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "New Account"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新账户"
           }
         }
       }
@@ -12502,6 +12978,12 @@
             "state" : "translated",
             "value" : "Add"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加"
+          }
         }
       }
     },
@@ -12511,6 +12993,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adding Account"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加账户"
           }
         }
       }
@@ -12522,6 +13010,12 @@
             "state" : "translated",
             "value" : "Auto Renew"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动续期"
+          }
         }
       }
     },
@@ -12531,6 +13025,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Automatically renew the login session after last session expires. If turned on, your password will be saved."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在登录会话过期后自动续期。若启用，你的密码将会被保存。"
           }
         }
       }
@@ -12542,105 +13042,11 @@
             "state" : "translated",
             "value" : "Cancel"
           }
-        }
-      }
-    },
-    "Settings.account.new.error.%@" : {
-      "localizations" : {
-        "en" : {
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unknown error: %@"
-          }
-        }
-      }
-    },
-    "Settings.account.new.error.cancel" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        }
-      }
-    },
-    "Settings.account.new.error.email-not-verified" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The account needs to verify email. (3001)"
-          }
-        }
-      }
-    },
-    "Settings.account.new.error.existed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The account added had existed. (1000)"
-          }
-        }
-      }
-    },
-    "Settings.account.new.error.go-to-bandori-station" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Go to BandoriStation"
-          }
-        }
-      }
-    },
-    "Settings.account.new.error.retry" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retry"
-          }
-        }
-      }
-    },
-    "Settings.account.new.error.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "An Error Occurred While Adding Account"
-          }
-        }
-      }
-    },
-    "Settings.account.new.error.too-many-requests" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Too many requests are sent. Try again later."
-          }
-        }
-      }
-    },
-    "Settings.account.new.error.user-not-found" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "User does not exist."
-          }
-        }
-      }
-    },
-    "Settings.account.new.error.wrong-password" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Account or password is incorrect."
+            "value" : "取消"
           }
         }
       }
@@ -12652,6 +13058,12 @@
             "state" : "translated",
             "value" : "Password"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码"
+          }
         }
       }
     },
@@ -12661,6 +13073,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Platform"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "平台"
           }
         }
       }
@@ -12672,6 +13090,12 @@
             "state" : "translated",
             "value" : "Account"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "账户"
+          }
         }
       }
     },
@@ -12682,6 +13106,12 @@
             "state" : "translated",
             "value" : "No Account"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无账户"
+          }
         }
       }
     },
@@ -12691,6 +13121,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "BandoriStation"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bandori车站"
           }
         }
       }
@@ -13011,22 +13447,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "缓存"
-          }
-        }
-      }
-    },
-    "Settings.advanced.storage.clear-cache.alert.action.cancel" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
           }
         }
       }
@@ -13623,28 +14043,6 @@
         }
       }
     },
-    "Settings.debug.activate-alert.cancel" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
-          }
-        }
-      }
-    },
     "Settings.debug.activate-alert.confirm" : {
       "localizations" : {
         "en" : {
@@ -13775,30 +14173,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "清除譜面資源"
-          }
-        }
-      }
-    },
-    "Settings.debug.deactivate-alert.cancel" : {
-      "comment" : "The label of a button that cancels the action of deactivating debug mode in the alert.",
-      "isCommentAutoGenerated" : true,
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "确实"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
           }
         }
       }
@@ -14757,8 +15131,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "文件字体应为TTF、OTF、TTC或OTC。请确保你有安装字体的许可。Greatdori!不为字体使用所造成的后果负责。"
+            "state" : "translated",
+            "value" : "文件字体应为TTF、OTF、TTC或OTC格式。"
           }
         },
         "zh-Hant" : {
@@ -15871,28 +16245,6 @@
         }
       }
     },
-    "Settings.widgets.collection.selector.select.select-all.alert.cancel" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
-          }
-        }
-      }
-    },
     "Settings.widgets.collection.selector.select.select-all.alert.message" : {
       "localizations" : {
         "en" : {
@@ -16346,7 +16698,20 @@
       }
     },
     "Settings.widgets.collections.code.dialog.share" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享…"
+          }
+        }
+      }
     },
     "Settings.widgets.collections.code.dialog.title" : {
       "localizations" : {
@@ -16359,7 +16724,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "向接收者分享精选集代码"
+            "value" : "向接收者共享精选集代码"
           }
         },
         "zh-Hant" : {
@@ -16438,30 +16803,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "刪除收藏集…"
-          }
-        }
-      }
-    },
-    "Settings.widgets.collections.delete.alert.cancel" : {
-      "comment" : "The label of the cancel action in the delete collection alert.",
-      "isCommentAutoGenerated" : true,
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
           }
         }
       }
@@ -17452,6 +17793,12 @@
     },
     "Song.lyrics.artistic" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artistic"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18185,6 +18532,12 @@
             "state" : "translated",
             "value" : "Powered by BandoriStation."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由BandoriStation提供。"
+          }
         }
       }
     },
@@ -18194,6 +18547,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Power %lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "综合力 %lld"
           }
         }
       }
@@ -18205,15 +18564,11 @@
             "state" : "translated",
             "value" : "Block"
           }
-        }
-      }
-    },
-    "Station.item.block.alert.cancel" : {
-      "localizations" : {
-        "en" : {
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cancel"
+            "value" : "屏蔽"
           }
         }
       }
@@ -18225,6 +18580,12 @@
             "state" : "translated",
             "value" : "Block"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽"
+          }
         }
       }
     },
@@ -18234,6 +18595,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You will not see gameplays submitted by this user anymore unless unblocked."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你将不再会见到该用户提交的协力，除非取消屏蔽。"
           }
         }
       }
@@ -18245,6 +18612,12 @@
             "state" : "translated",
             "value" : "Block %@?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽%@？"
+          }
         }
       }
     },
@@ -18254,6 +18627,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Blocked"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已屏蔽"
           }
         }
       }
@@ -18265,6 +18644,12 @@
             "state" : "translated",
             "value" : "Copy"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制"
+          }
         }
       }
     },
@@ -18274,6 +18659,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Copied"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已复制"
           }
         }
       }
@@ -18285,15 +18676,11 @@
             "state" : "translated",
             "value" : "Report"
           }
-        }
-      }
-    },
-    "Station.item.report.alert.cancel" : {
-      "localizations" : {
-        "en" : {
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cancel"
+            "value" : "举报"
           }
         }
       }
@@ -18305,6 +18692,12 @@
             "state" : "translated",
             "value" : "Report"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "举报"
+          }
         }
       }
     },
@@ -18314,6 +18707,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This report will be sent to BandoriStation."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该举报信息会被发送至BandoriStation。"
           }
         }
       }
@@ -18325,6 +18724,12 @@
             "state" : "translated",
             "value" : "Reason of Report"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "举报原因"
+          }
         }
       }
     },
@@ -18334,6 +18739,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Report %@?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "举报%@？"
           }
         }
       }
@@ -18345,6 +18756,12 @@
             "state" : "translated",
             "value" : "Reported"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已举报"
+          }
         }
       }
     },
@@ -18354,6 +18771,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "70K"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7万"
           }
         }
       }
@@ -18365,6 +18788,12 @@
             "state" : "translated",
             "value" : "120K"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12万"
+          }
         }
       }
     },
@@ -18375,6 +18804,12 @@
             "state" : "translated",
             "value" : "180K"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "18万"
+          }
         }
       }
     },
@@ -18384,6 +18819,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "250K"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25万"
           }
         }
       }
@@ -18413,7 +18854,20 @@
       }
     },
     "Station.unavailable.description.%@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your Internet connection and try again later. (Error %@)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请尝试检查你的互联网连接并稍后重试。(错误%@)"
+          }
+        }
+      }
     },
     "Station.unavailable.description.%lld" : {
       "comment" : "A view that shows an error message and a tap gesture to refresh the information. The error code is passed as a placeholder for more detailed error messages.",
@@ -18756,7 +19210,20 @@
       }
     },
     "Story-viewer.layout-test-sheet.done" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成"
+          }
+        }
+      }
     },
     "Story-viewer.locale" : {
       "comment" : "A label describing the locale picker in the story viewer.",

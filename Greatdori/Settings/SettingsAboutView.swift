@@ -110,9 +110,6 @@ struct SettingsAboutDetailIconView: View {
                     Text("Settings.debug.activate-alert.confirm")
                 })
                 .keyboardShortcut(.defaultAction)
-                Button(role: .cancel, action: {}, label: {
-                    Text("Settings.debug.activate-alert.cancel")
-                })
             } message: {
                 Text("Settings.debug.activate-alert.message")
             }
@@ -122,7 +119,6 @@ struct SettingsAboutDetailIconView: View {
                     AppFlag.set(false, forKey: "DEBUG")
                 }
                 .keyboardShortcut(.defaultAction)
-                Button("Settings.debug.deactivate-alert.cancel") {}
             } message: {
                 Text("Settings.debug.deactivate-alert.prompt")
             }

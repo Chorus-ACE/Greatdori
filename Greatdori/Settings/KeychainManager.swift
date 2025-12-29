@@ -119,7 +119,6 @@ class Keychain: @unchecked Sendable {
 }
 
 
-
 struct GreatdoriAccount: Codable, Hashable {
     var platform: Platform
     var account: String
@@ -228,8 +227,16 @@ struct GreatdoriAccount: Codable, Hashable {
         }
     }
     
-    public func updateToken() async throws {
-        if let password = try self.readPassword() {
+    public func updateToken(withPassword givenPassword: String? = nil) async throws {
+        var password = givenPassword
+        if password == nil {
+            do {
+                password = try self.readPassword()
+            } catch {
+                throw SimpleError(id: 4301, message: "Cannot read password.")
+            }
+        }
+        if let password {
             switch self.platform {
             case .bandoriStation:
                 let loginResult = try await DoriAPI.Station.login(username: self.account, password: password)
@@ -243,6 +250,15 @@ struct GreatdoriAccount: Codable, Hashable {
         } else {
             throw SimpleError(id: 4300, message: "No password.")
         }
+    }
+    
+    public func removePassword() throws {
+        try Keychain.shared.delete(service: "Greatdori-Password-\(self.platform.rawValue)", account: self.account)
+    }
+    
+    public func deleteAccount() throws {
+        try self.removePassword()
+        try Keychain.shared.delete(service: "Greatdori-Token-\(self.platform.rawValue)", account: self.account)
     }
 }
 

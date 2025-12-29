@@ -317,9 +317,6 @@ struct CollectionEditorView: View {
             updateSearchResults()
         }
         .alert("Settings.widgets.collection.selector.select.select-all.alert.title.\(searchedCards?.count ?? -1)", isPresented: $selectAllTooMuchItemsAlertIsDisplaying, actions: {
-            Button(action: {}, label: {
-                Text("Settings.widgets.collection.selector.select.select-all.alert.cancel")
-            })
             Button(action: {
                 selectAll()
             }, label: {

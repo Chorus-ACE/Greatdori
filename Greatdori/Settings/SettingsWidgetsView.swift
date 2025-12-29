@@ -484,9 +484,9 @@ struct SettingsWidgetsCollectionDetailsView: View {
                                                 }, label: {
                                                     Text("Settings.widgets.collections.delete.alert.delete")
                                                 })
-                                                Button(role: .cancel, action: {}, label: {
-                                                    Text("Settings.widgets.collections.delete.alert.cancel")
-                                                })
+//                                                Button(role: .cancel, action: {}, label: {
+//                                                    Text("Settings.widgets.collections.delete.alert.cancel")
+//                                                })
                                             }, message: {
                                                 Text("Settings.widgets.collections.delete.alert.message")
                                             })

@@ -22,6 +22,9 @@ struct SettingsAccountsView: View {
     var body: some View {
         Form {
             SettingsAccountsSectionView(platform: .bandoriStation, usage: "Settings.account.bandori-station.usage", updateIndex: $updateIndex)
+            SettingsDocumentButton(document: "Accounts", label: {
+                Text("Settings.account.learn-more")
+            })
         }
         .formStyle(.grouped)
         .navigationTitle("Settings.account")
@@ -47,42 +50,22 @@ struct SettingsAccountsSectionView: View {
     var usage: LocalizedStringResource? = nil
     @Binding var updateIndex: Int
     @State var currentPlatformAccounts: [GreatdoriAccount] = []
+    @State var actionPendingItemName = ""
+    @State var actionPendingItemIndex = -1
+    
     @State var removeAccountAlertIsDisplaying = false
-    @State var removingItemName = ""
-    @State var removePendingItem = -1
+    @State var turnOffAutoRenewAlertIsDisplaying = false
+    @State var turnOnAutoRenewAlertIsDisplaying = false
+    
+    @State var autoRenewPassword: String = ""
+    @State var autoRenewError: Error? = nil
+    @State var autoRenewErrorAlertIsDisplaying = false
+    @State var autoRenewIsActivating = false
     var body: some View {
         Section(content: {
             if !currentPlatformAccounts.isEmpty {
                 ForEach(Array(currentPlatformAccounts.enumerated()), id: \.element.self) { index, item in
-                    SettingsAccountsPreview(account: item, isPrimary: index == 0)
-                        .contextMenu {
-                            if index != 0 || isMACOS {
-                                Button(action: {
-                                    currentPlatformAccounts.move(fromOffsets: [index], toOffset: 0)
-                                }, label: {
-                                    Label("Settings.account.action.set-as-primary", systemImage: "arrow.up.to.line")
-                                })
-                                .disabled(index == 0)
-                            }
-                            Button(role: .destructive, action: {
-                                removingItemName = item.description
-                                removePendingItem = index
-                                removeAccountAlertIsDisplaying = true
-                            }, label: {
-                                Label("Settings.account.action.remove", systemImage: "trash")
-//                                    .foregroundStyle(.red)
-                            })
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true, content: {
-                            Button(role: .destructive, action: {
-                                removingItemName = item.description
-                                removePendingItem = index
-                                removeAccountAlertIsDisplaying = true
-                            }, label: {
-                                Label("Settings.account.action.remove", systemImage: "trash")
-                                    .foregroundStyle(.red)
-                            })
-                        })
+                    SettingsAccountsWithContextMenu(item: item, index: index, currentPlatformAccounts: $currentPlatformAccounts, actionPendingItemName: $actionPendingItemName, actionPendingItemIndex: $actionPendingItemIndex, removeAccountAlertIsDisplaying: $removeAccountAlertIsDisplaying, turnOffAutoRenewAlertIsDisplaying: $turnOffAutoRenewAlertIsDisplaying, turnOnAutoRenewAlertIsDisplaying: $turnOnAutoRenewAlertIsDisplaying, autoRenewPassword: $autoRenewPassword)
                 }
                 .onMove { currentPlatformAccounts.move(fromOffsets: $0, toOffset: $1) }
             } else {
@@ -110,24 +93,160 @@ struct SettingsAccountsSectionView: View {
                 print(error)
             }
         }
-        .alert("Settings.account.action.remove.alert.\(removingItemName)", isPresented: $removeAccountAlertIsDisplaying, actions: {
+        .alert("Settings.account.action.remove.alert.\(actionPendingItemName)", isPresented: $removeAccountAlertIsDisplaying, actions: {
             Button(role: .destructive, action: {
-                currentPlatformAccounts.remove(at: removePendingItem)
+                do {
+                    try currentPlatformAccounts[actionPendingItemIndex].deleteAccount()
+                } catch {
+                    print(error)
+                }
+                currentPlatformAccounts.remove(at: actionPendingItemIndex)
+                    
             }, label: {
                 Text("Settings.account.action.remove.alert.confirm")
             })
         }, message: {
             Text("Settings.account.action.remove.alert.message")
         })
+        .alert("Settings.account.action.turn-off-auto-renew.alert.\(actionPendingItemName)", isPresented: $turnOffAutoRenewAlertIsDisplaying, actions: {
+            Button(role: .destructive, action: {
+                currentPlatformAccounts[actionPendingItemIndex].isAutoRenewable = false
+                do {
+                    try currentPlatformAccounts[actionPendingItemIndex].removePassword()
+                } catch {
+                    print(error)
+                }
+            }, label: {
+                Text("Settings.account.action.turn-off-auto-renew.alert.confirm")
+            })
+        }, message: {
+            Text("Settings.account.action.turn-off-auto-renew.alert.message")
+        })
+        .alert("Settings.account.action.turn-on-auto-renew.alert.\(actionPendingItemName)", isPresented: $turnOnAutoRenewAlertIsDisplaying, actions: {
+            SecureField("Settings.account.action.turn-on-auto-renew.alert.password", text: $autoRenewPassword)
+            Button(action: {
+                Task {
+                    autoRenewIsActivating = true
+                    do {
+                        try await currentPlatformAccounts[actionPendingItemIndex].updateToken(withPassword: autoRenewPassword)
+                        try currentPlatformAccounts[actionPendingItemIndex].writePassword(autoRenewPassword)
+                        currentPlatformAccounts[actionPendingItemIndex].isAutoRenewable = true
+                    } catch {
+                        autoRenewError = error
+                        autoRenewErrorAlertIsDisplaying = true
+                    }
+                    autoRenewIsActivating = false
+                }
+            }, label: {
+                if autoRenewIsActivating {
+                    ProgressView()
+                } else {
+                    Text("Settings.account.action.turn-on-auto-renew.alert.confirm")
+                }
+            })
+            .keyboardShortcut(.defaultAction)
+            .disabled(autoRenewIsActivating || autoRenewPassword.isEmpty)
+            Button(role: .cancel, action: {}, label: {
+                Text("Settings.account.action.turn-on-auto-renew.alert.cancel")
+            })
+        }, message: {
+            Text("Settings.account.action.turn-on-auto-renew.alert.message")
+        })
+        .loginError(isPresented: $autoRenewErrorAlertIsDisplaying, presenting: autoRenewError, retryAction: {
+            autoRenewIsActivating = true
+            do {
+                try await currentPlatformAccounts[actionPendingItemIndex].updateToken(withPassword: autoRenewPassword)
+                try currentPlatformAccounts[actionPendingItemIndex].writePassword(autoRenewPassword)
+                currentPlatformAccounts[actionPendingItemIndex].isAutoRenewable = true
+            } catch {
+                autoRenewError = error
+                autoRenewErrorAlertIsDisplaying = true
+            }
+            autoRenewIsActivating = false
+        })
     }
 }
 
+struct SettingsAccountsWithContextMenu: View {
+    var item: GreatdoriAccount
+    var index: Int
+    @Binding var currentPlatformAccounts: [GreatdoriAccount]
+    
+    @Binding var actionPendingItemName: String
+    @Binding var actionPendingItemIndex: Int
+    
+    @Binding var removeAccountAlertIsDisplaying: Bool
+    @Binding var turnOffAutoRenewAlertIsDisplaying: Bool
+    @Binding var turnOnAutoRenewAlertIsDisplaying: Bool
+    
+    @Binding var autoRenewPassword: String
+    var body: some View {
+        SettingsAccountsPreview(account: item, isPrimary: index == 0 && currentPlatformAccounts.count > 1)
+            .contextMenu {
+                if index != 0 || isMACOS {
+                    Button(action: {
+                        currentPlatformAccounts.move(fromOffsets: [index], toOffset: 0)
+                    }, label: {
+                        Label("Settings.account.action.set-as-primary", systemImage: "arrow.up.to.line")
+                    })
+                    .disabled(index == 0)
+                }
+                
+                if item.isAutoRenewable {
+                    Button(role: .destructive, action: {
+                        actionPendingItemName = item.description
+                        actionPendingItemIndex = index
+                        turnOffAutoRenewAlertIsDisplaying = true
+                    }, label: {
+                        Label("Settings.account.action.turn-off-auto-renew", systemImage: "clock.badge.xmark")
+                    })
+                } else {
+                    Button(action: {
+                        autoRenewPassword = ""
+                        actionPendingItemName = item.description
+                        actionPendingItemIndex = index
+                        turnOnAutoRenewAlertIsDisplaying = true
+                    }, label: {
+                        Label("Settings.account.action.turn-on-auto-renew", systemImage: "clock.arrow.trianglehead.clockwise.rotate.90.path.dotted")
+                    })
+                }
+                
+                Button(role: .destructive, action: {
+                    actionPendingItemName = item.description
+                    actionPendingItemIndex = index
+                    removeAccountAlertIsDisplaying = true
+                }, label: {
+                    Label("Settings.account.action.remove", systemImage: "trash")
+//                                    .foregroundStyle(.red)
+                })
+            }
+            .swipeActions(edge: .trailing, allowsFullSwipe: true, content: {
+                Button(role: .destructive, action: {
+                    actionPendingItemName = item.description
+                    actionPendingItemIndex = index
+                    removeAccountAlertIsDisplaying = true
+                }, label: {
+                    Label("Settings.account.action.remove", systemImage: "trash")
+                        .foregroundStyle(.red)
+                })
+            })
+    }
+}
+
+
 struct SettingsAccountsPreview: View {
     @Environment(\.accessibilityDifferentiateWithoutColor) var differentiateWithoutColor
+    @Environment(\.dismiss) var dismiss
     var account: GreatdoriAccount
     var isPrimary: Bool = false
     @State var accountAvatarURL: URL? = nil
     @State var accountStatus: AccountStatus = .fetching
+    
+    @State var rescuePassword = ""
+    @State var rescueAlertIsDisplaying = false
+    @State var isRescuing = false
+    @State var rescueErrorAlertIsDisplaying = false
+    @State var rescueError: Error? = nil
     var body: some View {
         HStack {
             WebImage(url: accountAvatarURL, content: { image in
@@ -145,7 +264,9 @@ struct SettingsAccountsPreview: View {
             VStack(alignment: .leading) {
                 Text(account.username)
                 Group {
-                    if isPrimary {
+                    if accountStatus == .dead {
+                        Text(account.identifider) + Text("Typography.bold-dot-seperater").bold() + Text("Settings.account.item.actions-needed")
+                    } else if isPrimary {
                         Text(account.identifider) + Text("Typography.bold-dot-seperater").bold() + Text("Settings.account.item.primary")
                     } else {
                         Text(account.identifider)
@@ -184,6 +305,48 @@ struct SettingsAccountsPreview: View {
                 }
             }
         }
+        .onTapGesture {
+            if accountStatus == .dead {
+                isRescuing = false
+                rescuePassword = ""
+                rescueAlertIsDisplaying = true
+            }
+        }
+        .alert("Settings.account.item.rescue.alert.\(account.description)", isPresented: $rescueAlertIsDisplaying, actions: {
+            SecureField("Settings.account.item.rescue.alert.password", text: $rescuePassword)
+            Button(optionalRole: .destructive, action: {
+                Task {
+                    isRescuing = true
+                    do {
+                        try await account.updateToken(withPassword: rescuePassword)
+                    } catch {
+                        rescueError = error
+                        rescueErrorAlertIsDisplaying = true
+                    }
+                    isRescuing = false
+                }
+            }, label: {
+                if isRescuing {
+                    Text("Station.item.report.alert.confirm")
+                }
+            })
+            .keyboardShortcut(.defaultAction)
+            .disabled(rescuePassword.isEmpty || isRescuing)
+            Button(role: .cancel, action: {}, label: {
+                Text("Settings.account.item.rescue.alert.cancel")
+            })
+        }, message: {
+            Text("Settings.account.item.rescue.alert.message")
+        })
+        .loginError(isPresented: $rescueAlertIsDisplaying, presenting: rescueError, retryAction: {
+            isRescuing = true
+            do {
+                try await account.updateToken(withPassword: rescuePassword)
+            } catch {
+                rescueErrorAlertIsDisplaying = true
+            }
+            isRescuing = false
+        })
     }
     
     enum AccountStatus: Codable {
@@ -232,7 +395,6 @@ struct SettingsAccountsAddView: View {
     @State var accountAddingError: Error? = nil
     
     private var demoEmailAddress: String = getRandomExmapleEmailAddress()
-    let knownSimpleErrorIDs = [1000, 3001]
     var body: some View {
         Form {
             Section {
@@ -306,52 +468,7 @@ struct SettingsAccountsAddView: View {
                 .disabled(accountIsAdding)
             }
         }
-        .alert("Settings.account.new.error.title", isPresented: $errorAlertIsDisplaying, presenting: accountAddingError, actions: { error in
-            if let simpleError = error as? SimpleError, knownSimpleErrorIDs.contains(simpleError.id) {
-                switch simpleError.id {
-                case 3001:
-                    Button(action: {
-                        openURL(URL(string: "https://bandoristation.com/#/login")!)
-                    }, label: {
-                        Text("Settings.account.new.error.go-to-bandori-station")
-                    })
-                    .keyboardShortcut(.defaultAction)
-                default:
-                    EmptyView()
-                }
-            } else {
-                Button(action: {
-                    Task {
-                        await addAccount()
-                    }
-                }, label: {
-                    Text("Settings.account.new.error.retry")
-                })
-                .keyboardShortcut(.defaultAction)
-            }
-            Button(optionalRole: .cancel, action: {}, label: {
-                Text("Settings.account.new.error.cancel")
-            })
-        }, message: { error in
-            if let simpleError = error as? SimpleError, knownSimpleErrorIDs.contains(simpleError.id) {
-                switch simpleError.id {
-                case 1000:
-                    Text("Settings.account.new.error.existed")
-                case 3001:
-                    Text("Settings.account.new.error.email-not-verified")
-                default:
-                    EmptyView()
-                }
-            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .userNotFound {
-                Text("Settings.account.new.error.user-not-found")
-            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .wrongPassword {
-                Text("Settings.account.new.error.wrong-password")
-            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .tooManyRequests {
-                Text("Settings.account.new.error.too-many-requests")
-            } else {
-                Text("Settings.account.new.error.\("\(error)")")
-            }
-        })
+        .loginError(isPresented: $errorAlertIsDisplaying, presenting: accountAddingError, retryAction: { await addAccount() }, openURL: openURL)
     }
     
     func addAccount() async {
@@ -441,5 +558,62 @@ public struct SimpleError: Error, CustomStringConvertible {
         } else {
             return "Error \(String(id))"
         }
+    }
+}
+
+extension View {
+//    @ViewBuilder
+    func loginError(isPresented: Binding<Bool>, presenting: Error?, retryAction: (() async -> Void)? = nil, openURL: OpenURLAction? = nil) -> some View {
+        let knownSimpleErrorIDs = [1000, 3001]
+        return self.alert("Settings.account.error.title", isPresented: isPresented, presenting: presenting, actions: { error in
+            if let simpleError = error as? SimpleError, knownSimpleErrorIDs.contains(simpleError.id) {
+                switch simpleError.id {
+                case 3001:
+                    if let openURL {
+                        Button(action: {
+                            openURL(URL(string: "https://bandoristation.com/#/login")!)
+                        }, label: {
+                            Text("Settings.account.error.go-to-bandori-station")
+                        })
+                        .keyboardShortcut(.defaultAction)
+                    }
+                default:
+                    EmptyView()
+                }
+            } else {
+                if let retryAction {
+                    Button(action: {
+                        Task {
+                            await retryAction()
+                        }
+                    }, label: {
+                        Text("Settings.account.error.retry")
+                    })
+                    .keyboardShortcut(.defaultAction)
+                }
+            }
+            Button(optionalRole: .cancel, action: {}, label: {
+                Text("Settings.account.error.cancel")
+            })
+        }, message: { error in
+            if let simpleError = error as? SimpleError, knownSimpleErrorIDs.contains(simpleError.id) {
+                switch simpleError.id {
+                case 1000:
+                    Text("Settings.account.error.existed")
+                case 3001:
+                    Text("Settings.account.error.email-not-verified")
+                default:
+                    EmptyView()
+                }
+            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .userNotFound {
+                Text("Settings.account.error.user-not-found")
+            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .wrongPassword {
+                Text("Settings.account.error.wrong-password")
+            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .tooManyRequests {
+                Text("Settings.account.error.too-many-requests")
+            } else {
+                Text("Settings.account.error.\("\(error)")")
+            }
+        })
     }
 }

@@ -176,8 +176,6 @@ struct SettingsAdvancedStorageSection: View {
                 }, label: {
                     Text("Settings.advanced.storage.clear-cache.alert.action.confirm")
                 })
-                
-                Button("Settings.advanced.storage.clear-cache.alert.action.cancel", role: .cancel) {}
             } message: {
                 Text("Settings.advanced.storage.clear-cache.alert.message")
             }

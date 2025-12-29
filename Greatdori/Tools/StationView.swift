@@ -238,9 +238,6 @@ struct StationItemView: View {
         .buttonStyle(.plain)
         .alert("Station.item.report.alert.title.\(item.room.creator.username ?? "nil")", isPresented: $reporingSheetIsDisplaying, actions: {
             TextField("Station.item.report.alert.reason", text: $reasonOfReport)
-            Button(role: .cancel, action: {}, label: {
-                Text("Station.item.report.alert.cancel")
-            })
             Button(optionalRole: .destructive, action: {
                 itemTipStatus = 2
             }, label: {
@@ -251,9 +248,6 @@ struct StationItemView: View {
             Text("Station.item.report.alert.message")
         })
         .alert("Station.item.block.alert.title.\(item.room.creator.username ?? "nil")", isPresented: $blockingSheetIsDisplaying, actions: {
-            Button(role: .cancel, action: {}, label: {
-                Text("Station.item.block.alert.cancel")
-            })
             Button(optionalRole: .destructive, action: {
                 itemTipStatus = 3
             }, label: {
