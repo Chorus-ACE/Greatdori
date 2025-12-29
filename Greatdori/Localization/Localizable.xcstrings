@@ -12510,7 +12510,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The account needs to verified email. (3001)"
+            "value" : "The account needs to verify email. (3001)"
           }
         }
       }
@@ -12520,7 +12520,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The account added had existed before. (1000)"
+            "value" : "The account added had existed. (1000)"
           }
         }
       }
@@ -18341,6 +18341,9 @@
           }
         }
       }
+    },
+    "Station.unavailable.description.%@" : {
+
     },
     "Station.unavailable.description.%lld" : {
       "comment" : "A view that shows an error message and a tap gesture to refresh the information. The error code is passed as a placeholder for more detailed error messages.",

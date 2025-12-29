@@ -164,7 +164,7 @@ let settingsTabs: [SettingsTab] = [
     .init(symbol: "books.vertical", name: "Settings.story-viewer", destination: "story"),
     .init(symbol: "bell.badge", name: "Settings.permissions", destination: "permission"),
     .init(symbol: "widget.small", name: "Settings.widgets", destination: "widget"),
-    .init(symbol: "person.crop.circle", name: "Settings.account", destination: "account"),
+    .init(symbol: "person.crop.circle", name: "Settings.account", destination: "account", note: "NO-FORM"),
     .init(symbol: "textformat", name: "Settings.fonts", destination: "font"),
     .init(symbol: "hammer", name: "Settings.advanced", destination: "advanced"),
     .init(symbol: "info.circle", name: "Settings.about", destination: "about", note: "NO-FORM"),

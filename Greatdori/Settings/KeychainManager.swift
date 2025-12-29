@@ -20,31 +20,54 @@ func keychainSave(
     account: String,
     data: Data
 ) throws {
-    let query: [String: Any] = [
-        kSecClass as String: kSecClassInternetPassword,
+    let baseQuery: [String: Any] = [
+        kSecClass as String: kSecClassGenericPassword,
         kSecAttrService as String: service,
         kSecAttrAccount as String: account,
-        kSecValueData as String: data,
         kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     ]
 
-    SecItemDelete(query as CFDictionary)
-    let status = SecItemAdd(query as CFDictionary, nil)
+    var addQuery = baseQuery
+    addQuery[kSecValueData as String] = data
 
-    guard status == errSecSuccess else {
-        throw NSError(domain: "Keychain", code: Int(status))
+    let status = SecItemAdd(addQuery as CFDictionary, nil)
+
+    if status == errSecDuplicateItem {
+        let attributesToUpdate: [String: Any] = [
+            kSecValueData as String: data
+        ]
+
+        let updateStatus = SecItemUpdate(
+            baseQuery as CFDictionary,
+            attributesToUpdate as CFDictionary
+        )
+
+        guard updateStatus == errSecSuccess else {
+            throw NSError(
+                domain: "Keychain",
+                code: Int(updateStatus),
+                userInfo: [NSLocalizedDescriptionKey: "Keychain update failed (\(updateStatus))"]
+            )
+        }
+    } else if status != errSecSuccess {
+        throw NSError(
+            domain: "Keychain",
+            code: Int(status),
+            userInfo: [NSLocalizedDescriptionKey: "Keychain add failed (\(status))"]
+        )
     }
 }
+
 
 func keychainLoad(
     service: String,
     account: String
 ) throws -> Data? {
     let query: [String: Any] = [
-        kSecClass as String: kSecClassInternetPassword,
+        kSecClass as String: kSecClassGenericPassword,
         kSecAttrService as String: service,
         kSecAttrAccount as String: account,
-        kSecReturnData as String: true,
+        kSecReturnData as String: kCFBooleanTrue as Any,
         kSecMatchLimit as String: kSecMatchLimitOne
     ]
 
@@ -56,24 +79,52 @@ func keychainLoad(
     }
 
     guard status == errSecSuccess else {
-        throw NSError(domain: "Keychain", code: Int(status))
+        throw NSError(
+            domain: "Keychain",
+            code: Int(status),
+            userInfo: [NSLocalizedDescriptionKey: "Keychain read failed (\(status))"]
+        )
     }
 
-    return result as? Data
+    guard let data = result as? Data else {
+        throw NSError(
+            domain: "Keychain",
+            code: -1,
+            userInfo: [NSLocalizedDescriptionKey: "Keychain returned non-Data result"]
+        )
+    }
+
+    return data
 }
+
 
 func keychainDelete(
     service: String,
     account: String
-) {
+) throws {
     let query: [String: Any] = [
-        kSecClass as String: kSecClassInternetPassword,
+        kSecClass as String: kSecClassGenericPassword,
         kSecAttrService as String: service,
         kSecAttrAccount as String: account
     ]
 
-    SecItemDelete(query as CFDictionary)
+    let status = SecItemDelete(query as CFDictionary)
+
+    if status == errSecItemNotFound {
+        return
+    }
+
+    guard status == errSecSuccess else {
+        throw NSError(
+            domain: "Keychain",
+            code: Int(status),
+            userInfo: [
+                NSLocalizedDescriptionKey: "Keychain delete failed (\(status))"
+            ]
+        )
+    }
 }
+
 
 
 struct GreatdoriAccount: Codable, Hashable {
@@ -99,9 +150,13 @@ struct GreatdoriAccount: Codable, Hashable {
 }
 
 final class AccountManager: @unchecked Sendable {
-    static let shared = AccountManager()
+    static let bandoriStation = AccountManager(platform: .bandoriStation)
     
-    private init() {}
+    var platform: GreatdoriAccount.Platform
+    
+    private init(platform: GreatdoriAccount.Platform) {
+        self.platform = platform
+    }
     
     // MARK: - File URL
     
@@ -122,7 +177,7 @@ final class AccountManager: @unchecked Sendable {
             )
         }
         
-        return appFolder.appendingPathComponent("Accounts.plist")
+        return appFolder.appendingPathComponent("Accounts-\(platform.rawValue).plist")
     }
     
     // MARK: - Write

@@ -17,15 +17,17 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 struct SettingsAccountsView: View {
-    @State var allAccounts: [GreatdoriAccount] = []
+    @State var bandoriStationAccounts: [GreatdoriAccount] = []
     @State var addSheetIsDisplaying = false
     var body: some View {
-        Group {
+        Form {
             Section(content: {
-                if !allAccounts.filter({ $0.platform == .bandoriStation }).isEmpty {
-                    ForEach(allAccounts.filter({ $0.platform == .bandoriStation }), id: \.account) { item in
+                if !bandoriStationAccounts.isEmpty {
+                    ForEach(bandoriStationAccounts, id: \.account) { item in
                         SettingsAccountsPreview(account: item)
                     }
+                    .onDelete { bandoriStationAccounts.remove(atOffsets: $0) }
+                    .onMove { bandoriStationAccounts.move(fromOffsets: $0, toOffset: $1) }
                 } else {
                     Text("Settings.account.none")
                         .foregroundStyle(.secondary)
@@ -34,32 +36,43 @@ struct SettingsAccountsView: View {
                 Text("Settings.account.bandori-station")
             }, footer: {
                 Text("Settings.account.bandori-station.usage")
-                    .toolbar { // Had to place it here.
-                        Button(action: {
-                            addSheetIsDisplaying = true
-                        }, label: {
-                            Label("Settings.account.add", systemImage: "plus")
-                        })
-                    }
             })
         }
-        .navigationTitle("Settings.account")
+        .formStyle(.grouped)
+        .wrapIf(!isMACOS, in: {
+            $0.navigationTitle("Settings.account")
+        })
         .onAppear {
             do {
-                allAccounts = try AccountManager.shared.load()
+                bandoriStationAccounts = try AccountManager.bandoriStation.load()
             } catch {
                 print(error)
             }
         }
-        .onChange(of: allAccounts) {
+        .onChange(of: bandoriStationAccounts) {
             do {
-                try AccountManager.shared.save(allAccounts)
+                try AccountManager.bandoriStation.save(bandoriStationAccounts)
             } catch {
                 print(error)
             }
         }
-        .sheet(isPresented: $addSheetIsDisplaying, content: {
-            SettingsAccountsAddView()
+        .toolbar { // Had to place it here.
+            Button(action: {
+                addSheetIsDisplaying = true
+            }, label: {
+                Label("Settings.account.add", systemImage: "plus")
+            })
+        }
+        .sheet(isPresented: $addSheetIsDisplaying, onDismiss: {
+            do {
+                bandoriStationAccounts = try AccountManager.bandoriStation.load()
+            } catch {
+                print(error)
+            }
+        }, content: {
+            NavigationStack {
+                SettingsAccountsAddView()
+            } 
         })
     }
 }
@@ -82,8 +95,14 @@ struct SettingsAccountsPreview: View {
             .frame(width: 40, height: 40)
             VStack(alignment: .leading) {
                 Text(account.username)
-                Text(account.uid ?? account.account)
-                    .foregroundStyle(.secondary)
+                Group {
+                    if let uid = account.uid {
+                        Text("#\(String(uid))")
+                    } else {
+                        Text(account.account)
+                    }
+                }
+                .foregroundStyle(.secondary)
             }
             Spacer()
             if account.isAutoRenewable {
@@ -241,11 +260,12 @@ struct SettingsAccountsAddView: View {
             
             if platform == .bandoriStation {
                 let loginResponse = try await DoriAPI.Station.login(username: account, password: password)
-                if case .success(let token, let userInfo) = loginResponse {
-                    accountAddress = "TODO: NO USERNAME"
+                if case .success(let token, let incompleteUserInfo) = loginResponse {
+                    let userInfo = try await DoriAPI.Station.userInformation(id: incompleteUserInfo.id)
+                    accountAddress = userInfo.username
                     accountToken = token.value
                     accountPassword = password
-                    accountUsername = "TODO: NO USERNAME"
+                    accountUsername = userInfo.username
                     accountUID = String(userInfo.id)
                 } else {
                     throw SimpleError(id: 3001)
@@ -254,12 +274,14 @@ struct SettingsAccountsAddView: View {
                 throw SimpleError(id: 4000)
             }
             
-            // FIXME: Debate use, temp
-            //            DoriAPI.Station.login(with: DoriAPI.Station.Credential(username: account, password: password))
-            //            DoriAPI.Station.login(username: account, password: password)
-            
             if let accountAddress, let accountUsername, let accountPassword, let accountToken {
-                var currentAccounts = try AccountManager.shared.load()
+                
+                var currentAccounts: [GreatdoriAccount] = []
+                
+                switch platform {
+                case .bandoriStation:
+                    currentAccounts = try AccountManager.bandoriStation.load()
+                }
                 
                 if currentAccounts.contains(where: { $0.platform == platform && $0.account == accountAddress }) {
                     throw SimpleError(id: 1000)
@@ -279,7 +301,11 @@ struct SettingsAccountsAddView: View {
                         throw SimpleError(id: 4002, message: "Cannot write password.")
                     }
                 }
-                try AccountManager.shared.save(currentAccounts)
+                
+                switch platform {
+                case .bandoriStation:
+                    try AccountManager.bandoriStation.save(currentAccounts)
+                }
             } else {
                 throw SimpleError(id: 4002, message: "No address given.")
             }
@@ -287,8 +313,8 @@ struct SettingsAccountsAddView: View {
             accountIsAdding = false
             dismiss()
         } catch {
-            errorAlertIsDisplaying = true
             accountAddingError = error
+            errorAlertIsDisplaying = true
             accountIsAdding = false
         }
     }

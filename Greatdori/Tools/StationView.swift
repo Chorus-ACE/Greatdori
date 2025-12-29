@@ -14,17 +14,19 @@
 
 import Alamofire
 import Combine
+import DoriKit
 import SDWebImageSwiftUI
 import SwiftyJSON
 import SwiftUI
 
 struct StationView: View {
-    @State var allGamplays: [StationGameplay] = []
-    @State var displayingGameplays: [StationGameplay] = []
+    @State var allGameplays: [DoriAPI.Station.Room] = []
+    @State var displayingGameplays: [CombinedRoom] = []
     @State var informationIsAvailable = true
     @State var informationIsLoading = true
-    @State var fetchError: Int? = nil
-
+    
+    @State var fetchingTask: Task<(), Never>? = nil
+    @State var fetchError: Error? = nil
     var body: some View {
         Group {
             if informationIsAvailable {
@@ -63,55 +65,56 @@ struct StationView: View {
                 }
             } else {
                 ExtendedConstraints {
-                    ContentUnavailableView("Station.unavailable", systemImage: "flag.2.crossed", description: Text("Station.unavailable.description.\(fetchError ?? -1)"))
+                    ContentUnavailableView("Station.unavailable", systemImage: "flag.2.crossed", description: Text("Station.unavailable.description.\(String(describing: fetchError))"))
                 }
                 .onTapGesture {
-                    Task {
-                        await refreshGameplayInforation()
-                    }
+                    startConnection()
                 }
             }
         }
         .navigationTitle("Station")
         .withSystemBackground()
         .onAppear {
-            Task {
-                await refreshGameplayInforation()
-            }
+            startConnection()
+        }
+        .onDisappear {
+            fetchingTask?.cancel()
         }
     }
     
-    func refreshGameplayInforation() async {
+    func startConnection() {
         informationIsAvailable = true
-        // TODO: !!!!!!!!
-//        let task = Task {
-//            do {
-//                try await DoriAPI.Station.receiveRooms { newRooms in
-//                    roomArray.append(contentsOf: newRooms)
-//                }
-//                print("Finished!")
-//            } catch {
-//                let 
-//            }
-//        }
-        informationIsLoading = false
+        fetchingTask = Task {
+            do {
+                try await DoriAPI.Station.receiveRooms { newRooms in
+                    informationIsLoading = false
+                    allGameplays += newRooms
+                    displayingGameplays = allGameplays.reversed().combiningReferenceRepeatingItems()
+                }
+            } catch {
+                informationIsAvailable = false
+                fetchError = error
+            }
+        }
     }
 }
 
 struct StationItemView: View {
-    var item: StationGameplay
+    @Environment(\.horizontalSizeClass) var sizeClass
+    
+    var item: CombinedRoom
     @State var itemTipStatus = 0
     @State var reporingSheetIsDisplaying = false
     @State var blockingSheetIsDisplaying = false
     @State var reasonOfReport = ""
     var body: some View {
         Button(action: {
-            copyStringToClipboard(String(item.roomNumber))
+            copyStringToClipboard(String(item.room.number))
             itemTipStatus = 1
         }, label: {
             CustomGroupBox(cornerRadius: 20) {
                 HStack {
-                    WebImage(url: item.userInfo?.avatarLink(), content: { image in
+                    WebImage(url: item.room.creator.avatarURL(), content: { image in
                         image
                             .resizable()
                     }, placeholder: {
@@ -125,28 +128,28 @@ struct StationItemView: View {
                     .frame(width: 40, height: 40)
                     .iconBadge(item.quantity, ignoreOne: true)
                     VStack(alignment: .leading) {
-                        if let username = item.userInfo?.username {
+                        if let username = item.room.creator.username {
                             HStack {
                                 Text(username)
                                     .bold()
-                                if let bandPower = item.userInfo?.bandPower, bandPower > 0 {
+                                if let bandPower = item.room.creator.gameProfile?.bandPower, bandPower > 0 {
                                     Text("Station.item.band-power.\(bandPower)")
                                         .foregroundStyle(.secondary)
                                 }
                             }
                         }
                         HStack {
-                            Text(item.roomNumber)
+                            Text(item.room.number)
                                 .bold()
                             Group {
-                                switch item.roomType {
-                                case "7":
+                                switch item.room.type {
+                                case .standard:
                                     Text("Station.item.type.7")
-                                case "12":
+                                case .master:
                                     Text("Station.item.type.12")
-                                case "18":
+                                case .grand:
                                     Text("Station.item.type.18")
-                                case "25":
+                                case .legend:
                                     Text("Station.item.type.25")
                                 default:
                                     EmptyView()
@@ -154,16 +157,31 @@ struct StationItemView: View {
                             }
                             .foregroundStyle(.secondary)
                         }
-                        Text(item.description)
+                        Text(item.room.description)
+                            .font(isMACOS ? .body : .caption)
+                        if let mainDeck = item.room.creator.gameProfile?.mainDeck {
+                            HStack(spacing: 5) {
+                                ForEach(mainDeck.sortAsStandardBand(), id: \.self) { item in
+                                    CardPreviewViewWithPlaceholder(id: item.id, isTrained: item.trained)
+                                }
+                            }
+                        }
                     }
                     .textSelection(.enabled)
-                    Spacer()
+                    Spacer(minLength: 0)
                     VStack(alignment: .trailing) {
                         HStack {
-                            if let source = item.sourceInfo {
-                                Text(source.name)
+                            if sizeClass == .regular {
+                                switch item.room.source {
+                                case .qq(let name):
+                                    Text(name)
+                                case .website(let name):
+                                    Text(name)
+                                default:
+                                    EmptyView()
+                                }
                             }
-                            Text(Date(timeIntervalSince1970: Double(item.timestamp)/1000), style: .relative)
+                            Text(item.room.dateCreated, style: .relative)
                         }
                         .foregroundStyle(.secondary)
                         .font(.caption)
@@ -195,7 +213,7 @@ struct StationItemView: View {
                                         .labelStyle(.iconOnly)
                                 })
                                 Button(action: {
-                                    copyStringToClipboard(String(item.roomNumber))
+                                    copyStringToClipboard(String(item.room.number))
                                     itemTipStatus = 1
                                 }, label: {
                                     Label("Station.item.copy", systemImage: "document.on.document")
@@ -218,7 +236,7 @@ struct StationItemView: View {
             }
         })
         .buttonStyle(.plain)
-        .alert("Station.item.report.alert.title.\(item.userInfo?.username ?? "nil")", isPresented: $reporingSheetIsDisplaying, actions: {
+        .alert("Station.item.report.alert.title.\(item.room.creator.username ?? "nil")", isPresented: $reporingSheetIsDisplaying, actions: {
             TextField("Station.item.report.alert.reason", text: $reasonOfReport)
             Button(role: .cancel, action: {}, label: {
                 Text("Station.item.report.alert.cancel")
@@ -232,7 +250,7 @@ struct StationItemView: View {
         }, message: {
             Text("Station.item.report.alert.message")
         })
-        .alert("Station.item.block.alert.title.\(item.userInfo?.username ?? "nil")", isPresented: $blockingSheetIsDisplaying, actions: {
+        .alert("Station.item.block.alert.title.\(item.room.creator.username ?? "nil")", isPresented: $blockingSheetIsDisplaying, actions: {
             Button(role: .cancel, action: {}, label: {
                 Text("Station.item.block.alert.cancel")
             })
@@ -246,53 +264,27 @@ struct StationItemView: View {
             Text("Station.item.block.alert.message")
         })
     }
-}
-
-func getAllAvailableGameplays() async -> Result<[StationGameplay], Int> {
-    do {
-        let data = try await fetchData(from: "https://api.bandoristation.com/?function=query_room_number")
-        let json = try JSON(data: data)
+    
+    struct CardPreviewViewWithPlaceholder: View {
+        var id: Int
+        var isTrained: Bool
+        var sideLength: CGFloat = 40
         
-        if json["status"].string == "success" {
-            if let gameplays = json["response"].array {
-                var finalGameplays: [StationGameplay] = []
-                for gameplay in gameplays {
-                    if let roomNumber = gameplay["number"].string, let description = gameplay["raw_message"].string, let roomType = gameplay["type"].string, let timestamp = gameplay["time"].int {
-                        
-                        var shorterDesc = description
-                        
-                        if description.hasPrefix(String(roomNumber)) {
-                            shorterDesc.removeFirst(roomNumber.count)
-                        }
-                        if shorterDesc.hasPrefix(" ") {
-                            shorterDesc.removeFirst()
-                        }
-                        
-                        var userInfo: StationGameplay.StationUser? = nil
-                        let jsonUserInfo = gameplay["user_info"]
-                        if let userType = jsonUserInfo["type"].string, let userID = jsonUserInfo["user_id"].int, let userName = jsonUserInfo["username"].string, let userAvatar = jsonUserInfo["avatar"].string {
-                            userInfo = StationGameplay.StationUser(type: userType, avatar: userAvatar, username: userName, id: userID, bandPower: jsonUserInfo["bandori_player_brief_info"]["band_power"].int)
-                        }
-                        
-                        var sourceInfo: StationGameplay.SourceInfo? = nil
-                        let jsonSourceInfo = gameplay["source_info"]
-                        if let sourceName = jsonSourceInfo["name"].string, let sourceType = jsonSourceInfo["type"].string {
-                            sourceInfo = StationGameplay.SourceInfo(name: sourceName, type: sourceType)
-                        }
-                        finalGameplays.append(StationGameplay(roomNumber: roomNumber, description: shorterDesc, roomType: roomType, timestamp: timestamp, userInfo: userInfo, sourceInfo: sourceInfo))
-                    }
-                }
-                let historyGameplays = HistoryGameplayHolder.shared.historyGameplays
-                HistoryGameplayHolder.shared.historyGameplays = finalGameplays
-                return .success(finalGameplays.merge(with: historyGameplays).combiningReferenceRepeatingItems())
+        @State var card: Card? = nil
+        var body: some View {
+            if let card {
+                CardPreviewImage(card, showTrainedVersion: isTrained, sideLength: sideLength)
             } else {
-                return .failure(502)
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(getPlaceholderColor())
+                    .frame(width: sideLength, height: sideLength)
+                    .onAppear {
+                        Task {
+                            card = await Card(id: id)
+                        }
+                    }
             }
-        } else {
-            return .failure(501)
         }
-    } catch {
-        return .failure(400)
     }
 }
 
@@ -313,82 +305,71 @@ func fetchData(from url: String) async throws -> Data {
     }
 }
 
-struct StationGameplay: Hashable, Equatable {
-    var roomNumber: String
-    var description: String
-    var roomType: String
-    var timestamp: Int
-    var userInfo: StationUser?
-    var sourceInfo: SourceInfo?
-    var quantity: Int = 1 // This number goes up if repeating items are found.
-    
-    struct StationUser: Hashable, Equatable {
-        var type: String
-        var avatar: String
-        var username: String
-        var id: Int
-        var bandPower: Int?
-        
-        func avatarLink(isQQ: Bool? = nil) -> URL {
-            // Use prefix check instead of type check is to avoid Tsugu and other active user from losing their avatar pic
-            let condition = isQQ ?? username.hasPrefix("QQ用户")
-            if condition {
-                return URL(string: "https://q1.qlogo.cn/g?b=qq&nk=\(id)&s=640")!
-            } else {
-                return URL(string: "https://asset.bandoristation.com/images/user-avatar/\(avatar)")!
-            }
-        }
-    }
-    
-    struct SourceInfo: Hashable, Equatable {
-        var name: String
-        var type: String
-    }
-    
-    func isSameReference(as rhs: StationGameplay) -> Bool {
-        return self.roomNumber == rhs.roomNumber &&
-        self.roomType == rhs.roomType &&
-        self.userInfo == rhs.userInfo
+extension DoriAPI.Station.Room {
+    func isSameReference(as rhs: DoriAPI.Station.Room) -> Bool {
+        return self.number == rhs.number &&
+        self.type == rhs.type &&
+        self.creator == rhs.creator
         // Same room, same type and same user counts as "referring to the same gameplay".
     }
     
-    func dropQuantity() -> Self {
-        var mutableSelf = self
-        mutableSelf.quantity = 0
-        return mutableSelf
+    var description: String {
+        var result = self.message
+        if result.hasPrefix(String(self.number)) {
+            result.removeFirst(self.number.count)
+        }
+        if result.hasPrefix(" ") {
+            result.removeFirst()
+        }
+        return result
     }
 }
 
-extension Array<StationGameplay> {
-    func merge(with history: [StationGameplay]) -> Self {
-        var result = self
-        for play in history {
-            if !result.contains(play) {
-                result.append(play)
-            }
+extension DoriAPI.Station.UserInformation {
+    func avatarURL(isQQ: Bool? = nil) -> URL {
+        // Use prefix check instead of type check is to avoid Tsugu and other active user from losing their avatar pic
+        let condition = isQQ ?? self.username?.hasPrefix("QQ用户") ?? false
+        if condition {
+            return URL(string: "https://q1.qlogo.cn/g?b=qq&nk=\(id)&s=640")!
+        } else {
+            return URL(string: "https://asset.bandoristation.com/images/user-avatar/\(self._avatarFileName)")!
         }
-        return result.sorted(by: { $0.timestamp > $1.timestamp })
     }
-    
-    // Must have order new to old, or else older items overtakes representing data.
-    func combiningReferenceRepeatingItems() -> Self {
-        var result: [StationGameplay] = []
+}
+
+extension Array<DoriAPI.Station.Room> {
+    func combiningReferenceRepeatingItems() -> Array<CombinedRoom> {
+        var result: [CombinedRoom] = []
         for item in self {
-            if result.contains(where: { $0.isSameReference(as: item) }) {
-                result[result.firstIndex(where: { $0.isSameReference(as: item) })!].quantity += 1
+            if let firstIndex = result.firstIndex(where: { $0.room.isSameReference(as: item) }) {
+                result[firstIndex].quantity += 1
             } else {
-                result.append(item)
+                result.append(CombinedRoom(item))
             }
         }
         return result
     }
 }
 
+extension Array {
+    func sortAsStandardBand() -> Array {
+        guard self.count == 5 else { return self }
+        var mutableSelf = self
+        mutableSelf.swapAt(0, 2)
+        mutableSelf.swapAt(0, 3)
+        return mutableSelf
+    }
+}
+
 extension String: @retroactive Error {}
 extension Int: @retroactive Error {}
 
-class HistoryGameplayHolder: @unchecked Sendable {
-    static let shared = HistoryGameplayHolder()
+struct CombinedRoom: Hashable, Sendable {
+    var room: DoriAPI.Station.Room
+    var quantity: Int = 1
     
-    var historyGameplays: [StationGameplay] = []
+    init(_ room: DoriAPI.Station.Room, quantity: Int = 1) {
+        self.room = room
+        self.quantity = quantity
+    }
 }
