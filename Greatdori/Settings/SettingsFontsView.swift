@@ -49,62 +49,86 @@ struct SettingsFontsView: View {
     @State var showAboutSheet = false
     @State var aboutContent = ""
     var body: some View {
-        Group {
-            Section("Settings.fonts.system") {
-                ForEach(FontManager.builtInFonts, id: \.self) { item in
-                    SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item)
-                }
-                ForEach(addedSystemFonts, id: \.self) { item in
-                    SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item)
-                        .swipeActions {
-                            Button(role: .destructive, action: {
-                                addedSystemFonts.removeAll(where: { $0 == item })
-                                fontManager.removeFontFromPreferences(item)
-                            }, label: {
-                                Label("Settings.fonts.remove", systemImage: "trash")
-                            })
-                        }
-                }
-            }
-            
-            Section("Settings.fonts.installed") {
-                if !fontManager.loadedFonts.isEmpty {
-                    ForEach(fontManager.loadedFonts, id: \.self) { item in
-                        SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item.fontName)
+        Form {
+            Group {
+                Section("Settings.fonts.system") {
+                    ForEach(FontManager.builtInFonts, id: \.self) { item in
+                        SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item)
+                    }
+                    ForEach(addedSystemFonts, id: \.self) { item in
+                        SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item)
                             .swipeActions {
                                 Button(role: .destructive, action: {
-                                    fontManager.removeFont(fontName: item.fontName)
+                                    addedSystemFonts.removeAll(where: { $0 == item })
+                                    fontManager.removeFontFromPreferences(item)
                                 }, label: {
                                     Label("Settings.fonts.remove", systemImage: "trash")
                                 })
                             }
                     }
-                } else {
-                    Text("Settings.fonts.installed.none")
-                        .foregroundStyle(.secondary)
-                }
-            }
-            
-            Section(content: {
-                ForEach(DoriLocale.allCases, id: \.self) { locale in
-                    NavigationLink(destination: {
-                        SettingsFontsPicker(externalUpdateIndex: $storyViewerUpdateIndex, locale: locale)
-                    }, label: {
-                        HStack {
-                            Text("\(locale.rawValue.uppercased())")
-                            Spacer()
-                            Text(fontManager.getUserFriendlyFontDisplayName(forFontName: storyViewerFonts[locale] ?? "") ?? (storyViewerFonts[locale] ?? ""))
-                                .foregroundStyle(.secondary)
-                        }
-                    })
                 }
                 
-            }, header: {
-                Text("Settings.fonts.story-viewer")
-            }, footer: {
-                if isMACOS {
-                    SettingsDocumentButton(document: "FontSuggestions") {
-                        Text("Settings.fonts.learn-more")
+                Section("Settings.fonts.installed") {
+                    if !fontManager.loadedFonts.isEmpty {
+                        ForEach(fontManager.loadedFonts, id: \.self) { item in
+                            SettingsFontsPreview(fontInspectorTarget: $fontInspectorTarget, fontInspectorSheetIsDisplaying: $fontInspectorSheetIsDisplaying, fontName: item.fontName)
+                                .swipeActions {
+                                    Button(role: .destructive, action: {
+                                        fontManager.removeFont(fontName: item.fontName)
+                                    }, label: {
+                                        Label("Settings.fonts.remove", systemImage: "trash")
+                                    })
+                                }
+                        }
+                    } else {
+                        Text("Settings.fonts.installed.none")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                
+                Section(content: {
+                    ForEach(DoriLocale.allCases, id: \.self) { locale in
+                        NavigationLink(destination: {
+                            SettingsFontsPicker(externalUpdateIndex: $storyViewerUpdateIndex, locale: locale)
+                        }, label: {
+                            HStack {
+                                Text("\(locale.rawValue.uppercased())")
+                                Spacer()
+                                Text(fontManager.getUserFriendlyFontDisplayName(forFontName: storyViewerFonts[locale] ?? "") ?? (storyViewerFonts[locale] ?? ""))
+                                    .foregroundStyle(.secondary)
+                            }
+                        })
+                    }
+                    
+                }, header: {
+                    Text("Settings.fonts.story-viewer")
+                }, footer: {
+                    if isMACOS {
+                        SettingsDocumentButton(document: "FontSuggestions") {
+                            Text("Settings.fonts.learn-more")
+                        }
+                        .toolbar {
+                            ToolbarItem(placement: .primaryAction) {
+                                Button(action: {
+                                    newFontSheetIsDisplaying = true
+                                }, label: {
+                                    Label("Settings.fonts.new", systemImage: "plus")
+                                })
+                            }
+                        }
+                    }
+                })
+                .onChange(of: storyViewerUpdateIndex, initial: true) {
+                    for locale in DoriLocale.allCases {
+                        storyViewerFonts.updateValue(UserDefaults.standard.string(forKey: "StoryViewerFont\(locale.rawValue.uppercased())") ?? storyViewerDefaultFont[locale] ?? ".AppleSystemUIFont", forKey: locale)
+                    }
+                }
+                
+                if !isMACOS {
+                    Section {
+                        SettingsDocumentButton(document: "FontSuggestions") {
+                            Text("Settings.fonts.learn-more")
+                        }
                     }
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
@@ -116,30 +140,9 @@ struct SettingsFontsView: View {
                         }
                     }
                 }
-            })
-            .onChange(of: storyViewerUpdateIndex, initial: true) {
-                for locale in DoriLocale.allCases {
-                    storyViewerFonts.updateValue(UserDefaults.standard.string(forKey: "StoryViewerFont\(locale.rawValue.uppercased())") ?? storyViewerDefaultFont[locale] ?? ".AppleSystemUIFont", forKey: locale)
-                }
-            }
-            
-            if !isMACOS {
-                Section {
-                    SettingsDocumentButton(document: "FontSuggestions") {
-                        Text("Settings.fonts.learn-more")
-                    }
-                }
-                .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button(action: {
-                            newFontSheetIsDisplaying = true
-                        }, label: {
-                            Label("Settings.fonts.new", systemImage: "plus")
-                        })
-                    }
-                }
             }
         }
+        .formStyle(.grouped)
         .navigationTitle("Settings.fonts")
         .sheet(isPresented: $newFontSheetIsDisplaying) {
             SettingsFontsAdd()

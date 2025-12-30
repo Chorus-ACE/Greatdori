@@ -165,7 +165,7 @@ let settingsTabs: [SettingsTab] = [
     .init(symbol: "bell.badge", name: "Settings.permissions", destination: "permission"),
     .init(symbol: "widget.small", name: "Settings.widgets", destination: "widget"),
     .init(symbol: "person.crop.circle", name: "Settings.account", destination: "account", note: "NO-FORM"),
-    .init(symbol: "textformat", name: "Settings.fonts", destination: "font"),
+    .init(symbol: "textformat", name: "Settings.fonts", destination: "font", note: "NO-FORM"),
     .init(symbol: "hammer", name: "Settings.advanced", destination: "advanced"),
     .init(symbol: "info.circle", name: "Settings.about", destination: "about", note: "NO-FORM"),
     .init(symbol: "ant", name: "Settings.debug", destination: "debug", note: "DEBUG")
