@@ -20,12 +20,12 @@ import SwiftUI
 import UIKit
 #endif
 
-struct StationFilter: Hashable, Sendable {
+struct StationFilter: Hashable, Sendable, Codable {
     var roomTypes: Set<DoriAPI.Station.RoomType> = Set(DoriAPI.Station.RoomType.allCases)
     var disallowedKeywords: [String] = []
     var disallowedUsers: [DisallowedUser] = []
     
-    struct DisallowedUser: Hashable, Sendable {
+    struct DisallowedUser: Hashable, Sendable, Codable {
         var id: Int
         var name: String
     }
@@ -42,8 +42,10 @@ struct StationFilterView: View {
     
     @State var lastSelectAllActionIsDeselect: Bool = false
     @State var theItemThatShowsSelectAllTips: DoriFrontend.Filter.Key? = nil
-    
     @State var keywordNewItem = ""
+    
+    @State var allAccounts: [GreatdoriAccount] = []
+    @State var selectedAccount: GreatdoriAccount? = nil
     var body: some View {
         Form {
             Section(content: {
@@ -127,7 +129,9 @@ struct StationFilterView: View {
                     }
                     
                     HStack {
-                        TextField("Station.filter.keyword.prompt", text: $keywordNewItem)
+                        TextField("", text: $keywordNewItem, prompt: Text("Station.filter.keyword.prompt"))
+                            .labelsHidden()
+                            .textFieldStyle(.roundedBorder)
                         Button(action: {
                             if !filter.disallowedKeywords.contains(keywordNewItem) {
                                 filter.disallowedKeywords.append(keywordNewItem)
@@ -138,13 +142,65 @@ struct StationFilterView: View {
                         })
                         .disabled(keywordNewItem.isEmpty || filter.disallowedKeywords.contains(keywordNewItem))
                     }
+                    
+                    if !filter.disallowedKeywords.isEmpty {
+                        FlowLayout(items: filter.disallowedKeywords, verticalSpacing: flowLayoutDefaultVerticalSpacing, horizontalSpacing: flowLayoutDefaultHorizontalSpacing) { item in
+                            TextCapsuleWithDeleteButton(deleteAction: {
+                                filter.disallowedKeywords.removeAll(where: { $0 == item })
+                            }, content: {
+                                Text(item)
+                            })
+                            .buttonStyle(.plain)
+                        }
+                    } else {
+                        HStack {
+                            Text("Station.filter.keyword.none")
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        }
+                    }
+                }
+                
+                VStack {
+                    HStack {
+                        VStack {
+                            Text("Station.filter.user")
+                                .bold()
+                                .accessibilityHeading(.h2)
+                        }
+                        Spacer()
+                        Button(action: {
+                            filter.disallowedUsers.removeAll()
+                        }, label: {
+                            Text("Station.filter.clear")
+                            .foregroundStyle(.secondary)
+                        })
+                        .buttonStyle(.plain)
+                    }
+                    
+                    if !filter.disallowedUsers.isEmpty {
+                        FlowLayout(items: filter.disallowedUsers, verticalSpacing: flowLayoutDefaultVerticalSpacing, horizontalSpacing: flowLayoutDefaultHorizontalSpacing) { item in
+                            TextCapsuleWithDeleteButton(deleteAction: {
+                                filter.disallowedUsers.removeAll(where: { $0 == item })
+                            }, content: {
+                                Text(item.name)
+                            })
+                            .buttonStyle(.plain)
+                        }
+                    } else {
+                        HStack {
+                            Text("Station.filter.user.none")
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        }
+                    }
                 }
             }, header: {
                 VStack(alignment: .leading) {
                     if sizeClass == .compact {
                         Color.clear.frame(height: 10)
                     }
-                    Text("Filter")
+                    Text("Station.filter")
                 }
             })
             
@@ -152,10 +208,103 @@ struct StationFilterView: View {
                 Button(action: {
                     filter = .init()
                 }, label: {
-                    Text("Filter.clear-all")
+                    Text("Station.filter.clear-all")
                 })
                 .disabled(!filter.isFiltering)
             }
+            
+            Section("Station.filter.import") {
+                Picker(selection: $selectedAccount, content: {
+                    ForEach(allAccounts, id: \.self) { item in
+                        Text(item.description)
+                            .tag(item)
+                    }
+                }, label: {
+                    Text("Station.filter.import.source")
+                }, optionalCurrentValueLabel: {
+                    if let selectedAccount {
+                        Text(selectedAccount.username)
+                    } else {
+                        Text("Station.filter.import.source.none")
+                    }
+                })
+                Button(action: {
+//                    if let selectedAccount {
+//                        Task {
+//                            do {
+//                                let token = try selectedAccount.readToken()
+//                                let userInfomation = try await DoriAPI.Station.userInformation(userToken: DoriAPI.Station.UserToken(token))
+//                                userInfomation.websiteSettings?.postPreference.preselectedWordList
+//                            }
+//                        }
+//                    }
+                }, label: {
+                    Text("Station.filter.import.import")
+                })
+            }
         }
+        .onAppear {
+            allAccounts = (try? AccountManager.bandoriStation.load()) ?? []
+            selectedAccount = allAccounts.first
+        }
+    }
+    
+    
+    struct TextCapsuleWithDeleteButton<Content: View>: View {
+        @Environment(\.horizontalSizeClass) var sizeClass
+        let deleteAction: () -> Void
+        let content: Content
+        let cornerRadius: CGFloat = capsuleDefaultCornerRadius
+        @State var textWidth: CGFloat = 0
+        
+        init(deleteAction: @escaping () -> Void, @ViewBuilder content: () -> Content) {
+            self.deleteAction = deleteAction
+            self.content = content()
+        }
+        var body: some View {
+            ZStack {
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(lineWidth: 2)
+                    .foregroundStyle(.primary)
+                    .frame(width: textWidth, height: filterItemHeight)
+                HStack {
+                    content
+                    Button(action: {
+                        deleteAction()
+                    }, label: {
+                        Image(systemName: "xmark")
+                            .font(.caption)
+                    })
+                }
+                .foregroundStyle(.primary)
+                .frame(height: filterItemHeight)
+                .padding(.horizontal, isMACOS ? 10 : nil)
+                .onFrameChange(perform: { geometry in
+                    textWidth = geometry.size.width
+                })
+                //FIXME: Text padding to much in macOS
+            }
+        }
+    }
+}
+
+
+class CodableStorage {
+    static func save<T: Codable>(
+        _ value: T,
+        forKey key: String
+    ) throws {
+        let data = try JSONEncoder().encode(value)
+        UserDefaults.standard.set(data, forKey: key)
+    }
+    
+    static func load<T: Codable>(
+        _ type: T.Type,
+        forKey key: String
+    ) throws -> T? {
+        guard let data = UserDefaults.standard.data(forKey: key) else {
+            return nil
+        }
+        return try JSONDecoder().decode(T.self, from: data)
     }
 }

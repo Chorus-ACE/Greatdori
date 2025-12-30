@@ -201,6 +201,7 @@
 		E91ABF4A2ED97C630043CCE7 /* GachaDetailPossibilityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91ABF492ED97C610043CCE7 /* GachaDetailPossibilityView.swift */; };
 		E91D075A2F03A9F600A13FFD /* EventCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D07592F03A9E700A13FFD /* EventCalculator.swift */; };
 		E91D075C2F03BAB600A13FFD /* StationFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D075B2F03BAB400A13FFD /* StationFilter.swift */; };
+		E91D075F2F0419AA00A13FFD /* StationNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D075E2F0419A700A13FFD /* StationNew.swift */; };
 		E92401612E993B9D003BF482 /* NewsDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92401602E993B94003BF482 /* NewsDetailsView.swift */; };
 		E930F7822EE03CE100E8847F /* ISVLive2DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E930F7812EE03CDF00E8847F /* ISVLive2DView.swift */; };
 		E930F7842EE03D1B00E8847F /* ISVReliance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E930F7832EE03D0E00E8847F /* ISVReliance.swift */; };
@@ -695,6 +696,7 @@
 		E91ABF492ED97C610043CCE7 /* GachaDetailPossibilityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GachaDetailPossibilityView.swift; sourceTree = "<group>"; };
 		E91D07592F03A9E700A13FFD /* EventCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCalculator.swift; sourceTree = "<group>"; };
 		E91D075B2F03BAB400A13FFD /* StationFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationFilter.swift; sourceTree = "<group>"; };
+		E91D075E2F0419A700A13FFD /* StationNew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationNew.swift; sourceTree = "<group>"; };
 		E92401602E993B94003BF482 /* NewsDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailsView.swift; sourceTree = "<group>"; };
 		E930F7812EE03CDF00E8847F /* ISVLive2DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISVLive2DView.swift; sourceTree = "<group>"; };
 		E930F7832EE03D0E00E8847F /* ISVReliance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISVReliance.swift; sourceTree = "<group>"; };
@@ -1346,6 +1348,7 @@
 			children = (
 				E99B57642EC1E7DD0045EFC9 /* StationView.swift */,
 				E91D075B2F03BAB400A13FFD /* StationFilter.swift */,
+				E91D075E2F0419A700A13FFD /* StationNew.swift */,
 			);
 			path = Station;
 			sourceTree = "<group>";
@@ -1973,6 +1976,7 @@
 				E930F7A82EE0542900E8847F /* EventDetailStoriesView.swift in Sources */,
 				E942191E2E8AA5EB00F24974 /* DetailCostumesSection.swift in Sources */,
 				8C08B8BD2E73DC8F00447B05 /* CalendarEvents.swift in Sources */,
+				E91D075F2F0419AA00A13FFD /* StationNew.swift in Sources */,
 				E94219202E8AA60700F24974 /* DetailsCardsSection.swift in Sources */,
 				E942190A2E8AA4B000F24974 /* SongSearchView.swift in Sources */,
 				E930F7A62EE0540400E8847F /* EventDetailOverviewView.swift in Sources */,

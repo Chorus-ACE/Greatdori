@@ -32,6 +32,8 @@ struct StationView: View {
     
     @State var filter: StationFilter = .init()
     @State var filterIsDisplaying = false
+    
+    @State var newGameplaySheetIsDisplaying = false
     var body: some View {
         Group {
             if informationIsAvailable {
@@ -43,7 +45,7 @@ struct StationView: View {
                     CustomScrollView {
                         Section(content: {
                             ForEach(displayingGameplays, id: \.self) { item in
-                                StationItemView(item: item)
+                                StationItemView(item: item, filter: $filter)
                             }
                             .animation(.easeInOut(duration: 0.5), value: displayingGameplays)
                         }, footer: {
@@ -73,21 +75,40 @@ struct StationView: View {
         .navigationTitle("Station")
         .withSystemBackground()
         .onAppear {
+            filter = (try? CodableStorage.load(StationFilter.self, forKey: "StationFilter")) ?? .init()
             startConnection()
         }
         .onDisappear {
             fetchingTask?.cancel()
         }
-        .toolbar {
-            Button(action: {
-                filterIsDisplaying.toggle()
-            }, label: {
-                Image(systemName: "line.3.horizontal.decrease")
-            })
-            .animation(.easeInOut(duration: 0.2), value: filter.isFiltering)
-            .accessibilityLabel("Filter")
-            .accessibilityValue(filter.isFiltering ? "Accessibility.filter.active" : "Accessibility.filter.not-active")
+        .onChange(of: filter) {
+            displayingGameplays = allGameplays.reversed().filter(withFilter: filter).combiningReferenceRepeatingItems()
+            try? CodableStorage.save(filter, forKey: "StationFilter")
         }
+        .toolbar {
+            ToolbarItem {
+                Button(action: {
+                    filterIsDisplaying.toggle()
+                }, label: {
+                    Label("Station.filter", systemImage: "line.3.horizontal.decrease")
+                })
+            }
+            
+            if #available(iOS 26.0, macOS 26.0, *) {
+                ToolbarSpacer()
+            }
+            
+            ToolbarItem {
+                Button(action: {
+                    newGameplaySheetIsDisplaying = true
+                }, label: {
+                    Label("Station.new", systemImage: "plus")
+                })
+            }
+        }
+        .sheet(isPresented: $newGameplaySheetIsDisplaying, content: {
+            StationAddView()
+        })
         .wrapIf(sizeClass == .regular) { content in
             content
                 .inspector(isPresented: $filterIsDisplaying) {
@@ -114,7 +135,7 @@ struct StationView: View {
                 try await DoriAPI.Station.receiveRooms { newRooms in
                     informationIsLoading = false
                     allGameplays += newRooms
-                    displayingGameplays = allGameplays.reversed().combiningReferenceRepeatingItems()
+                    displayingGameplays = allGameplays.reversed().filter(withFilter: filter).combiningReferenceRepeatingItems()
                 }
             } catch {
                 informationIsAvailable = false
@@ -128,6 +149,7 @@ struct StationItemView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     
     var item: CombinedRoom
+    @Binding var filter: StationFilter
     @State var itemTipStatus = 0
     @State var reporingSheetIsDisplaying = false
     @State var blockingSheetIsDisplaying = false
@@ -265,11 +287,11 @@ struct StationItemView: View {
         })
         .alert("Station.item.block.alert.title.\(item.room.creator.username ?? "nil")", isPresented: $blockingSheetIsDisplaying, actions: {
             Button(optionalRole: .destructive, action: {
+                filter.disallowedUsers.append(.init(id: item.room.creator.id, name: item.room.creator.username ?? String(item.room.creator.id)))
                 itemTipStatus = 3
             }, label: {
                 Text("Station.item.block.alert.confirm")
             })
-            //            .keyboardShortcut(.defaultAction)
         }, message: {
             Text("Station.item.block.alert.message")
         })
@@ -365,6 +387,15 @@ extension DoriAPI.Station.UserInformation {
 }
 
 extension Array<DoriAPI.Station.Room> {
+    func filter(withFilter filter: StationFilter) -> Self {
+        var result = self
+        result = self
+            .filter({ filter.roomTypes.contains($0.type) })
+            .filter({ room in !filter.disallowedKeywords.contains(where: { keyword in room.description.contains(keyword) }) })
+            .filter({ room in !filter.disallowedUsers.map({ $0.id }).contains(where: { id in room.creator.id == id }) })
+        return result
+    }
+    
     func combiningReferenceRepeatingItems() -> Array<CombinedRoom> {
         var result: [CombinedRoom] = []
         for item in self {
