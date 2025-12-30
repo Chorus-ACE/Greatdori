@@ -39,14 +39,15 @@ struct WhatsNewView: View {
                     
                     ForEach(whatsNew, id: \.self) { item in
                         HStack {
-                            Image(systemName: item.icon)
+                            Image(_internalSystemName: item.icon)
                                 .foregroundStyle(.accent)
                                 .font(.title)
+                                .frame(width: 40)
                             VStack(alignment: .leading) {
-                                Text(item.title)
+                                Text(item.localizedTitle() ?? "\(item.item)")
                                     .bold()
                                     .font(.title3)
-                                Text(item.description)
+                                Text(item.localizedDescription() ?? "\(item.icon)")
                                     .foregroundStyle(.secondary)
                                     .font(.title3)
                             }
@@ -203,25 +204,53 @@ struct AppVersion: Hashable, Comparable, Equatable {
 }
 
 struct AppUpdateItem: Hashable {
-    var title: LocalizedStringResource
+    var item: String
     var icon: String
-    var description: LocalizedStringResource
     
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(title.key)
-        hasher.combine(icon)
-        hasher.combine(description.key)
+    func getLocalizedText(_ lang: Locale.Language = Locale.current.language) -> (String, String)? {
+        if lang.languageCode == .chinese {
+            if lang.script == .hanTraditional, let matchedItem = whatsNew_ZH_HANT[self.item] {
+                return matchedItem
+            }
+            
+            if let matchedItem = whatsNew_ZH_HANS[self.item] {
+                return matchedItem
+            }
+        } else {
+            return whatsNew_EN[self.item]
+        }
+        return nil
+    }
+    
+    func localizedTitle(_ lang: Locale.Language = Locale.current.language) -> String? {
+        return self.getLocalizedText(lang)?.0
+    }
+    
+    func localizedDescription(_ lang: Locale.Language = Locale.current.language) -> String? {
+        return self.getLocalizedText(lang)?.1
     }
 }
 
+
 let whatsNew: [AppUpdateItem] = [
-    AppUpdateItem(title: "Whats-new.item.rewards", icon: "gift", description: "Whats-new.item.rewards.desc"),
-    AppUpdateItem(title: "Whats-new.item.localization", icon: "globe", description: "Whats-new.item.localization.desc"),
-    AppUpdateItem(title: "Whats-new.item.asset-explorer", icon: "folder", description: "Whats-new.item.asset-explorer.desc"),
-    AppUpdateItem(title: "Whats-new.item.shazam", icon: "shazam.logo", description: "Whats-new.item.shazam.desc"),
+    AppUpdateItem(item: "account", icon: "person.crop.circle"),
+    AppUpdateItem(item: "calculator", icon: "calculator"),
+    AppUpdateItem(item: "station", icon: "flag.2.crossed")
 ]
 
-//let whatsNewItemVersion: AppVersion? = AppVersion(major: 1, minor: 1, patch: 0, build: nil)
+let whatsNew_EN: [String: (String, String)] = [
+    "account": ("Account System", "Login to your Bestdori and BandoriStation accounts to get the best from these platforms."),
+    "calculator": ("Event Calculator", "Calculate gameplay time, used flames, event points and more with Event Calculator."),
+    "station": ("Multi-Live Finder", "Find multiplayer gameplays and joined with others on BandoriStation."),
+]
+let whatsNew_ZH_HANS: [String: (String, String)] = [
+    "account": ("账户系统", "登录至你的Bestdori和BandoriStation账户以获得最佳体验。"),
+    "calculator": ("活动PT计算器", "用活动PT计算器计算游戏时间、火、活动点数和更多信息。"),
+    "station": ("车站", "在Bandori车站中寻找协力并与他人拼车。"),
+]
+
+let whatsNew_ZH_HANT: [String: (String, String)] = [:]
+
 let showWhatsNewVersionAsRecentUpdate = true
 
 func stableHashOfWhatsNew() -> Int {
@@ -229,9 +258,10 @@ func stableHashOfWhatsNew() -> Int {
     // See the conformance to Hashable in Array.swift in stdlib
     hasher.combine(whatsNew.count) // discriminator
     for element in whatsNew {
-        hasher.combine(element.title.key)
+//        hasher.combine(element.title.key)
+        hasher.combine(element.item)
         hasher.combine(element.icon)
-        hasher.combine(element.description.key)
+//        hasher.combine(element.description.key)
     }
     return hasher.finalize()
 }

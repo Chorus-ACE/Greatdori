@@ -20875,6 +20875,7 @@
       }
     },
     "Whats-new.item.asset-explorer" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -20891,6 +20892,7 @@
       }
     },
     "Whats-new.item.asset-explorer.desc" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -20907,6 +20909,7 @@
       }
     },
     "Whats-new.item.localization" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -20923,6 +20926,7 @@
       }
     },
     "Whats-new.item.localization.desc" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -20939,6 +20943,7 @@
       }
     },
     "Whats-new.item.rewards" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -20955,6 +20960,7 @@
       }
     },
     "Whats-new.item.rewards.desc" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -20971,6 +20977,7 @@
       }
     },
     "Whats-new.item.shazam" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -20987,6 +20994,7 @@
       }
     },
     "Whats-new.item.shazam.desc" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

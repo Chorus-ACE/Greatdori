@@ -59,145 +59,141 @@ struct AssetListView: View {
     var body: some View {
         Group {
             if let items {
-                ScrollView {
-                    HStack {
-                        Spacer(minLength: 0)
-                        if let filteredItems {
-                            LazyVStack {
-                                CustomGroupBox {
-                                    if !filteredItems.isEmpty {
-                                        VStack {
-                                            ForEach(filteredItems, id: \.self) { item in
-                                                Group {
-                                                    if item.type == .file {
-                                                        Button(action: {
-                                                            openItem(item)
-                                                        }, label: {
-                                                            HStack {
-                                                                Label(title: {
-                                                                    HighlightableText(item.name)
-                                                                        .highlightKeyword($searchField)
-                                                                }, icon: {
-                                                                    if item == contentLoadingItem {
-                                                                        ProgressView()
-                                                                            .controlSize(.small)
-                                                                    } else {
-                                                                        Image(_internalSystemName: {
-                                                                            if item.name.hasSuffix(".jpg") || item.name.hasSuffix(".png") {
-                                                                                return "photo"
-                                                                            } else if item.name.hasSuffix(".mp3") {
-                                                                                return "music.note"
-                                                                            } else if item.name.hasSuffix(".mp4") {
-                                                                                return "film"
-                                                                            } else if item.name.hasSuffix(".bundle") {
-                                                                                return "buildingblock"
-                                                                            } else if item.name.hasSuffix(".txt") {
-                                                                                return "text.document"
-                                                                            } else {
-                                                                                return "document"
-                                                                            }
-                                                                        }())
-                                                                        .foregroundStyle(.gray)
-                                                                    }
-                                                                })
-                                                                Spacer()
-                                                            }
-                                                            .contentShape(Rectangle())
-                                                        })
-                                                    } else {
-                                                        NavigationLink(destination: {
-                                                            item.view
-                                                        }, label: {
-                                                            HStack {
-                                                                Label(title: {
-                                                                    HighlightableText(item.name)
-                                                                        .highlightKeyword($searchField)
-                                                                }, icon: {
-                                                                    Group {
-                                                                        switch item.type {
-                                                                        case .folder:
-                                                                            Image(systemName: "folder.fill")
-                                                                                .foregroundStyle(Color(red: 121 / 255, green: 190 / 255, blue: 230 / 255).gradient)
-                                                                                .background {
-                                                                                    Rectangle()
-                                                                                        .fill(Color.white)
-                                                                                        .padding(isMACOS ? 3 : 4)
-                                                                                        .offset(y: 1)
-                                                                                }
-                                                                        case .rip:
-                                                                            Image(systemName: "zipper.page")
-                                                                                .foregroundStyle(Color(red: 121 / 255, green: 190 / 255, blue: 230 / 255).gradient)
-                                                                        default:
-                                                                            EmptyView()
+                CustomScrollView {
+                    if let filteredItems {
+                        LazyVStack {
+                            CustomGroupBox {
+                                if !filteredItems.isEmpty {
+                                    VStack {
+                                        ForEach(filteredItems, id: \.self) { item in
+                                            Group {
+                                                if item.type == .file {
+                                                    Button(action: {
+                                                        openItem(item)
+                                                    }, label: {
+                                                        HStack {
+                                                            Label(title: {
+                                                                HighlightableText(item.name)
+                                                                    .highlightKeyword($searchField)
+                                                            }, icon: {
+                                                                if item == contentLoadingItem {
+                                                                    ProgressView()
+                                                                        .controlSize(.small)
+                                                                } else {
+                                                                    Image(_internalSystemName: {
+                                                                        if item.name.hasSuffix(".jpg") || item.name.hasSuffix(".png") {
+                                                                            return "photo"
+                                                                        } else if item.name.hasSuffix(".mp3") {
+                                                                            return "music.note"
+                                                                        } else if item.name.hasSuffix(".mp4") {
+                                                                            return "film"
+                                                                        } else if item.name.hasSuffix(".bundle") {
+                                                                            return "buildingblock"
+                                                                        } else if item.name.hasSuffix(".txt") {
+                                                                            return "text.document"
+                                                                        } else {
+                                                                            return "document"
                                                                         }
+                                                                    }())
+                                                                    .foregroundStyle(.gray)
+                                                                }
+                                                            })
+                                                            Spacer()
+                                                        }
+                                                        .contentShape(Rectangle())
+                                                    })
+                                                } else {
+                                                    NavigationLink(destination: {
+                                                        item.view
+                                                    }, label: {
+                                                        HStack {
+                                                            Label(title: {
+                                                                HighlightableText(item.name)
+                                                                    .highlightKeyword($searchField)
+                                                            }, icon: {
+                                                                Group {
+                                                                    switch item.type {
+                                                                    case .folder:
+                                                                        Image(systemName: "folder.fill")
+                                                                            .foregroundStyle(Color(red: 121 / 255, green: 190 / 255, blue: 230 / 255).gradient)
+                                                                            .background {
+                                                                                Rectangle()
+                                                                                    .fill(Color.white)
+                                                                                    .padding(isMACOS ? 3 : 4)
+                                                                                    .offset(y: 1)
+                                                                            }
+                                                                    case .rip:
+                                                                        Image(systemName: "zipper.page")
+                                                                            .foregroundStyle(Color(red: 121 / 255, green: 190 / 255, blue: 230 / 255).gradient)
+                                                                    default:
+                                                                        EmptyView()
                                                                     }
-                                                                    .frame(minWidth: 5)
-                                                                })
-                                                                Spacer()
-                                                            }
-                                                            .contentShape(Rectangle())
-                                                        })
-                                                    }
+                                                                }
+                                                                .frame(minWidth: 5)
+                                                            })
+                                                            Spacer()
+                                                        }
+                                                        .contentShape(Rectangle())
+                                                    })
                                                 }
-                                                .frame(minHeight: 5)
-                                                .buttonStyle(.plain)
-                                                .contextMenu {
-                                                    Section {
-                                                        if item.type == .file, let path = currentPath {
-                                                            Button("Asset-explorer.download", systemImage: "arrow.down.circle") {
-                                                                downloadItem(item, withPath: path)
-                                                            }
+                                            }
+                                            .frame(minHeight: 5)
+                                            .buttonStyle(.plain)
+                                            .contextMenu {
+                                                Section {
+                                                    if item.type == .file, let path = currentPath {
+                                                        Button("Asset-explorer.download", systemImage: "arrow.down.circle") {
+                                                            downloadItem(item, withPath: path)
                                                         }
                                                     }
                                                 }
-                                                .fileExporter(
-                                                    isPresented: $isFileExporterPresented,
-                                                    document: fileExporterDocument,
-                                                    contentType: .content,
-                                                    defaultFilename: fileExporterDefaultFileName
-                                                ) { _ in
-                                                    fileExporterDocument = nil
-                                                    fileExporterDefaultFileName = nil
-                                                }
-                                                if item != filteredItems.last {
-                                                    Divider()
-                                                }
                                             }
-                                        }
-                                    } else {
-                                        HStack {
-                                            Spacer()
-                                            ContentUnavailableView("Search.no-results", systemImage: "magnifyingglass", description: Text("Search.no-results.description"))
-                                            Spacer()
-                                        }
-                                    }
-                                }
-                                .frame(maxWidth: infoContentMaxWidth)
-                                
-                                DetailSectionsSpacer()
-                                
-                                let imageItems = filteredItems.filter( { $0.name.hasSuffix(".jpg") || $0.name.hasSuffix(".png") } )
-                                if let currentPath, !imageItems.isEmpty {
-                                    DetailArtsSection {
-                                        ArtsTab("") {
-                                            for item in imageItems {
-                                                ArtsItem(title: LocalizedStringResource(stringLiteral: item.name), url: currentPath.resourceURL(name: item.name))
+                                            .fileExporter(
+                                                isPresented: $isFileExporterPresented,
+                                                document: fileExporterDocument,
+                                                contentType: .content,
+                                                defaultFilename: fileExporterDefaultFileName
+                                            ) { _ in
+                                                fileExporterDocument = nil
+                                                fileExporterDefaultFileName = nil
+                                            }
+                                            if item != filteredItems.last {
+                                                Divider()
                                             }
                                         }
                                     }
-                                    .highlightKeyword($searchField)
+                                } else {
+                                    HStack {
+                                        Spacer()
+                                        ContentUnavailableView("Search.no-results", systemImage: "magnifyingglass", description: Text("Search.no-results.description"))
+                                        Spacer()
+                                    }
                                 }
                             }
-                            .padding()
-                            .wrapIf(true, in: {
-                                if #available(iOS 26, macOS 14.0, *) {
-                                    $0.navigationSubtitle(Text(searchField.isEmpty ? "Search.item.\(filteredItems.count)" : "Search.result.\(filteredItems.count)"))
-                                } else {
-                                    $0
+                            .frame(maxWidth: infoContentMaxWidth)
+                            
+                            DetailSectionsSpacer()
+                            
+                            let imageItems = filteredItems.filter( { $0.name.hasSuffix(".jpg") || $0.name.hasSuffix(".png") } )
+                            if let currentPath, !imageItems.isEmpty {
+                                DetailArtsSection {
+                                    ArtsTab("") {
+                                        for item in imageItems {
+                                            ArtsItem(title: LocalizedStringResource(stringLiteral: item.name), url: currentPath.resourceURL(name: item.name))
+                                        }
+                                    }
                                 }
-                            })
+                                .highlightKeyword($searchField)
+                            }
                         }
-                        Spacer(minLength: 0)
+                        .padding()
+                        .wrapIf(true, in: {
+                            if #available(iOS 26, macOS 14.0, *) {
+                                $0.navigationSubtitle(Text(searchField.isEmpty ? "Search.item.\(filteredItems.count)" : "Search.result.\(filteredItems.count)"))
+                            } else {
+                                $0
+                            }
+                        })
                     }
                 }
                 .searchable(text: $searchField, prompt: "Asset-explorer.search")

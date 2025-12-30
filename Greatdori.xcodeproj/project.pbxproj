@@ -199,6 +199,7 @@
 		E91ABF462ED97BF00043CCE7 /* EventDetailGoalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91ABF452ED97BE30043CCE7 /* EventDetailGoalsView.swift */; };
 		E91ABF482ED97C290043CCE7 /* EventDetailTeamsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91ABF472ED97C240043CCE7 /* EventDetailTeamsView.swift */; };
 		E91ABF4A2ED97C630043CCE7 /* GachaDetailPossibilityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91ABF492ED97C610043CCE7 /* GachaDetailPossibilityView.swift */; };
+		E91D075A2F03A9F600A13FFD /* EventCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D07592F03A9E700A13FFD /* EventCalculator.swift */; };
 		E92401612E993B9D003BF482 /* NewsDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92401602E993B94003BF482 /* NewsDetailsView.swift */; };
 		E930F7822EE03CE100E8847F /* ISVLive2DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E930F7812EE03CDF00E8847F /* ISVLive2DView.swift */; };
 		E930F7842EE03D1B00E8847F /* ISVReliance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E930F7832EE03D0E00E8847F /* ISVReliance.swift */; };
@@ -691,6 +692,7 @@
 		E91ABF452ED97BE30043CCE7 /* EventDetailGoalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailGoalsView.swift; sourceTree = "<group>"; };
 		E91ABF472ED97C240043CCE7 /* EventDetailTeamsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailTeamsView.swift; sourceTree = "<group>"; };
 		E91ABF492ED97C610043CCE7 /* GachaDetailPossibilityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GachaDetailPossibilityView.swift; sourceTree = "<group>"; };
+		E91D07592F03A9E700A13FFD /* EventCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCalculator.swift; sourceTree = "<group>"; };
 		E92401602E993B94003BF482 /* NewsDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailsView.swift; sourceTree = "<group>"; };
 		E930F7812EE03CDF00E8847F /* ISVLive2DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISVLive2DView.swift; sourceTree = "<group>"; };
 		E930F7832EE03D0E00E8847F /* ISVReliance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISVReliance.swift; sourceTree = "<group>"; };
@@ -1522,6 +1524,7 @@
 			isa = PBXGroup;
 			children = (
 				E9A126FB2E8CB61900BBD39E /* EventTracker.swift */,
+				E91D07592F03A9E700A13FFD /* EventCalculator.swift */,
 				8CD28FEF2E9F6C6900831458 /* ChartSimulator.swift */,
 				E92F02A12EDC430A00CB341F /* StoryViewer */,
 				E99B57642EC1E7DD0045EFC9 /* StationView.swift */,
@@ -1950,6 +1953,7 @@
 				E94219192E8AA58800F24974 /* CostumeSearchView.swift in Sources */,
 				E9BB28F22EF9B46B0088B654 /* StorySupportiveStuffs.swift in Sources */,
 				E94218F02E8AA2FF00F24974 /* CharacterDetailView.swift in Sources */,
+				E91D075A2F03A9F600A13FFD /* EventCalculator.swift in Sources */,
 				8C3DFB102EAF84BB0004E1F5 /* CostumeSelector.swift in Sources */,
 				E930F7A22EE0461600E8847F /* ExternalLinks.swift in Sources */,
 				8C889D9C2EA1258D00FBF01D /* CommunityView.swift in Sources */,

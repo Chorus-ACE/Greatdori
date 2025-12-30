@@ -33,124 +33,118 @@ struct ChartSimulatorView: View {
     @State private var isDownloadingChartPlayerAsset = false
     @State private var availableWidth: CGFloat = 0
     var body: some View {
-        ScrollView {
-            HStack {
-                Spacer(minLength: 0)
-                VStack {
-                    Section {
-                        CustomGroupBox(cornerRadius: 20) {
-                            VStack {
-                                ListItem {
-                                    Text("Chart-simulator.song")
-                                        .bold()
-                                } value: {
-                                    ItemSelectorButton(selection: $selectedSong)
-                                        .onChange(of: selectedSong) {
-                                            loadChart()
-                                        }
+        CustomScrollView {
+            Section {
+                CustomGroupBox(cornerRadius: 20) {
+                    VStack {
+                        ListItem {
+                            Text("Chart-simulator.song")
+                                .bold()
+                        } value: {
+                            ItemSelectorButton(selection: $selectedSong)
+                                .onChange(of: selectedSong) {
+                                    loadChart()
                                 }
-                                
-                                
-                                if let selectedSong {
-                                    Divider()
-                                    ListItem {
-                                        Text("Chart-simulator.difficulty")
-                                            .bold()
-                                    } value: {
-                                        Picker(selection: $selectedDifficulty, content: {
-                                            ForEach(selectedSong.difficulty.keys.sorted { $0.rawValue < $1.rawValue }, id: \.rawValue) { key in
-                                                Text(verbatim: "\(key.rawStringValue.uppercased()) \(selectedSong.difficulty[key]!.playLevel)").tag(key)
-                                            }
-//                                            ForEach(selectedSong.difficulty.keys.sorted { $0.rawValue < $1.rawValue }, id: \.rawValue) { key in
-                                                //                                                Text(verbatim: "\(selectedSong.di) \(selectedSong.difficulty[key]!.playLevel)").tag(key)
-                                                //                                            }
-                                        }, label: {
-                                            EmptyView()
-                                        })
-                                        .labelsHidden()
-                                        .onChange(of: selectedDifficulty) {
-                                            loadChart()
-                                        }
+                        }
+                        
+                        
+                        if let selectedSong {
+                            Divider()
+                            ListItem {
+                                Text("Chart-simulator.difficulty")
+                                    .bold()
+                            } value: {
+                                Picker(selection: $selectedDifficulty, content: {
+                                    ForEach(selectedSong.difficulty.keys.sorted { $0.rawValue < $1.rawValue }, id: \.rawValue) { key in
+                                        Text(verbatim: "\(key.rawStringValue.uppercased()) \(selectedSong.difficulty[key]!.playLevel)").tag(key)
                                     }
+                                    //                                            ForEach(selectedSong.difficulty.keys.sorted { $0.rawValue < $1.rawValue }, id: \.rawValue) { key in
+                                    //                                                Text(verbatim: "\(selectedSong.di) \(selectedSong.difficulty[key]!.playLevel)").tag(key)
+                                    //                                            }
+                                }, label: {
+                                    EmptyView()
+                                })
+                                .labelsHidden()
+                                .onChange(of: selectedDifficulty) {
+                                    loadChart()
                                 }
-                                
-                                /*
-                                Divider()
-                                ListItem {
-                                    Text("Chart-simulator.show-simulator") // FIXME: Text style
-                                        .bold()
-                                } value: {
-                                    Toggle(isOn: $showChartPlayer) {
-                                        EmptyView()
-                                    }
-                                    .toggleStyle(.switch)
-                                    .labelsHidden()
-                                }
-                                .hidden()
-                                 */
                             }
                         }
-                        .frame(maxWidth: infoContentMaxWidth)
+                        
+                        /*
+                         Divider()
+                         ListItem {
+                         Text("Chart-simulator.show-simulator") // FIXME: Text style
+                         .bold()
+                         } value: {
+                         Toggle(isOn: $showChartPlayer) {
+                         EmptyView()
+                         }
+                         .toggleStyle(.switch)
+                         .labelsHidden()
+                         }
+                         .hidden()
+                         */
                     }
-                    
-                    DetailSectionsSpacer()
-                    
-                    if let chart {
-                        LazyVStack(pinnedViews: .sectionHeaders) {
-                            Section(content: {
-                                Group {
-                                    if !showChartPlayer {
-                                        ScrollView(.horizontal) {
-                                            HStack(spacing: 0) {
-                                                ForEach(chartScenes, id: \.self) { scene in
-                                                    SpriteView(scene: scene)
-                                                        .frame(width: 240, height: 500)
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        if isChartPlayerAssetAvailable {
-//                                            if let chart {
-                                                ChartPlayerView(chart: chart)
-                                                    .frame(idealWidth: availableWidth, idealHeight: availableWidth / 16 * 9)
-//                                            }
-                                        } else {
-                                            HStack {
-                                                Spacer()
-                                                VStack {
-                                                    Text("Chart-simulator.simulator.download.prompt")
-                                                    Button("Chart-simulator.simulator.download") {
-                                                        Task {
-                                                            isDownloadingChartPlayerAsset = true
-                                                            _ = await ChartPlayerAssetManager.download()
-                                                            isChartPlayerAssetAvailable = ChartPlayerAssetManager.isAvailable
-                                                            isDownloadingChartPlayerAsset = false
-                                                        }
-                                                    }
-                                                    .disabled(isDownloadingChartPlayerAsset)
-                                                }
-                                                Spacer()
-                                            }
+                }
+                .frame(maxWidth: infoContentMaxWidth)
+            }
+            
+            DetailSectionsSpacer()
+            
+            if let chart {
+                LazyVStack(pinnedViews: .sectionHeaders) {
+                    Section(content: {
+                        Group {
+                            if !showChartPlayer {
+                                ScrollView(.horizontal) {
+                                    HStack(spacing: 0) {
+                                        ForEach(chartScenes, id: \.self) { scene in
+                                            SpriteView(scene: scene)
+                                                .frame(width: 240, height: 500)
                                         }
                                     }
                                 }
-                                .frame(maxWidth: 600)
-                            }, header: {
-                                HStack {
-                                    Text(showChartPlayer ? "Chart-simulator.simulator" : "Chart-simulator.chart")
-                                        .font(.title2)
-                                        .bold()
-                                    Spacer()
+                            } else {
+                                if isChartPlayerAssetAvailable {
+                                    //                                            if let chart {
+                                    ChartPlayerView(chart: chart)
+                                        .frame(idealWidth: availableWidth, idealHeight: availableWidth / 16 * 9)
+                                    //                                            }
+                                } else {
+                                    HStack {
+                                        Spacer()
+                                        VStack {
+                                            Text("Chart-simulator.simulator.download.prompt")
+                                            Button("Chart-simulator.simulator.download") {
+                                                Task {
+                                                    isDownloadingChartPlayerAsset = true
+                                                    _ = await ChartPlayerAssetManager.download()
+                                                    isChartPlayerAssetAvailable = ChartPlayerAssetManager.isAvailable
+                                                    isDownloadingChartPlayerAsset = false
+                                                }
+                                            }
+                                            .disabled(isDownloadingChartPlayerAsset)
+                                        }
+                                        Spacer()
+                                    }
                                 }
-                                .frame(maxWidth: 615)
-                            })
+                            }
                         }
-                    }
+                        .frame(maxWidth: 600)
+                    }, header: {
+                        HStack {
+                            Text(showChartPlayer ? "Chart-simulator.simulator" : "Chart-simulator.chart")
+                                .font(.title2)
+                                .bold()
+                            Spacer()
+                        }
+                        .frame(maxWidth: 615)
+                    })
                 }
-                .padding()
-                Spacer(minLength: 0)
             }
         }
+        
         .navigationTitle("Chart-simulator")
         .onFrameChange { geometry in
             availableWidth = geometry.size.width

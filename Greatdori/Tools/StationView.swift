@@ -35,28 +35,21 @@ struct StationView: View {
                         ProgressView()
                     }
                 } else if !displayingGameplays.isEmpty {
-                    ScrollView {
-                        HStack {
-                            Spacer(minLength: 0)
-                            VStack {
-                                Section(content: {
-                                    ForEach(displayingGameplays, id: \.self) { item in
-                                        StationItemView(item: item)
-                                    }
-                                    .animation(.easeInOut(duration: 0.5), value: displayingGameplays)
-                                }, footer: {
-                                    HStack {
-                                        Text("Station.footer")
-                                            .foregroundStyle(.secondary)
-                                            .font(.footnote)
-                                        Spacer()
-                                    }
-                                })
-                                .frame(maxWidth: infoContentMaxWidth)
+                    CustomScrollView {
+                        Section(content: {
+                            ForEach(displayingGameplays, id: \.self) { item in
+                                StationItemView(item: item)
                             }
-                            .padding(.vertical)
-                            Spacer(minLength: 0)
-                        }
+                            .animation(.easeInOut(duration: 0.5), value: displayingGameplays)
+                        }, footer: {
+                            HStack {
+                                Text("Station.footer")
+                                    .foregroundStyle(.secondary)
+                                    .font(.footnote)
+                                Spacer()
+                            }
+                        })
+                        .frame(maxWidth: infoContentMaxWidth)
                     }
                 } else {
                     ExtendedConstraints {
@@ -243,7 +236,7 @@ struct StationItemView: View {
             }, label: {
                 Text("Station.item.report.alert.confirm")
             })
-//            .keyboardShortcut(.defaultAction)
+            //            .keyboardShortcut(.defaultAction)
         }, message: {
             Text("Station.item.report.alert.message")
         })
@@ -253,7 +246,7 @@ struct StationItemView: View {
             }, label: {
                 Text("Station.item.block.alert.confirm")
             })
-//            .keyboardShortcut(.defaultAction)
+            //            .keyboardShortcut(.defaultAction)
         }, message: {
             Text("Station.item.block.alert.message")
         })

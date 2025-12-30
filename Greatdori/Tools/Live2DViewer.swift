@@ -28,104 +28,101 @@ struct Live2DViewerView: View {
     @State private var informationIsLoading = false
     @State private var seasonalCostumes: [SeasonCostume]?
     var body: some View {
-        ScrollView {
-            HStack {
-                Spacer(minLength: 0)
+        CustomScrollView {
+            CustomGroupBox {
                 VStack {
-                    CustomGroupBox {
-                        VStack {
-                            ListItem(title: {
-                                Text("Live2d-viewer.type")
-                                    .bold()
-                            }, value: {
-                                Picker("", selection: $selectedItemTypeIndex, content: {
-                                    ForEach(itemType.indices, id: \.self) { itemIndex in
-                                        Text(itemType[itemIndex])
-                                            .tag(itemIndex)
-                                    }
-                                })
-                                .labelsHidden()
-                            })
-                            Divider()
-                            if selectedItemTypeIndex == 0 {
-                                ListItem {
-                                    Text("Live2d-viewer.card")
-                                        .bold()
-                                } value: {
-                                    ItemSelectorButton(selection: $selectedCard)
-                                        .onChange(of: selectedCard) {
-                                            updateDestination()
-                                        }
-                                }
-                            } else if selectedItemTypeIndex == 1 {
-                                ListItem {
-                                    Text("Live2d-viewer.costume")
-                                        .bold()
-                                } value: {
-                                    ItemSelectorButton(selection: $selectedCostume)
-                                }
-                            } else if selectedItemTypeIndex == 2 {
-                                ListItem {
-                                    Text("Live2d-viewer.character")
-                                        .bold()
-                                } value: {
-                                    ItemSelectorButton(selection: $selectedCharacter)
-                                        .onChange(of: selectedCharacter) {
-                                            updateDestination()
-                                        }
-                                }
+                    ListItem(title: {
+                        Text("Live2d-viewer.type")
+                            .bold()
+                    }, value: {
+                        Picker("", selection: $selectedItemTypeIndex, content: {
+                            ForEach(itemType.indices, id: \.self) { itemIndex in
+                                Text(itemType[itemIndex])
+                                    .tag(itemIndex)
                             }
+                        })
+                        .labelsHidden()
+                    })
+                    Divider()
+                    if selectedItemTypeIndex == 0 {
+                        ListItem {
+                            Text("Live2d-viewer.card")
+                                .bold()
+                        } value: {
+                            ItemSelectorButton(selection: $selectedCard)
+                                .onChange(of: selectedCard) {
+                                    updateDestination()
+                                }
+                        }
+                    } else if selectedItemTypeIndex == 1 {
+                        ListItem {
+                            Text("Live2d-viewer.costume")
+                                .bold()
+                        } value: {
+                            ItemSelectorButton(selection: $selectedCostume)
+                        }
+                    } else if selectedItemTypeIndex == 2 {
+                        ListItem {
+                            Text("Live2d-viewer.character")
+                                .bold()
+                        } value: {
+                            ItemSelectorButton(selection: $selectedCharacter)
+                                .onChange(of: selectedCharacter) {
+                                    updateDestination()
+                                }
                         }
                     }
-                    DetailSectionsSpacer()
-                    
-                    
-                    if informationIsLoading {
+                }
+            }
+            .frame(maxWidth: infoContentMaxWidth)
+            DetailSectionsSpacer()
+            
+            
+            if informationIsLoading {
+                CustomGroupBox {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                }
+                .frame(maxWidth: infoContentMaxWidth)
+            } else {
+                Group {
+                    if let selectedCostume, [0, 1].contains(selectedItemTypeIndex) {
+                        NavigationLink(destination: {
+                            Live2DDetailView(costume: selectedCostume)
+                        }, label: {
+                            CostumeInfo(selectedCostume)
+                        })
+                        .buttonStyle(.plain)
+                    } else if let seasonalCostumes {
+                        ForEach(seasonalCostumes, id: \.self) { costume in
+                            NavigationLink(destination: {
+                                Live2DDetailView(seasonalCostume: costume)
+                            }, label: {
+                                CustomGroupBox {
+                                    ExtendedConstraints {
+                                        Text("Live2d-viewer.year.\(costume.seasonType.components(separatedBy: "_").last ?? "").\(costume.seasonCostumeType.localizedString)")
+                                    }
+                                    .padding()
+                                }
+                            })
+                            .buttonStyle(.plain)
+                        }
+                    } else if selectionIsMeaningful() {
                         CustomGroupBox {
                             HStack {
                                 Spacer()
-                                ProgressView()
+                                Text("Live2d-viewer.unavailable")
+                                    .bold()
+                                    .foregroundStyle(.secondary)
                                 Spacer()
-                            }
-                        }
-                    } else {
-                        if let selectedCostume, [0, 1].contains(selectedItemTypeIndex) {
-                            NavigationLink(destination: {
-                                Live2DDetailView(costume: selectedCostume)
-                            }, label: {
-                                CostumeInfo(selectedCostume)
-                            })
-                            .buttonStyle(.plain)
-                        } else if let seasonalCostumes {
-                            ForEach(seasonalCostumes, id: \.self) { costume in
-                                NavigationLink(destination: {
-                                    Live2DDetailView(seasonalCostume: costume)
-                                }, label: {
-                                    CustomGroupBox {
-                                        ExtendedConstraints {
-                                            Text("Live2d-viewer.year.\(costume.seasonType.components(separatedBy: "_").last ?? "").\(costume.seasonCostumeType.localizedString)")
-                                        }
-                                        .padding()
-                                    }
-                                })
-                                .buttonStyle(.plain)
-                            }
-                        } else if selectionIsMeaningful() {
-                            CustomGroupBox {
-                                HStack {
-                                    Spacer()
-                                    Text("Live2d-viewer.unavailable")
-                                        .bold()
-                                        .foregroundStyle(.secondary)
-                                    Spacer()
-                                }
                             }
                         }
                     }
                 }
-                .padding()
                 .frame(maxWidth: infoContentMaxWidth)
-                Spacer(minLength: 0)
             }
         }
         .withSystemBackground()
@@ -196,24 +193,24 @@ struct Live2DDetailView: View {
                         Live2DView(costume: costume) {
                             ProgressView()
                         }
-//                        .accessibilityElement()
-//                        .accessibilityLabel("""
-//                        Live2D of character \(PreCache.current.characters.first { $0.id == costume.characterID }?.characterName.forPreferredLocale() ?? ""). \
-//                        Wearing costume named "\(costume.description.forPreferredLocale() ?? "")". \
-//                        Acting as the \(currentMotion != nil ? "motion named \"\(currentMotion!.name)\"" : "default motion"). \
-//                        Emoting as the \(currentExpression != nil ? "expression named \"\(currentExpression!.name)\"" : "default expression").
-//                        """)
+                        //                        .accessibilityElement()
+                        //                        .accessibilityLabel("""
+                        //                        Live2D of character \(PreCache.current.characters.first { $0.id == costume.characterID }?.characterName.forPreferredLocale() ?? ""). \
+                        //                        Wearing costume named "\(costume.description.forPreferredLocale() ?? "")". \
+                        //                        Acting as the \(currentMotion != nil ? "motion named \"\(currentMotion!.name)\"" : "default motion"). \
+                        //                        Emoting as the \(currentExpression != nil ? "expression named \"\(currentExpression!.name)\"" : "default expression").
+                        //                        """)
                     } else if let seasonalCostume {
                         Live2DView(costume: seasonalCostume) {
                             ProgressView()
                         }
-//                        .accessibilityElement()
-//                        .accessibilityLabel("""
-//                        Live2D of character \(PreCache.current.characters.first { $0.id == seasonalCostume.characterID }?.characterName.forPreferredLocale() ?? ""). \
-//                        Wearing \(seasonalCostume.seasonCostumeType.localizedString). \
-//                        Acting as the \(currentMotion != nil ? "motion named \"\(currentMotion!.name)\"" : "default motion"). \
-//                        Emoting as the \(currentExpression != nil ? "expression named \"\(currentExpression!.name)\"" : "default expression").
-//                        """)
+                        //                        .accessibilityElement()
+                        //                        .accessibilityLabel("""
+                        //                        Live2D of character \(PreCache.current.characters.first { $0.id == seasonalCostume.characterID }?.characterName.forPreferredLocale() ?? ""). \
+                        //                        Wearing \(seasonalCostume.seasonCostumeType.localizedString). \
+                        //                        Acting as the \(currentMotion != nil ? "motion named \"\(currentMotion!.name)\"" : "default motion"). \
+                        //                        Emoting as the \(currentExpression != nil ? "expression named \"\(currentExpression!.name)\"" : "default expression").
+                        //                        """)
                     }
                 }
                 .scaledToFit()
@@ -238,10 +235,10 @@ struct Live2DDetailView: View {
             Spacer(minLength: 0)
         }
         .navigationTitle(costume?.description.forPreferredLocale() ?? seasonalCostume?.seasonCostumeType.localizedString ?? "")
-        #if os(iOS)
+#if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(horizontalSizeClass == .compact && isInspectorVisible ? .hidden : .visible, for: .navigationBar)
-        #endif
+#endif
         .animation(.spring(duration: 0.3, bounce: 0.3), value: isInspectorVisible)
         .inspector(isPresented: $isInspectorPresented) {
             Form {
@@ -255,11 +252,11 @@ struct Live2DDetailView: View {
                     }, optionalCurrentValueLabel: {
                         Text(currentMotion?.name ?? String(localized: "Live2D.detail.motion.none"))
                     })
-//                    .onChange(of: motions, initial: true, {
-//                        if !motions.isEmpty {
-//                            currentMotion = motions.first(where: { $0.name == "idle01" })
-//                        }
-//                    })
+                    //                    .onChange(of: motions, initial: true, {
+                    //                        if !motions.isEmpty {
+                    //                            currentMotion = motions.first(where: { $0.name == "idle01" })
+                    //                        }
+                    //                    })
                     .onAppear {
                         isInspectorVisible = true
                     }

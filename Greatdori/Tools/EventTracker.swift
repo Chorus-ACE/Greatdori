@@ -29,380 +29,372 @@ struct EventTrackerView: View {
     @State private var trackerData: TrackerData?
     @State private var trackerIsAvailable = true
     var body: some View {
-        ScrollView {
-            HStack {
-                Spacer(minLength: 0)
-                VStack {
-                    CustomGroupBox(cornerRadius: 20) {
-                        LazyVStack {
-                            Group {
-                                ListItem(title: {
-                                    Text("Event-tracker.event")
-                                        .bold()
-                                }, value: {
-                                    ItemSelectorButton(selection: $selectedEvent)
-                                    .disabled(focusOnLatestEvent)
-                                })
-                                .onChange(of: selectedEvent) {
-//                                    isEventSelectorPresented = false
-                                    Task {
-                                        await updateTrackerData()
-                                    }
-                                }
-                                Divider()
-                            }
-                            Group {
-                                ListItem(title: {
-                                    Text("Event-tracker.latest-event")
-                                        .bold()
-                                }, value: {
-                                    Toggle(isOn: $focusOnLatestEvent, label: {
-                                        EmptyView()
-                                    })
-                                    .toggleStyle(.switch)
-                                    .labelsHidden()
-                                    .onChange(of: focusOnLatestEvent) {
-                                        if focusOnLatestEvent {
-                                            if let eventList {
-                                                selectedEvent = eventList.sorted(withDoriSorter: DoriSorter(keyword: .releaseDate(in: locale))).first
-                                            }
-                                        }
-                                    }
-                                })
-                                Divider()
-                            }
-                            Group {
-                                ListItem(title: {
-                                    Text("Event-tracker.locale")
-                                        .bold()
-                                }, value: {
-                                    Picker(selection: $locale, content: {
-                                        ForEach(DoriLocale.allCases, id: \.self) { item in
-                                            Text(item.rawValue.uppercased())
-                                                .tag(item)
-                                        }
-                                    }, label: {EmptyView()})
-                                    .labelsHidden()
-                                    .onChange(of: locale) {
-                                        if focusOnLatestEvent {
-                                            if let eventList {
-                                                selectedEvent = eventList.sorted(withDoriSorter: DoriSorter(keyword: .releaseDate(in: locale))).first
-                                            }
-                                        }
-                                        Task {
-                                            await updateTrackerData()
-                                        }
-                                    }
-                                })
-                                Divider()
-                            }
-                            Group {
-                                ListItem(title: {
-                                    Text("Event-tracker.tier")
-                                        .bold()
-                                }, value: {
-                                    Picker(selection: $selectedTier) {
-                                        ForEach([10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000, 70000, 100000, 300000], id: \.self) { t in
-                                            Text(verbatim: "T\(t)").tag(t)
-                                        }
-                                    } label: {
-                                        EmptyView()
-                                    }
-                                    .labelsHidden()
-                                    .onChange(of: selectedTier) {
-                                        Task {
-                                            await updateTrackerData()
-                                        }
-                                    }
-                                    
-                                })
+        CustomScrollView {
+            CustomGroupBox(cornerRadius: 20) {
+                LazyVStack {
+                    Group {
+                        ListItem(title: {
+                            Text("Event-tracker.event")
+                                .bold()
+                        }, value: {
+                            ItemSelectorButton(selection: $selectedEvent)
+                                .disabled(focusOnLatestEvent)
+                        })
+                        .onChange(of: selectedEvent) {
+                            //                                    isEventSelectorPresented = false
+                            Task {
+                                await updateTrackerData()
                             }
                         }
+                        Divider()
                     }
-                    .frame(maxWidth: infoContentMaxWidth)
-
-                    DetailSectionsSpacer(height: 15)
-                    
-                    if let selectedEvent {
-                        Section(content: {
-                            if let trackerData {
-                                switch trackerData {
-                                case .tracker(let trackerData):
-                                    CustomGroupBox(cornerRadius: 20) {
-                                        LazyVStack {
-                                            if let startDate = selectedEvent.startAt.forLocale(locale),
-                                               let endDate = selectedEvent.endAt.forLocale(locale) {
-                                                ListItem {
-                                                    Text("Event-tracker.status")
-                                                        .bold()
-                                                } value: {
-                                                    VStack(alignment: .trailing) {
-                                                        if startDate > .now {
-                                                            Text("Event-tracker.status.not-started")
-                                                        } else if endDate > .now {
-                                                            Text("Event-tracker.stauts.completed.\(Int((Date.now.timeIntervalSince1970 - startDate.timeIntervalSince1970) / (endDate.timeIntervalSince1970 - startDate.timeIntervalSince1970) * 100))")
-                                                            Text("Event-tracker.stauts.completed.end-in.\(Text(endDate, style: .relative))")
-                                                        } else {
-                                                            Text("Event-tracker.stauts.ended")
-                                                        }
-                                                    }
-                                                }
-                                                Divider()
-                                            }
-                                            if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
-                                                if let latestCutoff = trackerData.cutoffs.last?.ep {
-                                                    ListItem {
-                                                        Text("Event-tracker.latest-cutoff")
-                                                            .bold()
-                                                    } value: {
-                                                        Text("\(latestCutoff)")
-                                                    }
-                                                    Divider()
-                                                }
-                                                if let latestPrediction = trackerData.predictions.last?.ep {
-                                                    ListItem {
-                                                        Text("Event-tracker.latest-prediction")
-                                                            .bold()
-                                                    } value: {
-                                                        Text("\(latestPrediction)")
-                                                    }
-                                                    Divider()
-                                                }
-                                                if let latestUpdateTime = trackerData.cutoffs.last?.time {
-                                                    ListItem {
-                                                        Text("Event-tracker.last-updated")
-                                                            .bold()
-                                                    } value: {
-                                                        Text("Event-tracker.last-updated.ago.\(Text(latestUpdateTime, style: .relative))")
-                                                    }
-                                                }
-                                            } else {
-                                                Text("Event-tracker.information-not-available")
-                                                    .foregroundStyle(.secondary)
-                                            }
-                                        }
-                                    }
-                                    .frame(maxWidth: infoContentMaxWidth)
-                                    if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
-                                        CustomGroupBox(cornerRadius: 20) {
-                                            LazyVStack {
-                                                VStack(alignment: .leading) {
-                                                    Chart {
-                                                        ForEach(trackerData.cutoffs, id: \.time) { cutoff in
-                                                            if let ep = cutoff.ep {
-                                                                AreaMark(
-                                                                    x: .value("Event-tracker.date", cutoff.time),
-                                                                    y: .value("Event-tracker.ep", ep)
-                                                                )
-                                                                .foregroundStyle(Color.accentColor.opacity(0.7))
-                                                                LineMark(
-                                                                    x: .value("Event-tracker.date", cutoff.time),
-                                                                    y: .value("Event-tracker.ep", ep)
-                                                                )
-                                                                .foregroundStyle(by: .value("Event-tracker.type", String(localized: "Event-tracker.current-cutoff")))
-                                                            }
-                                                        }
-                                                        ForEach(trackerData.predictions, id: \.time) { prediction in
-                                                            if let ep = prediction.ep {
-                                                                LineMark(
-                                                                    x: .value("Event-tracker.date", prediction.time),
-                                                                    y: .value("Event-tracker.ep", ep)
-                                                                )
-                                                                .lineStyle(.init(lineWidth: 2, dash: [5, 3]))
-                                                                .foregroundStyle(by: .value("Event-tracker.type", String(localized: "Event-tracker.predicted-cutoff")))
-                                                            }
-                                                        }
-                                                    }
-                                                    .chartForegroundStyleScale([
-                                                        String(localized: "Event-tracker.current-cutoff"): Color.accentColor,
-                                                        String(localized: "Event-tracker.predicted-cutoff"): Color.accentColor
-                                                    ])
-                                                    .chartLegend(.hidden)
-                                                    .chartXAxis {
-                                                        AxisMarks(values: .stride(by: .day)) { value in
-                                                            AxisGridLine()
-                                                            AxisTick()
-                                                            if sizeClass == .regular {
-                                                                AxisValueLabel(format: .dateTime.day().month(.abbreviated))
-                                                            } else {
-                                                                AxisValueLabel(format: .dateTime.day())
-                                                            }
-                                                        }
-                                                    }
-                                                    .chartYAxis {
-                                                        AxisMarks(position: .leading, values: .automatic) { value in
-                                                            AxisGridLine()
-                                                            AxisTick()
-                                                            AxisValueLabel {
-                                                                if let number = value.as(Double.self) {
-                                                                    Text(formatNumber(number))
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                    .containerRelativeFrame(.vertical) { length, _ in
-                                                        length / 5 * 3
-                                                    }
-                                                    HStack {
-                                                        Rectangle()
-                                                            .fill(Color.accentColor.opacity(0.7))
-                                                            .strokeBorder(Color.accentColor, lineWidth: 2)
-                                                            .frame(width: 30, height: 15)
-                                                        Text("Event-tracker.current-cutoff")
-                                                        Rectangle()
-                                                            .stroke(style: .init(lineWidth: 2, dash: [5, 3]))
-                                                            .fill(Color.accentColor)
-                                                            .frame(width: 30, height: 15)
-                                                        Text("Event-tracker.predicted-cutoff")
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        .frame(maxWidth: infoContentMaxWidth)
-                                    }
-                                case .top(let topData):
-                                    CustomGroupBox(cornerRadius: 20) {
-                                        LazyVStack {
-                                            if let startDate = selectedEvent.startAt.forLocale(locale),
-                                               let endDate = selectedEvent.endAt.forLocale(locale) {
-                                                ListItem {
-                                                    Text("Event-tracker.status")
-                                                        .bold(isMACOS)
-                                                } value: {
-                                                    VStack(alignment: .trailing) {
-                                                        if startDate > .now {
-                                                            Text("Event-tracker.status.not-started")
-                                                        } else if endDate > .now {
-                                                            Text("Event-tracker.stauts.completed.\(Int((Date.now.timeIntervalSince1970 - startDate.timeIntervalSince1970) / (endDate.timeIntervalSince1970 - startDate.timeIntervalSince1970) * 100))")
-                                                            Text("Event-tracker.stauts.completed.end-in.\(Text(endDate, style: .relative))")
-                                                        } else {
-                                                            Text("Event-tracker.stauts.ended")
-                                                        }
-                                                    }
-                                                }
-                                                Divider()
-                                            }
-                                            if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
-                                                if let latestUpdateTime = topData.last?.points.last?.time {
-                                                    ListItem {
-                                                        Text("Event-tracker.last-updated")
-                                                            .bold()
-                                                    } value: {
-                                                        Text("Event-tracker.last-updated.ago.\(Text(latestUpdateTime, style: .relative))")
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    .frame(maxWidth: infoContentMaxWidth)
-                                    if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
-                                        CustomGroupBox(cornerRadius: 20) {
-                                            LazyVStack {
-                                                Chart {
-                                                    ForEach(topData, id: \.uid) { data in
-                                                        ForEach(data.points, id: \.time) { point in
-                                                            LineMark(
-                                                                x: .value("Event-tracker.date", point.time),
-                                                                y: .value("Event-tracker.point", point.value)
-                                                            )
-                                                            .foregroundStyle(by: .value("Event-tracker.name", data.name))
-                                                        }
-                                                    }
-                                                }
-                                                .chartXAxis {
-                                                    AxisMarks(values: .stride(by: .day)) { value in
-                                                        AxisGridLine()
-                                                        AxisTick()
-                                                        AxisValueLabel(format: .dateTime.day().month(.abbreviated))
-                                                    }
-                                                }
-                                                .chartYAxis {
-                                                    AxisMarks(position: .leading, values: .automatic) { value in
-                                                        AxisGridLine()
-                                                        AxisTick()
-                                                        AxisValueLabel {
-                                                            if let number = value.as(Double.self) {
-                                                                Text(formatNumber(number))
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                .containerRelativeFrame(.vertical) { length, _ in
-                                                    length / 5 * 4
-                                                }
-                                            }
-                                        }
-                                        .frame(maxWidth: infoContentMaxWidth)
-                                        CustomGroupBox(cornerRadius: 20) {
-                                            HStack {
-                                                VStack(alignment: .leading) {
-                                                    ForEach(Array(topData.prefix(10).enumerated()), id: \.element.uid) { index, data in
-                                                        HStack {
-                                                            if 1...3 ~= index + 1 {
-                                                                Image("tier_\(DoriLocale.primaryLocale.rawValue)_\(index + 1)")
-                                                                    .resizable()
-                                                                    .scaledToFit()
-                                                                    .frame(width: 40)
-                                                            } else {
-                                                                Text(verbatim: "#\(index + 1)")
-                                                                    .font(.headline)
-                                                                    .frame(width: 40)
-                                                            }
-                                                            CardPreviewImage(data.card, showTrainedVersion: data.trained)
-                                                            VStack(alignment: .leading) {
-                                                                Text(data.name)
-                                                                    .font(.title3)
-                                                                Text(data.introduction)
-                                                                    .foregroundStyle(.gray)
-                                                            }
-                                                            Spacer()
-                                                            if let score = data.points.last?.value {
-                                                                Text("Event-tracker.score.\(score)")
-                                                            }
-                                                        }
-                                                        if index != 9 {
-                                                            Divider()
-                                                        }
-                                                    }
-                                                }
-                                                Spacer()
-                                            }
-                                        }
-                                        .frame(maxWidth: infoContentMaxWidth)
+                    Group {
+                        ListItem(title: {
+                            Text("Event-tracker.latest-event")
+                                .bold()
+                        }, value: {
+                            Toggle(isOn: $focusOnLatestEvent, label: {
+                                EmptyView()
+                            })
+                            .toggleStyle(.switch)
+                            .labelsHidden()
+                            .onChange(of: focusOnLatestEvent) {
+                                if focusOnLatestEvent {
+                                    if let eventList {
+                                        selectedEvent = eventList.sorted(withDoriSorter: DoriSorter(keyword: .releaseDate(in: locale))).first
                                     }
                                 }
-                            } else {
+                            }
+                        })
+                        Divider()
+                    }
+                    Group {
+                        ListItem(title: {
+                            Text("Event-tracker.locale")
+                                .bold()
+                        }, value: {
+                            Picker(selection: $locale, content: {
+                                ForEach(DoriLocale.allCases, id: \.self) { item in
+                                    Text(item.rawValue.uppercased())
+                                        .tag(item)
+                                }
+                            }, label: {EmptyView()})
+                            .labelsHidden()
+                            .onChange(of: locale) {
+                                if focusOnLatestEvent {
+                                    if let eventList {
+                                        selectedEvent = eventList.sorted(withDoriSorter: DoriSorter(keyword: .releaseDate(in: locale))).first
+                                    }
+                                }
+                                Task {
+                                    await updateTrackerData()
+                                }
+                            }
+                        })
+                        Divider()
+                    }
+                    Group {
+                        ListItem(title: {
+                            Text("Event-tracker.tier")
+                                .bold()
+                        }, value: {
+                            Picker(selection: $selectedTier) {
+                                ForEach([10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000, 70000, 100000, 300000], id: \.self) { t in
+                                    Text(verbatim: "T\(t)").tag(t)
+                                }
+                            } label: {
+                                EmptyView()
+                            }
+                            .labelsHidden()
+                            .onChange(of: selectedTier) {
+                                Task {
+                                    await updateTrackerData()
+                                }
+                            }
+                            
+                        })
+                    }
+                }
+            }
+            .frame(maxWidth: infoContentMaxWidth)
+            
+            DetailSectionsSpacer(height: 15)
+            
+            if let selectedEvent {
+                Section(content: {
+                    if let trackerData {
+                        switch trackerData {
+                        case .tracker(let trackerData):
+                            CustomGroupBox(cornerRadius: 20) {
+                                LazyVStack {
+                                    if let startDate = selectedEvent.startAt.forLocale(locale),
+                                       let endDate = selectedEvent.endAt.forLocale(locale) {
+                                        ListItem {
+                                            Text("Event-tracker.status")
+                                                .bold()
+                                        } value: {
+                                            VStack(alignment: .trailing) {
+                                                if startDate > .now {
+                                                    Text("Event-tracker.status.not-started")
+                                                } else if endDate > .now {
+                                                    Text("Event-tracker.stauts.completed.\(Int((Date.now.timeIntervalSince1970 - startDate.timeIntervalSince1970) / (endDate.timeIntervalSince1970 - startDate.timeIntervalSince1970) * 100))")
+                                                    Text("Event-tracker.stauts.completed.end-in.\(Text(endDate, style: .relative))")
+                                                } else {
+                                                    Text("Event-tracker.stauts.ended")
+                                                }
+                                            }
+                                        }
+                                        Divider()
+                                    }
+                                    if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
+                                        if let latestCutoff = trackerData.cutoffs.last?.ep {
+                                            ListItem {
+                                                Text("Event-tracker.latest-cutoff")
+                                                    .bold()
+                                            } value: {
+                                                Text("\(latestCutoff)")
+                                            }
+                                            Divider()
+                                        }
+                                        if let latestPrediction = trackerData.predictions.last?.ep {
+                                            ListItem {
+                                                Text("Event-tracker.latest-prediction")
+                                                    .bold()
+                                            } value: {
+                                                Text("\(latestPrediction)")
+                                            }
+                                            Divider()
+                                        }
+                                        if let latestUpdateTime = trackerData.cutoffs.last?.time {
+                                            ListItem {
+                                                Text("Event-tracker.last-updated")
+                                                    .bold()
+                                            } value: {
+                                                Text("Event-tracker.last-updated.ago.\(Text(latestUpdateTime, style: .relative))")
+                                            }
+                                        }
+                                    } else {
+                                        Text("Event-tracker.information-not-available")
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: infoContentMaxWidth)
+                            if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
+                                CustomGroupBox(cornerRadius: 20) {
+                                    LazyVStack {
+                                        VStack(alignment: .leading) {
+                                            Chart {
+                                                ForEach(trackerData.cutoffs, id: \.time) { cutoff in
+                                                    if let ep = cutoff.ep {
+                                                        AreaMark(
+                                                            x: .value("Event-tracker.date", cutoff.time),
+                                                            y: .value("Event-tracker.ep", ep)
+                                                        )
+                                                        .foregroundStyle(Color.accentColor.opacity(0.7))
+                                                        LineMark(
+                                                            x: .value("Event-tracker.date", cutoff.time),
+                                                            y: .value("Event-tracker.ep", ep)
+                                                        )
+                                                        .foregroundStyle(by: .value("Event-tracker.type", String(localized: "Event-tracker.current-cutoff")))
+                                                    }
+                                                }
+                                                ForEach(trackerData.predictions, id: \.time) { prediction in
+                                                    if let ep = prediction.ep {
+                                                        LineMark(
+                                                            x: .value("Event-tracker.date", prediction.time),
+                                                            y: .value("Event-tracker.ep", ep)
+                                                        )
+                                                        .lineStyle(.init(lineWidth: 2, dash: [5, 3]))
+                                                        .foregroundStyle(by: .value("Event-tracker.type", String(localized: "Event-tracker.predicted-cutoff")))
+                                                    }
+                                                }
+                                            }
+                                            .chartForegroundStyleScale([
+                                                String(localized: "Event-tracker.current-cutoff"): Color.accentColor,
+                                                String(localized: "Event-tracker.predicted-cutoff"): Color.accentColor
+                                            ])
+                                            .chartLegend(.hidden)
+                                            .chartXAxis {
+                                                AxisMarks(values: .stride(by: .day)) { value in
+                                                    AxisGridLine()
+                                                    AxisTick()
+                                                    if sizeClass == .regular {
+                                                        AxisValueLabel(format: .dateTime.day().month(.abbreviated))
+                                                    } else {
+                                                        AxisValueLabel(format: .dateTime.day())
+                                                    }
+                                                }
+                                            }
+                                            .chartYAxis {
+                                                AxisMarks(position: .leading, values: .automatic) { value in
+                                                    AxisGridLine()
+                                                    AxisTick()
+                                                    AxisValueLabel {
+                                                        if let number = value.as(Double.self) {
+                                                            Text(formatNumber(number))
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            .containerRelativeFrame(.vertical) { length, _ in
+                                                length / 5 * 3
+                                            }
+                                            HStack {
+                                                Rectangle()
+                                                    .fill(Color.accentColor.opacity(0.7))
+                                                    .strokeBorder(Color.accentColor, lineWidth: 2)
+                                                    .frame(width: 30, height: 15)
+                                                Text("Event-tracker.current-cutoff")
+                                                Rectangle()
+                                                    .stroke(style: .init(lineWidth: 2, dash: [5, 3]))
+                                                    .fill(Color.accentColor)
+                                                    .frame(width: 30, height: 15)
+                                                Text("Event-tracker.predicted-cutoff")
+                                            }
+                                        }
+                                    }
+                                }
+                                .frame(maxWidth: infoContentMaxWidth)
+                            }
+                        case .top(let topData):
+                            CustomGroupBox(cornerRadius: 20) {
+                                LazyVStack {
+                                    if let startDate = selectedEvent.startAt.forLocale(locale),
+                                       let endDate = selectedEvent.endAt.forLocale(locale) {
+                                        ListItem {
+                                            Text("Event-tracker.status")
+                                                .bold(isMACOS)
+                                        } value: {
+                                            VStack(alignment: .trailing) {
+                                                if startDate > .now {
+                                                    Text("Event-tracker.status.not-started")
+                                                } else if endDate > .now {
+                                                    Text("Event-tracker.stauts.completed.\(Int((Date.now.timeIntervalSince1970 - startDate.timeIntervalSince1970) / (endDate.timeIntervalSince1970 - startDate.timeIntervalSince1970) * 100))")
+                                                    Text("Event-tracker.stauts.completed.end-in.\(Text(endDate, style: .relative))")
+                                                } else {
+                                                    Text("Event-tracker.stauts.ended")
+                                                }
+                                            }
+                                        }
+                                        Divider()
+                                    }
+                                    if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
+                                        if let latestUpdateTime = topData.last?.points.last?.time {
+                                            ListItem {
+                                                Text("Event-tracker.last-updated")
+                                                    .bold()
+                                            } value: {
+                                                Text("Event-tracker.last-updated.ago.\(Text(latestUpdateTime, style: .relative))")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: infoContentMaxWidth)
+                            if let startDate = selectedEvent.startAt.forLocale(locale), startDate <= .now {
+                                CustomGroupBox(cornerRadius: 20) {
+                                    LazyVStack {
+                                        Chart {
+                                            ForEach(topData, id: \.uid) { data in
+                                                ForEach(data.points, id: \.time) { point in
+                                                    LineMark(
+                                                        x: .value("Event-tracker.date", point.time),
+                                                        y: .value("Event-tracker.point", point.value)
+                                                    )
+                                                    .foregroundStyle(by: .value("Event-tracker.name", data.name))
+                                                }
+                                            }
+                                        }
+                                        .chartXAxis {
+                                            AxisMarks(values: .stride(by: .day)) { value in
+                                                AxisGridLine()
+                                                AxisTick()
+                                                AxisValueLabel(format: .dateTime.day().month(.abbreviated))
+                                            }
+                                        }
+                                        .chartYAxis {
+                                            AxisMarks(position: .leading, values: .automatic) { value in
+                                                AxisGridLine()
+                                                AxisTick()
+                                                AxisValueLabel {
+                                                    if let number = value.as(Double.self) {
+                                                        Text(formatNumber(number))
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        .containerRelativeFrame(.vertical) { length, _ in
+                                            length / 5 * 4
+                                        }
+                                    }
+                                }
+                                .frame(maxWidth: infoContentMaxWidth)
                                 CustomGroupBox(cornerRadius: 20) {
                                     HStack {
-                                        Spacer()
-                                        if trackerIsAvailable {
-                                            ProgressView()
-                                        } else {
-                                            Text("Event-tracker.information-not-available")
-                                                .foregroundStyle(.secondary)
+                                        VStack(alignment: .leading) {
+                                            ForEach(Array(topData.prefix(10).enumerated()), id: \.element.uid) { index, data in
+                                                HStack {
+                                                    if 1...3 ~= index + 1 {
+                                                        Image("tier_\(DoriLocale.primaryLocale.rawValue)_\(index + 1)")
+                                                            .resizable()
+                                                            .scaledToFit()
+                                                            .frame(width: 40)
+                                                    } else {
+                                                        Text(verbatim: "#\(index + 1)")
+                                                            .font(.headline)
+                                                            .frame(width: 40)
+                                                    }
+                                                    CardPreviewImage(data.card, showTrainedVersion: data.trained)
+                                                    VStack(alignment: .leading) {
+                                                        Text(data.name)
+                                                            .font(.title3)
+                                                        Text(data.introduction)
+                                                            .foregroundStyle(.gray)
+                                                    }
+                                                    Spacer()
+                                                    if let score = data.points.last?.value {
+                                                        Text("Event-tracker.score.\(score)")
+                                                    }
+                                                }
+                                                if index != 9 {
+                                                    Divider()
+                                                }
+                                            }
                                         }
                                         Spacer()
                                     }
                                 }
                                 .frame(maxWidth: infoContentMaxWidth)
                             }
-                        }, header: {
+                        }
+                    } else {
+                        CustomGroupBox(cornerRadius: 20) {
                             HStack {
-                                Text("Event-tracker.data")
-                                    .font(.title2)
-                                    .bold()
+                                Spacer()
+                                if trackerIsAvailable {
+                                    ProgressView()
+                                } else {
+                                    Text("Event-tracker.information-not-available")
+                                        .foregroundStyle(.secondary)
+                                }
                                 Spacer()
                             }
-                            .frame(maxWidth: infoContentMaxWidth)
-                        })
+                        }
+                        .frame(maxWidth: infoContentMaxWidth)
                     }
-                }
-                .padding()
-                Spacer(minLength: 0)
+                }, header: {
+                    HStack {
+                        Text("Event-tracker.data")
+                            .font(.title2)
+                            .bold()
+                        Spacer()
+                    }
+                    .frame(maxWidth: infoContentMaxWidth)
+                })
             }
         }
         .withSystemBackground()
-        .scrollDisablesPopover()
         .navigationTitle("Event-tracker")
         .task {
             await getEvents()

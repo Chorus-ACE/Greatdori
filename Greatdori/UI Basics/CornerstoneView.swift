@@ -289,6 +289,32 @@ struct CustomGroupBoxOld<Content: View>: View {
     }
 }
 
+// MARK: CustomScrollView
+struct CustomScrollView<Content: View>: View {
+    let withSystemBackground: Bool
+    let content: () -> Content
+    
+    init(withSystemBackground: Bool = false, @ViewBuilder content: @escaping () -> Content) {
+        self.withSystemBackground = withSystemBackground
+        self.content = content
+    }
+    
+    var body: some View {
+        ScrollView {
+            HStack {
+                Spacer(minLength: 0)
+                VStack {
+                    content()
+                }
+                .padding()
+                Spacer(minLength: 0)
+            }
+        }
+        .scrollDisablesPopover()
+        .withSystemBackground(isActive: withSystemBackground)
+    }
+}
+
 // MARK: CustomStack
 struct CustomStack<Content: View>: View {
     let axis: Axis
