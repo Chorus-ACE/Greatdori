@@ -17,10 +17,9 @@ import SwiftUI
 
 struct EventCalculatorView: View {
     var body: some View {
-        ScrollView {
-            HStack {
-                Spacer(minLength: 0)
-                Spacer(minLength: 0)
+        CustomScrollView {
+            CustomGroupBox(cornerRadius: 20) {
+                
             }
         }
     }

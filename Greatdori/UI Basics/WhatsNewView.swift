@@ -233,9 +233,9 @@ struct AppUpdateItem: Hashable {
 
 
 let whatsNew: [AppUpdateItem] = [
-    AppUpdateItem(item: "account", icon: "person.crop.circle"),
-    AppUpdateItem(item: "calculator", icon: "calculator"),
-    AppUpdateItem(item: "station", icon: "flag.2.crossed")
+//    AppUpdateItem(item: "account", icon: "person.crop.circle"),
+//    AppUpdateItem(item: "calculator", icon: "calculator"),
+//    AppUpdateItem(item: "station", icon: "flag.2.crossed")
 ]
 
 let whatsNew_EN: [String: (String, String)] = [

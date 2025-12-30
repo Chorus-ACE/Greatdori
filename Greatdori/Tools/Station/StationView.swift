@@ -20,6 +20,8 @@ import SwiftyJSON
 import SwiftUI
 
 struct StationView: View {
+    @Environment(\.horizontalSizeClass) var sizeClass
+    
     @State var allGameplays: [DoriAPI.Station.Room] = []
     @State var displayingGameplays: [CombinedRoom] = []
     @State var informationIsAvailable = true
@@ -27,6 +29,9 @@ struct StationView: View {
     
     @State var fetchingTask: Task<(), Never>? = nil
     @State var fetchError: Error? = nil
+    
+    @State var filter: StationFilter = .init()
+    @State var filterIsDisplaying = false
     var body: some View {
         Group {
             if informationIsAvailable {
@@ -72,6 +77,33 @@ struct StationView: View {
         }
         .onDisappear {
             fetchingTask?.cancel()
+        }
+        .toolbar {
+            Button(action: {
+                filterIsDisplaying.toggle()
+            }, label: {
+                Image(systemName: "line.3.horizontal.decrease")
+            })
+            .animation(.easeInOut(duration: 0.2), value: filter.isFiltering)
+            .accessibilityLabel("Filter")
+            .accessibilityValue(filter.isFiltering ? "Accessibility.filter.active" : "Accessibility.filter.not-active")
+        }
+        .wrapIf(sizeClass == .regular) { content in
+            content
+                .inspector(isPresented: $filterIsDisplaying) {
+                    StationFilterView(filter: $filter)
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackgroundInteraction(.enabled)
+                }
+        } else: { content in
+            content
+                .sheet(isPresented: $filterIsDisplaying) {
+                    StationFilterView(filter: $filter)
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackgroundInteraction(.enabled)
+                }
         }
     }
     
@@ -135,17 +167,8 @@ struct StationItemView: View {
                             Text(item.room.number)
                                 .bold()
                             Group {
-                                switch item.room.type {
-                                case .standard:
-                                    Text("Station.item.type.7")
-                                case .master:
-                                    Text("Station.item.type.12")
-                                case .grand:
-                                    Text("Station.item.type.18")
-                                case .legend:
-                                    Text("Station.item.type.25")
-                                default:
-                                    EmptyView()
+                                if item.room.type != .daredemo {
+                                    Text(item.room.type.localizedName)
                                 }
                             }
                             .foregroundStyle(.secondary)
@@ -309,6 +332,23 @@ extension DoriAPI.Station.Room {
             result.removeFirst()
         }
         return result
+    }
+}
+
+extension DoriAPI.Station.RoomType {
+    var localizedName: LocalizedStringResource {
+        switch self {
+        case .standard:
+            return "Station.item.type.7"
+        case .master:
+            return "Station.item.type.12"
+        case .grand:
+            return "Station.item.type.18"
+        case .legend:
+            return "Station.item.type.25"
+        default:
+            return "Station.item.type.other"
+        }
     }
 }
 

@@ -85,36 +85,6 @@ struct FilterItemView: View {
                             .bold()
                             .accessibilityHeading(.h2)
                     }
-                    if key == .character && allKeys.contains(.characterRequiresMatchAll) {
-                        Menu(content: {
-                            Picker(selection: $characterRequiresMatchAll, content: {
-                                Text("Filter.match-all.any-selected")
-                                    .tag(false)
-                                Text("Filter.match-all.all-selected")
-                                    .tag(true)
-                            }, label: {
-                                Text("")
-                            })
-                            .pickerStyle(.inline)
-                            .labelsHidden()
-                            .multilineTextAlignment(.leading)
-                        }, label: {
-                            ViewThatFits {
-                                Text(getAttributedStringForMatchAll(isAllSelected: characterRequiresMatchAll))
-                                Text(getAttributedStringForMatchAll(isAllSelected: characterRequiresMatchAll, isCompact: true))
-                            }
-                        })
-                        .menuIndicator(.hidden)
-                        .menuStyle(.borderlessButton)
-                        .buttonStyle(.plain)
-                        .onAppear {
-                            characterRequiresMatchAll = filter.characterRequiresMatchAll
-                        }
-                        .onChange(of: characterRequiresMatchAll) {
-                            filter.characterRequiresMatchAll = characterRequiresMatchAll
-                        }
-                        .accessibilityLabel(Text(getAttributedStringForMatchAll(isAllSelected: characterRequiresMatchAll)))
-                    }
                     Spacer()
                     Button(action: {
                         withAnimation(.easeInOut(duration: 0.05)) {

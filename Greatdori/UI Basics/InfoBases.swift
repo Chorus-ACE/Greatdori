@@ -514,7 +514,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
             }
         }
         .withSystemBackground()
-        .wrapIf(sizeClass == .regular || isMACOS) { content in
+        .wrapIf(sizeClass == .regular) { content in
             content
                 .inspector(isPresented: $showFilterSheet) {
                     FilterView(filter: $filter, includingKeys: Set(Element.applicableFilteringKeys))
