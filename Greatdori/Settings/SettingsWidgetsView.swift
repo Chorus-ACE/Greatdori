@@ -22,39 +22,6 @@ import WidgetKit
 import SDWebImageSwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
-//struct SettingsWidgetsView: View {
-//    @State var allCollections = CardCollectionManager.shared.allCollections
-//    var body: some View {
-//#if os(iOS)
-//        Section("Settings.widgets") {
-//            NavigationLink(destination: {
-//                List {
-//                    SettingsWidgetsCollectionView()
-//                }
-//                .navigationTitle("Settings.widgets.collections")
-//            }, label: {
-//                HStack {
-//                    Text("Settings.widgets.collections")
-//                    Spacer()
-//                    if !allCollections.isEmpty {
-//                        Text("\(allCollections.count)")
-//                            .foregroundStyle(.secondary)
-//                    }
-//                }
-//            })
-//        }
-//        .onAppear {
-//            // Refresh every time the view appears.
-//            allCollections = CardCollectionManager.shared.allCollections
-//        }
-//#else
-//        SettingsWidgetsCollectionView()
-//            .navigationTitle("Settings.widgets")
-//#endif
-//    }
-//}
-
-
 struct SettingsWidgetsView: View {
     @StateObject var collectionManager = CardCollectionManager.shared
     @State var destinationCollection: CardCollectionManager.Collection? = nil
@@ -631,7 +598,9 @@ struct SettingsWidgetsCollectionShareView: View {
     @AppStorage("hideCollectionNameWhileSharing") private var hideCollectionNameWhileSharing = false
     @State private var code = ""
     @State private var qrCode: PlatformImage?
+    @State private var link = ""
     @State private var showCopyTip = false
+    @State private var showCopyTipForLink = false
     var body: some View {
         Form {
             if let qrCode {
@@ -651,55 +620,66 @@ struct SettingsWidgetsCollectionShareView: View {
                         .frame(width: 200, height: 200)
                         Spacer()
                     }
-                } header: {
-                    Text("Settings.widgets.collections.share.qrcode.header")
+                    Text(code)
+                        .textSelection(.enabled)
+                        .fontDesign(.monospaced)
+                        .foregroundStyle(.secondary)
                 }
+                
                 Section {
-                    HStack {
-                        Text(code)
-                            .fontDesign(.monospaced)
-                            .foregroundStyle(.secondary)
-                        if !showCopyTip {
-                            Button(action: {
-                                copyStringToClipboard(code)
-                                showCopyTip = true
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                    showCopyTip = false
-                                }
-                            }, label: {
-                                Image(systemName: "doc.on.doc")
-                            })
-                        } else {
-                            HStack {
-                                Image(systemName: "checkmark")
-                                Text("Settings.widgets.collections.share.code.copied")
+                    Text("Settings.widgets.collections.code.dialog.message")
+                        Button(action: {
+                            copyStringToClipboard(code)
+                            showCopyTip = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                showCopyTip = false
                             }
-                            .foregroundStyle(.green)
+                        }, label: {
+                            ZStack {
+                                Label("Settings.widgets.collections.code.copy", systemImage: "doc.on.doc")
+                                    .opacity(showCopyTip ? 0 : 1)
+                                Label("Settings.widgets.collections.code.copied", systemImage: "checkmark.circle")
+                                    .foregroundStyle(.green)
+                                    .opacity(showCopyTip ? 1 : 0)
+                            }
+                        })
+                        .animation(.easeInOut(duration: 0.4), value: showCopyTip)
+                    Button(action: {
+                        copyStringToClipboard(link)
+                        showCopyTipForLink = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            showCopyTipForLink = false
                         }
-                    }
-                    .animation(.spring(duration: 0.4, bounce: 0.4), value: showCopyTip)
-                    ShareLink(item: code)
-                    Toggle(isOn: $hideCollectionNameWhileSharing, label: {
-                        VStack(alignment: .leading) {
-                            Text("Settings.widgets.collections.share-without-name")
-                            Text("Settings.widgets.collections.share-without-name.description")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                    }, label: {
+                        ZStack {
+                            Label("Settings.widgets.collections.link.copy", systemImage: "link")
+                                .opacity(showCopyTipForLink ? 0 : 1)
+                            Label("Settings.widgets.collections.link.copied", systemImage: "checkmark.circle")
+                                .foregroundStyle(.green)
+                                .opacity(showCopyTipForLink ? 1 : 0)
                         }
                     })
-                } header: {
-                    Text("Settings.widgets.collections.share.code.header")
-                } footer: {
+                    .animation(.easeInOut(duration: 0.4), value: showCopyTipForLink)
+                    ShareLink(item: URL(string: link)!)
+                }
+                
+                Section(content: {
+                    Toggle(isOn: $hideCollectionNameWhileSharing, label: {
+                        Text("Settings.widgets.collections.share-without-name")
+                    })
+                }, footer: {
                     SettingsDocumentButton(document: "CollectionCode") {
                         Text("Settings.widgets.collections.learn-more")
                     }
                     .font(isMACOS ? .body : .caption)
-                }
+                })
             }
         }
         .formStyle(.grouped)
         .frame(minHeight: 300)
-        .navigationTitle(name)
+        .wrapIf(!isMACOS, in: {
+            $0.navigationTitle(name)
+        })
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 #if os(macOS)
@@ -724,8 +704,9 @@ struct SettingsWidgetsCollectionShareView: View {
     func updateContent() {
         code = encodeCollection(collection.toCollectionCodeStructure(hideName: hideCollectionNameWhileSharing))
         let encodedCode = code.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed)!
+        link = "https://greatdori.com/share-collection.html?code=\(encodedCode)"
         qrCode = try? EFQRCode.Generator(
-            "https://greatdori.com/share-collection.html?code=\(encodedCode)",
+            link,
             errorCorrectLevel: .l,
             style: .basic(
                 params: .init(

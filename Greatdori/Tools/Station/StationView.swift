@@ -152,6 +152,7 @@ struct StationItemView: View {
     @Binding var filter: StationFilter
     @State var itemTipStatus = 0
     @State var reporingSheetIsDisplaying = false
+    @State var reporingUnavailableSheetIsDisplaying = false
     @State var blockingSheetIsDisplaying = false
     @State var reasonOfReport = ""
     var body: some View {
@@ -243,8 +244,12 @@ struct StationItemView: View {
                                         .labelStyle(.iconOnly)
                                 })
                                 Button(action: {
-                                    reasonOfReport = ""
-                                    reporingSheetIsDisplaying = true
+                                    if (try? AccountManager.bandoriStation.load().first) != nil  {
+                                        reasonOfReport = ""
+                                        reporingSheetIsDisplaying = true
+                                    } else {
+                                        reporingUnavailableSheetIsDisplaying = true
+                                    }
                                 }, label: {
                                     Label("Station.item.report", systemImage: "flag")
                                         .foregroundStyle(.secondary)
@@ -277,13 +282,25 @@ struct StationItemView: View {
         .alert("Station.item.report.alert.title.\(item.room.creator.username ?? "nil")", isPresented: $reporingSheetIsDisplaying, actions: {
             TextField("Station.item.report.alert.reason", text: $reasonOfReport)
             Button(optionalRole: .destructive, action: {
+                Task {
+                    let account = try? AccountManager.bandoriStation.load().first
+                    if let account {
+                        let token = try? account.readToken()
+                        if let token {
+                            try? await DoriAPI.Station.reportRoom(item.room, reason: reasonOfReport, userToken: .init(token))
+                        }
+                    }
+                }
                 itemTipStatus = 2
             }, label: {
                 Text("Station.item.report.alert.confirm")
             })
-            //            .keyboardShortcut(.defaultAction)
+            .disabled(reasonOfReport.isEmpty)
         }, message: {
             Text("Station.item.report.alert.message")
+        })
+        .alert("Station.item.report.unavailable", isPresented: $reporingUnavailableSheetIsDisplaying, actions: {}, message: {
+            Text("Station.item.report.unavailable.message")
         })
         .alert("Station.item.block.alert.title.\(item.room.creator.username ?? "nil")", isPresented: $blockingSheetIsDisplaying, actions: {
             Button(optionalRole: .destructive, action: {

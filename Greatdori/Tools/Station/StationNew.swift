@@ -36,207 +36,214 @@ struct StationAddView: View {
     @State var wordbankImportResultAlertIsDisplaying = false
     @State var wordbankImportResult: Result<(Int, Int), Error> = .failure(NSError(domain: "", code: -1))
     var body: some View {
-        Form {
-            Section(content: {
-                Picker(selection: $selectedAccount, content: {
-                    ForEach(allAccounts, id: \.self) { item in
-                        if let item {
-                            VStack {
-                                Text(item.username)
-                                Text(item.identifider)
+        NavigationStack {
+            Form {
+                Section(content: {
+                    Picker(selection: $selectedAccount, content: {
+                        ForEach(allAccounts, id: \.self) { item in
+                            if let item {
+                                VStack {
+                                    Text(item.username)
+                                    Text(item.identifider)
+                                }
+                                .tag(item)
+                            } else {
+                                Text("Station.new.account.anon")
+                                    .tag(item)
                             }
-                            .tag(item)
-                        } else {
-                            Text("Station.new.account.anon")
+                        }
+                    }, label: {
+                        Text("Station.new.account")
+                    })
+                }, footer: {
+                    if selectedAccount == nil {
+                        Text("Station.new.account.new.declaration")
+                    }
+                })
+                
+                Section {
+                    TextField("Station.new.number", value: $roomNumber, formatter: DigitStringFormatter(maxLength: 6))
+                        .wrapIf(true) {
+#if os(iOS)
+                            $0.keyboardType(.numberPad)
+#else
+                            $0
+#endif
+                        }
+                    TextField("Station.new.description", text: $description)
+                    Picker("Station.new.type", selection: $roomType, content: {
+                        ForEach(DoriAPI.Station.RoomType.allCases, id: \.self) { item in
+                            Text(item.localizedName)
                                 .tag(item)
                         }
-                    }
-                }, label: {
-                    Text("Station.new.account")
-                })
-            }, footer: {
-                if selectedAccount == nil {
-                    Text("Station.new.account.new.declaration")
-                }
-            })
-            
-            Section {
-                TextField("Station.new.number", value: $roomNumber, formatter: DigitStringFormatter(maxLength: 6))
-                    .wrapIf(true) {
-                        #if os(iOS)
-                        $0.keyboardType(.numberPad)
-                        #else
-                        $0
-                        #endif
-                    }
-                TextField("Station.new.description", text: $description)
-                Picker("Station.new.type", selection: $roomType, content: {
-                    ForEach(DoriAPI.Station.RoomType.allCases, id: \.self) { item in
-                        Text(item.localizedName)
-                            .tag(item)
-                    }
-                })
-            }
-            
-            Section {
-                HStack {
-                    Text("Station.new.wordbank")
-                    Spacer()
-                    if wordbank.count > 0 {
-                        Text("\(wordbank.count)")
-                            .foregroundStyle(.secondary)
-                    }
-                    Button(action: {
-                        wordbankIsExpanded.toggle()
-                    }, label: {
-                        Image(systemName: "chevron.forward")
-                            .rotationEffect(Angle(degrees: wordbankIsExpanded ? 90 : 0))
                     })
-                    .buttonStyle(.plain)
                 }
                 
-                if wordbankIsExpanded {
-                    if !wordbank.isEmpty {
-                        FlowLayout(items: wordbank, verticalSpacing: flowLayoutDefaultVerticalSpacing, horizontalSpacing: flowLayoutDefaultHorizontalSpacing) { item in
-                            TextCapsuleWithDeleteButton(deleteAction: {
-                                wordbank.removeAll(where: { $0 == item })
-                            }, showDivider: true, content: {
-                                Button(action: {
-                                    description.append(" \(item)")
-                                }, label: {
-                                    Text(item)
-                                })
-                            })
-                            .buttonStyle(.plain)
-                        }
-                    } else {
-                        HStack {
-                            Text("Station.new.wordbank.empty")
+                Section {
+                    HStack {
+                        Text("Station.new.wordbank")
+                        Spacer()
+                        if wordbank.count > 0 {
+                            Text("\(wordbank.count)")
                                 .foregroundStyle(.secondary)
-                            Spacer()
                         }
-                    }
-                    
-                    HStack {
-                        TextField("Station.new.wordbank.new.text-field", text: $wordbankNewEntry, prompt: Text("Station.new.wordbank.new.prompt"))
                         Button(action: {
-                            wordbank.append(wordbankNewEntry)
-                            wordbankNewEntry = ""
+                            wordbankIsExpanded.toggle()
                         }, label: {
-                            Image(systemName: "plus")
+                            Image(systemName: "chevron.forward")
+                                .rotationEffect(Angle(degrees: wordbankIsExpanded ? 90 : 0))
                         })
-                        .disabled(wordbank.contains(wordbankNewEntry) || wordbankNewEntry.isEmpty)
+                        .buttonStyle(.plain)
                     }
                     
-                    if let selectedAccount {
+                    if wordbankIsExpanded {
+                        if !wordbank.isEmpty {
+                            FlowLayout(items: wordbank, verticalSpacing: flowLayoutDefaultVerticalSpacing, horizontalSpacing: flowLayoutDefaultHorizontalSpacing) { item in
+                                TextCapsuleWithDeleteButton(deleteAction: {
+                                    wordbank.removeAll(where: { $0 == item })
+                                }, showDivider: true, content: {
+                                    Button(action: {
+                                        description.append(" \(item)")
+                                    }, label: {
+                                        Text(item)
+                                    })
+                                })
+                                .buttonStyle(.plain)
+                            }
+                        } else {
+                            HStack {
+                                Text("Station.new.wordbank.empty")
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                            }
+                        }
+                        
                         HStack {
-                            Text("Station.new.wordbank.import")
-                            Spacer()
-                            Text("Station.new.wordbank.import.from.\(selectedAccount.username)")
-//                                .foregroundStyle(.secondary)
+                            TextField("Station.new.wordbank.new.text-field", text: $wordbankNewEntry, prompt: Text(isMACOS ? "Station.new.wordbank.new.prompt" : "Station.new.wordbank.new.text-field"))
                             Button(action: {
-                                Task {
-                                    await fetchKeyword()
-                                }
+                                wordbank.append(wordbankNewEntry)
+                                wordbankNewEntry = ""
                             }, label: {
-                                if wordbankIsImporting {
-                                    ProgressView()
-                                        .controlSize(.small)
-                                } else {
-                                    Text("Station.new.wordbank.import.import")
-                                }
+                                Image(systemName: "plus")
                             })
-                            .disabled(wordbankIsImporting)
+                            .disabled(wordbank.contains(wordbankNewEntry) || wordbankNewEntry.isEmpty)
+                        }
+                        
+                        if let selectedAccount {
+                            HStack {
+                                Text("Station.new.wordbank.import")
+                                Spacer()
+                                Text("Station.new.wordbank.import.from.\(selectedAccount.username)")
+                                    .foregroundStyle(.secondary)
+                                Button(action: {
+                                    Task {
+                                        await fetchKeyword()
+                                    }
+                                }, label: {
+                                    if wordbankIsImporting {
+                                        ProgressView()
+                                            .controlSize(.small)
+                                    } else {
+                                        Text("Station.new.wordbank.import.import")
+                                    }
+                                })
+                                .disabled(wordbankIsImporting)
+                            }
                         }
                     }
                 }
-            }
-            .animation(.easeInOut(duration: 0.2), value: wordbankIsExpanded)
-            .alert("Station.new.wordbank.import.alert.title", isPresented: $wordbankImportResultAlertIsDisplaying, actions: {}, message: {
-                switch wordbankImportResult {
-                case .success(let success):
-                    if success.1 == 0 {
-                        Text("Station.new.wordbank.import.alert.success.\(success.0)")
-                    } else {
-                        Text("Station.new.wordbank.import.alert.success.\(success.0).\(success.1)")
+                .animation(.easeInOut(duration: 0.2), value: wordbankIsExpanded)
+                .alert("Station.new.wordbank.import.alert.title", isPresented: $wordbankImportResultAlertIsDisplaying, actions: {}, message: {
+                    switch wordbankImportResult {
+                    case .success(let success):
+                        if success.1 == 0 {
+                            Text("Station.new.wordbank.import.alert.success.\(success.0)")
+                        } else {
+                            Text("Station.new.wordbank.import.alert.success.\(success.0).\(success.1)")
+                        }
+                    case .failure(let failure):
+                        Text("Station.new.wordbank.import.alert.error.\("\(failure)")")
                     }
-                case .failure(let failure):
-                    Text("Station.new.wordbank.import.alert.error.\("\(failure)")")
-                }
-            })
-            
-            Section {
-                if roomNumber.count < 5 {
-                    Label("Station.new.issue.number-too-short", systemImage: "exclamationmark.circle")
-                        .foregroundStyle(.yellow)
-                }
-                if description.isEmpty {
-                    Label("Station.new.issue.empty-description", systemImage: "exclamationmark.circle")
-                        .foregroundStyle(.yellow)
-                }
-                if !description.isEmpty && roomNumber.count >= 5 {
-                    Label("Station.new.issue.ready", systemImage: "checkmark.circle")
-                        .foregroundStyle(.green)
-                }
-            }
-        }
-        .formStyle(.grouped)
-        .wrapIf(!isMACOS) {
-            $0.navigationTitle("Station.new")
-        }
-        .toolbar {
-            if isMACOS && gameplayIsSubmitting {
-                ToolbarItem(placement: .destructiveAction) {
-                    HStack {
-                        ProgressView()
-                            .controlSize(.small)
-                        Text("Station.new.submitting")
-                    }
-                }
-            }
-            ToolbarItem(placement: .cancellationAction) {
-                Button(action: {
-                    dismiss()
-                }, label: {
-                    Label("Station.new.cancel", systemImage: "xmark")
-                        .wrapIf(isMACOS, in: {
-                            $0.labelStyle(.titleOnly)
-                        }, else: {
-                            $0.labelStyle(.iconOnly)
-                        })
                 })
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                Button(action: {
-                    Task {
-                        await submitGameplay()
+                
+                Section {
+                    if roomNumber.count < 5 {
+                        Label("Station.new.issue.number-too-short", systemImage: "exclamationmark.circle")
+                            .foregroundStyle(.yellow)
                     }
-                }, label: {
-                    if !isMACOS && gameplayIsSubmitting {
-                        ProgressView()
-                    } else {
-                        Label("Station.new.submit", systemImage: "plus")
+                    if description.isEmpty {
+                        Label("Station.new.issue.empty-description", systemImage: "exclamationmark.circle")
+                            .foregroundStyle(.yellow)
+                    }
+                    if !description.isEmpty && roomNumber.count >= 5 {
+                        Label("Station.new.issue.ready", systemImage: "checkmark.circle")
+                            .foregroundStyle(.green)
+                    }
+                }
+            }
+            .formStyle(.grouped)
+            
+            .wrapIf(!isMACOS) {
+                $0.navigationTitle("Station.new")
+            }
+            .toolbar {
+                if isMACOS && gameplayIsSubmitting {
+                    ToolbarItem(placement: .destructiveAction) {
+                        HStack {
+                            ProgressView()
+                                .controlSize(.small)
+                            Text("Station.new.submitting")
+                        }
+                    }
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(action: {
+                        dismiss()
+                    }, label: {
+                        Label("Station.new.cancel", systemImage: "xmark")
                             .wrapIf(isMACOS, in: {
                                 $0.labelStyle(.titleOnly)
                             }, else: {
                                 $0.labelStyle(.iconOnly)
                             })
-                    }
-                })
-                .disabled(roomNumber.count < 5 || description.isEmpty)
-                .disabled(gameplayIsSubmitting)
+                    })
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(action: {
+                        Task {
+                            await submitGameplay()
+                        }
+                    }, label: {
+                        if !isMACOS && gameplayIsSubmitting {
+                            ProgressView()
+                        } else {
+                            Label("Station.new.submit", systemImage: "plus")
+                                .wrapIf(isMACOS, in: {
+                                    $0.labelStyle(.titleOnly)
+                                }, else: {
+                                    $0.labelStyle(.iconOnly)
+                                })
+                        }
+                    })
+                    .disabled(roomNumber.count < 5 || description.isEmpty)
+                    .disabled(gameplayIsSubmitting)
+                }
             }
+            .onAppear {
+                roomType = .init(rawValue: UserDefaults.standard.integer(forKey: "DefaultSubmittingRoomType")) ?? .daredemo
+                wordbank = (UserDefaults.standard.array(forKey: "StationWordbank") as? [String]) ?? []
+                
+                allAccounts = ((try? AccountManager.bandoriStation.load()) ?? []) + [nil]
+                selectedAccount = allAccounts.first ?? nil
+            }
+            .onChange(of: roomType, {
+                UserDefaults.standard.set(roomType.rawValue, forKey: "DefaultSubmittingRoomType")
+            })
+            .onChange(of: wordbank, {
+                UserDefaults.standard.set(wordbank, forKey: "StationWordbank")
+            })
+            .loginError(isPresented: $errorAlertIsDisplaying, presenting: submitError, retryAction: { await submitGameplay() }, openURL: openURL)
         }
-        .onAppear {
-            roomType = .init(rawValue: UserDefaults.standard.integer(forKey: "DefaultSubmittingRoomType")) ?? .daredemo
-            
-            allAccounts = ((try? AccountManager.bandoriStation.load()) ?? []) + [nil]
-            selectedAccount = allAccounts.first ?? nil
-        }
-        .onChange(of: roomType, {
-            UserDefaults.standard.set(roomType.rawValue, forKey: "DefaultSubmittingRoomType")
-        })
-        .loginError(isPresented: $errorAlertIsDisplaying, presenting: submitError, retryAction: { await submitGameplay() }, openURL: openURL)
     }
     
     func submitGameplay(rescueIfDead: Bool = true) async {

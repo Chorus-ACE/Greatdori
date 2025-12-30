@@ -135,11 +135,11 @@ struct StationFilterView: View {
                     HStack {
                         TextField("", text: $keywordNewItem, prompt: Text("Station.filter.keyword.prompt"))
                             .labelsHidden()
-                            .textFieldStyle(.roundedBorder)
+//                            .textFieldStyle(.roundedBorder)
                         Button(action: {
                             if !filter.disallowedKeywords.contains(keywordNewItem) {
-                                keywordNewItem = ""
                                 filter.disallowedKeywords.append(keywordNewItem)
+                                keywordNewItem = ""
                             }
                         }, label: {
                             Label("Station.filter.keyword.add", systemImage: "plus")
@@ -148,22 +148,25 @@ struct StationFilterView: View {
                         .disabled(keywordNewItem.isEmpty || filter.disallowedKeywords.contains(keywordNewItem))
                     }
                     
-                    if !filter.disallowedKeywords.isEmpty {
-                        FlowLayout(items: filter.disallowedKeywords, verticalSpacing: flowLayoutDefaultVerticalSpacing, horizontalSpacing: flowLayoutDefaultHorizontalSpacing) { item in
-                            TextCapsuleWithDeleteButton(deleteAction: {
-                                filter.disallowedKeywords.removeAll(where: { $0 == item })
-                            }, content: {
-                                Text(item)
-                            })
-                            .buttonStyle(.plain)
-                        }
-                    } else {
-                        HStack {
-                            Text("Station.filter.keyword.none")
-                                .foregroundStyle(.secondary)
-                            Spacer()
+                    Group {
+                        if !filter.disallowedKeywords.isEmpty {
+                            FlowLayout(items: filter.disallowedKeywords, verticalSpacing: flowLayoutDefaultVerticalSpacing, horizontalSpacing: flowLayoutDefaultHorizontalSpacing) { item in
+                                TextCapsuleWithDeleteButton(deleteAction: {
+                                    filter.disallowedKeywords.removeAll(where: { $0 == item })
+                                }, content: {
+                                    Text(item)
+                                })
+                                .buttonStyle(.plain)
+                            }
+                        } else {
+                            HStack {
+                                Text("Station.filter.keyword.none")
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                            }
                         }
                     }
+                    .padding(.top, 3)
                 }
                 
                 VStack {
@@ -183,22 +186,25 @@ struct StationFilterView: View {
                         .buttonStyle(.plain)
                     }
                     
-                    if !filter.disallowedUsers.isEmpty {
-                        FlowLayout(items: filter.disallowedUsers, verticalSpacing: flowLayoutDefaultVerticalSpacing, horizontalSpacing: flowLayoutDefaultHorizontalSpacing) { item in
-                            TextCapsuleWithDeleteButton(deleteAction: {
-                                filter.disallowedUsers.removeAll(where: { $0 == item })
-                            }, content: {
-                                Text(item.name)
-                            })
-                            .buttonStyle(.plain)
-                        }
-                    } else {
-                        HStack {
-                            Text("Station.filter.user.none")
-                                .foregroundStyle(.secondary)
-                            Spacer()
+                    Group {
+                        if !filter.disallowedUsers.isEmpty {
+                            FlowLayout(items: filter.disallowedUsers, verticalSpacing: flowLayoutDefaultVerticalSpacing, horizontalSpacing: flowLayoutDefaultHorizontalSpacing) { item in
+                                TextCapsuleWithDeleteButton(deleteAction: {
+                                    filter.disallowedUsers.removeAll(where: { $0 == item })
+                                }, content: {
+                                    Text(item.name)
+                                })
+                                .buttonStyle(.plain)
+                            }
+                        } else {
+                            HStack {
+                                Text("Station.filter.user.none")
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                            }
                         }
                     }
+                    .padding(.top, 1)
                 }
             }, header: {
                 VStack(alignment: .leading) {
@@ -218,34 +224,37 @@ struct StationFilterView: View {
                 .disabled(!filter.isFiltering)
             }
             
-            Section("Station.filter.import") {
-                Picker(selection: $selectedAccount, content: {
-                    ForEach(allAccounts, id: \.self) { item in
-                        Text(item.description)
-                            .tag(item)
-                    }
-                }, label: {
-                    Text("Station.filter.import.source")
-                }, optionalCurrentValueLabel: {
-                    if let selectedAccount {
-                        Text(selectedAccount.username)
-                    } else {
-                        Text("Station.filter.import.source.none")
-                    }
-                })
-                HStack {
-                    Button(action: {
-                        Task {
-                            await importFilter()
+            if !allAccounts.isEmpty {
+                Section("Station.filter.import") {
+                    Picker(selection: $selectedAccount, content: {
+                        ForEach(allAccounts, id: \.self) { item in
+                            Text(item.description)
+                                .tag(item)
                         }
                     }, label: {
-                        Text("Station.filter.import.import")
+                        Text("Station.filter.import.source")
+                    }, optionalCurrentValueLabel: {
+                        if let selectedAccount {
+                            Text(selectedAccount.username)
+                        } else {
+                            Text("Station.filter.import.source.none")
+                        }
                     })
-                    .disabled(isImporting || selectedAccount == nil)
-                    Spacer()
-                    if isImporting {
-                        ProgressView()
-                            .controlSize(.small)
+                    .id(allAccounts)
+                    HStack {
+                        Button(action: {
+                            Task {
+                                await importFilter()
+                            }
+                        }, label: {
+                            Text("Station.filter.import.import")
+                        })
+                        .disabled(isImporting || selectedAccount == nil)
+                        Spacer()
+                        if isImporting {
+                            ProgressView()
+                                .controlSize(.small)
+                        }
                     }
                 }
             }
