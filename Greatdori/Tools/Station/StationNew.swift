@@ -22,11 +22,19 @@ struct StationAddView: View {
     @State var selectedAccount: GreatdoriAccount? = nil
     
     @State var roomNumber = ""
-    @State var message = ""
+    @State var description = ""
+    @State var roomType: DoriAPI.Station.RoomType = .daredemo
     
     @State var gameplayIsSubmitting = false
     @State var errorAlertIsDisplaying = false
     @State var submitError: Error? = nil
+    
+    @State var wordbankIsExpanded = false
+    @State var wordbank: [String] = []
+    @State var wordbankNewEntry = ""
+    @State var wordbankIsImporting = false
+    @State var wordbankImportResultAlertIsDisplaying = false
+    @State var wordbankImportResult: Result<(Int, Int), Error> = .failure(NSError(domain: "", code: -1))
     var body: some View {
         Form {
             Section(content: {
@@ -54,20 +62,119 @@ struct StationAddView: View {
             
             Section {
                 TextField("Station.new.number", value: $roomNumber, formatter: DigitStringFormatter(maxLength: 6))
-                // Keyboard Layout?
-                TextField("Station.new.description", text: $message)
+                    .wrapIf(true) {
+                        #if os(iOS)
+                        $0.keyboardType(.numberPad)
+                        #else
+                        $0
+                        #endif
+                    }
+                TextField("Station.new.description", text: $description)
+                Picker("Station.new.type", selection: $roomType, content: {
+                    ForEach(DoriAPI.Station.RoomType.allCases, id: \.self) { item in
+                        Text(item.localizedName)
+                            .tag(item)
+                    }
+                })
             }
+            
+            Section {
+                HStack {
+                    Text("Station.new.wordbank")
+                    Spacer()
+                    if wordbank.count > 0 {
+                        Text("\(wordbank.count)")
+                            .foregroundStyle(.secondary)
+                    }
+                    Button(action: {
+                        wordbankIsExpanded.toggle()
+                    }, label: {
+                        Image(systemName: "chevron.forward")
+                            .rotationEffect(Angle(degrees: wordbankIsExpanded ? 90 : 0))
+                    })
+                    .buttonStyle(.plain)
+                }
+                
+                if wordbankIsExpanded {
+                    if !wordbank.isEmpty {
+                        FlowLayout(items: wordbank, verticalSpacing: flowLayoutDefaultVerticalSpacing, horizontalSpacing: flowLayoutDefaultHorizontalSpacing) { item in
+                            TextCapsuleWithDeleteButton(deleteAction: {
+                                wordbank.removeAll(where: { $0 == item })
+                            }, showDivider: true, content: {
+                                Button(action: {
+                                    description.append(" \(item)")
+                                }, label: {
+                                    Text(item)
+                                })
+                            })
+                            .buttonStyle(.plain)
+                        }
+                    } else {
+                        HStack {
+                            Text("Station.new.wordbank.empty")
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        }
+                    }
+                    
+                    HStack {
+                        TextField("Station.new.wordbank.new.text-field", text: $wordbankNewEntry, prompt: Text("Station.new.wordbank.new.prompt"))
+                        Button(action: {
+                            wordbank.append(wordbankNewEntry)
+                            wordbankNewEntry = ""
+                        }, label: {
+                            Image(systemName: "plus")
+                        })
+                        .disabled(wordbank.contains(wordbankNewEntry) || wordbankNewEntry.isEmpty)
+                    }
+                    
+                    if let selectedAccount {
+                        HStack {
+                            Text("Station.new.wordbank.import")
+                            Spacer()
+                            Text("Station.new.wordbank.import.from.\(selectedAccount.username)")
+//                                .foregroundStyle(.secondary)
+                            Button(action: {
+                                Task {
+                                    await fetchKeyword()
+                                }
+                            }, label: {
+                                if wordbankIsImporting {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                } else {
+                                    Text("Station.new.wordbank.import.import")
+                                }
+                            })
+                            .disabled(wordbankIsImporting)
+                        }
+                    }
+                }
+            }
+            .animation(.easeInOut(duration: 0.2), value: wordbankIsExpanded)
+            .alert("Station.new.wordbank.import.alert.title", isPresented: $wordbankImportResultAlertIsDisplaying, actions: {}, message: {
+                switch wordbankImportResult {
+                case .success(let success):
+                    if success.1 == 0 {
+                        Text("Station.new.wordbank.import.alert.success.\(success.0)")
+                    } else {
+                        Text("Station.new.wordbank.import.alert.success.\(success.0).\(success.1)")
+                    }
+                case .failure(let failure):
+                    Text("Station.new.wordbank.import.alert.error.\("\(failure)")")
+                }
+            })
             
             Section {
                 if roomNumber.count < 5 {
                     Label("Station.new.issue.number-too-short", systemImage: "exclamationmark.circle")
                         .foregroundStyle(.yellow)
                 }
-                if message.isEmpty {
-                    Label("Station.new.issue.empty-message", systemImage: "exclamationmark.circle")
+                if description.isEmpty {
+                    Label("Station.new.issue.empty-description", systemImage: "exclamationmark.circle")
                         .foregroundStyle(.yellow)
                 }
-                if !message.isEmpty && roomNumber.count >= 5 {
+                if !description.isEmpty && roomNumber.count >= 5 {
                     Label("Station.new.issue.ready", systemImage: "checkmark.circle")
                         .foregroundStyle(.green)
                 }
@@ -102,7 +209,7 @@ struct StationAddView: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button(action: {
                     Task {
-//                        await addAccount()
+                        await submitGameplay()
                     }
                 }, label: {
                     if !isMACOS && gameplayIsSubmitting {
@@ -116,20 +223,85 @@ struct StationAddView: View {
                             })
                     }
                 })
-                .disabled(roomNumber.count < 5 || message.isEmpty)
+                .disabled(roomNumber.count < 5 || description.isEmpty)
                 .disabled(gameplayIsSubmitting)
             }
         }
         .onAppear {
+            roomType = .init(rawValue: UserDefaults.standard.integer(forKey: "DefaultSubmittingRoomType")) ?? .daredemo
+            
             allAccounts = ((try? AccountManager.bandoriStation.load()) ?? []) + [nil]
             selectedAccount = allAccounts.first ?? nil
         }
-        .loginError(isPresented: $errorAlertIsDisplaying, presenting: submitError, retryAction: {  }, openURL: openURL)
+        .onChange(of: roomType, {
+            UserDefaults.standard.set(roomType.rawValue, forKey: "DefaultSubmittingRoomType")
+        })
+        .loginError(isPresented: $errorAlertIsDisplaying, presenting: submitError, retryAction: { await submitGameplay() }, openURL: openURL)
     }
     
-    func submitGameplay() async {
+    func submitGameplay(rescueIfDead: Bool = true) async {
         gameplayIsSubmitting = true
-        
+        if let selectedAccount {
+            do {
+                let token = try selectedAccount.readToken()
+                try await DoriAPI.Station.postRoom(number: roomNumber, type: roomType, description: description, user: .init(token), client: "Greatdori")
+                dismiss()
+            } catch {
+                do {
+                    if rescueIfDead {
+                        try await selectedAccount.updateToken()
+                        await submitGameplay(rescueIfDead: false)
+                    } else {
+                        throw error
+                    }
+                } catch {
+                    submitError = error
+                    errorAlertIsDisplaying = true
+                }
+            }
+        }
+        gameplayIsSubmitting = false
+    }
+    
+    func fetchKeyword(rescueIfDead: Bool = true) async {
+        if let selectedAccount {
+            Task {
+                wordbankIsImporting = true
+                do {
+                    let token = try selectedAccount.readToken()
+                    let userInfo = try await DoriAPI.Station.userInformation(userToken: .init(token))
+                    let preferredWords = userInfo.websiteSettings?.postPreference.preselectedWordList
+                    
+                    if let preferredWords {
+                        var duplicatesCount = 0
+                        for word in preferredWords {
+                            if !wordbank.contains(word) {
+                                wordbank.append(word)
+                            } else {
+                                duplicatesCount += 1
+                            }
+                        }
+                        
+                        wordbankImportResult = .success((preferredWords.count, duplicatesCount))
+                    } else {
+                        throw SimpleError(id: 5010, message: "Cannot get word list")
+                    }
+                } catch {
+                    do {
+                        if rescueIfDead {
+                            try await selectedAccount.updateToken()
+                            await fetchKeyword(rescueIfDead: false)
+                        } else {
+                            throw error
+                        }
+                    } catch {
+                        wordbankImportResult = .failure(error)
+                    }
+                }
+                wordbankIsImporting = false
+                wordbankImportResultAlertIsDisplaying = true
+            }
+        }
     }
 }
 

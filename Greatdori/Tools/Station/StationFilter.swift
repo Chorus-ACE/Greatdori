@@ -46,6 +46,10 @@ struct StationFilterView: View {
     
     @State var allAccounts: [GreatdoriAccount] = []
     @State var selectedAccount: GreatdoriAccount? = nil
+    
+    @State var isImporting = false
+    @State var importResultAlertIsDisplaying = false
+    @State var importResult: Result<Void, Error> = .failure(NSError(domain: "", code: -1))
     var body: some View {
         Form {
             Section(content: {
@@ -91,7 +95,7 @@ struct StationFilterView: View {
                         })
                         .buttonStyle(.plain)
                     }
-
+                    
                     FlowLayout(items: DoriAPI.Station.RoomType.allCases, verticalSpacing: flowLayoutDefaultVerticalSpacing, horizontalSpacing: flowLayoutDefaultHorizontalSpacing) { item in
                         Button(action: {
                             if filter.roomTypes.contains(item) {
@@ -123,7 +127,7 @@ struct StationFilterView: View {
                             filter.disallowedKeywords.removeAll()
                         }, label: {
                             Text("Station.filter.clear")
-                            .foregroundStyle(.secondary)
+                                .foregroundStyle(.secondary)
                         })
                         .buttonStyle(.plain)
                     }
@@ -134,6 +138,7 @@ struct StationFilterView: View {
                             .textFieldStyle(.roundedBorder)
                         Button(action: {
                             if !filter.disallowedKeywords.contains(keywordNewItem) {
+                                keywordNewItem = ""
                                 filter.disallowedKeywords.append(keywordNewItem)
                             }
                         }, label: {
@@ -173,7 +178,7 @@ struct StationFilterView: View {
                             filter.disallowedUsers.removeAll()
                         }, label: {
                             Text("Station.filter.clear")
-                            .foregroundStyle(.secondary)
+                                .foregroundStyle(.secondary)
                         })
                         .buttonStyle(.plain)
                     }
@@ -228,62 +233,116 @@ struct StationFilterView: View {
                         Text("Station.filter.import.source.none")
                     }
                 })
-                Button(action: {
-//                    if let selectedAccount {
-//                        Task {
-//                            do {
-//                                let token = try selectedAccount.readToken()
-//                                let userInfomation = try await DoriAPI.Station.userInformation(userToken: DoriAPI.Station.UserToken(token))
-//                                userInfomation.websiteSettings?.postPreference.preselectedWordList
-//                            }
-//                        }
-//                    }
-                }, label: {
-                    Text("Station.filter.import.import")
-                })
+                HStack {
+                    Button(action: {
+                        Task {
+                            await importFilter()
+                        }
+                    }, label: {
+                        Text("Station.filter.import.import")
+                    })
+                    .disabled(isImporting || selectedAccount == nil)
+                    Spacer()
+                    if isImporting {
+                        ProgressView()
+                            .controlSize(.small)
+                    }
+                }
             }
         }
         .onAppear {
             allAccounts = (try? AccountManager.bandoriStation.load()) ?? []
             selectedAccount = allAccounts.first
         }
+        .alert("Station.filter.import.alert.title", isPresented: $importResultAlertIsDisplaying, actions: {}, message: {
+            switch importResult {
+            case .success(_):
+                Text("Station.filter.import.alert.success")
+            case .failure(let failure):
+                Text("Station.filter.import.alert.error.\("\(failure)")")
+            }
+        })
     }
     
-    
-    struct TextCapsuleWithDeleteButton<Content: View>: View {
-        @Environment(\.horizontalSizeClass) var sizeClass
-        let deleteAction: () -> Void
-        let content: Content
-        let cornerRadius: CGFloat = capsuleDefaultCornerRadius
-        @State var textWidth: CGFloat = 0
-        
-        init(deleteAction: @escaping () -> Void, @ViewBuilder content: () -> Content) {
-            self.deleteAction = deleteAction
-            self.content = content()
-        }
-        var body: some View {
-            ZStack {
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(lineWidth: 2)
-                    .foregroundStyle(.primary)
-                    .frame(width: textWidth, height: filterItemHeight)
-                HStack {
-                    content
-                    Button(action: {
-                        deleteAction()
-                    }, label: {
-                        Image(systemName: "xmark")
-                            .font(.caption)
-                    })
+    func importFilter(rescueIfDead: Bool = true) async {
+        if let selectedAccount {
+            Task {
+                isImporting = true
+                do {
+                    let token = try selectedAccount.readToken()
+                    let onlineFilter = try await DoriAPI.Station.roomFilter(fromUserToken: .init(token))
+                    
+                    filter.roomTypes = onlineFilter.roomTypes
+                    
+                    for keyword in onlineFilter.keywords {
+                        if !filter.disallowedKeywords.contains(keyword) {
+                            filter.disallowedKeywords.append(keyword)
+                        }
+                    }
+                    
+                    for user in onlineFilter.users {
+                        if !filter.disallowedUsers.contains(where: { $0.id == user.id }) {
+                            filter.disallowedUsers.append(StationFilter.DisallowedUser(id: user.id, name: user.username ?? String(user.id)))
+                        }
+                    }
+                    
+                    importResult = .success(())
+                } catch {
+                    do {
+                        if rescueIfDead {
+                            try await selectedAccount.updateToken()
+                            await importFilter(rescueIfDead: false)
+                        } else {
+                            throw error
+                        }
+                    } catch {
+                        importResult = .failure(error)
+                    }
                 }
-                .foregroundStyle(.primary)
-                .frame(height: filterItemHeight)
-                .padding(.horizontal, isMACOS ? 10 : nil)
-                .onFrameChange(perform: { geometry in
-                    textWidth = geometry.size.width
-                })
-                //FIXME: Text padding to much in macOS
+                isImporting = false
+                importResultAlertIsDisplaying = true
             }
+        }
+    }
+}
+
+struct TextCapsuleWithDeleteButton<Content: View>: View {
+    @Environment(\.horizontalSizeClass) var sizeClass
+    let deleteAction: () -> Void
+    let showDivider: Bool
+    let content: Content
+    let cornerRadius: CGFloat = capsuleDefaultCornerRadius
+    @State var textWidth: CGFloat = 0
+    
+    init(deleteAction: @escaping () -> Void, showDivider: Bool = false, @ViewBuilder content: () -> Content) {
+        self.deleteAction = deleteAction
+        self.showDivider = showDivider
+        self.content = content()
+    }
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .stroke(lineWidth: 2)
+                .foregroundStyle(.primary)
+                .frame(width: textWidth, height: filterItemHeight)
+            HStack {
+                content
+                if showDivider {
+                    Divider()
+                }
+                Button(action: {
+                    deleteAction()
+                }, label: {
+                    Image(systemName: "xmark")
+                        .font(showDivider ? .body : .caption)
+                })
+            }
+            .foregroundStyle(.primary)
+            .frame(height: filterItemHeight)
+            .padding(.horizontal, isMACOS ? 10 : nil)
+            .onFrameChange(perform: { geometry in
+                textWidth = geometry.size.width
+            })
         }
     }
 }

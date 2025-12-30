@@ -18598,7 +18598,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Clear All"
+            "value" : "Reset to Defualts"
           }
         }
       }
@@ -18608,7 +18608,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Import"
+            "value" : "Import Keyword"
+          }
+        }
+      }
+    },
+    "Station.filter.import.alert.error.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encountered an error while importing: %@"
+          }
+        }
+      }
+    },
+    "Station.filter.import.alert.success" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter had successfully imported. Duplicates may be ignored."
+          }
+        }
+      }
+    },
+    "Station.filter.import.alert.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter Import Completed"
           }
         }
       }
@@ -19022,7 +19052,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Other"
+            "value" : "Default"
           }
         }
       }
@@ -19087,12 +19117,12 @@
         }
       }
     },
-    "Station.new.issue.empty-message" : {
+    "Station.new.issue.empty-description" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Message cannot be empty"
+            "value" : "Description cannot be empty"
           }
         }
       }
@@ -19102,7 +19132,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Room number is too short"
+            "value" : "Room number needs to be 5 or 6 digits"
           }
         }
       }
@@ -19143,6 +19173,180 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Submitting"
+          }
+        }
+      }
+    },
+    "Station.new.type" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        }
+      }
+    },
+    "Station.new.wordbank" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wordlist"
+          }
+        }
+      }
+    },
+    "Station.new.wordbank.empty" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(No Word)"
+          }
+        }
+      }
+    },
+    "Station.new.wordbank.import" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import"
+          }
+        }
+      }
+    },
+    "Station.new.wordbank.import.alert.error.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import failed: %@"
+          }
+        }
+      }
+    },
+    "Station.new.wordbank.import.alert.success.%lld" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld item was successfully imported."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld items were successfully imported."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Station.new.wordbank.import.alert.success.%lld.%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@arg1@ successfully imported, in which %#@arg2@."
+          },
+          "substitutions" : {
+            "arg1" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item was"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items were"
+                    }
+                  }
+                }
+              }
+            },
+            "arg2" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item was duplicate"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items were duplicates"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Station.new.wordbank.import.alert.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wordlist Import Completed"
+          }
+        }
+      }
+    },
+    "Station.new.wordbank.import.from.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from %@"
+          }
+        }
+      }
+    },
+    "Station.new.wordbank.import.import" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import"
+          }
+        }
+      }
+    },
+    "Station.new.wordbank.new.prompt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter word here"
+          }
+        }
+      }
+    },
+    "Station.new.wordbank.new.text-field" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Word"
           }
         }
       }
