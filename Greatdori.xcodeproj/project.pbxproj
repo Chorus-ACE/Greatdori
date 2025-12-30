@@ -31,6 +31,7 @@
 		8C2C89262E9E153400058FF7 /* DoriKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C2C89252E9E153400058FF7 /* DoriKit.framework */; };
 		8C2C89272E9E153400058FF7 /* DoriKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8C2C89252E9E153400058FF7 /* DoriKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8C2CCD532E3F43E90014189F /* CommunityPostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2CCD522E3F43E00014189F /* CommunityPostsView.swift */; };
+		8C2EBE9B2F0428FD006BC253 /* EFQRCode in Frameworks */ = {isa = PBXBuildFile; productRef = 8C2EBE9A2F0428FD006BC253 /* EFQRCode */; };
 		8C320FAF2E8BF2AB002D183A /* InfoBases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C320FAE2E8BF2A5002D183A /* InfoBases.swift */; };
 		8C3264082E3C724900081F4F /* GachaListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3264072E3C723F00081F4F /* GachaListView.swift */; };
 		8C32640A2E3CB4D000081F4F /* GachaDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3264092E3CB4CC00081F4F /* GachaDetailView.swift */; };
@@ -834,6 +835,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C2EBE9B2F0428FD006BC253 /* EFQRCode in Frameworks */,
 				8CB4D47F2E445F700085D57A /* BuiltinCardCollections.framework in Frameworks */,
 				8CD2A9D22E9F690D00831458 /* Alamofire in Frameworks */,
 				8C3D4E7C2EA7AABE0034E831 /* SwiftyJSON in Frameworks */,
@@ -1634,6 +1636,7 @@
 				8C3D4E7B2EA7AABE0034E831 /* SwiftyJSON */,
 				8CE0BBAB2ED2FE1F00E22ED6 /* SwiftJWT */,
 				E97810BB2EE9486D000AD397 /* Mute */,
+				8C2EBE9A2F0428FD006BC253 /* EFQRCode */,
 			);
 			productName = Greatdori;
 			productReference = 8C0C995D2E296A4400549B5C /* Greatdori!.app */;
@@ -1853,6 +1856,7 @@
 				8CE0BBAA2ED2FE1E00E22ED6 /* XCRemoteSwiftPackageReference "Swift-JWT" */,
 				E97810BA2EE9486D000AD397 /* XCRemoteSwiftPackageReference "Mute" */,
 				E9CA1FD02EFEC7A0005932E5 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
+				8C2EBE992F0428FC006BC253 /* XCRemoteSwiftPackageReference "EFQRCode" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8C0C995E2E296A4400549B5C /* Products */;
@@ -5000,6 +5004,14 @@
 				minimumVersion = 5.0.2;
 			};
 		};
+		8C2EBE992F0428FC006BC253 /* XCRemoteSwiftPackageReference "EFQRCode" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EFPrefix/EFQRCode";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.3;
+			};
+		};
 		8C499F8B2E4FD9CE0073FCB6 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
@@ -5075,6 +5087,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		8C2EBE9A2F0428FD006BC253 /* EFQRCode */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C2EBE992F0428FC006BC253 /* XCRemoteSwiftPackageReference "EFQRCode" */;
+			productName = EFQRCode;
+		};
 		8C32BA372E8EA955002D183A /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8C923D7B2E304882003AFC0A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;

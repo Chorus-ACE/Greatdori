@@ -45,6 +45,11 @@ let rawAcknowledgements: [AcknowledgementItem] = [
         licenseVerbatim: Apache_License_2_0),
     
     AcknowledgementItem(
+        title: "EFQRCode",
+        subtitle: "MIT License",
+        licenseVerbatim: MIT_License(year: "2017-2025", name: "EyreFree <eyrefree@eyrefree.org>")),
+    
+    AcknowledgementItem(
         title: "KituraContracts",
         subtitle: "Apache License 2.0",
         licenseVerbatim: Apache_License_2_0),
@@ -104,6 +109,11 @@ let rawAcknowledgements: [AcknowledgementItem] = [
         title: "swift-syntax",
         subtitle: "Apache License 2.0",
         licenseVerbatim: Apache_License_2_0 + swiftSuffix),
+    
+    AcknowledgementItem(
+        title: "SwiftDraw",
+        subtitle: "MIT License",
+        licenseVerbatim: MIT_License(year: "2019", name: "Simon Whitty")),
     
     AcknowledgementItem(
         title: "SwiftJWT",

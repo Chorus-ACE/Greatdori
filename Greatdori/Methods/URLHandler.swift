@@ -164,6 +164,13 @@ func _handleURL(_ url: URL) {
             default: break
             }
         }
+    case "share-collection.html":
+        if let code = components.queryItems?.first(where: { $0.name == "code" })?.value,
+           decodeCollection(code) != nil {
+            rootShowView {
+                SettingsWidgetsView(newCollectionSheetIsDisplaying: true, newCollectionInput: code)
+            }
+        }
     default: break
     }
 }

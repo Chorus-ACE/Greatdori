@@ -14,10 +14,12 @@
 
 import Combine
 import DoriKit
+import EFQRCode
 import Alamofire
 import MarkdownUI
 import SwiftUI
 import WidgetKit
+import SDWebImageSwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
 //struct SettingsWidgetsView: View {
@@ -54,7 +56,6 @@ import WidgetKit
 
 
 struct SettingsWidgetsView: View {
-    @AppStorage("hideCollectionNameWhileSharing") var hideCollectionNameWhileSharing = false
     @StateObject var collectionManager = CardCollectionManager.shared
     @State var destinationCollection: CardCollectionManager.Collection? = nil
     @State var showDestination = false
@@ -202,6 +203,19 @@ struct SettingsWidgetsView: View {
                 }
             }, header: {
                 Text("Settings.widgets.collections.user")
+                    .toolbar {
+                        if isMACOS {
+                            ToolbarItem {
+                                Button(action: {
+                                    newCollectionInput = ""
+                                    newCollectionSheetIsDisplaying = true
+                                }, label: {
+                                    Label("Settings.widgets.collections.user.add", systemImage: "plus")
+                                })
+                                .disabled(newCollectionIsImporting)
+                            }
+                        }
+                    }
             })
             
             Section("Settings.widgets.collections.built-in") {
@@ -247,35 +261,6 @@ struct SettingsWidgetsView: View {
                     })
                 }
             }
-            
-            Section(content: {
-                Toggle(isOn: $hideCollectionNameWhileSharing, label: {
-                    VStack(alignment: .leading) {
-                        Text("Settings.widgets.collections.share-without-name")
-                        Text("Settings.widgets.collections.share-without-name.description")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                })
-            }, footer: {
-                SettingsDocumentButton(document: "CollectionCode") {
-                    Text("Settings.widgets.collections.learn-more")
-                }
-                .font(isMACOS ? .body : .caption)
-                .toolbar {
-                    if isMACOS {
-                        ToolbarItem {
-                            Button(action: {
-                                newCollectionInput = ""
-                                newCollectionSheetIsDisplaying = true
-                            }, label: {
-                                Label("Settings.widgets.collections.user.add", systemImage: "plus")
-                            })
-                            .disabled(newCollectionIsImporting)
-                        }
-                    }
-                }
-            })
         }
         .navigationTitle("Settings.widgets")
         .navigationDestination(isPresented: $showDestination, destination: {
@@ -352,7 +337,6 @@ struct SettingsWidgetsCollectionDetailsView: View {
     @State var showCollectionDeleteAlert = false
     @State var cards: [Int: Card] = [:]
     @State var layoutType: Int = 1
-    @State var collectionCode: String = ""
     @State var showCollectionCodeDialog = false
     @State var showExportCheckmark = false
     @State var showCollectionEditorSheet = false
@@ -586,7 +570,6 @@ struct SettingsWidgetsCollectionDetailsView: View {
                 if !collection.cards.isEmpty {
                     ToolbarItem(placement: .primaryAction, content: {
                         Button(action: {
-                            collectionCode = encodeCollection(collection.toCollectionCodeStructure(hideName: hideCollectionNameWhileSharing))
                             showCollectionCodeDialog = true
                         }, label: {
                             if showExportCheckmark {
@@ -616,37 +599,16 @@ struct SettingsWidgetsCollectionDetailsView: View {
                         CollectionEditorView(collection: collection)
                     }
             })
-            .alert("Settings.widgets.collections.code.dialog.title", isPresented: $showCollectionCodeDialog, actions: {
-                Button(action: {
-                    copyStringToClipboard(collectionCode)
-                    withAnimation {
-                        showExportCheckmark = true
+            .sheet(isPresented: $showCollectionCodeDialog) {
+                if let collection = collectionManager.allCollections.first(where: { $0.name == collectionGivenName }) {
+                    NavigationStack {
+                        SettingsWidgetsCollectionShareView(
+                            name: collectionGivenName,
+                            collection: collection
+                        )
                     }
-                    showCollectionCodeDialog = false
-                }, label: {
-                    Label("Settings.widgets.collections.code.dialog.copy", systemImage: "doc.on.doc")
-                })
-                .keyboardShortcut(.defaultAction)
-                #if os(iOS)
-                // ShareLink in `alert` doesn't work on iOS,
-                // we have to use a button to present it with UIKit
-                Button("Settings.widgets.collections.code.dialog.share", systemImage: "square.and.arrow.up") {
-                    isCodeShareSheetPresented = true
                 }
-                #else
-                ShareLink(item: collectionCode)
-                #endif
-                Button(role: .cancel, action: {}, label: {
-                    Text("Settings.widgets.collections.code.dialog.cancel")
-                })
-            }, message: {
-                Text("Settings.widgets.collections.code.dialog.message")
-            })
-            #if os(iOS)
-            .sheet(isPresented: $isCodeShareSheetPresented) {
-                CollectionCodeShareSheet(for: collectionCode)
             }
-            #endif
             .onChange(of: showExportCheckmark) {
                 if showExportCheckmark {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -660,24 +622,124 @@ struct SettingsWidgetsCollectionDetailsView: View {
             ProgressView()
         }
     }
-    
-    #if os(iOS)
-    struct CollectionCodeShareSheet: UIViewControllerRepresentable {
-        let code: String
-        
-        init(for code: String) {
-            self.code = code
-        }
-        
-        func makeUIViewController(context: Context) -> some UIViewController {
-            UIActivityViewController(activityItems: [code], applicationActivities: nil)
-        }
-        
-        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}
-    }
-    #endif
 }
 
+struct SettingsWidgetsCollectionShareView: View {
+    var name: String
+    var collection: CardCollectionManager.Collection
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage("hideCollectionNameWhileSharing") private var hideCollectionNameWhileSharing = false
+    @State private var code = ""
+    @State private var qrCode: PlatformImage?
+    @State private var showCopyTip = false
+    var body: some View {
+        Form {
+            if let qrCode {
+                Section {
+                    HStack {
+                        Spacer()
+                        Group {
+                            #if os(macOS)
+                            Image(nsImage: qrCode)
+                                .resizable()
+                            #else
+                            Image(uiImage: qrCode)
+                                .resizable()
+                            #endif
+                        }
+                        .scaledToFit()
+                        .frame(width: 200, height: 200)
+                        Spacer()
+                    }
+                } header: {
+                    Text("Settings.widgets.collections.share.qrcode.header")
+                }
+                Section {
+                    HStack {
+                        Text(code)
+                            .fontDesign(.monospaced)
+                            .foregroundStyle(.secondary)
+                        if !showCopyTip {
+                            Button(action: {
+                                copyStringToClipboard(code)
+                                showCopyTip = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    showCopyTip = false
+                                }
+                            }, label: {
+                                Image(systemName: "doc.on.doc")
+                            })
+                        } else {
+                            HStack {
+                                Image(systemName: "checkmark")
+                                Text("Settings.widgets.collections.share.code.copied")
+                            }
+                            .foregroundStyle(.green)
+                        }
+                    }
+                    .animation(.spring(duration: 0.4, bounce: 0.4), value: showCopyTip)
+                    ShareLink(item: code)
+                    Toggle(isOn: $hideCollectionNameWhileSharing, label: {
+                        VStack(alignment: .leading) {
+                            Text("Settings.widgets.collections.share-without-name")
+                            Text("Settings.widgets.collections.share-without-name.description")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    })
+                } header: {
+                    Text("Settings.widgets.collections.share.code.header")
+                } footer: {
+                    SettingsDocumentButton(document: "CollectionCode") {
+                        Text("Settings.widgets.collections.learn-more")
+                    }
+                    .font(isMACOS ? .body : .caption)
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .frame(minHeight: 300)
+        .navigationTitle(name)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                #if os(macOS)
+                Button("Settings.widgets.collections.share.done") {
+                    dismiss()
+                }
+                #else
+                Button("Settings.widgets.collections.share.done", systemImage: "checkmark") {
+                    dismiss()
+                }
+                #endif
+            }
+        }
+        .onAppear {
+            updateContent()
+        }
+        .onChange(of: hideCollectionNameWhileSharing) {
+            updateContent()
+        }
+    }
+    
+    func updateContent() {
+        code = encodeCollection(collection.toCollectionCodeStructure(hideName: hideCollectionNameWhileSharing))
+        let encodedCode = code.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed)!
+        qrCode = try? EFQRCode.Generator(
+            "https://greatdori.com/share-collection.html?code=\(encodedCode)",
+            errorCorrectLevel: .l,
+            style: .basic(
+                params: .init(
+                    icon: .init(
+                        image: .static(image: PlatformImage(named: "MacAppIcon")!.cgImage!),
+                        mode: .scaleAspectFit,
+                        borderColor: .init(red: 1, green: 1, blue: 1, alpha: 0),
+                        percentage: 0.2
+                    )
+                )
+            )
+        ).toImage(width: 200)
+    }
+}
 
 struct SettingsWidgetsCollectionsItemView: View {
     var collectionIndex: Int
