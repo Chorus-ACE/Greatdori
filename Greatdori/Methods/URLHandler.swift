@@ -167,8 +167,27 @@ func _handleURL(_ url: URL) {
     case "share-collection.html":
         if let code = components.queryItems?.first(where: { $0.name == "code" })?.value,
            decodeCollection(code) != nil {
-            rootShowView {
-                SettingsWidgetsView(newCollectionSheetIsDisplaying: true, newCollectionInput: code)
+            struct V: View {
+                var code: String
+                @Environment(\.dismiss) var dismiss
+                var body: some View {
+                    NavigationStack {
+                        Form {
+                            SettingsWidgetsView(newCollectionSheetIsDisplaying: true, newCollectionInput: code)
+                        }
+                        .formStyle(.grouped)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Settings.widgets.collections.share.done", systemImage: "checkmark") {
+                                    dismiss()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            rootShowView(modal: true) {
+                V(code: code)
             }
         }
     default: break

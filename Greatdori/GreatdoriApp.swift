@@ -250,11 +250,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 }
 #endif
 
-@MainActor let _showRootViewSubject = PassthroughSubject<AnyView, Never>()
-func rootShowView(@ViewBuilder content: () -> some View) {
+@MainActor let _showRootViewSubject = PassthroughSubject<(AnyView, Bool), Never>()
+func rootShowView(modal: Bool = false, @ViewBuilder content: () -> some View) {
     let view = AnyView(content())
     DispatchQueue.main.async {
-        _showRootViewSubject.send(view)
+        _showRootViewSubject.send((view, modal))
     }
 }
 extension View {
@@ -265,10 +265,14 @@ extension View {
 private struct _ExternalViewHandlerModifier: ViewModifier {
     @State private var presentingView: AnyView?
     @State private var isViewPresented = false
+    @State private var isModalViewPresented = false
     @State private var isVisible = false
     func body(content: Content) -> some View {
         content
             .navigationDestination(isPresented: $isViewPresented) {
+                presentingView
+            }
+            .sheet(isPresented: $isModalViewPresented) {
                 presentingView
             }
             .onAppear {
@@ -277,10 +281,14 @@ private struct _ExternalViewHandlerModifier: ViewModifier {
             .onDisappear {
                 isVisible = false
             }
-            .onReceive(_showRootViewSubject) { view in
+            .onReceive(_showRootViewSubject) { input in
                 if isVisible {
-                    presentingView = view
-                    isViewPresented = true
+                    presentingView = input.0
+                    if input.1 {
+                        isModalViewPresented = true
+                    } else {
+                        isViewPresented = true
+                    }
                 }
             }
     }
