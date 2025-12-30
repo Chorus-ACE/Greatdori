@@ -12656,13 +12656,23 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "BandoriStation allows you to submit new multi-live gameplays."
+            "value" : "Submit new multi-live gameplays to BandoriStation."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "你可以通过Bandori车站提交协力游戏信息。"
+          }
+        }
+      }
+    },
+    "Settings.account.bestdori.usage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Publish contents and get personalized profiles from Bestdori."
           }
         }
       }
@@ -13127,6 +13137,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bandori车站"
+          }
+        }
+      }
+    },
+    "Settings.account.platform.bestdori" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestdori"
           }
         }
       }

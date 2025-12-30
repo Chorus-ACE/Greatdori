@@ -21,6 +21,7 @@ struct SettingsAccountsView: View {
     @State var updateIndex = 0
     var body: some View {
         Form {
+            SettingsAccountsSectionView(platform: .bestdori, usage: "Settings.account.bestdori.usage", updateIndex: $updateIndex)
             SettingsAccountsSectionView(platform: .bandoriStation, usage: "Settings.account.bandori-station.usage", updateIndex: $updateIndex)
             SettingsDocumentButton(document: "Accounts", label: {
                 Text("Settings.account.learn-more")
@@ -386,7 +387,7 @@ struct SettingsAccountsPreview: View {
 struct SettingsAccountsAddView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.openURL) var openURL
-    @State var platform: GreatdoriAccount.Platform = .bandoriStation
+    @State var platform: GreatdoriAccount.Platform = .bestdori
     @State var account = ""
     @State var password = ""
     @State var autoRenew = false
@@ -474,60 +475,8 @@ struct SettingsAccountsAddView: View {
     func addAccount() async {
         accountAddingError = nil
         accountIsAdding = true
-        
-        var accountUsername: String? = nil
-        var accountPassword: String? = nil
-        var accountAddress: String? = nil
-        var accountToken: String? = nil
-        var accountUID: String? = nil
-        
         do {
-            guard !account.isEmpty && !password.isEmpty else {
-                throw SimpleError(id: 1001)
-            }
-            
-            if platform == .bandoriStation {
-                let loginResponse = try await DoriAPI.Station.login(username: account, password: password)
-                if case .success(let token, let incompleteUserInfo) = loginResponse {
-                    let userInfo = try await DoriAPI.Station.userInformation(id: incompleteUserInfo.id)
-                    accountAddress = userInfo.username
-                    accountToken = token.value
-                    accountPassword = password
-                    accountUsername = userInfo.username
-                    accountUID = String(userInfo.id)
-                } else {
-                    throw SimpleError(id: 3001)
-                }
-            } else {
-                throw SimpleError(id: 4000)
-            }
-            
-            if let accountAddress, let accountUsername, let accountPassword, let accountToken {
-                
-                var currentAccounts: [GreatdoriAccount] = try AccountManager(platform: platform).load()
-                
-                if currentAccounts.contains(where: { $0.platform == platform && $0.account == accountAddress }) {
-                    throw SimpleError(id: 1000)
-                }
-                
-                var newAccount = GreatdoriAccount(platform: platform, account: accountAddress, username: accountUsername, uid: accountUID, isAutoRenewable: autoRenew)
-                
-                try newAccount.writeToken(accountToken)
-                
-                if autoRenew {
-                    try newAccount.writePassword(password)
-                }
-                
-                currentAccounts.append(newAccount)
-                
-                switch platform {
-                case .bandoriStation:
-                    try AccountManager.bandoriStation.save(currentAccounts)
-                }
-            } else {
-                throw SimpleError(id: 4002, message: "No address given.")
-            }
-            
+            try await AccountManager.addAccount(forPlatform: platform, account: account, password: password, isAutoRenewable: autoRenew)
             accountIsAdding = false
             dismiss()
         } catch {
@@ -580,6 +529,10 @@ extension View {
                 default:
                     EmptyView()
                 }
+            } else if let castedError = error as? DoriAPI.Station.APIError, castedError == .wrongPassword {
+                EmptyView()
+            } else if let castedError = error as? DoriAPI.User.LoginError, [DoriAPI.User.LoginError.invalidCredential, .invalidPassword, .invalidUsername].contains(castedError) {
+                EmptyView()
             } else {
                 if let retryAction {
                     Button(action: {
@@ -605,11 +558,13 @@ extension View {
                 default:
                     EmptyView()
                 }
-            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .userNotFound {
+            } else if let castedError = error as? DoriAPI.Station.APIError, castedError == .userNotFound {
                 Text("Settings.account.error.user-not-found")
-            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .wrongPassword {
+            } else if let castedError = error as? DoriAPI.Station.APIError, castedError == .wrongPassword {
                 Text("Settings.account.error.wrong-password")
-            } else if let apiError = error as? DoriAPI.Station.APIError, apiError == .tooManyRequests {
+            } else if let castedError = error as? DoriAPI.User.LoginError, [DoriAPI.User.LoginError.invalidCredential, .invalidPassword, .invalidUsername].contains(castedError) {
+                Text("Settings.account.error.wrong-password")
+            } else if let castedError = error as? DoriAPI.Station.APIError, castedError == .tooManyRequests {
                 Text("Settings.account.error.too-many-requests")
             } else {
                 Text("Settings.account.error.\("\(error)")")
