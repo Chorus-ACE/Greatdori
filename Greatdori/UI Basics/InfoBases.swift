@@ -538,17 +538,17 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         }
         .onChange(of: filter) {
             if let elements {
-                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText).sorted(withDoriSorter: sorter)
+                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText, with: nil).sorted(withDoriSorter: sorter)
             }
         }
         .onChange(of: sorter) {
             if let elements {
-                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText).sorted(withDoriSorter: sorter)
+                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText, with: nil).sorted(withDoriSorter: sorter)
             }
         }
         .onChange(of: searchedText, {
             if let elements {
-                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText).sorted(withDoriSorter: sorter)
+                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText, with: nil).sorted(withDoriSorter: sorter)
             }
         })
     }
@@ -560,7 +560,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         }.onUpdate {
             if let cards = $0 {
                 self.elements = cards.sorted(withDoriSorter: DoriFrontend.Sorter(keyword: .id, direction: .ascending))
-                searchedElements = cards.filter(withDoriFilter: filter).search(for: searchedText).sorted(withDoriSorter: sorter)
+                searchedElements = cards.filter(withDoriFilter: filter).search(for: searchedText, with: nil).sorted(withDoriSorter: sorter)
             } else {
                 infoIsAvailable = false
             }
