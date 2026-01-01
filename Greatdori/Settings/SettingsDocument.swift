@@ -78,7 +78,15 @@ struct SettingsDocumentButton<L: View>: View {
 }
 
 func readMarkdownFile(_ fileName: String) -> String? {
-    if let path = Bundle.main.path(forResource: fileName, ofType: "md") {
+    var collectionCodeDocLanguage = "EN"
+    if #available(iOS 16, macOS 13, *) {
+        if Locale.current.language.languageCode?.identifier == "zh" &&
+            Locale.current.language.script?.identifier == "Hans" {
+            collectionCodeDocLanguage = "ZH-HANS"
+        }
+    }
+    
+    if let path = Bundle.main.path(forResource: "\(fileName)_\(collectionCodeDocLanguage)", ofType: "md") {
         if let content = try? String(contentsOfFile: path, encoding: .utf8) {
             return content
         }

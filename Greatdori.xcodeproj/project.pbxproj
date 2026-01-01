@@ -808,24 +808,14 @@
 			path = .github;
 			sourceTree = "<group>";
 		};
-		8CBF0C192EFE69C20069585F /* en.lproj */ = {
+		8CBF0C192EFE69C20069585F /* en */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = en.lproj;
+			path = en;
 			sourceTree = "<group>";
 		};
-		8CBF0C1A2EFE69FE0069585F /* zh-Hans.lproj */ = {
+		8CBF0C1A2EFE69FE0069585F /* zh-Hans */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "zh-Hans.lproj";
-			sourceTree = "<group>";
-		};
-		8CBF0C1B2EFE6A600069585F /* zh-Hant.lproj */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "zh-Hant.lproj";
-			sourceTree = "<group>";
-		};
-		8CBF0C1C2EFE6A880069585F /* ja.lproj */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ja.lproj;
+			path = "zh-Hans";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -1511,10 +1501,8 @@
 		E944C3022ECC694C0005EE55 /* Documents */ = {
 			isa = PBXGroup;
 			children = (
-				8CBF0C192EFE69C20069585F /* en.lproj */,
-				8CBF0C1A2EFE69FE0069585F /* zh-Hans.lproj */,
-				8CBF0C1B2EFE6A600069585F /* zh-Hant.lproj */,
-				8CBF0C1C2EFE6A880069585F /* ja.lproj */,
+				8CBF0C192EFE69C20069585F /* en */,
+				8CBF0C1A2EFE69FE0069585F /* zh-Hans */,
 			);
 			path = Documents;
 			sourceTree = "<group>";
@@ -1621,10 +1609,8 @@
 				8C902F9A2EA3AD4200202812 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				8CBF0C192EFE69C20069585F /* en.lproj */,
-				8CBF0C1A2EFE69FE0069585F /* zh-Hans.lproj */,
-				8CBF0C1B2EFE6A600069585F /* zh-Hant.lproj */,
-				8CBF0C1C2EFE6A880069585F /* ja.lproj */,
+				8CBF0C192EFE69C20069585F /* en */,
+				8CBF0C1A2EFE69FE0069585F /* zh-Hans */,
 			);
 			name = Greatdori;
 			packageProductDependencies = (
