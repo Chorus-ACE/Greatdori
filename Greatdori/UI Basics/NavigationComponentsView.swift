@@ -104,6 +104,12 @@ import SwiftUI
         destination: {StationView()}
     ),
     ToolDestinationItem(
+        title: "App.tools.event-calculator",
+        symbol: "calculator",
+        tabValue: .eventCalculator,
+        destination: {EventCalculatorView()}
+    ),
+    ToolDestinationItem(
         title: "App.tools.chart-simulator",
         symbol: "apple.classical.pages",
         tabValue: .chartSimulator,

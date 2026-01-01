@@ -62,7 +62,8 @@ struct StationAddView: View {
                 })
                 
                 Section {
-                    TextField("Station.new.number", value: $roomNumber, formatter: DigitStringFormatter(maxLength: 6))
+                    TextField("Station.new.number", value: $roomNumber, formatter: DigitStringFormatter(maxLength: 6), prompt: Text(verbatim: "123456"))
+                        .trailingTextFieldForIOS("Station.new.number")
                         .wrapIf(true) {
 #if os(iOS)
                             $0.keyboardType(.numberPad)
@@ -70,7 +71,8 @@ struct StationAddView: View {
                             $0
 #endif
                         }
-                    TextField("Station.new.description", text: $description)
+                    TextField("Station.new.description", text: $description, prompt: Text("Station.new.description.prompt"))
+                        .trailingTextFieldForIOS("Station.new.description")
                     Picker("Station.new.type", selection: $roomType, content: {
                         ForEach(DoriAPI.Station.RoomType.allCases, id: \.self) { item in
                             Text(item.localizedName)
@@ -80,21 +82,23 @@ struct StationAddView: View {
                 }
                 
                 Section {
-                    HStack {
-                        Text("Station.new.wordbank")
-                        Spacer()
-                        if wordbank.count > 0 {
-                            Text("\(wordbank.count)")
-                                .foregroundStyle(.secondary)
-                        }
-                        Button(action: {
-                            wordbankIsExpanded.toggle()
-                        }, label: {
+                    Button(action: {
+                        wordbankIsExpanded.toggle()
+                    }, label: {
+                        HStack {
+                            Text("Station.new.wordbank")
+                            Spacer()
+                            if wordbank.count > 0 {
+                                Text("\(wordbank.count)")
+                                    .foregroundStyle(.secondary)
+                            }
                             Image(systemName: "chevron.forward")
+                                .foregroundStyle(.secondary)
                                 .rotationEffect(Angle(degrees: wordbankIsExpanded ? 90 : 0))
-                        })
-                        .buttonStyle(.plain)
-                    }
+                        }
+                        .contentShape(Rectangle())
+                    })
+                    .buttonStyle(.plain)
                     
                     if wordbankIsExpanded {
                         if !wordbank.isEmpty {

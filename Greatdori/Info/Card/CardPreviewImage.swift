@@ -50,7 +50,7 @@ struct CardPreviewImage: View {
         self.showTrainedVersion = showTrainedVersion
         self.sideLength = sideLength
         self.showNavigationHints = showNavigationHints
-        self.cardTitle = card.prefix
+        self.cardTitle = card.cardName
         self.characterID = card.characterID
         //        self._cardNavigationDestinationID = cardNavigationDestinationID
     }
@@ -65,7 +65,7 @@ struct CardPreviewImage: View {
         self.showTrainedVersion = showTrainedVersion
         self.sideLength = sideLength
         self.showNavigationHints = showNavigationHints
-        self.cardTitle = card.prefix
+        self.cardTitle = card.cardName
         self.characterID = card.characterID
         //        self._cardNavigationDestinationID = cardNavigationDestinationID
     }

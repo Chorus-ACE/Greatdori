@@ -20,7 +20,7 @@ struct EventDetailStageView: View {
     @State private var stages: [DoriAPI.Events.FestivalStage]?
     @State var isExpanded = false
     var body: some View {
-        if information.event.eventType == .festival {
+        if information.event.eventType == .teamLiveFestival {
             Section {
                 CustomGroupBox {
                     VStack {

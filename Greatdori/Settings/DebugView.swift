@@ -334,7 +334,7 @@ struct DebugFilterExperimentView: View {
                         } else if focusingList == 2 {
                             Text(verbatim: "Cards List Item: \(cardListFiltered.count)/\(cardList.count)")
                             ForEach(cardListFiltered) { element in
-                                Text(verbatim: "#\(element.id) - \(element.card.prefix.jp ?? "nil")")
+                                Text(verbatim: "#\(element.id) - \(element.card.cardName.jp ?? "nil")")
                             }
                         } else if focusingList == 3 {
                             Text(verbatim: "Songs List Item: \(songListFiltered.count)/\(songList.count)")

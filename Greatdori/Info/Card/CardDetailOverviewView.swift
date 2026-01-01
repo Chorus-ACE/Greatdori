@@ -25,7 +25,7 @@ struct CardDetailOverviewView: View {
     let cardCoverScalingFactor: CGFloat = 1
     var body: some View {
         DetailInfoBase {
-            DetailInfoItem("Card.title", text: information.card.prefix)
+            DetailInfoItem("Card.title", text: information.card.cardName)
             DetailInfoItem("Card.type", text: information.card.type.localizedString)
             DetailInfoItem("Card.character") {
                 NavigationLink(destination: {

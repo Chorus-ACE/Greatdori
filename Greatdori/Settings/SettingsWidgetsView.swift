@@ -779,7 +779,7 @@ struct SettingsWidgetsCollectionsItemView: View {
                     Group {
                         VStack(alignment: layoutType == 1 ? .leading : .center) {
                             if let doriCard {
-                                HighlightableText(doriCard.prefix.forPreferredLocale() ?? "")
+                                HighlightableText(doriCard.cardName.forPreferredLocale() ?? "")
                                     .bold()
                                     .layoutPriority(1)
                                 Group {

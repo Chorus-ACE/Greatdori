@@ -128,6 +128,13 @@ struct GreatdoriAccount: Codable, Hashable {
     
     func avatarURL() async -> URL? {
         switch platform {
+        case .bestdori:
+            let userInfo = await DoriAPI.User.userInformation(username: self.account)
+            if let posterCard = userInfo?.posterCard {
+                let card = await Card(id: posterCard.id)
+                return posterCard.isTrained ? card?.thumbAfterTrainingImageURL : card?.thumbNormalImageURL
+            }
+            return nil
         case .bandoriStation:
             guard let literalUID = self.uid, let uid = Int(literalUID) else {
                 return nil
@@ -139,13 +146,6 @@ struct GreatdoriAccount: Codable, Hashable {
             } catch {
                 return nil
             }
-        case .bestdori:
-            let userInfo = await DoriAPI.User.userInformation(username: self.account)
-            if let posterCard = userInfo?.posterCard {
-                let card = await Card(id: posterCard.id)
-                return posterCard.isTrained ? card?.thumbAfterTrainingImageURL : card?.thumbNormalImageURL
-            }
-            return nil
         }
     }
     
@@ -157,6 +157,14 @@ struct GreatdoriAccount: Codable, Hashable {
         "\(self.username) (\(identifider))"
     }
     
+    var personalProfile: URL? {
+        switch platform {
+        case .bestdori:
+            return URL(string: "https://bestdori.com/community/user/\(self.account)")
+        case .bandoriStation:
+            return nil
+        }
+    }
     
     func accountTokenIsValid(rescueIfDead: Bool = true) async -> Bool? {
         do {

@@ -22,7 +22,7 @@ struct EventDetailRotationMusicView: View {
     @State private var songList: [PreviewSong]?
     @State var isExpanded = false
     var body: some View {
-        if information.event.eventType == .festival {
+        if information.event.eventType == .teamLiveFestival {
 //            LazyVStack {
                 Section {
                     CustomGroupBox {

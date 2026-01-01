@@ -491,6 +491,20 @@ public extension View {
         environment(\.regularInfoImageSizeFactor, sizeFactor)
     }
     
+    @ViewBuilder
+    func trailingTextFieldForIOS(_ label: LocalizedStringResource) -> some View {
+        if !isMACOS {
+            HStack {
+                Text(label)
+                Spacer()
+                self
+                    .multilineTextAlignment(.trailing)
+            }
+        } else {
+            self
+        }
+    }
+    
     // MARK: wrapIf
     @ViewBuilder
     func wrapIf(_ condition: Bool, @ViewBuilder in container: (Self) -> some View) -> some View {

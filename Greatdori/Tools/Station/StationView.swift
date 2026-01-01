@@ -280,7 +280,7 @@ struct StationItemView: View {
         })
         .buttonStyle(.plain)
         .alert("Station.item.report.alert.title.\(item.room.creator.username ?? "nil")", isPresented: $reporingSheetIsDisplaying, actions: {
-            TextField("Station.item.report.alert.reason", text: $reasonOfReport)
+            TextField("Station.item.report.alert.reason", text: $reasonOfReport, axis: .vertical)
             Button(optionalRole: .destructive, action: {
                 Task {
                     let account = try? AccountManager.bandoriStation.load().first

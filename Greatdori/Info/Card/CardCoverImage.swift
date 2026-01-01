@@ -101,7 +101,7 @@ struct CardCoverImage: View {
         }
         .cornerRadius(cardCornerRadius)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Accessibility.card.\(card.prefix.forPreferredLocale() ?? "")")
+        .accessibilityLabel("Accessibility.card.\(card.cardName.forPreferredLocale() ?? "")")
         .accessibilityCustomContent("Card.character", Text(characterName?.forPreferredLocale() ?? ""), importance: .high)
         .accessibilityCustomContent("Card.rarity", "\(card.rarity)")
         .accessibilityCustomContent("Card.attribute", card.attribute.selectorText)
@@ -298,7 +298,7 @@ struct CardCoverNavigationHints: View {
                 showCardDetailView = true
             }, label: {
 #if os(iOS)
-                if let title = card.prefix.forPreferredLocale(), let character = characterName?.forPreferredLocale() {
+                if let title = card.cardName.forPreferredLocale(), let character = characterName?.forPreferredLocale() {
                     Group {
                         Text(title)
                         Group {
@@ -315,7 +315,7 @@ struct CardCoverNavigationHints: View {
                     .redacted(reason: .placeholder)
                 }
 #else
-                if let title = card.prefix.forPreferredLocale() {
+                if let title = card.cardName.forPreferredLocale() {
                     Label(title, systemImage: "info.circle")
                 } else {
                     Text(verbatim: "Lorem ipsum dolor")
@@ -323,7 +323,7 @@ struct CardCoverNavigationHints: View {
                 }
 #endif
             })
-            .disabled(card.prefix.forPreferredLocale() == nil || characterName?.forPreferredLocale() == nil)
+            .disabled(card.cardName.forPreferredLocale() == nil || characterName?.forPreferredLocale() == nil)
         }
     }
 }

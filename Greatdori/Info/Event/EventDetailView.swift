@@ -46,7 +46,7 @@ struct EventDetailView: View {
                     return result
                 }()
             )
-            .wrapIf(information.event.eventType == .festival) {
+            .wrapIf(information.event.eventType == .teamLiveFestival) {
                 $0.appendingView { EventDetailRotationMusicView(information: information) }
             }
             EventDetailStageView(information: information)

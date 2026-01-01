@@ -365,7 +365,7 @@ struct CollectionEditorView: View {
                     Task {
                         let reachablility = await DoriFrontend.URLValidator.reachability(of: item.card.coverNormalImageURL)
                         if reachablility {
-                            CardCollectionManager.shared.userCollections[CardCollectionManager.shared.userCollections.firstIndex(where: { $0.name == collection.name })!].cards.append(CardCollectionManager.Card(id: item.card.id, isTrained: false, localizedName: item.card.prefix, file: .path(item.card.coverNormalImageURL.absoluteString)))
+                            CardCollectionManager.shared.userCollections[CardCollectionManager.shared.userCollections.firstIndex(where: { $0.name == collection.name })!].cards.append(CardCollectionManager.Card(id: item.card.id, isTrained: false, localizedName: item.card.cardName, file: .path(item.card.coverNormalImageURL.absoluteString)))
                             selectAllTotalSucceedItemsCount += 1
                         } else {
                             selectAllTotalFailureItemsCount += 1
@@ -376,7 +376,7 @@ struct CollectionEditorView: View {
                 }
                 if !CardCollectionManager.shared.userCollections.first(where: { $0.name == collection.name })!.cards.contains(where: { $0.id == item.card.id && $0.isTrained }) {
                     if let url = item.card.coverAfterTrainingImageURL {
-                        CardCollectionManager.shared.userCollections[CardCollectionManager.shared.userCollections.firstIndex(where: { $0.name == collection.name })!].cards.append(CardCollectionManager.Card(id: item.card.id, isTrained: true, localizedName: item.card.prefix, file: .path(url.absoluteString)))
+                        CardCollectionManager.shared.userCollections[CardCollectionManager.shared.userCollections.firstIndex(where: { $0.name == collection.name })!].cards.append(CardCollectionManager.Card(id: item.card.id, isTrained: true, localizedName: item.card.cardName, file: .path(url.absoluteString)))
                         selectAllTotalSucceedItemsCount += 1
                     } else {
                         selectAllTotalFailureItemsCount += 1
@@ -491,7 +491,7 @@ struct CollectionEditorItemView: View {
                             }
                         }
                         VStack(alignment: layoutType == 1 ? .leading : .center) {
-                            HighlightableText(doriCard.prefix.forPreferredLocale() ?? "")
+                            HighlightableText(doriCard.cardName.forPreferredLocale() ?? "")
                                 .bold()
                                 .layoutPriority(1)
                             Group {
@@ -530,7 +530,7 @@ struct CollectionEditorItemView: View {
                             
                             if normalCardIsSelected {
                                 CardCollectionManager.shared.userCollections[CardCollectionManager.shared.userCollections.firstIndex(where: { $0.name == collection.name })!].cards.append(
-                                    CardCollectionManager.Card(id: doriCard.id, isTrained: false, localizedName: doriCard.prefix, file: .path(doriCard.coverNormalImageURL.absoluteString))
+                                    CardCollectionManager.Card(id: doriCard.id, isTrained: false, localizedName: doriCard.cardName, file: .path(doriCard.coverNormalImageURL.absoluteString))
                                 )
                             } else {
                                 CardCollectionManager.shared.userCollections[CardCollectionManager.shared.userCollections.firstIndex(where: { $0.name == collection.name })!].cards.removeAll(where: {
@@ -561,7 +561,7 @@ struct CollectionEditorItemView: View {
                             
                             if trainedCardIsSelected {
                                 CardCollectionManager.shared.userCollections[CardCollectionManager.shared.userCollections.firstIndex(where: { $0.name == collection.name })!].cards.append(
-                                    CardCollectionManager.Card(id: doriCard.id, isTrained: true, localizedName: doriCard.prefix, file: .path(doriCard.coverAfterTrainingImageURL!.absoluteString))
+                                    CardCollectionManager.Card(id: doriCard.id, isTrained: true, localizedName: doriCard.cardName, file: .path(doriCard.coverAfterTrainingImageURL!.absoluteString))
                                 )
                             } else {
                                 CardCollectionManager.shared.userCollections[CardCollectionManager.shared.userCollections.firstIndex(where: { $0.name == collection.name })!].cards.removeAll(where: {

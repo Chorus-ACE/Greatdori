@@ -169,6 +169,8 @@ struct SettingsAccountsSectionView: View {
 }
 
 struct SettingsAccountsWithContextMenu: View {
+    @Environment(\.openURL) var openURL
+    
     var item: GreatdoriAccount
     var index: Int
     @Binding var currentPlatformAccounts: [GreatdoriAccount]
@@ -191,6 +193,14 @@ struct SettingsAccountsWithContextMenu: View {
                         Label("Settings.account.action.set-as-primary", systemImage: "arrow.up.to.line")
                     })
                     .disabled(index == 0)
+                }
+                
+                if let profile = item.personalProfile {
+                    Button(action: {
+                        openURL(profile)
+                    }, label: {
+                        Label("Settings.account.action.open", systemImage: "arrow.up.forward.app")
+                    })
                 }
                 
                 if item.isAutoRenewable {
@@ -410,8 +420,10 @@ struct SettingsAccountsAddView: View {
             }
             
             Section {
-                TextField("Settings.account.new.username", text: $account, prompt: Text(verbatim: demoEmailAddress))
-                SecureField("Settings.account.new.password", text: $password)
+                TextField("Settings.account.new.username", text: $account, prompt: Text(demoEmailAddress))
+                    .trailingTextFieldForIOS("Settings.account.new.username")
+                SecureField("Settings.account.new.password", text: $password, prompt: Text("Settings.account.new.password.prompt"))
+                    .trailingTextFieldForIOS("Settings.account.new.password")
             }
             
             Section(content: {

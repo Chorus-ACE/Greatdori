@@ -201,7 +201,7 @@ private struct PostSectionView: View {
                     case .character(let character):
                         commentSourceTitle = character.characterName.forPreferredLocale()
                     case .card(let card):
-                        commentSourceTitle = card.prefix.forPreferredLocale()
+                        commentSourceTitle = card.cardName.forPreferredLocale()
                     case .costume(let costume):
                         commentSourceTitle = costume.description.forPreferredLocale()
                     case .event(let event):

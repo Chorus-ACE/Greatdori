@@ -41,7 +41,7 @@ private struct Provider: AppIntentTimelineProvider {
             return .init(
                 event: .init(
                     id: 264,
-                    eventType: .medley,
+                    eventType: .medleyLive,
                     eventName: .init(
                         _jp: "白き想い、約束を咲かせて",
                         en: "White Feelings, Our Promise in Bloom",
