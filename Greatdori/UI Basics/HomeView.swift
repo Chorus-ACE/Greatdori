@@ -449,11 +449,16 @@ struct HomeBirthdayView: View {
 }
 
 struct HomeEventsView: View {
+    @Environment(\.scenePhase) var scenePhase
+    #if os(macOS)
+    @Environment(\.appearsActive) var appearsActive
+    #endif
     @State var latestEvents: LocalizedData<DoriFrontend.Events.PreviewEvent>?
     @State var imageOpacity: Double = 0
     @State var placeholderOpacity: Double = 1
     var locale: DoriLocale = .jp
     var dateFormatter = DateFormatter()
+    
     init(locale: DoriLocale = .jp) {
         self.locale = locale
         dateFormatter.dateStyle = .medium
@@ -464,7 +469,6 @@ struct HomeEventsView: View {
         Button(action: {
             if let latestEvents {
                 homeNavigate(to: .eventDetail(latestEvents.forLocale(locale)!.id))
-//                homeNavigate(to: .eventDetail(180))
             }
         }, label: {
             CustomGroupBox {
@@ -501,17 +505,33 @@ struct HomeEventsView: View {
         .buttonStyle(.plain)
         .foregroundStyle(.primary)
         .task {
-            DoriCache.withCache(id: "Home_LatestEvents", trait: .realTime) {
-                await DoriFrontend.Events.localizedLatestEvent()
-            } .onUpdate {
-                latestEvents = $0
-                withAnimation(.easeInOut(duration: loadingAnimationDuration), {
-//                    placeholderOpacity = 0
-                    imageOpacity = 1
-                })
+            updateEvent()
+        }
+        #if os(macOS)
+        .onChange(of: appearsActive) {
+            if appearsActive {
+                updateEvent()
             }
         }
+        #else
+        .onChange(of: scenePhase) {
+            if case .active = scenePhase {
+                updateEvent()
+            }
+        }
+        #endif
         .accessibilityElement(children: .contain)
+    }
+    
+    func updateEvent() {
+        DoriCache.withCache(id: "Home_LatestEvents", trait: .realTime) {
+            await DoriFrontend.Events.localizedLatestEvent()
+        } .onUpdate {
+            latestEvents = $0
+            withAnimation(.easeInOut(duration: loadingAnimationDuration), {
+                imageOpacity = 1
+            })
+        }
     }
 }
 
