@@ -171,6 +171,10 @@ struct StationAddView: View {
                 })
                 
                 Section {
+                    if selectedAccount == nil && anonAPIPrivateKey.isEmpty {
+                        Label("Station.new.issue.anon-key-missing", systemImage: "xmark.octagon")
+                            .foregroundStyle(.red)
+                    }
                     if roomNumber.count < 5 {
                         Label("Station.new.issue.number-too-short", systemImage: "exclamationmark.circle")
                             .foregroundStyle(.yellow)
@@ -179,7 +183,7 @@ struct StationAddView: View {
                         Label("Station.new.issue.empty-description", systemImage: "exclamationmark.circle")
                             .foregroundStyle(.yellow)
                     }
-                    if !description.isEmpty && roomNumber.count >= 5 {
+                    if !description.isEmpty && roomNumber.count >= 5 && (!anonAPIPrivateKey.isEmpty || selectedAccount != nil) {
                         Label("Station.new.issue.ready", systemImage: "checkmark.circle")
                             .foregroundStyle(.green)
                     }
@@ -231,6 +235,7 @@ struct StationAddView: View {
                     })
                     .disabled(roomNumber.count < 5 || description.isEmpty)
                     .disabled(gameplayIsSubmitting)
+                    .disabled(selectedAccount == nil && anonAPIPrivateKey.isEmpty)
                 }
             }
             .onAppear {
@@ -271,14 +276,13 @@ struct StationAddView: View {
                 }
             }
         } else {
-            if let error = await stationAnonymousSubmit(
-                number: roomNumber,
-                type: roomType,
-                description: description
-            ) {
-                submitError = SimpleError(id: 500, message: error)
+            do {
+                try await stationAnonymousSubmit(number: roomNumber, type: roomType, description: description)
+                dismiss()
+            } catch {
+                submitError = error
+                errorAlertIsDisplaying = true
             }
-            dismiss()
         }
         gameplayIsSubmitting = false
     }

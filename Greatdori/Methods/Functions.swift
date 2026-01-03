@@ -460,9 +460,9 @@ func stationAnonymousSubmit(
     number: String,
     type: DoriAPI.Station.RoomType,
     description: String
-) async -> String? {
+) async throws {
     guard !anonAPIPrivateKey.isEmpty else {
-        return "Private key is not available"
+        throw SimpleError(id: 2666000, message: "Private key is not available")
     }
     struct S: Claims {
         var iat: Date
@@ -477,7 +477,7 @@ func stationAnonymousSubmit(
         kIOMainPortDefault,
         IOServiceMatching("IOPlatformExpertDevice")
     )
-    guard platformExpert != 0 else { return "Internal error" }
+    guard platformExpert != 0 else { throw SimpleError(id: 2666100, message: "Internal error") }
     defer { IOObjectRelease(platformExpert) }
     let key = kIOPlatformUUIDKey as CFString
     guard let _uuid = unsafe IORegistryEntryCreateCFProperty(
@@ -485,15 +485,15 @@ func stationAnonymousSubmit(
         key,
         kCFAllocatorDefault,
         0
-    ).takeUnretainedValue() as? String else { return "Internal error" }
+    ).takeUnretainedValue() as? String else { throw SimpleError(id: 2666101, message: "Internal error") }
     let uuid = UUID(uuidString: _uuid)!
     #else
     guard let uuid = await UIDevice.current.identifierForVendor else {
-        return "Internal error"
+        throw SimpleError(id: 2666157, message: "Internal error")
     }
     #endif
     
-    return await withCheckedContinuation { continuation in
+    return try await withCheckedThrowingContinuation { continuation in
         var jwt = JWT(
             header: .init(),
             claims: S(
@@ -506,7 +506,7 @@ func stationAnonymousSubmit(
         )
         let signer = JWTSigner.rs512(privateKey: anonAPIPrivateKey.data(using: .utf8)!)
         guard let signed = try? jwt.sign(using: signer) else {
-            return continuation.resume(returning: "Failed to generate request")
+            return continuation.resume(throwing: SimpleError(id: 2666737, message: "Failed to generate request"))
         }
         AF.request(
             "https://station-anon.greatdori.com/room/anon",
@@ -516,13 +516,11 @@ func stationAnonymousSubmit(
         ).response { response in
             if let data = response.data, let json = try? JSON(data: data) {
                 print(json)
-                if json["success"].boolValue {
-                    return continuation.resume(returning: nil)
-                } else {
-                    return continuation.resume(returning: json["error"].string ?? "Unknown error")
+                if !json["success"].boolValue {
+                    return continuation.resume(throwing: SimpleError(id: 2666999, message: json["error"].string ?? "Unknown error"))
                 }
             } else {
-                return continuation.resume(returning: "Network error")
+                return continuation.resume(throwing: SimpleError(id: 2666638, message: "Network error"))
             }
         }
     }

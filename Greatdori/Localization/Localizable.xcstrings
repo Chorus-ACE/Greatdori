@@ -20341,6 +20341,16 @@
         }
       }
     },
+    "Station.new.issue.anon-key-missing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anonymous submitting is unavailable (2666000)"
+          }
+        }
+      }
+    },
     "Station.new.issue.empty-description" : {
       "localizations" : {
         "en" : {
