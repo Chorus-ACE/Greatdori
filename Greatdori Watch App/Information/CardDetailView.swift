@@ -57,7 +57,7 @@ struct CardDetailView: View {
                     }
                 }
                 Section {
-                    InfoTextView("标题", text: information.card.prefix)
+                    InfoTextView("标题", text: information.card.cardName)
                     InfoTextView("种类", text: information.card.type.localizedString)
                     InfoTextView("角色") {
                         HStack {
@@ -290,7 +290,7 @@ struct CardDetailView: View {
                 }
             }
         }
-        .navigationTitle(information?.card.prefix.forPreferredLocale() ?? String(localized: "正在载入卡牌..."))
+        .navigationTitle(information?.card.cardName.forPreferredLocale() ?? String(localized: "正在载入卡牌..."))
         .task {
             await getInformation()
         }

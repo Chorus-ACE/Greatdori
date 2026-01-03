@@ -33,7 +33,7 @@ struct CardSelector: View {
             VStack(alignment: .leading) {
                 Text("卡牌")
                 if let selection {
-                    Text(selection.card.prefix.forPreferredLocale() ?? "")
+                    Text(selection.card.cardName.forPreferredLocale() ?? "")
                         .font(.system(size: 12))
                         .opacity(0.6)
                 }

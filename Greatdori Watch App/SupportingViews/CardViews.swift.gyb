@@ -164,7 +164,7 @@ struct CardCardView: View {
     % for cardType in cardTypes:
     init(_ card: ${cardType}) {
         self.characterName = PreCache.current.characterDetails[card.characterID]?.characterName.forPreferredLocale() ?? ""
-        self.cardPrefix = card.prefix.forPreferredLocale() ?? ""
+        self.cardPrefix = card.cardName.forPreferredLocale() ?? ""
         self.normalBackgroundImageURL = card.coverNormalImageURL
         self.trainedBackgroundImageURL = card.coverAfterTrainingImageURL
         self.cardType = card.type
@@ -287,7 +287,7 @@ struct ThumbCardCardView: View {
         self.attribute = card.attribute
         self.rarity = card.rarity
         self.bandIconImageURL = URL(string: "https://bestdori.com/res/icon/band_\(PreCache.current.characters.first { $0.id == card.characterID }?.bandID ?? 0).svg")!
-        self.prefix = card.prefix
+        self.prefix = card.cardName
     }
     % end
     
