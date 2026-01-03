@@ -125,7 +125,6 @@ struct CustomGroupBox<Content: View>: View {
     var showGroupBox: Bool
     var strokeLineWidth: CGFloat
     var useExtenedConstraints: Bool
-    var customGroupBoxVersion: Int
     @Environment(\._groupBoxStrokeLineWidth) var envStrokeLineWidth: CGFloat
     @Environment(\._suppressCustomGroupBox) var suppressCustomGroupBox
     @Environment(\._groupBoxBackgroundTintOpacity) var backgroundTintOpacity: CGFloat
@@ -142,7 +141,6 @@ struct CustomGroupBox<Content: View>: View {
         self.cornerRadius = cornerRadius
         self.strokeLineWidth = strokeLineWidth
         self.useExtenedConstraints = useExtenedConstraints
-        self.customGroupBoxVersion = customGroupBoxVersion ?? (UserDefaults.standard.value(forKey: "customGroupBoxVersion") as? Int) ?? 2
         self.content = content
     }
     
@@ -153,63 +151,47 @@ struct CustomGroupBox<Content: View>: View {
         }
         .background {
             if showGroupBox && !suppressCustomGroupBox {
-                if customGroupBoxVersion == 2 {
-                    GeometryReader { geometry in
-                        ZStack {
-                            RoundedRectangle(cornerRadius: cornerRadius)
-                                .fill(.black.opacity(0.1))
-                                .offset(y: 2)
-                                .blur(radius: 2)
-                                .mask {
-                                    Rectangle()
-                                        .size(width: geometry.size.width + 18, height: geometry.size.height + 18)
-                                        .offset(x: -9, y: -9)
-                                        .overlay {
-                                            RoundedRectangle(cornerRadius: cornerRadius)
-                                                .blendMode(.destinationOut)
-                                        }
-                                }
-                            RoundedRectangle(cornerRadius: cornerRadius)
-                                .fill(.black.opacity(0.1))
-                                .offset(y: 2)
-                                .blur(radius: 4)
-                                .mask {
-                                    Rectangle()
-                                        .size(width: geometry.size.width + 60, height: geometry.size.height + 60)
-                                        .offset(x: -30, y: -30)
-                                        .overlay {
-                                            RoundedRectangle(cornerRadius: cornerRadius)
-                                                .blendMode(.destinationOut)
-                                        }
-                                }
-                            
-                            RoundedRectangle(cornerRadius: cornerRadius)
-                                .fill(.accent)
-                                .opacity(backgroundTintOpacity)
-                            
-                            RoundedRectangle(cornerRadius: cornerRadius)
-                                .fill(Color(.floatingCard))
-                        }
-                    }
-                } else {
+                GeometryReader { geometry in
                     ZStack {
                         RoundedRectangle(cornerRadius: cornerRadius)
-                        #if os(iOS)
-                            .foregroundStyle(Color(.secondarySystemGroupedBackground))
-                        #else
-                            .foregroundStyle(Color(NSColor.quaternarySystemFill))
-                        #endif
-                        let strokeLineWidth = strokeLineWidth > 0 ? strokeLineWidth : envStrokeLineWidth
-                        if strokeLineWidth > 0 {
-                            RoundedRectangle(cornerRadius: cornerRadius)
-                                .strokeBorder(.tint.opacity(0.9), lineWidth: strokeLineWidth)
-                        }
+                            .fill(.black.opacity(0.1))
+                            .offset(y: 2)
+                            .blur(radius: 2)
+                            .mask {
+                                Rectangle()
+                                    .size(width: geometry.size.width + 18, height: geometry.size.height + 18)
+                                    .offset(x: -9, y: -9)
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: cornerRadius)
+                                            .blendMode(.destinationOut)
+                                    }
+                            }
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .fill(.black.opacity(0.1))
+                            .offset(y: 2)
+                            .blur(radius: 4)
+                            .mask {
+                                Rectangle()
+                                    .size(width: geometry.size.width + 60, height: geometry.size.height + 60)
+                                    .offset(x: -30, y: -30)
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: cornerRadius)
+                                            .blendMode(.destinationOut)
+                                    }
+                            }
+                        
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .fill(.accent)
+                            .opacity(backgroundTintOpacity)
+                        
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .fill(Color(.floatingCard))
                     }
                 }
             }
         }
         .overlay {
-            if showGroupBox && !suppressCustomGroupBox && customGroupBoxVersion == 2 {
+            if showGroupBox && !suppressCustomGroupBox {
                 LinearGradient(
                     colors: [
                         Color(.floatingCardTopBorder),
@@ -236,7 +218,6 @@ struct CustomGroupBox<Content: View>: View {
                 }
             }
         }
-        .animation(.spring(duration: 0.3, bounce: 0.2), value: customGroupBoxVersion)
         // We pass the group box status bidirectionally to allow
         // other views that suppress the custom group box
         // to provide their own representation

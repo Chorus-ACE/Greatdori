@@ -121,14 +121,10 @@ struct SettingsAdvancedImageSection: View {
 }
 
 struct SettingsAdvancedUISection: View {
-    @AppStorage("customGroupBoxVersion") var customGroupBoxVersion = 2
     @AppStorage("ISVStyleTestFlag") var isvStyleTestFlag = 0
     @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
     var body: some View {
         Section {
-            Toggle(isOn: .init { customGroupBoxVersion != 2 } set: { customGroupBoxVersion = $0 ? 1 : 2 }) {
-                Text("Settings.advanced.ui.legacy-custom-group-box")
-            }
             Toggle(isOn: .init(get: { AppFlag.CharacterRandomCardsContainAllCards }, set: { AppFlag.set($0, forKey: "CharacterRandomCardsContainAllCards") }), label: {
                 VStack(alignment: .leading) {
                     Text("Settings.advanced.ui.random-card-contains-all-card")
