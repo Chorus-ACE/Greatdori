@@ -449,3 +449,81 @@ func submitCombinedStats(
         }
     }
 }
+
+/// Submit a room to BandoriStation anonymously with the ANON API.
+/// - Parameters:
+///   - number: Room number.
+///   - type: Room type.
+///   - description: Description text.
+/// - Returns: Error text, or `nil` if succeeded.
+func stationAnonymousSubmit(
+    number: String,
+    type: DoriAPI.Station.RoomType,
+    description: String
+) async -> String? {
+    guard !anonAPIPrivateKey.isEmpty else {
+        return "Private key is not available"
+    }
+    struct S: Claims {
+        var iat: Date
+        var iss: String
+        var sub: String
+        var aud: String
+        var rtp: String
+    }
+    
+    #if os(macOS)
+    let platformExpert = unsafe IOServiceGetMatchingService(
+        kIOMainPortDefault,
+        IOServiceMatching("IOPlatformExpertDevice")
+    )
+    guard platformExpert != 0 else { return "Internal error" }
+    defer { IOObjectRelease(platformExpert) }
+    let key = kIOPlatformUUIDKey as CFString
+    guard let _uuid = unsafe IORegistryEntryCreateCFProperty(
+        platformExpert,
+        key,
+        kCFAllocatorDefault,
+        0
+    ).takeUnretainedValue() as? String else { return "Internal error" }
+    let uuid = UUID(uuidString: _uuid)!
+    #else
+    guard let uuid = await UIDevice.current.identifierForVendor else {
+        return "Internal error"
+    }
+    #endif
+    
+    return await withCheckedContinuation { continuation in
+        var jwt = JWT(
+            header: .init(),
+            claims: S(
+                iat: .now,
+                iss: uuid.uuidString,
+                sub: number,
+                aud: description,
+                rtp: type.rawValue == 0 ? "" : String(type.rawValue)
+            )
+        )
+        let signer = JWTSigner.rs512(privateKey: anonAPIPrivateKey.data(using: .utf8)!)
+        guard let signed = try? jwt.sign(using: signer) else {
+            return continuation.resume(returning: "Failed to generate request")
+        }
+        AF.request(
+            "https://station-anon.greatdori.com/room/anon",
+            method: .post,
+            parameters: ["payload": signed],
+            encoder: .json
+        ).response { response in
+            if let data = response.data, let json = try? JSON(data: data) {
+                print(json)
+                if json["success"].boolValue {
+                    return continuation.resume(returning: nil)
+                } else {
+                    return continuation.resume(returning: json["error"].string ?? "Unknown error")
+                }
+            } else {
+                return continuation.resume(returning: "Network error")
+            }
+        }
+    }
+}

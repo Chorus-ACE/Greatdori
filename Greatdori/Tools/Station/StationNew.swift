@@ -270,6 +270,15 @@ struct StationAddView: View {
                     errorAlertIsDisplaying = true
                 }
             }
+        } else {
+            if let error = await stationAnonymousSubmit(
+                number: roomNumber,
+                type: roomType,
+                description: description
+            ) {
+                submitError = SimpleError(id: 500, message: error)
+            }
+            dismiss()
         }
         gameplayIsSubmitting = false
     }
