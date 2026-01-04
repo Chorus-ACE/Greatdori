@@ -81,6 +81,11 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      - name: Copy secrets
+        run: |
+          mkdir secrets
+          echo "${{ secrets.ANON_API_PRIVATE_KEY }}" > secrets/anon_api_private_key.key
+          echo "${{ secrets.STATS_API_PRIVATE_KEY }}" > secrets/stats_api_private_key.key
       - name: Archive
         run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -archivePath ./Greatdori.xcarchive -destination "generic/platform=${{ matrix.destination }}" -quiet archive CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=B57D8PP775 CURRENT_PROJECT_VERSION=$(git rev-list --count HEAD)
       - name: Prepare archive result
