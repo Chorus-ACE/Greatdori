@@ -44,6 +44,8 @@ struct StoryDetailView: View {
     @State var safeAreaInsets = EdgeInsets()
     @State var isMuted = false
     
+    @State var fullScreenButtonIsOnScreen = false
+    
     init(
         title: LocalizedData<String>,
         scenarioID: String,
@@ -131,6 +133,15 @@ struct StoryDetailView: View {
                                             interactivePlayerIsInFullScreen = true
                                         }, label: {
                                             Label("Story-viewer.enter-full-screen", systemImage: "arrow.down.backward.and.arrow.up.forward")
+                                        })
+                                        .wrapIf(true, in: { content in
+                                            if #available(iOS 18.0, macOS 15.0, *) {
+                                                content.onScrollVisibilityChange { value in
+                                                    fullScreenButtonIsOnScreen = value
+                                                }
+                                            } else {
+                                                content
+                                            }
                                         })
                                         
                                     }
@@ -304,7 +315,7 @@ struct StoryDetailView: View {
                 }
             }
 #endif
-            if isvAlwaysFullScreen || !isMACOS {
+            if isvAlwaysFullScreen || !isMACOS && !fullScreenButtonIsOnScreen {
                 ToolbarItem {
                     Button(action: {
                         interactivePlayerIsInFullScreen.toggle()
