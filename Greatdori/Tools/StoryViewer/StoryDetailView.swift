@@ -95,7 +95,7 @@ struct StoryDetailView: View {
                                 Section {
                                     Group {
                                         if let ir {
-                                            InteractiveStoryView(ir, fullScreenToggleIsAvailable: true, mutingIsAvailable: true)
+                                            InteractiveStoryView(ir, fullScreenToggleIsAvailable: true, mutingIsAvailable: true, locale: locale)
                                         } else {
                                             ProgressView()
                                         }
@@ -159,96 +159,99 @@ struct StoryDetailView: View {
                                 // MARK: - Transcript
                                 Section {
                                     ForEach(Array(transcript.enumerated()), id: \.element.self) { index, transcript in
-                                        if transcript.isTelop {
-                                            HStack {
-                                                Spacer()
-                                                Text(transcript.text)
-                                                    .underline()
-                                                    .multilineTextAlignment(.center)
-                                                    .foregroundStyle(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? .accent : .primary)
-                                                Spacer()
-                                            }
-                                            .padding(index > 0 && self.transcript![index - 1].isTelop ? .bottom : .vertical)
-                                        } else {
-                                            CustomGroupBox(cornerRadius: 20) {
-                                                Button(action: {
-                                                    if let voiceID = transcript.voiceID {
-                                                        let url = switch type {
-                                                        case .event:
-                                                            "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/eventstory\(unsafeAssociatedID)_\(unsafeSecondaryAssociatedID!)_rip/\(voiceID).mp3"
-                                                        case .main:
-                                                            "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/mainstory\(unsafeAssociatedID)_rip/\(voiceID).mp3"
-                                                        case .band:
-                                                            "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/\(voiceAssetBundleName!)_rip/\(voiceID).mp3"
-                                                        case .card:
-                                                            "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/resourceset/\(unsafeAssociatedID)_rip/\(voiceID).mp3"
-                                                        case .actionSet:
-                                                            "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/actionset/actionset\(Int(floor(Double(unsafeAssociatedID)! / 200) * 10))_rip/\(voiceID).mp3"
-                                                        case .afterLive:
-                                                            "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/afterlivetalk/group\(Int(floor(Double(unsafeAssociatedID)! / 100)))_rip/\(voiceID).mp3"
-                                                        }
-                                                        audioPlayer.replaceCurrentItem(with: .init(url: .init(string: url)!))
-                                                        audioPlayer.play()
-                                                    }
-                                                }, label: {
-                                                    HStack {
-                                                        VStack(alignment: .leading) {
-                                                            HStack {
-                                                                switch transcript.characterType {
-                                                                case .single:
-                                                                    if let url = transcript.characterIconImageURL {
-                                                                        WebImage(url: url)
-                                                                            .resizable()
-                                                                            .frame(width: 20, height: 20)
-                                                                    } else {
-                                                                        Image(systemName: "person.crop.circle")
-                                                                            .bold()
-                                                                    }
-                                                                case .multiple:
-                                                                    Image(systemName: "person.3.fill")
-                                                                        .bold()
-                                                                        .frame(height: 20)
-                                                                case .unknown:
-                                                                    Image(systemName: "person.crop.circle.badge.questionmark")
-                                                                        .bold()
-                                                                        .frame(width: 20, height: 20)
-                                                                }
-                                                                Text(transcript.characterName ?? "Character.unknown")
-                                                                    .font(.headline)
-                                                                Spacer()
-                                                                if AppFlag.ISV_DEBUG {
-                                                                    if let index = transcript.sourceIndex {
-                                                                        Text(verbatim: "#\(index)")
-                                                                            .foregroundStyle(.secondary)
-                                                                    }
-                                                                }
-                                                            }
-                                                            .accessibilityElement(children: .combine)
-                                                            .accessibilityLabel(transcript.characterName ?? "Character.unknown")
-                                                            Text(transcript.text)
-                                                                .font(.body)
-                                                                .multilineTextAlignment(.leading)
-                                                                .fixedSize(horizontal: false, vertical: true)
-                                                        }
-                                                        Spacer()
-                                                    }
-                                                    .foregroundStyle(Color.primary)
-                                                })
-                                                .buttonStyle(.borderless)
-                                            }
-                                            .groupBoxStrokeLineWidth(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? 3 : 0)
-//                                            .groupBoxBackgroundTintOpacity(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? 0.5: 0)
-#if os(macOS)
-                                            .wrapIf(true) { content in
-                                                if #available(macOS 15.0, *) {
-                                                    content
-                                                        .pointerStyle(.link)
-                                                } else {
-                                                    content
+                                        Group {
+                                            if transcript.isTelop {
+                                                HStack {
+                                                    Spacer()
+                                                    Text(transcript.text)
+                                                        .underline()
+                                                        .multilineTextAlignment(.center)
+                                                        .foregroundStyle(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? .accent : .primary)
+                                                    Spacer()
                                                 }
-                                            }
+                                                .padding(index > 0 && self.transcript![index - 1].isTelop ? .bottom : .vertical)
+                                            } else {
+                                                CustomGroupBox(cornerRadius: 20) {
+                                                    Button(action: {
+                                                        if let voiceID = transcript.voiceID {
+                                                            let url = switch type {
+                                                            case .event:
+                                                                "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/eventstory\(unsafeAssociatedID)_\(unsafeSecondaryAssociatedID!)_rip/\(voiceID).mp3"
+                                                            case .main:
+                                                                "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/mainstory\(unsafeAssociatedID)_rip/\(voiceID).mp3"
+                                                            case .band:
+                                                                "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/\(voiceAssetBundleName!)_rip/\(voiceID).mp3"
+                                                            case .card:
+                                                                "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/resourceset/\(unsafeAssociatedID)_rip/\(voiceID).mp3"
+                                                            case .actionSet:
+                                                                "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/actionset/actionset\(Int(floor(Double(unsafeAssociatedID)! / 200) * 10))_rip/\(voiceID).mp3"
+                                                            case .afterLive:
+                                                                "https://bestdori.com/assets/\(locale.rawValue)/sound/voice/scenario/afterlivetalk/group\(Int(floor(Double(unsafeAssociatedID)! / 100)))_rip/\(voiceID).mp3"
+                                                            }
+                                                            audioPlayer.replaceCurrentItem(with: .init(url: .init(string: url)!))
+                                                            audioPlayer.play()
+                                                        }
+                                                    }, label: {
+                                                        HStack {
+                                                            VStack(alignment: .leading) {
+                                                                HStack {
+                                                                    switch transcript.characterType {
+                                                                    case .single:
+                                                                        if let url = transcript.characterIconImageURL {
+                                                                            WebImage(url: url)
+                                                                                .resizable()
+                                                                                .frame(width: 20, height: 20)
+                                                                        } else {
+                                                                            Image(systemName: "person.crop.circle")
+                                                                                .bold()
+                                                                        }
+                                                                    case .multiple:
+                                                                        Image(systemName: "person.3.fill")
+                                                                            .bold()
+                                                                            .frame(height: 20)
+                                                                    case .unknown:
+                                                                        Image(systemName: "person.crop.circle.badge.questionmark")
+                                                                            .bold()
+                                                                            .frame(width: 20, height: 20)
+                                                                    }
+                                                                    Text(transcript.characterName ?? "Character.unknown")
+                                                                        .font(.headline)
+                                                                    Spacer()
+                                                                    if AppFlag.ISV_DEBUG {
+                                                                        if let index = transcript.sourceIndex {
+                                                                            Text(verbatim: "#\(index)")
+                                                                                .foregroundStyle(.secondary)
+                                                                        }
+                                                                    }
+                                                                }
+                                                                .accessibilityElement(children: .combine)
+                                                                .accessibilityLabel(transcript.characterName ?? "Character.unknown")
+                                                                Text(transcript.text)
+                                                                    .font(.body)
+                                                                    .multilineTextAlignment(.leading)
+                                                                    .fixedSize(horizontal: false, vertical: true)
+                                                            }
+                                                            Spacer()
+                                                        }
+                                                        .foregroundStyle(Color.primary)
+                                                    })
+                                                    .buttonStyle(.borderless)
+                                                }
+                                                .groupBoxStrokeLineWidth(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? 3 : 0)
+                                                //                                            .groupBoxBackgroundTintOpacity(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? 0.5: 0)
+#if os(macOS)
+                                                .wrapIf(true) { content in
+                                                    if #available(macOS 15.0, *) {
+                                                        content
+                                                            .pointerStyle(.link)
+                                                    } else {
+                                                        content
+                                                    }
+                                                }
 #endif
+                                            }
                                         }
+                                        .typesettingLanguage(locale.nsLocale().language)
                                     }
                                 }
                                 .frame(maxWidth: infoContentMaxWidth)

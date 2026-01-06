@@ -68,10 +68,12 @@ struct InteractiveStoryView: View {
     @State private var frameWidth: CGFloat = 0
     @State private var frameHeight: CGFloat = 0
     
+    @State var locale: DoriLocale = .jp
+    
     private var fullScreenToggleIsAvailable: Bool
     private var mutingIsAvailable: Bool
     
-    init(_ ir: StoryIR, assetFolder: URL? = nil, fullScreenToggleIsAvailable: Bool = false, mutingIsAvailable: Bool = false) {
+    init(_ ir: StoryIR, assetFolder: URL? = nil, fullScreenToggleIsAvailable: Bool = false, mutingIsAvailable: Bool = false, locale: DoriLocale = DoriLocale.primaryLocale) {
         // We assign an ID for ISV so that we can identify data related
         // to this view in some global states
         self.viewID = .init()
@@ -80,6 +82,7 @@ struct InteractiveStoryView: View {
         self.assetFolder = assetFolder
         self.fullScreenToggleIsAvailable = fullScreenToggleIsAvailable
         self.mutingIsAvailable = mutingIsAvailable
+        self.locale = locale
     }
     init(asset: DoriAPI.Misc.StoryAsset, voiceBundlePath: String, locale: DoriLocale) {
         let ir = DoriStoryBuilder.Conversion.zeileIR(
@@ -90,6 +93,7 @@ struct InteractiveStoryView: View {
         self.init(ir)
         self.fullScreenToggleIsAvailable = true
         self.mutingIsAvailable = true
+        self.locale = locale
     }
     
     var body: some View {
@@ -178,6 +182,7 @@ struct InteractiveStoryView: View {
                     }
                 }
             }
+            .typesettingLanguage(locale.nsLocale().language)
             
             // MARK: - Telop
             if let currentTelop {
@@ -194,6 +199,7 @@ struct InteractiveStoryView: View {
                         .font(.custom(fontName(in: ir.locale), size: 18 * frameWidth/400/2*1.3))
                         .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
                 }
+                .typesettingLanguage(locale.nsLocale().language)
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)).combined(with: .opacity))
 //                .scaleEffect()
             }
