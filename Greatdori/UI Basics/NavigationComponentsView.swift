@@ -60,13 +60,6 @@ import SwiftUI
         destination: {SongSearchView()}
     ),
     InfoDestinationItem(
-        title: "App.info.song-meta",
-        symbol: "music.note.list",
-        lightColor: .pink,
-        tabValue: .songMeta,
-        destination: {EmptyView()}
-    ),
-    InfoDestinationItem(
         title: "App.info.login-campaign",
         shortenedTitle: "App.info.login-campaign.abbr",
         symbol: "calendar",
