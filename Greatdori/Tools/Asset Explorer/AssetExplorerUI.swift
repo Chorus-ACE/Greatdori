@@ -61,7 +61,7 @@ struct AssetListView: View {
             if let items {
                 CustomScrollView {
                     if let filteredItems {
-                        LazyVStack {
+                        LazyVStack(spacing: 35) {
                             CustomGroupBox {
                                 if !filteredItems.isEmpty {
                                     VStack {
@@ -136,8 +136,8 @@ struct AssetListView: View {
                                                         .contentShape(Rectangle())
                                                     })
                                                 }
-                                            }
-                                            .frame(minHeight: 5)
+                                            } 
+                                            .frame(minHeight: isMACOS ? nil : 35)
                                             .buttonStyle(.plain)
                                             .contextMenu {
                                                 Section {
@@ -172,8 +172,6 @@ struct AssetListView: View {
                             }
                             .frame(maxWidth: infoContentMaxWidth)
                             
-                            DetailSectionsSpacer()
-                            
                             let imageItems = filteredItems.filter( { $0.name.hasSuffix(".jpg") || $0.name.hasSuffix(".png") } )
                             if let currentPath, !imageItems.isEmpty {
                                 DetailArtsSection {
@@ -186,7 +184,7 @@ struct AssetListView: View {
                                 .highlightKeyword($searchField)
                             }
                         }
-                        .padding()
+//                        .padding()
                         .wrapIf(true, in: {
                             if #available(iOS 26, macOS 14.0, *) {
                                 $0.navigationSubtitle(Text(searchField.isEmpty ? "Search.item.\(filteredItems.count)" : "Search.result.\(filteredItems.count)"))
