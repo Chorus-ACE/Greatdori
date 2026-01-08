@@ -161,7 +161,7 @@ struct StationItemView: View {
             itemTipStatus = 1
         }, label: {
             CustomGroupBox(cornerRadius: 20) {
-                HStack {
+                HStack(spacing: 0) {
                     WebImage(url: item.room.creator.avatarURL(), content: { image in
                         image
                             .resizable()
@@ -175,16 +175,36 @@ struct StationItemView: View {
                     }
                     .frame(width: 40, height: 40)
                     .iconBadge(item.quantity, ignoreOne: true)
+                    Spacer()
+                        .frame(width: 5)
                     VStack(alignment: .leading) {
-                        if let username = item.room.creator.username {
-                            HStack {
-                                Text(username)
-                                    .bold()
-                                if let bandPower = item.room.creator.gameProfile?.bandPower, bandPower > 0 {
-                                    Text("Station.item.band-power.\(bandPower)")
-                                        .foregroundStyle(.secondary)
+                        HStack(alignment: .top) {
+                            if let username = item.room.creator.username {
+                                HStack {
+                                    Text(username)
+                                        .bold()
+                                    if let bandPower = item.room.creator.gameProfile?.bandPower, bandPower > 0 {
+                                        Text("Station.item.band-power.\(bandPower)")
+                                            .foregroundStyle(.secondary)
+                                    }
                                 }
                             }
+                            Spacer()
+                            Group {
+                                if sizeClass == .regular {
+                                    switch item.room.source {
+                                    case .qq(let name):
+                                        Text(name)
+                                    case .website(let name):
+                                        Text(name)
+                                    default:
+                                        EmptyView()
+                                    }
+                                }
+                                Text(item.room.dateCreated, style: .relative)
+                            }
+                            .foregroundStyle(.secondary)
+                            .font(.caption)
                         }
                         HStack {
                             Text(item.room.number)
@@ -196,85 +216,33 @@ struct StationItemView: View {
                             }
                             .foregroundStyle(.secondary)
                         }
-                        Text(item.room.description)
-                            .font(isMACOS ? .body : .caption)
+                        HStack(alignment: .top) {
+                            Text(item.room.description)
+                                .font(isMACOS ? .body : .caption)
+                            Spacer()
+                            if item.room.creator.gameProfile?.mainDeck == nil {
+                                actionButtons
+                            }
+                        }
                         if let mainDeck = item.room.creator.gameProfile?.mainDeck {
                             HStack(spacing: 5) {
                                 ForEach(mainDeck.sortAsStandardBand(), id: \.self) { item in
                                     CardPreviewViewWithPlaceholder(id: item.id, isTrained: item.trained)
                                 }
+                                Spacer(minLength: 0)
+                                if sizeClass == .regular {
+                                    actionButtons
+                                }
+                            }
+                            if sizeClass != .regular {
+                                HStack {
+                                    Spacer()
+                                    actionButtons
+                                }
                             }
                         }
                     }
                     .textSelection(.enabled)
-                    Spacer(minLength: 0)
-                    VStack(alignment: .trailing) {
-                        HStack {
-                            if sizeClass == .regular {
-                                switch item.room.source {
-                                case .qq(let name):
-                                    Text(name)
-                                case .website(let name):
-                                    Text(name)
-                                default:
-                                    EmptyView()
-                                }
-                            }
-                            Text(item.room.dateCreated, style: .relative)
-                        }
-                        .foregroundStyle(.secondary)
-                        .font(.caption)
-                        Spacer(minLength: 0)
-                        ZStack(alignment: .trailing, content: {
-                            Label("Station.item.block.success", systemImage: "nosign")
-                                .foregroundStyle(.red)
-                                .opacity(itemTipStatus == 3 ? 1 : 0)
-                            Label("Station.item.report.success", systemImage: "flag")
-                                .foregroundStyle(.red)
-                                .opacity(itemTipStatus == 2 ? 1 : 0)
-                            Label("Station.item.copy.success", systemImage: "checkmark.circle")
-                                .foregroundStyle(.green)
-                                .opacity(itemTipStatus == 1 ? 1 : 0)
-                            HStack {
-                                Button(action: {
-                                    blockingSheetIsDisplaying = true
-                                }, label: {
-                                    Label("Station.item.block", systemImage: "nosign")
-                                        .foregroundStyle(.secondary)
-                                        .labelStyle(.iconOnly)
-                                })
-                                Button(action: {
-                                    if (try? AccountManager.bandoriStation.load().first) != nil  {
-                                        reasonOfReport = ""
-                                        reporingSheetIsDisplaying = true
-                                    } else {
-                                        reporingUnavailableSheetIsDisplaying = true
-                                    }
-                                }, label: {
-                                    Label("Station.item.report", systemImage: "flag")
-                                        .foregroundStyle(.secondary)
-                                        .labelStyle(.iconOnly)
-                                })
-                                Button(action: {
-                                    copyStringToClipboard(String(item.room.number))
-                                    itemTipStatus = 1
-                                }, label: {
-                                    Label("Station.item.copy", systemImage: "document.on.document")
-                                        .labelStyle(.iconOnly)
-                                })
-                            }
-                            .buttonStyle(.plain)
-                            .opacity(itemTipStatus == 0 ? 1 : 0)
-                        })
-                        .animation(.easeIn(duration: 0.2), value: itemTipStatus)
-                        .onChange(of: itemTipStatus, {
-                            if itemTipStatus != 0 {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                    itemTipStatus = 0
-                                }
-                            }
-                        })
-                    }
                 }
             }
         })
@@ -311,6 +279,59 @@ struct StationItemView: View {
             })
         }, message: {
             Text("Station.item.block.alert.message")
+        })
+    }
+    
+    @ViewBuilder
+    private var actionButtons: some View {
+        ZStack(alignment: .trailing, content: {
+            Label("Station.item.block.success", systemImage: "nosign")
+                .foregroundStyle(.red)
+                .opacity(itemTipStatus == 3 ? 1 : 0)
+            Label("Station.item.report.success", systemImage: "flag")
+                .foregroundStyle(.red)
+                .opacity(itemTipStatus == 2 ? 1 : 0)
+            Label("Station.item.copy.success", systemImage: "checkmark.circle")
+                .foregroundStyle(.green)
+                .opacity(itemTipStatus == 1 ? 1 : 0)
+            HStack {
+                Button(action: {
+                    blockingSheetIsDisplaying = true
+                }, label: {
+                    Label("Station.item.block", systemImage: "nosign")
+                        .foregroundStyle(.secondary)
+                        .labelStyle(.iconOnly)
+                })
+                Button(action: {
+                    if (try? AccountManager.bandoriStation.load().first) != nil  {
+                        reasonOfReport = ""
+                        reporingSheetIsDisplaying = true
+                    } else {
+                        reporingUnavailableSheetIsDisplaying = true
+                    }
+                }, label: {
+                    Label("Station.item.report", systemImage: "flag")
+                        .foregroundStyle(.secondary)
+                        .labelStyle(.iconOnly)
+                })
+                Button(action: {
+                    copyStringToClipboard(String(item.room.number))
+                    itemTipStatus = 1
+                }, label: {
+                    Label("Station.item.copy", systemImage: "document.on.document")
+                        .labelStyle(.iconOnly)
+                })
+            }
+            .buttonStyle(.plain)
+            .opacity(itemTipStatus == 0 ? 1 : 0)
+        })
+        .animation(.easeIn(duration: 0.2), value: itemTipStatus)
+        .onChange(of: itemTipStatus, {
+            if itemTipStatus != 0 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    itemTipStatus = 0
+                }
+            }
         })
     }
     
