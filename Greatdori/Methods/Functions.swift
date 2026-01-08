@@ -515,8 +515,9 @@ func stationAnonymousSubmit(
             encoder: .json
         ).response { response in
             if let data = response.data, let json = try? JSON(data: data) {
-                print(json)
-                if !json["success"].boolValue {
+                if json["success"].boolValue {
+                    continuation.resume()
+                } else {
                     return continuation.resume(throwing: SimpleError(id: 2666999, message: json["error"].string ?? "Unknown error"))
                 }
             } else {
