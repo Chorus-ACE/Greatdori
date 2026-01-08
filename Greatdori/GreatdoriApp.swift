@@ -76,15 +76,6 @@ struct GreatdoriApp: App {
                 })
                 .keyboardShortcut(",", modifiers: .command)
             }
-//            CommandGroup(after: .newItem) {
-//                Button(action: {
-////                    openWindow(id: "New")
-//                    // TODO: Create Zeile Project
-//                }, label: {
-//                    Label("Zeile.menu-bar.new", systemImage: "plus")
-//                })
-//                .keyboardShortcut("N", modifiers: .command)
-//            }
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
@@ -108,21 +99,6 @@ struct GreatdoriApp: App {
             SettingsView()
         }
         #endif
-        
-        DocumentGroup {
-            ZeileProjectDocument(emptyWithName: "Untitled.zeileproj")
-        } editor: { config in
-            ZeileEditorMainView(document: config.document)
-        }
-        .commands {
-            ZeileEditorCommands()
-        }
-        
-        WindowGroup("Window.zeile-story-viewer", id: "ZeileStoryViewer", for: ZeileStoryViewerWindowData.self) { $data in
-            ZeileStoryViewerView(data: data)
-        }
-        .commandsRemoved()
-        .handlesExternalEvents(matching: [".zir", ".sar"])
         
         WindowGroup("Window", id: "AnyWindow", for: AnyWindowData.self) { $data in
             if let data, data.isValid {

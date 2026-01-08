@@ -59,17 +59,6 @@
 		8C3FA26D2E4BCE7B001526F2 /* TextStyleRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA26C2E4BCE77001526F2 /* TextStyleRender.swift */; };
 		8C3FA26F2E4BCEC2001526F2 /* WrapIf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA26E2E4BCEC0001526F2 /* WrapIf.swift */; };
 		8C3FA2712E4BD487001526F2 /* StyleEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3FA2702E4BD484001526F2 /* StyleEditorView.swift */; };
-		8C480BFF2EC5DAA800A8AE70 /* ZeileWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480BFE2EC5DAA400A8AE70 /* ZeileWelcomeView.swift */; };
-		8C480C022EC5E15500A8AE70 /* ZeileProjectDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C012EC5E15100A8AE70 /* ZeileProjectDocument.swift */; };
-		8C480C042EC60D0000A8AE70 /* ZeileProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C032EC60CFC00A8AE70 /* ZeileProjectConfig.swift */; };
-		8C480C062EC60FAA00A8AE70 /* ZeileEditorMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C052EC60FA300A8AE70 /* ZeileEditorMainView.swift */; };
-		8C480C082EC6159E00A8AE70 /* CodeTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C072EC6159200A8AE70 /* CodeTemplates.swift */; };
-		8C480C0A2EC6198D00A8AE70 /* UTType+ZeileTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C092EC6198300A8AE70 /* UTType+ZeileTypes.swift */; };
-		8C480C0C2EC61DEB00A8AE70 /* ZeileEditorSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C0B2EC61DE100A8AE70 /* ZeileEditorSidebar.swift */; };
-		8C480C0E2EC62F5900A8AE70 /* ZeileEditorFileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C0D2EC62F2600A8AE70 /* ZeileEditorFileEditView.swift */; };
-		8C480C102EC633B200A8AE70 /* ZeileEditorCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C480C0F2EC633AD00A8AE70 /* ZeileEditorCommands.swift */; };
-		8C48F2452EC8C73F00A8AE70 /* ZeileProductActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C48F2442EC8C73700A8AE70 /* ZeileProductActions.swift */; };
-		8C48F2472EC8D97200A8AE70 /* ZeileStoryViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C48F2462EC8D96E00A8AE70 /* ZeileStoryViewerView.swift */; };
 		8C499F8D2E4FD9CE0073FCB6 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 8C499F8C2E4FD9CE0073FCB6 /* SwiftUIIntrospect */; };
 		8C499F8F2E4FEAC20073FCB6 /* OnChange+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */; };
 		8C499F992E5177540073FCB6 /* NewsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F982E51774F0073FCB6 /* NewsDetailView.swift */; };
@@ -166,7 +155,6 @@
 		8CBC1BD92E333461004023F7 /* FoldableList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBC1BD82E33345C004023F7 /* FoldableList.swift */; };
 		8CBC1BDD2E336556004023F7 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBC1BDC2E33654D004023F7 /* SearchView.swift */; };
 		8CBC1BE12E340AD8004023F7 /* CostumeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBC1BE02E340AD4004023F7 /* CostumeListView.swift */; };
-		8CBC97552EC193DC007A1E33 /* CodeEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBC97542EC193D5007A1E33 /* CodeEditor.swift */; };
 		8CBC97772EC48E7D007A1E33 /* TypeIcon.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8CBC97762EC48E7D007A1E33 /* TypeIcon.xcassets */; };
 		8CBF73132E902A0600D88F96 /* CardCollectionCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBF73122E9029FE00D88F96 /* CardCollectionCoding.swift */; };
 		8CC046DC2E6C8F63009FDC13 /* AppFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC046DB2E6C8F5D009FDC13 /* AppFlags.swift */; };
@@ -556,17 +544,6 @@
 		8C3FA26C2E4BCE77001526F2 /* TextStyleRender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStyleRender.swift; sourceTree = "<group>"; };
 		8C3FA26E2E4BCEC0001526F2 /* WrapIf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapIf.swift; sourceTree = "<group>"; };
 		8C3FA2702E4BD484001526F2 /* StyleEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleEditorView.swift; sourceTree = "<group>"; };
-		8C480BFE2EC5DAA400A8AE70 /* ZeileWelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileWelcomeView.swift; sourceTree = "<group>"; };
-		8C480C012EC5E15100A8AE70 /* ZeileProjectDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileProjectDocument.swift; sourceTree = "<group>"; };
-		8C480C032EC60CFC00A8AE70 /* ZeileProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileProjectConfig.swift; sourceTree = "<group>"; };
-		8C480C052EC60FA300A8AE70 /* ZeileEditorMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorMainView.swift; sourceTree = "<group>"; };
-		8C480C072EC6159200A8AE70 /* CodeTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeTemplates.swift; sourceTree = "<group>"; };
-		8C480C092EC6198300A8AE70 /* UTType+ZeileTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UTType+ZeileTypes.swift"; sourceTree = "<group>"; };
-		8C480C0B2EC61DE100A8AE70 /* ZeileEditorSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorSidebar.swift; sourceTree = "<group>"; };
-		8C480C0D2EC62F2600A8AE70 /* ZeileEditorFileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorFileEditView.swift; sourceTree = "<group>"; };
-		8C480C0F2EC633AD00A8AE70 /* ZeileEditorCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileEditorCommands.swift; sourceTree = "<group>"; };
-		8C48F2442EC8C73700A8AE70 /* ZeileProductActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileProductActions.swift; sourceTree = "<group>"; };
-		8C48F2462EC8D96E00A8AE70 /* ZeileStoryViewerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeileStoryViewerView.swift; sourceTree = "<group>"; };
 		8C499F892E4FCC050073FCB6 /* TestLyrics.json */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLyrics.json; sourceTree = "<group>"; };
 		8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnChange+.swift"; sourceTree = "<group>"; };
 		8C499F982E51774F0073FCB6 /* NewsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailView.swift; sourceTree = "<group>"; };
@@ -662,7 +639,6 @@
 		8CBC1BD82E33345C004023F7 /* FoldableList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldableList.swift; sourceTree = "<group>"; };
 		8CBC1BDC2E33654D004023F7 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		8CBC1BE02E340AD4004023F7 /* CostumeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostumeListView.swift; sourceTree = "<group>"; };
-		8CBC97542EC193D5007A1E33 /* CodeEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeEditor.swift; sourceTree = "<group>"; };
 		8CBC97762EC48E7D007A1E33 /* TypeIcon.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = TypeIcon.xcassets; sourceTree = "<group>"; };
 		8CBF73122E9029FE00D88F96 /* CardCollectionCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionCoding.swift; sourceTree = "<group>"; };
 		8CC046DB2E6C8F5D009FDC13 /* AppFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlags.swift; sourceTree = "<group>"; };
@@ -967,7 +943,6 @@
 				8C889D9A2EA1257700FBF01D /* Community */,
 				E98BE10F2E7E8C5E00B4C8A8 /* Info */,
 				E9A126FD2E8CB62700BBD39E /* Tools */,
-				8CBC97532EC193C8007A1E33 /* Zeile */,
 				E9BD6C4F2E547A7200D56E55 /* Settings */,
 				E944C3022ECC694C0005EE55 /* Documents */,
 			);
@@ -1052,17 +1027,6 @@
 				8C3FA2562E4B9EC6001526F2 /* Assets.xcassets */,
 			);
 			path = GreatLyrics;
-			sourceTree = "<group>";
-		};
-		8C480C002EC5E14800A8AE70 /* Documents */ = {
-			isa = PBXGroup;
-			children = (
-				8C480C092EC6198300A8AE70 /* UTType+ZeileTypes.swift */,
-				8C480C032EC60CFC00A8AE70 /* ZeileProjectConfig.swift */,
-				8C480C012EC5E15100A8AE70 /* ZeileProjectDocument.swift */,
-				8C480C072EC6159200A8AE70 /* CodeTemplates.swift */,
-			);
-			path = Documents;
 			sourceTree = "<group>";
 		};
 		8C6B8FC32E75372000452D7B /* Localization */ = {
@@ -1252,22 +1216,6 @@
 				8CB4D4E12E449D150085D57A /* Assets.xcassets */,
 			);
 			path = "Greatdori Watch Widgets";
-			sourceTree = "<group>";
-		};
-		8CBC97532EC193C8007A1E33 /* Zeile */ = {
-			isa = PBXGroup;
-			children = (
-				8C480C002EC5E14800A8AE70 /* Documents */,
-				8CBC97542EC193D5007A1E33 /* CodeEditor.swift */,
-				8C480BFE2EC5DAA400A8AE70 /* ZeileWelcomeView.swift */,
-				8C480C0F2EC633AD00A8AE70 /* ZeileEditorCommands.swift */,
-				8C480C052EC60FA300A8AE70 /* ZeileEditorMainView.swift */,
-				8C480C0B2EC61DE100A8AE70 /* ZeileEditorSidebar.swift */,
-				8C480C0D2EC62F2600A8AE70 /* ZeileEditorFileEditView.swift */,
-				8C48F2442EC8C73700A8AE70 /* ZeileProductActions.swift */,
-				8C48F2462EC8D96E00A8AE70 /* ZeileStoryViewerView.swift */,
-			);
-			path = Zeile;
 			sourceTree = "<group>";
 		};
 		8CD13FE32E300ACE00673E15 /* utils */ = {
@@ -1943,7 +1891,6 @@
 				8C3DFB0E2EAF6B8D0004E1F5 /* CharacterSelector.swift in Sources */,
 				E94219392E8AA7B300F24974 /* GachaDetailView.swift in Sources */,
 				E94219112E8AA51600F24974 /* SongInfo.swift in Sources */,
-				8C48F2452EC8C73F00A8AE70 /* ZeileProductActions.swift in Sources */,
 				8CF827A92E8ACD380045CA97 /* LoginCampaignInfo.swift in Sources */,
 				E9DA971C2ED97ED90047B464 /* GachaDetailCardsView.swift in Sources */,
 				E92401612E993B9D003BF482 /* NewsDetailsView.swift in Sources */,
@@ -1974,7 +1921,6 @@
 				8CB4D4712E4454890085D57A /* CardCollectionManager.swift in Sources */,
 				E97810992EE82C8F000AD397 /* CostumeDetailOverviewView.swift in Sources */,
 				E942192A2E8AA6CE00F24974 /* EventSearchView.swift in Sources */,
-				8C480C042EC60D0000A8AE70 /* ZeileProjectConfig.swift in Sources */,
 				E94218FA2E8AA3B000F24974 /* CardPreviewImage.swift in Sources */,
 				E91D075C2F03BAB600A13FFD /* StationFilter.swift in Sources */,
 				E94219072E8AA48A00F24974 /* ComicDetailView.swift in Sources */,
@@ -1988,12 +1934,9 @@
 				E949A5612EAA00CB007441A6 /* WelcomeView.swift in Sources */,
 				E94218F22E8AA32000F24974 /* CharacterSearchView.swift in Sources */,
 				E942190E2E8AA4D700F24974 /* SongDetailGameplayView.swift in Sources */,
-				8CBC97552EC193DC007A1E33 /* CodeEditor.swift in Sources */,
 				E960D3382EB64CE600EA6A5E /* StoryDetailView.swift in Sources */,
 				E955A0F92EBF08D800795C9D /* ISVDialogBox.swift in Sources */,
 				E9DA971E2ED97FD30047B464 /* SongDetailMusicMovieView.swift in Sources */,
-				8C48F2472EC8D97200A8AE70 /* ZeileStoryViewerView.swift in Sources */,
-				8C480C062EC60FAA00A8AE70 /* ZeileEditorMainView.swift in Sources */,
 				E94443CE2E8E80C200593F07 /* SettingsDebugView.swift in Sources */,
 				E9B17BBB2EA5DC430049C92C /* SettingsAboutView.swift in Sources */,
 				E9F87E072EDEA8F50015427F /* CardDetailStoriesView.swift in Sources */,
@@ -2014,17 +1957,13 @@
 				E90769D72E546D5B00C9871C /* DebugView.swift in Sources */,
 				E9BDF0022EEC1BF5009568F5 /* SettingsStoryView.swift in Sources */,
 				E94219152E8AA55700F24974 /* SongDifficultyIndicators.swift in Sources */,
-				8C480C022EC5E15500A8AE70 /* ZeileProjectDocument.swift in Sources */,
 				E94219282E8AA6BC00F24974 /* EventInfoForHome.swift in Sources */,
 				E949D28E2E93D9F800E50D3F /* Live2DViewer.swift in Sources */,
 				E930F7862EE03D3200E8847F /* ISVBacklogView.swift in Sources */,
-				8C480BFF2EC5DAA800A8AE70 /* ZeileWelcomeView.swift in Sources */,
 				E94219172E8AA57B00F24974 /* CostumeInfo.swift in Sources */,
-				8C480C082EC6159E00A8AE70 /* CodeTemplates.swift in Sources */,
 				E94218FE2E8AA40100F24974 /* CardSearchView.swift in Sources */,
 				8C2BB9B42E92AF3C00D003D1 /* StoryViewer.swift in Sources */,
 				E942192C2E8AA6E700F24974 /* EventDetailView.swift in Sources */,
-				8C480C102EC633B200A8AE70 /* ZeileEditorCommands.swift in Sources */,
 				E942190C2E8AA4C400F24974 /* SongDetailView.swift in Sources */,
 				E942192F2E8AA72D00F24974 /* DetailEventsSection.swift in Sources */,
 				E94443C72E8E6A2E00593F07 /* SettingsLocaleView.swift in Sources */,
@@ -2038,12 +1977,10 @@
 				E978109D2EE83616000AD397 /* CharacterDetailOverviewView.swift in Sources */,
 				E98B8B532E7E922A00B4C8A8 /* NavigationComponentsView.swift in Sources */,
 				8C0CCD4C2EEC5D5C00762292 /* EventDetailRewardsView.swift in Sources */,
-				8C480C0E2EC62F5900A8AE70 /* ZeileEditorFileEditView.swift in Sources */,
 				E90769D92E546D5B00C9871C /* SettingsView.swift in Sources */,
 				E9EE03812E4F5DB30088843B /* FilterView.swift in Sources */,
 				E9C8ED8A2F01068E0080DBF7 /* KeychainManager.swift in Sources */,
 				E9BDD6362EED3B74009568F5 /* AssetExplorerFileViewer.swift in Sources */,
-				8C480C0C2EC61DEB00A8AE70 /* ZeileEditorSidebar.swift in Sources */,
 				E94219352E8AA78800F24974 /* GachaSearchView.swift in Sources */,
 				8CF827AD2E8ACEDC0045CA97 /* LoginCampaignDetailView.swift in Sources */,
 				E97C5B882E8E9A50004858A3 /* SettingsWidgetsView.swift in Sources */,
@@ -2065,7 +2002,6 @@
 				8C3593192EDC30BB009E41AD /* CompactAudioPlayer.swift in Sources */,
 				E94219332E8AA76A00F24974 /* GachaInfo.swift in Sources */,
 				8C6C0EFF2E42462A00D1FB0A /* OptionsData.swift in Sources */,
-				8C480C0A2EC6198D00A8AE70 /* UTType+ZeileTypes.swift in Sources */,
 				8C0C99842E296A5500549B5C /* GreatdoriApp.swift in Sources */,
 				8C902FAA2EA4D31900202812 /* UIBasic.metal in Sources */,
 				E99B57652EC1E7DF0045EFC9 /* StationView.swift in Sources */,

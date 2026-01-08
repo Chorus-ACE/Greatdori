@@ -132,12 +132,6 @@ import SwiftUI
         symbol: "folder",
         tabValue: .assetExplorer,
         destination: {AssetExplorerView()}
-    ),
-    ToolDestinationItem(
-        title: "App.tools.zeile-editor",
-        symbol: "hammer",
-        tabValue: .zeileEditor,
-        destination: {ZeileWelcomeView()}
     )
 ]
 
