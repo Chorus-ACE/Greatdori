@@ -61,7 +61,7 @@ struct AssetListView: View {
             if let items {
                 CustomScrollView {
                     if let filteredItems {
-                        LazyVStack {
+                        LazyVStack(spacing: 35) {
                             CustomGroupBox {
                                 if !filteredItems.isEmpty {
                                     VStack {
@@ -171,8 +171,6 @@ struct AssetListView: View {
                                 }
                             }
                             .frame(maxWidth: infoContentMaxWidth)
-                            
-                            DetailSectionsSpacer()
                             
                             let imageItems = filteredItems.filter( { $0.name.hasSuffix(".jpg") || $0.name.hasSuffix(".png") } )
                             if let currentPath, !imageItems.isEmpty {
