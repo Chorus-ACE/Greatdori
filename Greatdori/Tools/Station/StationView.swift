@@ -129,6 +129,7 @@ struct StationView: View {
     }
     
     func startConnection() {
+        allGameplays = []
         informationIsAvailable = true
         fetchingTask = Task {
             do {

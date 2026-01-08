@@ -136,8 +136,8 @@ struct AssetListView: View {
                                                         .contentShape(Rectangle())
                                                     })
                                                 }
-                                            }
-                                            .frame(minHeight: 5)
+                                            } 
+                                            .frame(minHeight: isMACOS ? nil : 35)
                                             .buttonStyle(.plain)
                                             .contextMenu {
                                                 Section {
@@ -184,7 +184,7 @@ struct AssetListView: View {
                                 .highlightKeyword($searchField)
                             }
                         }
-                        .padding()
+//                        .padding()
                         .wrapIf(true, in: {
                             if #available(iOS 26, macOS 14.0, *) {
                                 $0.navigationSubtitle(Text(searchField.isEmpty ? "Search.item.\(filteredItems.count)" : "Search.result.\(filteredItems.count)"))
