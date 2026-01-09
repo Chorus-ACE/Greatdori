@@ -168,6 +168,7 @@ struct SettingsAdvancedStorageSection: View {
                         }
                     }
                     DoriCache.invalidateAll()
+                    URLCache.shared.removeAllCachedResponses()
                     updateCacheSize()
                 }, label: {
                     Text("Settings.advanced.storage.clear-cache.alert.action.confirm")
