@@ -22,19 +22,21 @@ struct EventDetailStoriesView: View {
     var body: some View {
         if !information.event.stories.isEmpty {
             Section {
-                if information.event.stories[0].caption.forLocale(locale) != nil {
-                    ForEach(Array(information.event.stories.enumerated()), id: \.element.scenarioID) { index, story in
-                        StoryCardView(
-                            story: .init(story),
-                            type: .event,
-                            locale: locale,
-                            unsafeAssociatedID: String(information.event.id),
-                            unsafeSecondaryAssociatedID: String(index),
-                            notes: story.releaseConditions.forLocale(locale)
-                        )
+                VStack {
+                    if information.event.stories[0].caption.forLocale(locale) != nil {
+                        ForEach(Array(information.event.stories.enumerated()), id: \.element.scenarioID) { index, story in
+                            StoryCardView(
+                                story: .init(story),
+                                type: .event,
+                                locale: locale,
+                                unsafeAssociatedID: String(information.event.id),
+                                unsafeSecondaryAssociatedID: String(index),
+                                notes: story.releaseConditions.forLocale(locale)
+                            )
+                        }
+                    } else {
+                        DetailUnavailableView(title: "Details.unavailable.story", symbol: "star.hexagon")
                     }
-                } else {
-                    DetailUnavailableView(title: "Details.unavailable.story", symbol: "star.hexagon")
                 }
             } header: {
                 HStack {
