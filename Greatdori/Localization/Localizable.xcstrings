@@ -20758,19 +20758,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No Keyword"
+            "value" : "(No Keyword)"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无关键词"
+            "value" : "(无关键词)"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無關鍵詞"
+            "value" : "(無關鍵詞)"
           }
         }
       }
@@ -20846,19 +20846,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No User"
+            "value" : "(No User)"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无用户"
+            "value" : "(无用户)"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無用戶"
+            "value" : "(無用戶)"
           }
         }
       }
@@ -20968,7 +20968,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你將不再會見到這位用戶所提交的遊戲，直到取消屏蔽。"
+            "value" : "你將不再會見到這位用戶所提交的遊戲，除非取消屏蔽。"
           }
         }
       }
@@ -21083,6 +21083,28 @@
         }
       }
     },
+    "Station.item.report.alert.cancel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
+    },
     "Station.item.report.alert.confirm" : {
       "localizations" : {
         "en" : {
@@ -21122,7 +21144,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "該報告會被發送至BandoriStation."
+            "value" : "該報告會被發送至BandoriStation。"
           }
         }
       }
@@ -21514,6 +21536,12 @@
             "state" : "translated",
             "value" : "匿名提交不可用 (2666000)"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匿名提交不可用(2666000)"
+          }
         }
       }
     },
@@ -21710,7 +21738,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "（沒有詞）"
+            "value" : "(沒有詞)"
           }
         }
       }
@@ -22224,13 +22252,13 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "（无角色）"
+            "value" : "(无角色)"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "（無角色）"
+            "value" : "(無角色)"
           }
         }
       }
