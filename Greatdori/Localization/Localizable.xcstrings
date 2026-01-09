@@ -17807,6 +17807,22 @@
         }
       }
     },
+    "Settings.story-viewer.demo.replay" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replay"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重放"
+          }
+        }
+      }
+    },
     "Settings.story-viewer.fonts" : {
       "localizations" : {
         "en" : {
