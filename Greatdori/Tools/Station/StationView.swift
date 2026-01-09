@@ -43,20 +43,22 @@ struct StationView: View {
                     }
                 } else if !displayingGameplays.isEmpty {
                     CustomScrollView {
-                        Section(content: {
-                            ForEach(displayingGameplays, id: \.self) { item in
-                                StationItemView(item: item, filter: $filter)
-                            }
-                            .animation(.easeInOut(duration: 0.5), value: displayingGameplays)
-                        }, footer: {
-                            HStack {
-                                Text("Station.footer")
-                                    .foregroundStyle(.secondary)
-                                    .font(.footnote)
-                                Spacer()
-                            }
-                        })
-                        .frame(maxWidth: infoContentMaxWidth)
+                        LazyVStack {
+                            Section(content: {
+                                ForEach(displayingGameplays, id: \.self) { item in
+                                    StationItemView(item: item, filter: $filter)
+                                }
+                                .animation(.easeInOut(duration: 0.5), value: displayingGameplays)
+                            }, footer: {
+                                HStack {
+                                    Text("Station.footer")
+                                        .foregroundStyle(.secondary)
+                                        .font(.footnote)
+                                    Spacer()
+                                }
+                            })
+                            .frame(maxWidth: infoContentMaxWidth)
+                        }
                     }
                 } else {
                     ExtendedConstraints {
@@ -162,7 +164,7 @@ struct StationItemView: View {
             itemTipStatus = 1
         }, label: {
             CustomGroupBox(cornerRadius: 20) {
-                HStack(spacing: 0) {
+                HStack {
                     WebImage(url: item.room.creator.avatarURL(), content: { image in
                         image
                             .resizable()
@@ -176,9 +178,8 @@ struct StationItemView: View {
                     }
                     .frame(width: 40, height: 40)
                     .iconBadge(item.quantity, ignoreOne: true)
-                    Spacer()
-                        .frame(width: 5)
                     VStack(alignment: .leading) {
+                        // Username, band power, source, time
                         HStack(alignment: .top) {
                             if let username = item.room.creator.username {
                                 HStack {
@@ -207,6 +208,8 @@ struct StationItemView: View {
                             .foregroundStyle(.secondary)
                             .font(.caption)
                         }
+                        
+                        // Number, type
                         HStack {
                             Text(item.room.number)
                                 .bold()
@@ -217,7 +220,9 @@ struct StationItemView: View {
                             }
                             .foregroundStyle(.secondary)
                         }
-                        HStack(alignment: .top) {
+                        
+                        // Description, buttons if deck empty
+                        HStack(alignment: .bottom) {
                             Text(item.room.description)
                                 .font(isMACOS ? .body : .caption)
                             Spacer()
@@ -225,18 +230,24 @@ struct StationItemView: View {
                                 actionButtons
                             }
                         }
+                        
                         if let mainDeck = item.room.creator.gameProfile?.mainDeck {
-                            HStack(spacing: 5) {
-                                ForEach(mainDeck.sortAsStandardBand(), id: \.self) { item in
-                                    CardPreviewViewWithPlaceholder(id: item.id, isTrained: item.trained)
+                            // Deck, buttons if regular size
+                            HStack(alignment: .bottom) {
+                                HStack(spacing: 5) {
+                                    ForEach(mainDeck.sortAsStandardBand(), id: \.self) { item in
+                                        CardPreviewViewWithPlaceholder(id: item.id, isTrained: item.trained)
+                                    }
                                 }
                                 Spacer(minLength: 0)
                                 if sizeClass == .regular {
                                     actionButtons
                                 }
                             }
-                            if sizeClass != .regular {
-                                HStack {
+                            
+                            // Buttons if compact
+                            if sizeClass == .compact {
+                                HStack(alignment: .bottom) {
                                     Spacer()
                                     actionButtons
                                 }
@@ -265,6 +276,9 @@ struct StationItemView: View {
                 Text("Station.item.report.alert.confirm")
             })
             .disabled(reasonOfReport.isEmpty)
+            Button(role: .cancel, action: {}, label: {
+                Text("Station.item.report.alert.cancel")
+            })
         }, message: {
             Text("Station.item.report.alert.message")
         })
