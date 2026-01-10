@@ -1,26 +1,26 @@
-# 账户
+# 帳號
 
-Greatdori!内置了一套账户系统，对接了多种第三方平台，以方便快速访问各种平台上的个性化资料，或在对应平台中发布内容。
+Greatdori! 內建了一套帳號系統，串接了多種第三方平台，以方便快速存取各種平台上的個人化資料，或在對應平台中發布內容。
 
-所有信息的处理都遵循《Greatdori！隐私政策》，Greatdori!不会将任何信息用于营利性目的。于 https://greatdori.com/privacy 了解更多。
+所有資訊的處理都遵循《Greatdori！隱私政策》，Greatdori! 不會將任何資訊用於營利性目的。請至 [https://greatdori.com/privacy](https://greatdori.com/privacy) 了解更多。
 
-Greatdori!不提供账户信息的托管和验证，而只提供对接服务。Greatdori!不提供任何注册或注销服务，也无法为任何服务平台上的信息和操作负责。你可能需要同意对应平台的协议以使用他们的账户服务，且你的信息将经过对应平台的服务器处理。
+Greatdori! 不提供帳號資訊的代管與驗證，僅提供串接服務。Greatdori! 不提供任何註冊或註銷服務，也無法為任何服務平台上的資訊與操作負責。您可能需要同意對應平台的協議以使用其帳號服務，且您的資訊將經由對應平台的伺服器處理。
 
-## Bandori车站
+## Bandori 車站
 
-Bandori车站（BandoriStation，https://bandoristation.com）提供多人游戏房间号托管服务。
+Bandori 車站（BandoriStation，https://bandoristation.com）提供多人遊戲房間號碼代管服務。
 
-登录Bandori车站以提交你的游戏信息，或举报其他不当信息。
+登入 Bandori 車站以提交您的遊戲資訊，或檢舉其他不當資訊。
 
 ## Bestdori
 
-Bestdori（https://bestdori.com）是一个综合性的GBP信息平台。
+Bestdori（https://bestdori.com）是一個綜合性的 GBP 資訊平台。
 
-登录Bestdori以在社区中上传信息，或获取你的个人游戏档案。
+登入 Bestdori 以在社群中上傳資訊，或取得您的個人遊戲檔案。
 
 ## 了解更多
 
 - BandoriStation: https://bandoristation.com
-- Bestdori: https://bestdori.com 
+- Bestdori: https://bestdori.com
 
-最后更新于2025年12月29日
+最後更新於 2025 年 12 月 29 日

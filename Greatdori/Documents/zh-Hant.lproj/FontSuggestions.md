@@ -1,19 +1,19 @@
-# 字体
+# 字型
 
-为方便调用字体，Greatdori!内置一份字体管理器。你可以轻松地从互联网或本地导入字体文件，或使用系统字体。
+為了方便調用字型，Greatdori! 內建了一套字型管理器。您可以輕鬆地從網路或本機匯入字型檔案，或使用系統字型。
 
-Greatdori!的字体管理器兼容TTF、TTC、OTF和OTC字体文件。尽管WOFF2不受支持，你可以考虑使用在线服务转换。
+Greatdori! 的字型管理器相容 TTF、TTC、OTF 與 OTC 字型檔案。雖然不支援 WOFF2，但您可以考慮使用線上服務進行轉換。
 
-Greatdori!开发团队在制作字体管理器已经找出了所有地区所使用的字体。受限于许可原因，我们不能在此提供文件。尽管如此，我们想向你提供我们的研究成果。如果你有相应的许可，你可以考虑将其导入至Greatdori!以获得更好的阅读体验。
+Greatdori! 開發團隊在製作字型管理器時，已經找出了所有地區版本所使用的字型。受限於授權原因，我們無法在此直接提供檔案。儘管如此，我們仍想向您分享我們的研究成果。如果您擁有相應的授權，可以考慮將其匯入 Greatdori! 以獲得更佳的閱讀體驗。
 
-- JP: タイプラボN(`Type Labo N`) & 新ゴ (`Shin Go`)
+- JP: タイプラボN (`Type Labo N`) & 新ゴ (`Shin Go`)
 - EN: NewRodin Pro DB (`NewRobinPro-DB`)
-- TW: 思源黑体 (`SourceHanSansTC`)
-- CN: 腾祥嘉丽大圆简 (`Tensentype-JiaLiDaYuanGB18030`)
+- TW: 思源黑體 (`SourceHanSansTC`)
+- CN: 騰祥嘉麗大圓簡 (`Tensentype-JiaLiDaYuanGB18030`)
 - KR: Jeju Gothic (`JujuGothic`)
 
-其中JP的汉字使用「新ゴ」，其余的所有字符（假名、字母、数字和标点等）都使用「タイプラボN」。「タイプラボN」不包含汉字。由于开发团队中无人会韩文，因此KR的字体信息可能有误。若有误，欢迎向我们报告。
+其中 JP 的漢字使用「新ゴ」，其餘的所有字元（假名、字母、數字與標點符號等）皆使用「タイプラボN」。「タイプラボN」不包含漢字。由於開發團隊中無人精通韓文，因此 KR 的字型資訊可能有誤。若有錯誤，歡迎向我們回報。
 
-同时，我们还推荐Noto Sans系列。Noto Sans的License是Open Font License。你可以在 https://fonts.google.com/noto 或 https://github.com/google/fonts 找到Noto Sans系列。
+同時，我們也推薦 Noto Sans 系列。Noto Sans 的授權條款為 Open Font License。您可以在 https://fonts.google.com/noto 或 https://github.com/google/fonts 找到 Noto Sans 系列。
 
-最后更新于2025年12月29日
+最後更新於 2025 年 12 月 29 日

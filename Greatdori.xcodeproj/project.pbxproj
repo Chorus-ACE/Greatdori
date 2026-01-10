@@ -817,8 +817,6 @@
 				"/Localized: CollectionCode.md",
 				"/Localized: EventCalcEfficiency.md",
 				"/Localized: FontSuggestions.md",
-				"/Localized: Privacy.md",
-				"/Localized: T&C.md",
 			);
 			target = 8C0C995C2E296A4400549B5C /* Greatdori */;
 		};

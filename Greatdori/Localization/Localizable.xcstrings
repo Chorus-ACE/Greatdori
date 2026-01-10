@@ -17820,6 +17820,12 @@
             "state" : "translated",
             "value" : "重放"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重播"
+          }
         }
       }
     },
