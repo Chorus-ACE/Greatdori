@@ -92,7 +92,7 @@ if let cards = await DoriAPI.Cards.all() {
         resultImageData.append((data, fileName))
         resultCards.append(
             .init(
-                localizedName: card.prefix,
+                localizedName: card.cardName,
                 fileName: fileName
             )
         )
