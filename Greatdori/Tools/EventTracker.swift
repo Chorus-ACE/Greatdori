@@ -403,7 +403,7 @@ struct EventTrackerView: View {
     
     func getEvents() async {
         eventListIsAvailabile = true
-        withDoriCache(id: "EventList") {
+        withDoriCache(id: "EventList", trait: .realTime) {
             await PreviewEvent.all()
         }.onUpdate {
             if let events = $0 {
