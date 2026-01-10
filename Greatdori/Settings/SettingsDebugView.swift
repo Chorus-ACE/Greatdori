@@ -53,7 +53,10 @@ struct SettingsDebugView: View {
                 Toggle(isOn: $forceDisplayWhatsNewSheet, label: {
                     Text(verbatim: "forceDisplayWhatsNewSheet")
                 })
-                Toggle(isOn: .init(get: { AppFlag.ISV_DEBUG }, set: { AppFlag.set($0, forKey: "ISV_DEBUG") })) {
+                Toggle(isOn: AppFlag.bindingValue(forKey: "DEMO")) {
+                    Text(verbatim: "DEMO")
+                }
+                Toggle(isOn: AppFlag.bindingValue(forKey: "ISV_DEBUG")) {
                     Text(verbatim: "ISV_DEBUG")
                 }
                 

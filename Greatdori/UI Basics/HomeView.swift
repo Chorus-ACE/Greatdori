@@ -285,6 +285,7 @@ struct HomeBirthdayView: View {
                     .foregroundStyle(.secondary)
                     .fontWeight(.light)
                     .font(.title3)
+                    .hidden(AppFlag.DEMO)
                     .wrapIf(birthdays == nil) { content in
                         content
                             .redacted(reason: .placeholder)
@@ -438,7 +439,11 @@ struct HomeBirthdayView: View {
     
     func updateBirthday() {
         Task {
-            birthdays = await DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone())
+            if AppFlag.DEMO {
+                birthdays = await DoriFrontend.Characters.recentBirthdayCharacters(aroundDate: Date(timeIntervalSince1970: 1768534620))
+            } else {
+                birthdays = await DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone())
+            }
             if getBirthdayTimeZone() != TimeZone.autoupdatingCurrent {
                 systemBirthdays = await DoriFrontend.Characters.recentBirthdayCharacters(timeZone: getBirthdayTimeZone(from: .adaptive))
             } else {

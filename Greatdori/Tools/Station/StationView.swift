@@ -14,7 +14,7 @@
 
 import Alamofire
 import Combine
-import DoriKit
+@_private(sourceFile: "Station.swift") import DoriKit
 import SDWebImageSwiftUI
 import SwiftyJSON
 import SwiftUI
@@ -131,19 +131,25 @@ struct StationView: View {
     }
     
     func startConnection() {
-        allGameplays = []
-        informationIsAvailable = true
-        fetchingTask = Task {
-            do {
-                try await DoriAPI.Station.receiveRooms { newRooms in
-                    informationIsLoading = false
-                    allGameplays += newRooms
-                    displayingGameplays = allGameplays.reversed().filter(withFilter: filter).combiningReferenceRepeatingItems()
+        if !AppFlag.DEMO {
+            allGameplays = []
+            informationIsAvailable = true
+            fetchingTask = Task {
+                do {
+                    try await DoriAPI.Station.receiveRooms { newRooms in
+                        informationIsLoading = false
+                        allGameplays += newRooms
+                        displayingGameplays = allGameplays.reversed().filter(withFilter: filter).combiningReferenceRepeatingItems()
+                    }
+                } catch {
+                    informationIsAvailable = false
+                    fetchError = error
                 }
-            } catch {
-                informationIsAvailable = false
-                fetchError = error
             }
+        } else {
+            informationIsAvailable = true
+            informationIsLoading = false
+            displayingGameplays = CombinedRoom.demoRooms
         }
     }
 }
@@ -165,7 +171,13 @@ struct StationItemView: View {
         }, label: {
             CustomGroupBox(cornerRadius: 20) {
                 HStack {
-                    WebImage(url: item.room.creator.avatarURL(), content: { image in
+                    WebImage(url: {
+                        if AppFlag.DEMO, let username = demoNames[item.room.creator.username ?? ""]  {
+                            return URL(string: "https://github.com/Greatdori/demo-image/blob/main/\(username).png?raw=true")!
+                        } else {
+                            return item.room.creator.avatarURL()
+                        }
+                    }(), content: { image in
                         image
                             .resizable()
                     }, placeholder: {
@@ -178,6 +190,7 @@ struct StationItemView: View {
                     }
                     .frame(width: 40, height: 40)
                     .iconBadge(item.quantity, ignoreOne: true)
+
                     VStack(alignment: .leading) {
                         // Username, band power, source, time
                         HStack(alignment: .top) {
@@ -222,12 +235,18 @@ struct StationItemView: View {
                         }
                         
                         // Description, buttons if deck empty
-                        HStack(alignment: .bottom) {
-                            Text(item.room.description)
-                                .font(isMACOS ? .body : .caption)
+                        HStack {
+                            VStack {
+                                Text(item.room.description)
+                                    .font(isMACOS ? .body : .caption)
+                                Spacer(minLength: 0)
+                            }
                             Spacer()
-                            if item.room.creator.gameProfile?.mainDeck == nil {
-                                actionButtons
+                            VStack {
+                                Spacer(minLength: 0)
+                                if item.room.creator.gameProfile?.mainDeck == nil {
+                                    actionButtons
+                                }
                             }
                         }
                         
@@ -244,10 +263,12 @@ struct StationItemView: View {
                                     actionButtons
                                 }
                             }
+                            .padding(.top, 1)
                             
                             // Buttons if compact
                             if sizeClass == .compact {
                                 HStack(alignment: .bottom) {
+                                    Text(verbatim: "")
                                     Spacer()
                                     actionButtons
                                 }
@@ -483,4 +504,57 @@ struct CombinedRoom: Hashable, Sendable {
         self.room = room
         self.quantity = quantity
     }
+    
+    init(number: String,
+         message: String,
+         username: String,
+         sourceIsTsugu: Bool,
+         timeInterval: TimeInterval,
+         type: DoriAPI.Station.RoomType,
+         deck: DoriAPI.Station.UserInformation.GameProfile?,
+         quantity: Int,
+    ) {
+        self.room = DoriAPI.Station.Room(
+            _rawJSON: "",
+            type: type,
+            source: sourceIsTsugu ? .qq("Tsugu") : .website("BandoriStation"),
+            creator: .init(username: username, gameProfile: deck),
+            dateCreated: Date.now.addingTimeInterval(-timeInterval),
+            message: message,
+            number: number)
+        self.quantity = quantity
+    }
+    
+    static var demoRooms: [CombinedRoom] {
+        [
+            CombinedRoom(number: "180325", message: "37W130/36W150 e长 满级技能 禁hdfc hygh q1接车牌", username: "Layer", sourceIsTsugu: false, timeInterval: 2, type: .legend, deck: .init(bandPower: 200819, mainDeck: [(1708, true), (1223, true), (1375, true), (1422, true), (967, true)]), quantity: 1),
+            CombinedRoom(number: "250723", message: "40w150p大e长q1 禁fchd 下车丽萨补火熊饼", username: "Greatdori! 车牌代发", sourceIsTsugu: false, timeInterval: 15, type: .daredemo, deck: nil, quantity: 1),
+            CombinedRoom(number: "200823", message: "40w130/39w150 满级技能e长 欢迎清火 q1", username: "仓田真白", sourceIsTsugu: true, timeInterval: 24, type: .grand, deck: .init(bandPower: 0, mainDeck: [(1173, true), (2361, true), (1264, true), (2354, true), (1991, true)]), quantity: 2),
+            CombinedRoom(number: "220703", message: "40w130+/39w150 满级队长 红黄长跳 hyqh 下把q1接车牌", username: "高松灯", sourceIsTsugu: false, timeInterval: 76, type: .daredemo, deck: .init(bandPower: 210270, mainDeck: [(2151, true), (2123, true), (2125, false), (1853, true), (1852, false)]), quantity: 1),
+            CombinedRoom(number: "230604", message: "40w135+e长 禁hdfc 禁蹭 hyqh q1", username: "三角初华", sourceIsTsugu: true, timeInterval: 80, type: .master, deck: nil, quantity: 3),
+            CombinedRoom(number: "240824", message: "39w 5级135 黄跳长 hygh ql", username: "仲町阿拉蕾", sourceIsTsugu: true, timeInterval: 93, type: .grand, deck: nil, quantity: 1),
+
+            // let demoNames: [String: String] = ["Layer": "layer", "仓田真白": "mashiro", "高松灯": "tomori", "三角初华": "uika", "仲町阿拉蕾": "arare", "Greatdori! 车牌代发": "greatdori-anon"]
+            // 40w150p大e长q1 禁fchd 下车丽萨补火熊饼
+            // 40w130/39w150 满级技能e长 欢迎清火 q1
+            // 40w130+/39w150 满级队长 红黄长跳 hyqh 下把q1接车牌
+            // 40w135+e长 禁hdfc 禁蹭 hyqh q1
+        ]
+    }
 }
+
+
+extension DoriAPI.Station.UserInformation {
+    init(username: String, gameProfile: GameProfile? = nil) {
+        self.init(id: Int.random(in: 0..<114514), username: username, _avatarFileName: "", gameProfile: gameProfile)
+    }
+}
+
+extension DoriAPI.Station.UserInformation.GameProfile {
+    init(bandPower: Int, mainDeck: [(Int, Bool)]) {
+        let situations: [DoriAPI.Station.UserInformation.GameProfile.Situation] = mainDeck.map({ card in Situation.init(id: card.0, trained: card.1, illust: "") })
+        self.init(id: Int.random(in: 0..<114514), degreeIDs: [], dateUpdated: Date(), server: .cn, bandPower: bandPower, mainDeck: situations)
+    }
+}
+
+let demoNames: [String: String] = ["Layer": "layer", "仓田真白": "mashiro", "高松灯": "tomori", "三角初华": "uika", "仲町阿拉蕾": "arare", "Greatdori! 车牌代发": "greatdori-anon"]

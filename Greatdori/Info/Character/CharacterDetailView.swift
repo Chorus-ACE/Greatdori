@@ -204,6 +204,9 @@ struct CharacterDetailView: View {
             cardList.removeAll {
                 (90036...90040).contains($0.id)
             }
+            if AppFlag.DEMO {
+                cardList.removeAll { $0.id != 1641 }
+            }
             if _slowPath(cardList.isEmpty) {
                 cardList = listCopy
             }

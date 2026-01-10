@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import SwiftUI
 import Foundation
 
 @dynamicMemberLookup
@@ -19,10 +20,18 @@ struct AppFlag {
     private init() {}
     
     static subscript(dynamicMember dynamicMember: String) -> Bool {
-        UserDefaults.standard.bool(forKey: "AppFlag_\(dynamicMember)")
+        AppFlag.get(key: dynamicMember)
     }
     
     static func set(_ value: Bool, forKey key: String) {
         UserDefaults.standard.set(value, forKey: "AppFlag_\(key)")
+    }
+    
+    static func get(key: String) -> Bool {
+        UserDefaults.standard.bool(forKey: "AppFlag_\(key)")
+    }
+    
+    static func bindingValue(forKey key: String) -> Binding<Bool> {
+        .init(get: { AppFlag.get(key: key) }, set: { AppFlag.set($0, forKey: key) })
     }
 }
