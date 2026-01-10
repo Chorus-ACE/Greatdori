@@ -466,12 +466,10 @@ struct InteractiveStoryView: View {
             Image(systemName: "ellipsis")
                 .wrapIf(!isMACOS) {
                     $0.font(.system(size: 20)).padding(5)
+                        .wrapIf(isvAlwaysFullScreen) { content in
+                            content.padding(7)
+                        }
                 }
-//                .font(.title)
-//            #if os(iOS)
-//                .font(.system(size: 20))
-//                .padding(12)
-//            #endif
         }
         .menuStyle(.button)
         .menuIndicator(.hidden)

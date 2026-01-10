@@ -166,7 +166,7 @@ struct StoryDetailView: View {
                                                     Text(transcript.text)
                                                         .underline()
                                                         .multilineTextAlignment(.center)
-                                                        .foregroundStyle(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? .accent : .primary)
+                                                        .foregroundStyle(!isvAlwaysFullScreen && (isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417) ? .accent : .primary)
                                                     Spacer()
                                                 }
                                                 .padding(index > 0 && self.transcript![index - 1].isTelop ? .bottom : .vertical)
@@ -198,9 +198,14 @@ struct StoryDetailView: View {
                                                                     switch transcript.characterType {
                                                                     case .single:
                                                                         if let url = transcript.characterIconImageURL {
-                                                                            WebImage(url: url)
-                                                                                .resizable()
-                                                                                .frame(width: 20, height: 20)
+                                                                            WebImage(url: url) { image in
+                                                                                image
+                                                                            } placeholder: {
+                                                                                Image(systemName: "person.crop.circle")
+                                                                                    .bold()
+                                                                            }
+                                                                            .resizable()
+                                                                            .frame(width: 20, height: 20)
                                                                         } else {
                                                                             Image(systemName: "person.crop.circle")
                                                                                 .bold()
@@ -237,9 +242,8 @@ struct StoryDetailView: View {
                                                     })
                                                     .buttonStyle(.borderless)
                                                 }
-                                                .groupBoxStrokeLineWidth(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? 3 : 0)
-                                                //                                            .groupBoxBackgroundTintOpacity(isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417 ? 0.5: 0)
-#if os(macOS)
+                                                .groupBoxStrokeLineWidth(!isvAlwaysFullScreen && (isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417) ? 3 : 0)
+                                                #if os(macOS)
                                                 .wrapIf(true) { content in
                                                     if #available(macOS 15.0, *) {
                                                         content
@@ -248,7 +252,7 @@ struct StoryDetailView: View {
                                                         content
                                                     }
                                                 }
-#endif
+                                                #endif // os(macOS)
                                             }
                                         }
                                         .typesettingLanguage(locale.nsLocale().language)
@@ -285,10 +289,10 @@ struct StoryDetailView: View {
             }
         }
         .navigationTitle(title.forLocale(locale) ?? String(localized: "Story"))
-#if os(iOS)
+        #if os(iOS)
         .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .navigationBar)
         .toolbar(interactivePlayerIsInFullScreen ? .hidden : .visible, for: .tabBar)
-#endif
+        #endif
         .navigationBarBackButtonHidden(interactivePlayerIsInFullScreen)
         .withSystemBackground()
         .task {
@@ -308,16 +312,15 @@ struct StoryDetailView: View {
                             await loadAssets()
                         }
                     }
-                    //                    .menuIndicator(.hidden)
                 }
             }
-#if os(macOS)
+            #if os(macOS)
             if AppFlag.ISV_DEBUG {
                 ToolbarItem {
                     debugMenu
                 }
             }
-#endif
+            #endif
             if isvAlwaysFullScreen || !isMACOS && !fullScreenButtonIsOnScreen {
                 ToolbarItem {
                     Button(action: {
