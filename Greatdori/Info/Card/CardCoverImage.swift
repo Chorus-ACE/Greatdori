@@ -49,14 +49,11 @@ struct CardCoverImage: View {
     private let expectedCardRatio: CGFloat = 480/320
     private let cardFocusSwitchingAnimation: Animation = .easeOut(duration: 0.15)
     
-    @State var normalCardIsOnHover = false
-    @State var trainedCardIsOnHover = false
-    @State var isNormalImageUnavailable = false
-    
+    @State var isNormalImageUnavailable: Bool = false
     @State var isHovering: Bool = false
     var body: some View {
         ZStack {
-            CardCoverImageBorder(card, band: band, showNavigationHints: showNavigationHints, displayType: displayType)
+            CardCoverImageBorder(card, band: band, isNormalImageUnavailable: $isNormalImageUnavailable, showNavigationHints: showNavigationHints, displayType: displayType)
             
             // The Image may not be in expected ratio. Gosh.
             // Why the heck will the image has a different ratio with the border???
@@ -131,11 +128,13 @@ struct CardCoverImageBorder: View {
     private var displayType: CardImageDisplayType
     private var characterName: LocalizedData<String>?
     private var showNavigationHints: Bool
+    private var isNormalImageUnavailable: Binding<Bool>
     
     @State var showCardDetailView: Bool = false
-    init(_ card: PreviewCard, band: Band?, showNavigationHints: Bool = true, displayType: CardImageDisplayType = .both) {
+    init(_ card: PreviewCard, band: Band?, isNormalImageUnavailable: Binding<Bool>, showNavigationHints: Bool = true, displayType: CardImageDisplayType = .both) {
         self.card = card
         self.band = band
+        self.isNormalImageUnavailable = isNormalImageUnavailable
         
         self.showNavigationHints = showNavigationHints
         self.displayType = displayType
@@ -150,7 +149,7 @@ struct CardCoverImageBorder: View {
     
     @State var normalCardIsOnHover = false
     @State var trainedCardIsOnHover = false
-    @State var isNormalImageUnavailable = false
+//    @State var isNormalImageUnavailable = false
     
     @State var isHovering: Bool = false
     var body: some View {
@@ -172,7 +171,7 @@ struct CardCoverImageBorder: View {
             GeometryReader { proxy in
                 Group {
                     if let cardCoverAfterTrainingImageURL = card.coverAfterTrainingImageURL, displayType != .normalOnly {
-                        if displayType == .both && !isNormalImageUnavailable {
+                        if displayType == .both && !isNormalImageUnavailable.wrappedValue {
                             // Both
                             HStack(spacing: 0) {
                                 WebImage(url: card.coverNormalImageURL) { image in
@@ -184,7 +183,7 @@ struct CardCoverImageBorder: View {
                                 .resizable()
                                 .onFailure { _ in
                                     DispatchQueue.main.async {
-                                        isNormalImageUnavailable = true
+                                        isNormalImageUnavailable.wrappedValue = true
                                     }
                                 }
                                 .interpolation(.high)

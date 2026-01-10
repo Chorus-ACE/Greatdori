@@ -1848,7 +1848,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 張卡片"
+                  "value" : "%lld張卡片"
                 }
               }
             }
@@ -2657,7 +2657,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 個樂團"
+                  "value" : "%lld個樂團"
                 }
               }
             }
@@ -3556,7 +3556,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 個漫畫"
+                  "value" : "%lld個漫畫"
                 }
               }
             }
@@ -4032,7 +4032,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 個服裝"
+                  "value" : "%lld個服裝"
                 }
               }
             }
@@ -7185,7 +7185,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 個活動"
+                  "value" : "%lld個活動"
                 }
               }
             }
@@ -8772,7 +8772,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld 個轉蛋"
+            "value" : "%lld個轉蛋"
           }
         }
       }
@@ -10786,7 +10786,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 個登入獎勵"
+                  "value" : "%lld個登入獎勵"
                 }
               }
             }
@@ -11723,7 +11723,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "將在 %lld 天後結束"
+                  "value" : "將在%lld天後結束"
                 }
               }
             }
@@ -11803,7 +11803,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "將在 %lld 天後開始"
+                  "value" : "將在%lld天後開始"
                 }
               }
             }
@@ -13155,7 +13155,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 個項目"
+                  "value" : "%lld個項目"
                 }
               },
               "zero" : {
@@ -13345,7 +13345,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 個結果"
+                  "value" : "%lld個結果"
                 }
               },
               "zero" : {
@@ -14652,6 +14652,12 @@
           }
         }
       }
+    },
+    "Settings.account.item.rescue.alert.confirm" : {
+
+    },
+    "Settings.account.item.rescue.alert.loading" : {
+
     },
     "Settings.account.item.rescue.alert.message" : {
       "localizations" : {
@@ -16437,7 +16443,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 個字符"
+                  "value" : "%lld個字符"
                 }
               }
             }
@@ -16509,7 +16515,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 個語言"
+                  "value" : "%lld個語言"
                 }
               }
             }
@@ -16580,7 +16586,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此字體不支持一些語言。"
+            "value" : "此字體不支持部分語言。"
           }
         }
       }
@@ -17622,7 +17628,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打開設定 App。"
+            "value" : "打開設定 App"
           }
         }
       }
@@ -18226,7 +18232,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選取全部 %lld 張卡片"
+            "value" : "選取全部%lld張卡片"
           }
         }
       }
@@ -19445,7 +19451,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld 首歌曲"
+                  "value" : "%lld首歌曲"
                 }
               }
             }
@@ -21899,7 +21905,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%llld個項目被成功導入。"
+                  "value" : "%lld個項目被成功導入。"
                 }
               }
             }

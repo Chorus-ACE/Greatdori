@@ -325,7 +325,7 @@ struct SettingsAccountsPreview: View {
         }
         .alert("Settings.account.item.rescue.alert.\(account.description)", isPresented: $rescueAlertIsDisplaying, actions: {
             SecureField("Settings.account.item.rescue.alert.password", text: $rescuePassword)
-            Button(optionalRole: .destructive, action: {
+            Button(action: {
                 Task {
                     isRescuing = true
                     do {
@@ -338,7 +338,9 @@ struct SettingsAccountsPreview: View {
                 }
             }, label: {
                 if isRescuing {
-                    Text("Station.item.report.alert.confirm")
+                    Text("Settings.account.item.rescue.alert.loading")
+                } else {
+                    Text("Settings.account.item.rescue.alert.confirm")
                 }
             })
             .keyboardShortcut(.defaultAction)

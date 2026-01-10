@@ -523,6 +523,14 @@ public extension View {
         }
     }
     @ViewBuilder
+    func wrapIf(_ condition: Bool, @ViewBuilder in container: (Self) -> some View, @ViewBuilder otherwise otherwiseContainer: (Self) -> some View) -> some View {
+        if condition {
+            container(self)
+        } else {
+            otherwiseContainer(self)
+        }
+    }
+    @ViewBuilder
     func wrapIfLet<T>(
         _ optional: T?,
         @ViewBuilder in container: (Self, T) -> some View

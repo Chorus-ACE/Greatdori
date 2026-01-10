@@ -98,7 +98,7 @@ struct GreatdoriApp: App {
             }
         }
         
-        #if os(macOS)
+#if os(macOS)
         Window("Settings", id: "Secchi") {
             SettingsView()
         }

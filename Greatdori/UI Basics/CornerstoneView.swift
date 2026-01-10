@@ -1126,7 +1126,7 @@ struct MultilingualTextForCountdown: View {
                             primaryDisplayingLocale = DoriLocale.primaryLocale
                         }
                 } else if allAvailableLocales.contains(DoriLocale.secondaryLocale) {
-                    MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: DoriLocale.primaryLocale)
+                    MultilingualTextForCountdownInternalNumbersView(startDate: startDate, endDate: endDate, aggregateEndDate: aggregateEndDate, distributionStartDate: distributionStartDate, locale: DoriLocale.secondaryLocale)
                         .onAppear {
                             primaryDisplayingLocale = DoriLocale.secondaryLocale
                         }

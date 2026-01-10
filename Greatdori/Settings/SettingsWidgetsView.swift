@@ -24,7 +24,7 @@ import SDWebImageSwiftUI
 
 struct SettingsWidgetsView: View {
     @StateObject var collectionManager = CardCollectionManager.shared
-    @State var destinationCollection: CardCollectionManager.Collection? = nil
+    @State var destinationCollection: String = ""
     @State var showDestination = false
     @State var newCollectionSheetIsDisplaying = false // macOS only
     @State var newCollectionInput = ""
@@ -40,7 +40,7 @@ struct SettingsWidgetsView: View {
                 if !collectionManager.userCollections.isEmpty {
                     ForEach(collectionManager.userCollections, id: \.self) { item in
                         Button(action: {
-                            destinationCollection = item
+                            destinationCollection = item.name
                             showDestination = true
                         }, label: {
                             HStack {
@@ -188,7 +188,7 @@ struct SettingsWidgetsView: View {
             Section("Settings.widgets.collections.built-in") {
                 ForEach(collectionManager.builtinCollections, id: \.self) { item in
                     Button(action: {
-                        destinationCollection = item
+                        destinationCollection = item.name
                         showDestination = true
                     }, label: {
                         HStack {
@@ -231,9 +231,9 @@ struct SettingsWidgetsView: View {
         }
         .navigationTitle("Settings.widgets")
         .navigationDestination(isPresented: $showDestination, destination: {
-            if let destinationCollection {
-                SettingsWidgetsCollectionDetailsView(collectionGivenName: destinationCollection.name, isPresented: $showDestination)
-            }
+//            if let destinationCollection {
+                SettingsWidgetsCollectionDetailsView(collectionGivenName: $destinationCollection, isPresented: $showDestination)
+//            }
         })
         .alert("Settings.widgets.collections.user.add.alert.title", isPresented: $newCollectionSheetIsDisplaying, actions: {
             CollectionAddingActions(newCollectionTitle: $newCollectionInput, newCollectionIsAdding: $newCollectionIsImporting)
@@ -297,7 +297,7 @@ struct SettingsWidgetsView: View {
 
 struct SettingsWidgetsCollectionDetailsView: View {
     @AppStorage("hideCollectionNameWhileSharing") var hideCollectionNameWhileSharing = false
-    var collectionGivenName: String
+    @Binding var collectionGivenName: String
     @StateObject var collectionManager = CardCollectionManager.shared
     @Binding var isPresented: Bool
     @State var collectionName: String = ""
@@ -332,6 +332,7 @@ struct SettingsWidgetsCollectionDetailsView: View {
                                                     if collectionManager.nameIsAvailable(collectionName) {
                                                         collectionManager.userCollections[collectionManager.userCollections.firstIndex{$0.name == collection.name}!].name = collectionName
                                                         collectionManager.updateStorage()
+                                                        collectionGivenName = collectionName
                                                     } else {
                                                         collectionName = collection.name
                                                     }

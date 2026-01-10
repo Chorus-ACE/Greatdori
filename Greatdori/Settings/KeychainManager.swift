@@ -127,6 +127,11 @@ struct GreatdoriAccount: Codable, Hashable {
     var isAutoRenewable: Bool
     
     func avatarURL() async -> URL? {
+        if AppFlag.DEMO {
+            let targetAvatar: [String: String] = ["@Aimi": "kasumi", "@SakuraAyane": "ran", "1227": "aya", "1026": "yukina", "0808": "kokoro"]
+            return URL(string: "https://github.com/Greatdori/demo-image/blob/main/\(targetAvatar[uid ?? ""] ?? "unknown").png?raw=true")
+        }
+        
         switch platform {
         case .bestdori:
             let userInfo = await DoriAPI.User.userInformation(username: self.account)
@@ -167,6 +172,10 @@ struct GreatdoriAccount: Codable, Hashable {
     }
     
     func accountTokenIsValid(rescueIfDead: Bool = true) async -> Bool? {
+        if AppFlag.DEMO {
+            return true
+        }
+        
         do {
             let token = try self.readToken()
             
@@ -354,6 +363,9 @@ final class AccountManager: @unchecked Sendable {
     }
     
     func save(_ accounts: [GreatdoriAccount]) throws {
+        if AppFlag.DEMO {
+            throw SimpleError(id: 114514, message: "Demo accounts cannot save")
+        }
         let encoder = PropertyListEncoder()
         encoder.outputFormat = .xml
         
@@ -362,6 +374,10 @@ final class AccountManager: @unchecked Sendable {
     }
     
     func load() throws -> [GreatdoriAccount] {
+        if AppFlag.DEMO {
+            return AccountManager.demoAccounts.filter({ $0.platform == self.platform })
+        }
+        
         let fm = FileManager.default
         
         guard fm.fileExists(atPath: fileURL.path) else {
@@ -388,18 +404,6 @@ final class AccountManager: @unchecked Sendable {
         }
         
         switch platform {
-        case .bandoriStation:
-            let loginResponse = try await DoriAPI.Station.login(username: account, password: password)
-            if case .success(let token, let incompleteUserInfo) = loginResponse {
-                let userInfo = try await DoriAPI.Station.userInformation(id: incompleteUserInfo.id)
-                accountAddress = userInfo.username
-                accountToken = token.value
-                accountPassword = password
-                accountUsername = userInfo.username
-                accountUID = String(userInfo.id)
-            } else {
-                throw SimpleError(id: 3001)
-            }
         case .bestdori:
             let token = try await DoriAPI.User.login(username: account, password: password)
             let userInfo = await withUserToken(token, {
@@ -413,6 +417,18 @@ final class AccountManager: @unchecked Sendable {
                 //                    accountUID = userInfo.email
                 accountUID = "@\(userInfo.username)"
                 accountTokenExpiryDate = token.expirationDate
+            }
+        case .bandoriStation:
+            let loginResponse = try await DoriAPI.Station.login(username: account, password: password)
+            if case .success(let token, let incompleteUserInfo) = loginResponse {
+                let userInfo = try await DoriAPI.Station.userInformation(id: incompleteUserInfo.id)
+                accountAddress = userInfo.username
+                accountToken = token.value
+                accountPassword = password
+                accountUsername = userInfo.username
+                accountUID = String(userInfo.id)
+            } else {
+                throw SimpleError(id: 3001)
             }
         }
         
@@ -443,4 +459,16 @@ final class AccountManager: @unchecked Sendable {
             throw SimpleError(id: 4002, message: "No address given.")
         }
     }
+    
+    static var demoAccounts: [GreatdoriAccount] {
+        let charNames = DoriCache.preCache.birthdayCharacters.filter({ [1, 6, 11, 16, 21].contains($0.id) }).map { $0.nickname.forPreferredLocale() ?? $0.characterName.forPreferredLocale() ?? "N/A" }
+        return [
+            GreatdoriAccount(platform: .bestdori, account: charNames[0], username: charNames[0], uid: "@Aimi", isAutoRenewable: false),
+            GreatdoriAccount(platform: .bestdori, account: charNames[1], username: charNames[1], uid: "@SakuraAyane", isAutoRenewable: true),
+            GreatdoriAccount(platform: .bandoriStation, account: charNames[3], username: charNames[3], uid: "1227", isAutoRenewable: true),
+            GreatdoriAccount(platform: .bandoriStation, account: charNames[4], username: charNames[4], uid: "1026", isAutoRenewable: false),
+            GreatdoriAccount(platform: .bandoriStation, account: charNames[2], username: charNames[2], uid: "0808", isAutoRenewable: false),
+        ]
+    }
 }
+
