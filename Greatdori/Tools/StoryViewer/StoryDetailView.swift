@@ -198,9 +198,14 @@ struct StoryDetailView: View {
                                                                     switch transcript.characterType {
                                                                     case .single:
                                                                         if let url = transcript.characterIconImageURL {
-                                                                            WebImage(url: url)
-                                                                                .resizable()
-                                                                                .frame(width: 20, height: 20)
+                                                                            WebImage(url: url) { image in
+                                                                                image
+                                                                            } placeholder: {
+                                                                                Image(systemName: "person.crop.circle")
+                                                                                    .bold()
+                                                                            }
+                                                                            .resizable()
+                                                                            .frame(width: 20, height: 20)
                                                                         } else {
                                                                             Image(systemName: "person.crop.circle")
                                                                                 .bold()
