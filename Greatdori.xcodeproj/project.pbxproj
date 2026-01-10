@@ -762,7 +762,6 @@
 		E9D96AA42E752BE7005E0F2C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		E9D96AA52E752C60005E0F2C /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		E9D96AA62E752C60005E0F2C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		E9D96AA72E752C61005E0F2C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E9DA971B2ED97ED90047B464 /* GachaDetailCardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GachaDetailCardsView.swift; sourceTree = "<group>"; };
 		E9DA971D2ED97FA70047B464 /* SongDetailMusicMovieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailMusicMovieView.swift; sourceTree = "<group>"; };
 		E9DA971F2ED981A30047B464 /* DebugPlaygroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPlaygroundView.swift; sourceTree = "<group>"; };
@@ -1811,7 +1810,6 @@
 				en,
 				Base,
 				"zh-Hans",
-				ja,
 				"zh-Hant",
 			);
 			mainGroup = 8C0C99542E296A4400549B5C;
@@ -2250,7 +2248,6 @@
 				E9D96AA42E752BE7005E0F2C /* zh-Hans */,
 				E9D96AA52E752C60005E0F2C /* zh-Hant */,
 				E9D96AA62E752C60005E0F2C /* en */,
-				E9D96AA72E752C61005E0F2C /* ja */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
