@@ -2,7 +2,7 @@
 
 Greatdori! has an account system, intergrating multiple third-party accounts services, so that you may access your personalized profiles, or publish contents on the platforms.
 
-All information follows Greatdori! Policy Guidelines.  Greatdori! will not use any information for commercial use. Learn more at https://greatdori.com/privacy .
+All information follows Greatdori! Policy Guidelines.  Greatdori! will not use any information for commercial use. Learn more at [https://greatdori.com/privacy](https://greatdori.com/privacy).
 
 Greatdori! does not provide any account hosting or verifying services, but only interfacing. Greatdori! does not provide any account registering or deleting services, and cannot take responsibiliy of any information or action from any third-party platform. You may need to agree to their agreements in order to get access to their account services, and your information may be sent to their server for computing.
 
