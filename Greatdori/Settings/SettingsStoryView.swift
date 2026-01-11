@@ -14,13 +14,14 @@
 
 import DoriKit
 import SwiftUI
+private import Builtin
 
 struct SettingsStoryView: View {
     var hasSelectedLayout: Binding<Bool>?
     @StateObject private var fontManager = FontManager.shared
     @AppStorage("ISVStyleTestFlag") private var isvStyleTestFlag = 0
     @AppStorage("ISVAlwaysFullScreen") private var isvAlwaysFullScreen = false
-    
+    @AppStorage("ISVLayoutDemoPlayFlag") private var layoutDemoPlayFlag = 0
     @State private var selectedLayout: Bool? // isFullScreen
     @State private var storyViewerFonts: [DoriLocale: String] = [:]
     @State private var storyViewerUpdateIndex: Int = 0
@@ -29,6 +30,7 @@ struct SettingsStoryView: View {
     @State private var isDemoTouchPressed = false
     @State private var isDemoTouchVisible = true
     @State private var isDemoReplayAvailable = false
+    @State private var demoAnimationCancellation: Any?
     var body: some View {
         Group {
             if isvStyleTestFlag > 0 { // See the initializer in AppDelegate
@@ -73,11 +75,21 @@ struct SettingsStoryView: View {
                         } action: { newValue in
                             demoHeight = newValue
                         }
-
+                        
                         if isDemoReplayAvailable {
-                            Button("Settings.story-viewer.demo.replay", systemImage: "arrow.clockwise") {
+                            Button {
                                 playDemoAnimation()
+                            } label: {
+                                HStack {
+                                    Image(systemName: "play.fill")
+                                    if shouldAutoplayDemoAnimation {
+                                        Text("Settings.story-viewer.demo.replay")
+                                    } else {
+                                        Text("Settings.story-viewer.demo.play")
+                                    }
+                                }
                             }
+                            .buttonBorderShape(.capsule)
                             .wrapIf(true) { content in
                                 if #available(iOS 26.0, macOS 26.0, *) {
                                     content
@@ -90,7 +102,9 @@ struct SettingsStoryView: View {
                         }
                     }
                     .onAppear {
-                        playDemoAnimation()
+                        if shouldAutoplayDemoAnimation {
+                            playDemoAnimation()
+                        }
                     }
                     
                     Picker("Settings.story-viewer.layout", selection: $selectedLayout) {
@@ -118,7 +132,9 @@ struct SettingsStoryView: View {
                         }
                     }
                     .onChange(of: isvAlwaysFullScreen) {
-                        playDemoAnimation()
+                        if shouldAutoplayDemoAnimation {
+                            playDemoAnimation()
+                        }
                         Task {
                             await submitStats(
                                 key: "ISVPreferAlwaysFullScreen2",
@@ -173,46 +189,54 @@ struct SettingsStoryView: View {
         .navigationTitle("Settings.story-viewer")
     }
     
+    private var shouldAutoplayDemoAnimation: Bool {
+        layoutDemoPlayFlag & (isvAlwaysFullScreen ? 2 : 1) == 0
+    }
     private func playDemoAnimation() {
-        func doAnimation() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                withAnimation(.spring(duration: 0.4, bounce: 0.2)) {
-                    isDemoTouchPressed = true
-                } completion: {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        withAnimation(.spring(duration: 0.4, bounce: 0.2)) {
-                            isDemoTouchPressed = false
-                        } completion: {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                withAnimation {
-                                    isDemoRotated = true
-                                    isDemoTouchVisible = false
-                                } completion: {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                        withAnimation {
-                                            isDemoRotated = false
-                                            isDemoReplayAvailable = true
-                                        }
+        let alwaysFullScreen = isvAlwaysFullScreen
+        
+        if let cancellation = demoAnimationCancellation {
+            unsafe Builtin.assign(true, unsafeBitCast(cancellation, to: Builtin.RawPointer.self))
+        }
+        var cancellation = false
+        demoAnimationCancellation = Builtin.addressof(&cancellation)
+        
+        isDemoTouchPressed = false
+        isDemoTouchVisible = true
+        isDemoReplayAvailable = false
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            if cancellation { return }
+            withAnimation(.spring(duration: 0.4, bounce: 0.2)) {
+                isDemoTouchPressed = true
+            } completion: {
+                if cancellation { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    withAnimation(.spring(duration: 0.4, bounce: 0.2)) {
+                        isDemoTouchPressed = false
+                    } completion: {
+                        if cancellation { return }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            if cancellation { return }
+                            withAnimation {
+                                isDemoRotated = true
+                                isDemoTouchVisible = false
+                            } completion: {
+                                if cancellation { return }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    withAnimation {
+                                        isDemoRotated = false
+                                        isDemoReplayAvailable = true
                                     }
+                                    layoutDemoPlayFlag |= 1 << (alwaysFullScreen ? 1 : 0)
+                                    demoAnimationCancellation = nil
+                                    _fixLifetime(cancellation)
                                 }
                             }
                         }
                     }
                 }
             }
-        }
-        
-        isDemoTouchPressed = false
-        isDemoTouchVisible = true
-        isDemoReplayAvailable = false
-        if isDemoRotated {
-            withAnimation(.spring(duration: 0.2, bounce: 0.2)) {
-                isDemoRotated = false
-            } completion: {
-                doAnimation()
-            }
-        } else {
-            doAnimation()
         }
     }
 }
