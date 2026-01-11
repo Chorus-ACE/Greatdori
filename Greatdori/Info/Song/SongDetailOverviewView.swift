@@ -47,8 +47,9 @@ struct SongDetailOverviewView: View {
                 }
                 
                 if !isComplyingWithAppStore {
-                CustomGroupBox(cornerRadius: 3417) {
-                    CompactAudioPlayer(url: information.soundURL, mediaInfo: (information.title.forPreferredLocale(), DoriCache.preCache.bands.first(where: { $0.id == information.bandID })?.bandName.forPreferredLocale(), information.jacketImageURL))
+                    CustomGroupBox(cornerRadius: 3417) {
+                        CompactAudioPlayer(url: information.soundURL, mediaInfo: (information.title.forPreferredLocale(), DoriCache.preCache.bands.first(where: { $0.id == information.bandID })?.bandName.forPreferredLocale(), information.jacketImageURL))
+                    }
                 }
                 
                 // MARK: Info
