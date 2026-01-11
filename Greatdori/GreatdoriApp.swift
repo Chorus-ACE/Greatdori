@@ -34,6 +34,8 @@ let isMACOS = true
 let isMACOS = false
 #endif
 
+let isComplyingWithAppStore = false
+
 // MARK: GreatdoriApp (@main)
 @main
 struct GreatdoriApp: App {
