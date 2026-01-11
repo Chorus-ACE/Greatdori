@@ -69,11 +69,11 @@ struct EventDetailOverviewView: View {
                             .frame(height: 2)
                     }
                     
-#if !APP_STORE
-                CustomGroupBox(cornerRadius: 3417) {
-                    CompactAudioPlayer(url: information.event.bgmURL)
-                }
-#endif
+                    if !isComplyingWithAppStore {
+                        CustomGroupBox(cornerRadius: 3417) {
+                            CompactAudioPlayer(url: information.event.bgmURL)
+                        }
+                    }
                     
                     //MARK: Info
                     CustomGroupBox(cornerRadius: 20) {

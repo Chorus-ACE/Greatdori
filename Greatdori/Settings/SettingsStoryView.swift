@@ -20,6 +20,7 @@ struct SettingsStoryView: View {
     @StateObject private var fontManager = FontManager.shared
     @AppStorage("ISVStyleTestFlag") private var isvStyleTestFlag = 0
     @AppStorage("ISVAlwaysFullScreen") private var isvAlwaysFullScreen = false
+    
     @State private var selectedLayout: Bool? // isFullScreen
     @State private var storyViewerFonts: [DoriLocale: String] = [:]
     @State private var storyViewerUpdateIndex: Int = 0

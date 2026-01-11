@@ -126,13 +126,6 @@ struct SettingsDebugView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                ListItem {
-                    Text(verbatim: "App Store")
-                        .bold(false)
-                } value: {
-                    Text(verbatim: isComplyingWithAppStore ? "Yes" : "No")
-                        .foregroundStyle(.secondary)
-                }
             }
         }
     }
