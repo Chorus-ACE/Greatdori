@@ -772,6 +772,31 @@
 		E9F87E082EDEAD000015427F /* CardDetailGachaVoicePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailGachaVoicePlayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8CD6C55F2F13D8420018A8F4 /* Exceptions for "zh-Hans.lproj" folder in "Greatdori" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: Accounts.md",
+				"/Localized: CollectionCode.md",
+				"/Localized: EventCalcEfficiency.md",
+				"/Localized: FontSuggestions.md",
+				"/Localized: Privacy.md",
+				"/Localized: T&C.md",
+			);
+			target = 8C0C995C2E296A4400549B5C /* Greatdori */;
+		};
+		8CD6C5602F13D8420018A8F4 /* Exceptions for "zh-Hant.lproj" folder in "Greatdori" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: Accounts.md",
+				"/Localized: CollectionCode.md",
+				"/Localized: EventCalcEfficiency.md",
+				"/Localized: FontSuggestions.md",
+			);
+			target = 8C0C995C2E296A4400549B5C /* Greatdori */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8C085ACA2E71968C00447B05 /* ci_scripts */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -783,14 +808,25 @@
 			path = .github;
 			sourceTree = "<group>";
 		};
-		8CBF0C192EFE69C20069585F /* en */ = {
+		8CD6C5382F13D8310018A8F4 /* en.lproj */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = en;
+			path = en.lproj;
 			sourceTree = "<group>";
 		};
-		8CBF0C1A2EFE69FE0069585F /* zh-Hans */ = {
+		8CD6C5452F13D8310018A8F4 /* zh-Hans.lproj */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "zh-Hans";
+			exceptions = (
+				8CD6C55F2F13D8420018A8F4 /* Exceptions for "zh-Hans.lproj" folder in "Greatdori" target */,
+			);
+			path = "zh-Hans.lproj";
+			sourceTree = "<group>";
+		};
+		8CD6C54E2F13D8310018A8F4 /* zh-Hant.lproj */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8CD6C5602F13D8420018A8F4 /* Exceptions for "zh-Hant.lproj" folder in "Greatdori" target */,
+			);
+			path = "zh-Hant.lproj";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -1448,8 +1484,9 @@
 		E944C3022ECC694C0005EE55 /* Documents */ = {
 			isa = PBXGroup;
 			children = (
-				8CBF0C192EFE69C20069585F /* en */,
-				8CBF0C1A2EFE69FE0069585F /* zh-Hans */,
+				8CD6C5382F13D8310018A8F4 /* en.lproj */,
+				8CD6C5452F13D8310018A8F4 /* zh-Hans.lproj */,
+				8CD6C54E2F13D8310018A8F4 /* zh-Hant.lproj */,
 			);
 			path = Documents;
 			sourceTree = "<group>";
@@ -1556,8 +1593,9 @@
 				8C902F9A2EA3AD4200202812 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				8CBF0C192EFE69C20069585F /* en */,
-				8CBF0C1A2EFE69FE0069585F /* zh-Hans */,
+				8CD6C5382F13D8310018A8F4 /* en.lproj */,
+				8CD6C5452F13D8310018A8F4 /* zh-Hans.lproj */,
+				8CD6C54E2F13D8310018A8F4 /* zh-Hant.lproj */,
 			);
 			name = Greatdori;
 			packageProductDependencies = (
