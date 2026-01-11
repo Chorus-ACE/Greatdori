@@ -400,7 +400,7 @@ extension URL {
             ) else { continue }
             
             if isDirectoryResourceValue.isDirectory == true {
-                size += url.directorySize()
+                size += url.directorySize(including: fileMatch)
             } else {
                 guard let fileSizeResourceValue = try? url.resourceValues(
                     forKeys: [.fileSizeKey]

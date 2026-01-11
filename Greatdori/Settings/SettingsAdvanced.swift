@@ -167,6 +167,11 @@ struct SettingsAdvancedStorageSection: View {
                             try? FileManager.default.removeItem(atPath: NSTemporaryDirectory() + "/\(content)")
                         }
                     }
+                    if let contents = try? FileManager.default.contentsOfDirectory(atPath: NSHomeDirectory() + "/Library/Caches/com.hackemist.SDImageCache/default") {
+                        for content in contents {
+                            try? FileManager.default.removeItem(atPath: NSHomeDirectory() + "/Library/Caches/com.hackemist.SDImageCache/default/\(content)")
+                        }
+                    }
                     DoriCache.invalidateAll()
                     URLCache.shared.removeAllCachedResponses()
                     updateCacheSize()
