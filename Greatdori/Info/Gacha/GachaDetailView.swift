@@ -188,12 +188,13 @@ struct GachaDetailOverviewView: View {
                         
                         // MARK: Description
                         Group {
-                            ListItem(displayMode: .basedOnUISizeClass, title: {
+                            ListItem(title: {
                                 Text("Gacha.descripition")
                                     .bold()
                             }, value: {
                                 MultilingualText(information.gacha.description)
                             })
+                            .listItemLayout(.basedOnUISizeClass)
                             Divider()
                         }
                         

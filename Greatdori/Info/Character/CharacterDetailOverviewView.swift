@@ -217,12 +217,13 @@ struct CharacterDetailOverviewView: View {
                             
                             // MARK: Introduction
                             Group {
-                                ListItem(displayMode: .basedOnUISizeClass, title: {
+                                ListItem(title: {
                                     Text("Character.introduction")
                                         .bold()
                                 }, value: {
                                     MultilingualText(profile.selfIntroduction, showSecondaryText: false, allowPopover: false)
                                 })
+                                .listItemLayout(.basedOnUISizeClass)
                                 Divider()
                             }
                         }

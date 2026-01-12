@@ -72,8 +72,8 @@ struct SettingsAboutDetailIconView: View {
             Group {
                 if AppFlag.DEBUG {
                     Text("Settings.about.version.\(appVersion)") + Text(verbatim: " - ") + Text(verbatim: "DEBUG")
-                } else if !isComplyingWithAppStore {
-                    Text("Settings.about.version.\(appVersion)") + Text(verbatim: " - ") + Text(verbatim: "Blick")
+                } else if isSayuruVersion {
+                    Text("Settings.about.version.\(appVersion)") + Text(verbatim: " - ") + Text(verbatim: "Sayuru")
                 } else {
                     Text("Settings.about.version.\(appVersion)")
                 }

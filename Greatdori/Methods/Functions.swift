@@ -365,13 +365,7 @@ func setDeviceOrientation(to orientation: UIInterfaceOrientationMask? = nil, all
 }
 #endif
 
-// MARK: ListItemType
-enum ListItemType: Hashable, Equatable {
-    case compactOnly
-    case expandedOnly
-    case automatic
-    case basedOnUISizeClass
-}
+
 
 @discardableResult
 func submitStats(

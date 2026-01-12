@@ -34,7 +34,7 @@ let isMACOS = true
 let isMACOS = false
 #endif
 
-let isComplyingWithAppStore = false
+let isSayuruVersion = true
 
 // MARK: GreatdoriApp (@main)
 @main
