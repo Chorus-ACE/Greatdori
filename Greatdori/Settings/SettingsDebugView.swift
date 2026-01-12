@@ -83,17 +83,22 @@ struct SettingsDebugView: View {
             }
             
             Section("Settings.debug.actions") {
+                Button(action: {
+                    copyStringToClipboard(correctDebugPassword)
+                }, label: {
+                    Text("Settings.debug.actions.copy-password")
+                })
                 Button(role: .destructive, action: {
                     showDebugDisactivationAlert = true
                 }, label: {
-                    Text("Settings.debug.disable")
+                    Text("Settings.debug.actions.disable")
                 })
-                .alert("Settings.debug.disable.title", isPresented: $showDebugDisactivationAlert, actions: {
+                .alert("Settings.debug.actions.disable.title", isPresented: $showDebugDisactivationAlert, actions: {
                     Button(role: .destructive, action: {
                         AppFlag.set(false, forKey: "DEBUG")
                         showDebugDisactivationAlert = false
                     }, label: {
-                        Text("Settings.debug.disable.turn-off")
+                        Text("Settings.debug.actions.disable.turn-off")
                     })
                 })
             }
