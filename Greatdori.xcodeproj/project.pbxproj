@@ -2506,7 +2506,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
-				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule -enable-experimental-feature CompileTimeValues";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
 				PRODUCT_NAME = "Greatdori!";
@@ -2576,7 +2576,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
-				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule -enable-experimental-feature CompileTimeValues";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
 				PRODUCT_NAME = "Greatdori!";
@@ -2712,7 +2712,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
-				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule -enable-experimental-feature CompileTimeValues";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
 				PRODUCT_NAME = "Greatdori!";
@@ -2877,7 +2877,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1.0;
-				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
+				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule -enable-experimental-feature CompileTimeValues";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
 				PRODUCT_NAME = "Greatdori!";
