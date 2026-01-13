@@ -443,6 +443,54 @@ func submitCombinedStats(
         }
     }
 }
+@discardableResult
+func submitCommunityReport(_ post: Post, reason: String) async -> Bool {
+    guard !statsAPIPrivateKey.isEmpty else {
+        return false
+    }
+    struct S: Claims {
+        var sub: String
+        var iat: Date
+    }
+    return await withCheckedContinuation { continuation in
+        var jwt = JWT(
+            header: .init(),
+            claims: S(
+                sub: String(
+                    data: try! JSONSerialization.data(withJSONObject: [
+                        "id": post.id,
+                        "categoryName": post.categoryName.rawValue,
+                        "categoryID": post.categoryID,
+                        "title": post.title,
+                        "content": post.content.toMarkdown(),
+                        "time": post.time.timeIntervalSince1970,
+                        "username": post.author.username,
+                        "nickname": post.author.nickname,
+                        "reason": reason
+                    ]),
+                    encoding: .utf8
+                )!,
+                iat: .now
+            )
+        )
+        let signer = JWTSigner.rs512(privateKey: statsAPIPrivateKey.data(using: .utf8)!)
+        guard let signed = try? jwt.sign(using: signer) else {
+            return continuation.resume(returning: false)
+        }
+        AF.request(
+            "https://stats.greatdori.com/community/report",
+            method: .post,
+            parameters: ["payload": signed],
+            encoder: .json
+        ).response { response in
+            if let data = response.data, let json = try? JSON(data: data) {
+                return continuation.resume(returning: json["success"].boolValue)
+            } else {
+                return continuation.resume(returning: false)
+            }
+        }
+    }
+}
 
 /// Submit a room to BandoriStation anonymously with the ANON API.
 /// - Parameters:
