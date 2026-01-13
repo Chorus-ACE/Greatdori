@@ -3715,6 +3715,18 @@
             "state" : "translated",
             "value" : "Block"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽"
+          }
         }
       }
     },
@@ -3724,6 +3736,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Block"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽"
           }
         }
       }
@@ -3735,6 +3759,18 @@
             "state" : "translated",
             "value" : "Posts from this user will no longer appear in your feeds."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "来自此用户的帖子将不再出现在你的列表中。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "來自此用戶的貼文將不再出現在你的清單中。"
+          }
         }
       }
     },
@@ -3744,6 +3780,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Block this User?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽此用户？"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽此用戶？"
           }
         }
       }
@@ -3755,6 +3803,18 @@
             "state" : "translated",
             "value" : "Report a Concern"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "报告问题"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告問題"
+          }
         }
       }
     },
@@ -3764,6 +3824,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please enter the reason for report."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请输入报告问题的原因。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請輸入報告問題的原因。"
           }
         }
       }
@@ -3775,6 +3847,18 @@
             "state" : "translated",
             "value" : "Reason"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原因"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原因"
+          }
         }
       }
     },
@@ -3785,6 +3869,18 @@
             "state" : "translated",
             "value" : "Submit"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交"
+          }
         }
       }
     },
@@ -3794,6 +3890,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Report a Concern"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "报告问题"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告問題"
           }
         }
       }
