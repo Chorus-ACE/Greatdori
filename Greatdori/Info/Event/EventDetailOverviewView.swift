@@ -69,7 +69,7 @@ struct EventDetailOverviewView: View {
                             .frame(height: 2)
                     }
                     
-                    if !isComplyingWithAppStore {
+                    if isSayuruVersion {
                         CustomGroupBox(cornerRadius: 3417) {
                             CompactAudioPlayer(url: information.event.bgmURL)
                         }
@@ -280,7 +280,7 @@ struct EventDetailOverviewView: View {
                                 }
                                 
                                 if !cardsArray.isEmpty {
-                                    ListItem(displayMode: .compactOnly, title: {
+                                    ListItem(title: {
                                         Text("Event.card")
                                             .bold()
                                     }, value: {
@@ -315,6 +315,7 @@ struct EventDetailOverviewView: View {
                                             }
                                         }
                                     })
+                                    .listItemLayout(.compactOnly)
                                     .accessibilityValue("Accessibility.event.card.\(cardsArray.count)")
                                     .accessibilityAction {}
                                     

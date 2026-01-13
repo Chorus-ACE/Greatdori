@@ -413,7 +413,7 @@ struct SettingsFontsDetail: View {
                     
                     Section {
                         if let fullName = fontInfo?.fullName {
-                            ListItem(allowValueLeading: true, title: {
+                            ListItem(title: {
                                 Text("Settings.fonts.info.full-name")
                             }, value: {
                                 Text(fullName)
@@ -421,14 +421,14 @@ struct SettingsFontsDetail: View {
                         }
                         
                         if let glythCount = fontInfo?.glyphCount {
-                            ListItem(allowValueLeading: true, title: {
+                            ListItem(title: {
                                 Text("Settings.fonts.info.glyphs")
                             }, value: {
                                 Text("Settings.fonts.info.glyphs.\(glythCount)")
                             })
                         }
                         if !fontSupportingLanguagesText.isEmpty {
-                            ListItem(allowValueLeading: true, displayMode: (showCountsInsteadOfAllItemsForLanguages || (fontInfo?.supportedLanguages?.count ?? 0) < 5) ? .automatic : .expandedOnly, title: {
+                            ListItem(title: {
                                 Text("Settings.fonts.info.languages")
                             }, value: {
                                 Group {
@@ -439,12 +439,13 @@ struct SettingsFontsDetail: View {
                                     }
                                 }
                             })
+                            .listItemLayout((showCountsInsteadOfAllItemsForLanguages || (fontInfo?.supportedLanguages?.count ?? 0) < 5) ? .automatic : .expandedOnly)
                             .onTapGesture {
                                 showCountsInsteadOfAllItemsForLanguages.toggle()
                             }
                         }
                         if fontManager.fontIsVariable(fontName: fontName) {
-                            ListItem(allowValueLeading: true, title: {
+                            ListItem(title: {
                                 Text("Settings.fonts.info.variable-font")
                             }, value: {
                                 Text("Settings.fonts.info.true")
@@ -452,7 +453,7 @@ struct SettingsFontsDetail: View {
                         }
                         
                         if fontManager.isSystemFont(CTFontCreateWithName(fontName as CFString, 14, nil)) {
-                            ListItem(allowValueLeading: true, title: {
+                            ListItem(title: {
                                 Text("Settings.fonts.info.system-font")
                             }, value: {
                                 Text("Settings.fonts.info.true")
@@ -460,57 +461,61 @@ struct SettingsFontsDetail: View {
                         }
                         
                         if let designer = fontInfo?.designer {
-                            ListItem(allowValueLeading: true, title: {
+                            ListItem(title: {
                                 Text("Settings.fonts.info.designer")
                             }, value: {
                                 Text(designer)
                             })
                         }
                         if let manufacturer = fontInfo?.manufacturer {
-                            ListItem(allowValueLeading: true, title: {
+                            ListItem(title: {
                                 Text("Settings.fonts.info.manufacturer")
                             }, value: {
                                 Text(manufacturer)
                             })
                         }
                         if let copyright = fontInfo?.copyright {
-                            ListItem(allowValueLeading: true, title: {
+                            ListItem(title: {
                                 Text("Settings.fonts.info.copyright")
                             }, value: {
                                 Text(copyright)
                             })
                         }
                     }
+                    .listItemValueAlignment(.leading)
                     
                     Section(content: {
-                        if fontManager.fontIsVariable(fontName: fontName) {
-                            ListItem(allowValueLeading: true, boldTitle: false, title: {
-                                Text("Settings.fonts.info.preview.weight")
-                            }, value: {
-                                Picker(selection: $fontManagerSampleTextFontWeight, content: {
-                                    Text("Settings.fonts.info.preview.weight.light")
-                                        .tag(Font.Weight.light)
-                                    Text("Settings.fonts.info.preview.weight.regular")
-                                        .tag(Font.Weight.regular)
-                                    Text("Settings.fonts.info.preview.weight.bold")
-                                        .tag(Font.Weight.bold)
-                                }, label: {
-                                    EmptyView()
+                        Group {
+                            if fontManager.fontIsVariable(fontName: fontName) {
+                                ListItem(title: {
+                                    Text("Settings.fonts.info.preview.weight")
+                                        .bold(false)
+                                }, value: {
+                                    Picker(selection: $fontManagerSampleTextFontWeight, content: {
+                                        Text("Settings.fonts.info.preview.weight.light")
+                                            .tag(Font.Weight.light)
+                                        Text("Settings.fonts.info.preview.weight.regular")
+                                            .tag(Font.Weight.regular)
+                                        Text("Settings.fonts.info.preview.weight.bold")
+                                            .tag(Font.Weight.bold)
+                                    }, label: {
+                                        EmptyView()
+                                    })
+                                    .labelsHidden()
                                 })
-                                .labelsHidden()
-                            })
-                        }
-                        
-                        ForEach(DoriLocale.allCases, id: \.self) { locale in
-                            if fontManager.fontSupportsLocale(fontName, locale: locale) {
-                                Text(fontManagerSampleText[locale]!)
-                                    .font(.custom(fontName, size: 18))
-                                    .fontWeight(fontManagerSampleTextFontWeight)
-                                    .typesettingLanguage(locale.nsLocale().language)
+                                .listItemValueAlignment(.leading)
+                            }
+                            
+                            ForEach(DoriLocale.allCases, id: \.self) { locale in
+                                if fontManager.fontSupportsLocale(fontName, locale: locale) {
+                                    Text(fontManagerSampleText[locale]!)
+                                        .font(.custom(fontName, size: 18))
+                                        .fontWeight(fontManagerSampleTextFontWeight)
+                                        .typesettingLanguage(locale.nsLocale().language)
+                                }
                             }
                         }
-                        
-                        if !fontManager.fontSupportsLocale(fontName, locale: .jp) && !fontManager.fontSupportsLocale(fontName, locale: .en) && !fontManager.fontSupportsLocale(fontName, locale: .cn) && !fontManager.fontSupportsLocale(fontName, locale: .tw) && !fontManager.fontSupportsLocale(fontName, locale: .kr) {
+                        .emptyReplacement {
                             Text(fontManagerSampleText[.en]!)
                                 .font(.custom(fontName, size: 18))
                                 .fontWeight(fontManagerSampleTextFontWeight)
@@ -518,6 +523,15 @@ struct SettingsFontsDetail: View {
                             Text("Settings.fonts.info.preview.unavailable")
                                 .foregroundStyle(.secondary)
                         }
+                        
+//                        if !fontManager.fontSupportsLocale(fontName, locale: .jp) && !fontManager.fontSupportsLocale(fontName, locale: .en) && !fontManager.fontSupportsLocale(fontName, locale: .cn) && !fontManager.fontSupportsLocale(fontName, locale: .tw) && !fontManager.fontSupportsLocale(fontName, locale: .kr) {
+//                            Text(fontManagerSampleText[.en]!)
+//                                .font(.custom(fontName, size: 18))
+//                                .fontWeight(fontManagerSampleTextFontWeight)
+//                                .typesettingLanguage(DoriLocale.en.nsLocale().language)
+//                            Text("Settings.fonts.info.preview.unavailable")
+//                                .foregroundStyle(.secondary)
+//                        }
                     }, header: {
                         Text("Settings.fonts.info.preview")
                     }, footer: {
@@ -550,7 +564,7 @@ struct SettingsFontsDetail: View {
                     /*
                     if fontName.hasPrefix("Noto Sans") || fontName.hasPrefix("NotoSans") {
                         Section {
-                            ListItem(allowValueLeading: true, title: {
+                            ListItem(title: {
                                 Text("Settings.fonts.info.license")
                             }, value: {
                                 Text(oflLicense)

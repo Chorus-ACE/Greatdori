@@ -1323,37 +1323,39 @@ struct MultilingualTextForCountdownAlt: View {
 // MARK: ListItem
 struct ListItem<Content1: View, Content2: View>: View {
     @Environment(\.horizontalSizeClass) var sizeClass
+    @Environment(\.listItemLayout) var layout
+    @Environment(\.listItemTextStyle) var textStyle
+    @Environment(\.listItemValueIsLeading) var allowValueLeading
+    @Environment(\.listItemTextSelectionIsEnabled) var allowTextSelection
     let title: Content1
     let value: Content2
-    var allowValueLeading: Bool = false
-    var displayMode: ListItemType = .automatic
-    var allowTextSelection: Bool = true
-    var boldTitle: Bool = true
     @State private var totalAvailableWidth: CGFloat = 0
     @State private var titleAvailableWidth: CGFloat = 0
     @State private var valueAvailableWidth: CGFloat = 0
     
-    init(allowValueLeading: Bool = false, displayMode: ListItemType = .automatic, allowTextSelection: Bool = true, boldTitle: Bool = true, @ViewBuilder title: () -> Content1, @ViewBuilder value: () -> Content2) {
+    init(@ViewBuilder title: () -> Content1, @ViewBuilder value: () -> Content2) {
         self.title = title()
         self.value = value()
-        self.allowValueLeading = allowValueLeading
-        self.displayMode = displayMode
-        self.allowTextSelection = allowTextSelection
-        self.boldTitle = boldTitle
     }
     
+//    @available(*, deprecated, message: "Use modifiers instead of parameters")
+//    init(allowValueLeading: Bool = false, displayMode: ListItemLayout = .automatic, allowTextSelection: Bool = true, @ViewBuilder title: () -> Content1, @ViewBuilder value: () -> Content2) {
+//        self.init(allowValueLeading: allowValueLeading, title: { title() }, value: { value() })
+//    }
+//    
     var body: some View {
         Group {
-            if (displayMode == .compactOnly  || (displayMode == .basedOnUISizeClass && sizeClass == .regular) || (totalAvailableWidth - titleAvailableWidth - valueAvailableWidth) > 5) && displayMode != .expandedOnly { // HStack (SHORT)
+            if (layout == .compactOnly  || (layout == .basedOnUISizeClass && sizeClass == .regular) || (totalAvailableWidth - titleAvailableWidth - valueAvailableWidth) > 5) && layout != .expandedOnly { // HStack (SHORT)
                 HStack {
                     title
-                        .bold(boldTitle)
+                        .bold(textStyle == .bold)
                         .fixedSize(horizontal: true, vertical: true)
                         .onFrameChange(perform: { geometry in
                             titleAvailableWidth = geometry.size.width
                         })
                     Spacer()
                     value
+                        .foregroundStyle(textStyle == .native ? .secondary: .primary)
                         .wrapIf(allowTextSelection, in: { content in
                             content.textSelection(.enabled)
                         }, else: { content in
@@ -1367,7 +1369,7 @@ struct ListItem<Content1: View, Content2: View>: View {
             } else { // VStack (LONG)
                 VStack(alignment: .leading) {
                     title
-                        .bold(boldTitle)
+                        .bold(textStyle == .bold)
                         .fixedSize(horizontal: true, vertical: true)
                         .onFrameChange(perform: { geometry in
                             titleAvailableWidth = geometry.size.width
@@ -1378,6 +1380,7 @@ struct ListItem<Content1: View, Content2: View>: View {
                             Spacer()
                         }
                         value
+                            .foregroundStyle(textStyle == .native ? .secondary: .primary)
                             .wrapIf(allowTextSelection, in: { content in
                                 content.textSelection(.enabled)
                             }, else: { content in
@@ -1503,46 +1506,44 @@ struct ListItemWithWrappingView<Content1: View, Content2: View, Content3: View, 
     }
 }
 
-/*
- // MARK: WrappingHStack
- struct WrappingHStack<Content: View>: View {
- var alignment: HorizontalAlignment
- var rowSpacing: CGFloat?
- var columnSpacing: CGFloat?
- var contentWidth: CGFloat
- var makeContent: () -> Content
- 
- init(
- alignment: HorizontalAlignment = .center,
- rowSpacing: CGFloat? = nil,
- columnSpacing: CGFloat? = nil,
- contentWidth: CGFloat,
- @ViewBuilder content: @escaping () -> Content
- ) {
- self.alignment = alignment
- self.rowSpacing = rowSpacing
- self.columnSpacing = columnSpacing
- self.contentWidth = contentWidth
- self.makeContent = content
- }
- 
- @Environment(\.layoutDirection) private var layoutDirection
- 
- var body: some View {
- LazyVGrid(
- columns: [.init(.adaptive(minimum: contentWidth, maximum: contentWidth), spacing: columnSpacing)],
- alignment: (alignment != .trailing ? alignment : (alignment == .leading ? .trailing : (alignment == .trailing ? .leading : alignment))),
- spacing: rowSpacing
- ) {
- makeContent()
- .environment(\.layoutDirection, alignment != .trailing ? layoutDirection : (layoutDirection == .leftToRight ? .leftToRight : .rightToLeft))
- }
- //        .environment(\.layoutDirection, alignment != .trailing ? layoutDirection : layoutDirection == .leftToRight ? .rightToLeft : .leftToRight)
- //        .accessibilityRepresentation {
- //            makeContent()
- //        }
- //        .accessibilityAction {}
- //        .accessibilityElement(children: .combine)
- }
- }
- */
+extension View {
+    func listItemLayout(_ layout: ListItemLayout) -> some View {
+        environment(\.listItemLayout, layout)
+    }
+    
+    func listItemTextStyle(_ style: ListItemTextStyle) -> some View {
+        environment(\.listItemTextStyle, style)
+    }
+    
+    func listItemValueAlignment(_ alignment: ListItemValueAlignment) -> some View {
+        environment(\.listItemValueIsLeading, alignment == .leading)
+    }
+    
+    func listItemTextSelection(_ isEnabled: Bool) -> some View {
+        environment(\.listItemTextSelectionIsEnabled, isEnabled)
+    }
+}
+
+extension EnvironmentValues {
+    @Entry var listItemLayout: ListItemLayout = .automatic
+    @Entry var listItemTextStyle: ListItemTextStyle = .bold
+    @Entry var listItemValueIsLeading: Bool = false
+    @Entry var listItemTextSelectionIsEnabled: Bool = true
+}
+
+enum ListItemLayout: Hashable, Equatable {
+    case compactOnly
+    case expandedOnly
+    case automatic
+    case basedOnUISizeClass
+}
+
+enum ListItemTextStyle {
+    case bold
+    case native
+}
+
+enum ListItemValueAlignment {
+    case leading
+    case trailing
+}

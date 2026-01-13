@@ -39,6 +39,16 @@ extension Array {
     }
 }
 
+extension Binding<Bool> {
+    func reversed() -> Binding<Bool>{
+        return .init(get: {
+            !self.wrappedValue
+        }, set: {
+            self.wrappedValue = !$0
+        })
+    }
+}
+
 // MARK: Bool
 extension Bool {
     @_transparent
@@ -416,10 +426,22 @@ extension URL {
 
 // MARK: View
 public extension View {
+    // MARK: detailSectionHeader
     func detailSectionHeader() -> some View {
         self
             .padding(.bottom, -40)
             .offset(y: 5)
+    }
+    
+    // MARK: emptyReplacement
+    func emptyReplacement<V: View>(@ViewBuilder content: @escaping () -> V) -> some View {
+        self._variadic { children in
+            if children.isEmpty {
+                content()
+            } else {
+                children
+            }
+        }
     }
     
     // MARK: hidden

@@ -46,7 +46,7 @@ struct SongDetailOverviewView: View {
                         .frame(height: 2)
                 }
                 
-                if !isComplyingWithAppStore {
+                if isSayuruVersion {
                     CustomGroupBox(cornerRadius: 3417) {
                         CompactAudioPlayer(url: information.soundURL, mediaInfo: (information.title.forPreferredLocale(), DoriCache.preCache.bands.first(where: { $0.id == information.bandID })?.bandName.forPreferredLocale(), information.jacketImageURL))
                     }

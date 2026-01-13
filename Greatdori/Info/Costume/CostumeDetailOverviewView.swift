@@ -100,12 +100,13 @@ struct CostumeDetailOverviewView: View {
                         if !information.costume.howToGet.isValueEmpty {
                             // MARK: How to Get
                             Group {
-                                ListItem(displayMode: .basedOnUISizeClass, title: {
+                                ListItem(title: {
                                     Text("Costume.how-to-get")
                                         .bold()
                                 }, value: {
                                     MultilingualText(information.costume.howToGet)
                                 })
+                                .listItemLayout(.basedOnUISizeClass)
                                 Divider()
                             }
                         }

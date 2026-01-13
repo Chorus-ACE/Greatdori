@@ -17,9 +17,8 @@ import SwiftUI
 
 struct SettingsDebugView: View {
     var body: some View {
-        Section {
+        Group {
             SettingsDebugControlsView()
-                .fontDesign(.monospaced)
         }
         .navigationTitle("Settings.debug")
     }
@@ -32,100 +31,76 @@ struct SettingsDebugView: View {
         @AppStorage("forceDisplayWhatsNewSheet") var forceDisplayWhatsNewSheet = false
         @AppStorage("ISVStyleTestFlag") var isvStyleTestFlag = 0
         @State var showDebugDisactivationAlert = false
-        
         var body: some View {
-            Group {
-                Toggle(isOn: $isInitializationRequired, label: {
-                    Text(verbatim: "isInitializationRequired")
-                        .fontDesign(.monospaced)
-                })
-                Toggle(isOn: $isFirstLaunchResettable, label: {
-                    Text(verbatim: "isFirstLaunchResettable")
+            Section("Settings.debug.initialization") {
+                Toggle("Settings.debug.initialization.welcome", isOn: $isInitializationRequired)
+                Toggle("Settings.debug.initialization.always-welcome", isOn: $isFirstLaunchResettable.reversed())
+                Toggle("Settings.debug.initialization.start-up-failure", isOn: $isFirstLaunchResettable.reversed())
+                Toggle("Settings.debug.initialization.force-display-whats-new", isOn: $forceDisplayWhatsNewSheet)
+            }
+            
+            Section("Settings.debug.flags") {
+                Toggle("Settings.debug.flags.demo", isOn: AppFlag.bindingValue(forKey: "DEMO"))
+                Toggle("Settings.debug.flags.isv-debug", isOn: AppFlag.bindingValue(forKey: "ISV_DEBUG"))
+                Toggle("Settings.debug.flags.ruler", isOn: $enableRulerOverlay)
+            }
+            
+            Section("Settings.debug.views") {
+                NavigationLink("Settings.debug.views.playground", destination: { DebugPlaygroundView() })
+                NavigationLink("Settings.debug.views.birthday", destination: { DebugBirthdayView() })
+                NavigationLink("Settings.debug.views.filter", destination: { DebugFilterExperimentView() })
+                NavigationLink("Settings.debug.views.storage", destination: { DebugStorageView() })
+            }
+            
+            Section("Settings.debug.values") {
+                Group {
+                    ListItem(title: {
+                        Text("Settings.debug.values.sayuru")
+                    }, value: {
+                        Text(isSayuruVersion ? "Settings.debug.values.bool.yes" : "Settings.debug.values.bool.no")
+                    })
                     
-                })
-                Toggle(isOn: $startUpSucceeded, label: {
-                    Text(verbatim: "startUpSucceeded")
+                    if [1, 2].contains(isvStyleTestFlag) {
+                        ListItem(title: {
+                            Text("Settings.debug.values.isv-ab-test")
+                        }, value: {
+                            Text(isvStyleTestFlag == 1 ? "Settings.story-viewer.layout.always-full-screen" : "Settings.story-viewer.layout.resizable")
+                        })
+                        
+                    }
                     
-                })
-                Toggle(isOn: $enableRulerOverlay, label: {
-                    Text(verbatim: "enableRulerOverlay")
-                })
-                Toggle(isOn: $forceDisplayWhatsNewSheet, label: {
-                    Text(verbatim: "forceDisplayWhatsNewSheet")
-                })
-                Toggle(isOn: AppFlag.bindingValue(forKey: "DEMO")) {
-                    Text(verbatim: "DEMO")
+                    if let token = UserDefaults.standard.data(forKey: "RemoteNotifDeviceToken") {
+                        ListItem(title: {
+                            Text("Settings.debug.values.notification-token")
+                        }, value: {
+                            Text(token.map { unsafe String(format: "%02hhx", $0) }.joined())
+                                .fontDesign(.monospaced)
+                                .textSelection(.enabled)
+                        })
+                    }
                 }
-                Toggle(isOn: AppFlag.bindingValue(forKey: "ISV_DEBUG")) {
-                    Text(verbatim: "ISV_DEBUG")
-                }
-                
-                NavigationLink(destination: {
-                    DebugBirthdayView()
+                .listItemTextStyle(.native)
+            }
+            
+            Section("Settings.debug.actions") {
+                Button(action: {
+                    copyStringToClipboard(correctDebugPassword)
                 }, label: {
-                    Text(verbatim: "DebugBirthdayView")
-                        .fontDesign(.monospaced)
-                })
-                NavigationLink(destination: {
-                    DebugFilterExperimentView()
-                }, label: {
-                    Text(verbatim: "DebugFilterExperimentView")
-                })
-                NavigationLink(destination: {
-                    DebugPlaygroundView()
-                }, label: {
-                    Text(verbatim: "DebugPlaygroundView")
-                })
-                NavigationLink(destination: {
-                    DebugStorageView()
-                }, label: {
-                    Text(verbatim: "DebugStorageView")
-                })
-                Button(role: .destructive, action: {
-                    
-                }, label: {
-                    Text("Settings.debug.clean-chart-asset")
+                    Text("Settings.debug.actions.copy-password")
                 })
                 Button(role: .destructive, action: {
                     showDebugDisactivationAlert = true
                 }, label: {
-                    Text("Settings.debug.disable")
+                    Text("Settings.debug.actions.disable")
                 })
-                .alert("Settings.debug.disable.title", isPresented: $showDebugDisactivationAlert, actions: {
+                .alert("Settings.debug.actions.disable.title", isPresented: $showDebugDisactivationAlert, actions: {
                     Button(role: .destructive, action: {
                         AppFlag.set(false, forKey: "DEBUG")
                         showDebugDisactivationAlert = false
                     }, label: {
-                        Text("Settings.debug.disable.turn-off")
+                        Text("Settings.debug.actions.disable.turn-off")
                     })
                 })
-                ListItem(title: {
-                    Text(verbatim: "ISV A/B Test")
-                        .bold(false)
-                }, value: {
-                    Group {
-                        switch isvStyleTestFlag {
-                        case 1:
-                            Text(verbatim: "Default Always Full Screen")
-                        case 2:
-                            Text(verbatim: "Default Previewable")
-                        default:
-                            Text(verbatim: "N/A")
-                        }
-                    }
-                    .foregroundStyle(.secondary)
-                })
-                if let token = UserDefaults.standard.data(forKey: "RemoteNotifDeviceToken") {
-                    ListItem {
-                        Text(verbatim: "Remote Notification Token")
-                            .bold(false)
-                    } value: {
-                        Text(token.map { unsafe String(format: "%02hhx", $0) }.joined())
-                            .fontDesign(.monospaced)
-                            .textSelection(.enabled)
-                            .foregroundStyle(.secondary)
-                    }
-                }
             }
         }
     }

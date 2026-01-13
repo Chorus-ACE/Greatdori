@@ -3153,6 +3153,18 @@
             "state" : "translated",
             "value" : "Block"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽"
+          }
         }
       }
     },
@@ -3162,6 +3174,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Block"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽"
           }
         }
       }
@@ -3173,6 +3197,18 @@
             "state" : "translated",
             "value" : "Posts from this user will no longer appear in your feeds."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "来自此用户的帖子将不再出现在你的列表中。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "來自此用戶的貼文將不再出現在你的清單中。"
+          }
         }
       }
     },
@@ -3182,6 +3218,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Block this User?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽此用户？"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏蔽此用戶？"
           }
         }
       }
@@ -3193,6 +3241,18 @@
             "state" : "translated",
             "value" : "Report a Concern"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "报告问题"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告問題"
+          }
         }
       }
     },
@@ -3202,6 +3262,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please enter the reason for report."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请输入报告问题的原因。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請輸入報告問題的原因。"
           }
         }
       }
@@ -3213,6 +3285,18 @@
             "state" : "translated",
             "value" : "Reason"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原因"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原因"
+          }
         }
       }
     },
@@ -3223,6 +3307,18 @@
             "state" : "translated",
             "value" : "Submit"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交"
+          }
         }
       }
     },
@@ -3232,6 +3328,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Report a Concern"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "报告问题"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告問題"
           }
         }
       }
@@ -14589,6 +14697,86 @@
         }
       }
     },
+    "Settings.debug.actions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actions"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作"
+          }
+        }
+      }
+    },
+    "Settings.debug.actions.copy-password" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy Debug Password"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制Debug密钥"
+          }
+        }
+      }
+    },
+    "Settings.debug.actions.disable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disable Debug"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "禁用Debug"
+          }
+        }
+      }
+    },
+    "Settings.debug.actions.disable.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[DEBUG] Disable Debug"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[DEBUG] 关闭DEBUG"
+          }
+        }
+      }
+    },
+    "Settings.debug.actions.disable.turn-off" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "禁用"
+          }
+        }
+      }
+    },
     "Settings.debug.activate-alert.confirm" : {
       "localizations" : {
         "en" : {
@@ -14699,26 +14887,18 @@
         }
       }
     },
-    "Settings.debug.clean-chart-asset" : {
-      "comment" : "A button label that, when tapped, will clean the chart asset.",
-      "isCommentAutoGenerated" : true,
+    "Settings.debug.deactivate-alert.cancel" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Clean Chart Asset"
+            "value" : "Not Now"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "清理谱面缓存"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "清除譜面資源"
+            "value" : "稍后再说"
           }
         }
       }
@@ -14795,68 +14975,322 @@
         }
       }
     },
-    "Settings.debug.disable" : {
+    "Settings.debug.flags" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Turn DEBUG Off"
+            "value" : "Features & Flags"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "关闭DEBUG"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "關閉 DEBUG"
+            "value" : "功能与旗帜"
           }
         }
       }
     },
-    "Settings.debug.disable.title" : {
+    "Settings.debug.flags.demo" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "[DEBUG] Turn DEBUG Off"
+            "value" : "Demo Mode"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "[DEBUG] 关闭DEBUG"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "[DEBUG] 關閉 DEBUG"
+            "value" : "演示模式"
           }
         }
       }
     },
-    "Settings.debug.disable.turn-off" : {
+    "Settings.debug.flags.isv-debug" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Turn Off"
+            "value" : "Story Debug Mode"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "关闭"
+            "value" : "故事调试模式"
           }
-        },
-        "zh-Hant" : {
+        }
+      }
+    },
+    "Settings.debug.flags.ruler" : {
+      "localizations" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "關閉"
+            "value" : "Show Ruler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示测距尺"
+          }
+        }
+      }
+    },
+    "Settings.debug.initialization" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Initialization"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初始化"
+          }
+        }
+      }
+    },
+    "Settings.debug.initialization.always-welcome" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always Display Welcome Sheet"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始终显示欢迎页"
+          }
+        }
+      }
+    },
+    "Settings.debug.initialization.force-display-whats-new" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Force Display What’s New"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制显示最近更新"
+          }
+        }
+      }
+    },
+    "Settings.debug.initialization.start-up-failure" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark Setup as Failure"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标记启动失败"
+          }
+        }
+      }
+    },
+    "Settings.debug.initialization.welcome" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display Welcome Sheet"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示欢迎页"
+          }
+        }
+      }
+    },
+    "Settings.debug.values" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Values"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "值"
+          }
+        }
+      }
+    },
+    "Settings.debug.values.bool.no" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "否"
+          }
+        }
+      }
+    },
+    "Settings.debug.values.bool.yes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "是"
+          }
+        }
+      }
+    },
+    "Settings.debug.values.isv-ab-test" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ISV Default Layout"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ISV默认布局"
+          }
+        }
+      }
+    },
+    "Settings.debug.values.notification-token" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notification Token"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知Token"
+          }
+        }
+      }
+    },
+    "Settings.debug.values.sayuru" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sayuru Version"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sayuru版本"
+          }
+        }
+      }
+    },
+    "Settings.debug.views" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Views"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视图"
+          }
+        }
+      }
+    },
+    "Settings.debug.views.birthday" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birthdays"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生日"
+          }
+        }
+      }
+    },
+    "Settings.debug.views.filter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "过滤器"
+          }
+        }
+      }
+    },
+    "Settings.debug.views.playground" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playground"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playground"
+          }
+        }
+      }
+    },
+    "Settings.debug.views.storage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storage"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "存储"
           }
         }
       }

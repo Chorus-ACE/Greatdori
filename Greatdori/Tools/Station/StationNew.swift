@@ -171,19 +171,21 @@ struct StationAddView: View {
                 })
                 
                 Section {
-                    if selectedAccount == nil && anonAPIPrivateKey.isEmpty {
-                        Label("Station.new.issue.anon-key-missing", systemImage: "xmark.octagon")
-                            .foregroundStyle(.red)
+                    Group {
+                        if selectedAccount == nil && anonAPIPrivateKey.isEmpty {
+                            Label("Station.new.issue.anon-key-missing", systemImage: "xmark.octagon")
+                                .foregroundStyle(.red)
+                        }
+                        if roomNumber.count < 5 {
+                            Label("Station.new.issue.number-too-short", systemImage: "exclamationmark.circle")
+                                .foregroundStyle(.yellow)
+                        }
+                        if description.isEmpty {
+                            Label("Station.new.issue.empty-description", systemImage: "exclamationmark.circle")
+                                .foregroundStyle(.yellow)
+                        }
                     }
-                    if roomNumber.count < 5 {
-                        Label("Station.new.issue.number-too-short", systemImage: "exclamationmark.circle")
-                            .foregroundStyle(.yellow)
-                    }
-                    if description.isEmpty {
-                        Label("Station.new.issue.empty-description", systemImage: "exclamationmark.circle")
-                            .foregroundStyle(.yellow)
-                    }
-                    if !description.isEmpty && roomNumber.count >= 5 && (!anonAPIPrivateKey.isEmpty || selectedAccount != nil) {
+                    .emptyReplacement {
                         Label("Station.new.issue.ready", systemImage: "checkmark.circle")
                             .foregroundStyle(.green)
                     }
