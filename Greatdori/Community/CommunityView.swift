@@ -12,15 +12,22 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Combine
 import DoriKit
 import SwiftUI
+import Alamofire
 import MarkdownUI
+import SwiftyJSON
 
 struct CommunityView: View {
+    static let updateBlockedUsers = PassthroughSubject<Void, Never>()
+    
     @State var posts: PagedPosts?
     @State var infoIsAvailable = true
     @State var pageOffset = 0
     @State var isLoadingMore = false
+    @State var blockedUsers: [String] = []
+    @State var blockedIDs: [Int] = []
     var body: some View {
         NavigationStack {
             Group {
@@ -28,27 +35,28 @@ struct CommunityView: View {
                     ScrollView {
                         LazyVStack {
                             ForEach(Array(posts.content.enumerated()), id: \.element.id) { index, post in
-                                PostSectionView(post: post)
-                                /*
-                                    .swipeActions {
-                                        Button(action: {
-                                            
-                                        }, label: {
-                                            if post.liked {
-                                                Label("Community.like", systemImage: "heart")
-                                                    .foregroundStyle(.red)
-                                            } else {
-                                                Label("Community.remove-like", systemImage: "heart.slash.fill")
-                                                    .foregroundStyle(.red)
+                                if !blockedUsers.contains(post.author.username)
+                                    && !blockedIDs.contains(post.id) {
+                                    PostSectionView(post: post)
+//                                        .swipeActions {
+//                                            Button(action: {
+//                                                
+//                                            }, label: {
+//                                                if post.liked {
+//                                                    Label("Community.like", systemImage: "heart")
+//                                                        .foregroundStyle(.red)
+//                                                } else {
+//                                                    Label("Community.remove-like", systemImage: "heart.slash.fill")
+//                                                        .foregroundStyle(.red)
+//                                                }
+//                                            })
+//                                        }
+                                        .onAppear {
+                                            if index == posts.content.count - 1 {
+                                                continueLoadPosts()
                                             }
-                                        })
-                                    }
-                                 */
-                                    .onAppear {
-                                        if index == posts.content.count - 1 {
-                                            continueLoadPosts()
                                         }
-                                    }
+                                }
                             }
                             if isLoadingMore {
                                 ProgressView()
@@ -85,6 +93,12 @@ struct CommunityView: View {
             .withSystemBackground()
             .navigationTitle(isMACOS || posts != nil ? "Community" : "")
         }
+        .onAppear {
+            updateBlockedUsers()
+        }
+        .onReceive(Self.updateBlockedUsers) { _ in
+            updateBlockedUsers()
+        }
     }
     
     func getPosts() async {
@@ -103,6 +117,22 @@ struct CommunityView: View {
             }
         }
     }
+    func updateBlockedUsers() {
+        blockedUsers = ((try? String(
+            contentsOfFile: NSHomeDirectory() + "/Documents/CommunityBlockedUsers",
+            encoding: .utf8
+        )) ?? "").split(separator: "|").map { String($0) }
+        
+        if let data = try? Data(contentsOf: URL(filePath: NSHomeDirectory() + "/Documents/CachedRemoteBlockedIDs.plist")) {
+            blockedIDs = (try? PropertyListDecoder().decode([Int].self, from: data)) ?? []
+        }
+        AF.request("https://stats.greatdori.com/community/report").response { response in
+            if let data = response.data, let json = try? JSON(data: data) {
+                blockedIDs = json["list"].map { $0.1.intValue }
+                try? PropertyListEncoder().encode(blockedIDs).write(to: URL(filePath: NSHomeDirectory() + "/Documents/CachedRemoteBlockedIDs.plist"))
+            }
+        }
+    }
 }
 
 private struct PostSectionView: View {
@@ -110,6 +140,9 @@ private struct PostSectionView: View {
     var post: Post
     @State var commentSourceTitle: String?
     @State var tagsText: String = ""
+    @State var isBlockAlertPresented = false
+    @State var isReportAlertPresented = false
+    @State var reportReasonInput = ""
     var body: some View {
         CustomGroupBox {
             VStack(alignment: .leading) {
@@ -189,7 +222,39 @@ private struct PostSectionView: View {
             }
         }
         .frame(maxWidth: infoContentMaxWidth)
-        .textSelection(.enabled)
+        .contextMenu {
+            Button("Community.post.block", systemImage: "nosign", role: .destructive) {
+                isBlockAlertPresented = true
+            }
+            Button("Community.post.report", systemImage: "flag", role: .destructive) {
+                isReportAlertPresented = true
+            }
+        }
+        .alert("Community.post.block.alert.title", isPresented: $isBlockAlertPresented) {
+            Button("Community.post.block.alert.block", role: .destructive) {
+                let filePath = NSHomeDirectory() + "/Documents/CommunityBlockedUsers"
+                var blockedUsers = (try? String(
+                    contentsOfFile: filePath,
+                    encoding: .utf8
+                )) ?? ""
+                blockedUsers += "|\(post.author.username)"
+                try? blockedUsers.write(toFile: filePath, atomically: true, encoding: .utf8)
+                CommunityView.updateBlockedUsers.send()
+            }
+        } message: {
+            Text("Community.post.block.alert.description")
+        }
+        .alert("Community.post.report.alert.title", isPresented: $isReportAlertPresented) {
+            TextField("Community.post.report.alert.input.reason", text: $reportReasonInput)
+            Button("Community.post.report.alert.submit", role: .destructive) {
+                Task {
+                    await submitCommunityReport(post, reason: reportReasonInput)
+                    reportReasonInput = ""
+                }
+            }
+        } message: {
+            Text("Community.post.report.alert.description")
+        }
         .onAppear {
             if commentSourceTitle == nil {
                 Task {
