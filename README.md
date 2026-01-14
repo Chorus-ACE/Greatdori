@@ -6,14 +6,19 @@
 # Greatdori!
 
 Greatdori includes iOS, iPadOS, macOS and watchOS app,
-built with [DoriKit](https://github.com/Greatdori/DoriKit)
+built with [DoriKit](https://github.com/Greatdori/DoriKit).
 
 | **Platform** | **Status** |
 |---:|:---:|
 | iOS & watchOS | ![Greatdori iOS & watchOS Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori.yml)|
 | macOS         | ![Greatdori macOS Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori-mac.yml)|
 
-This open source version is called *Sayuru*, which enables features like music streaming that App Store might not allow to do so. 
+This open source version is called *Sayuru*,
+which enables features like music streaming that App Store might not allow to do so.
+
+## Downloads
+- [App Store](https://apps.apple.com/app/id6749022770)
+- [TestFlight (Nightly Build)](https://testflight.apple.com/join/hTXga49Q)
 
 ## Building
 
