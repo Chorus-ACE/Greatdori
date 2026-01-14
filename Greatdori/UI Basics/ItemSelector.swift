@@ -322,6 +322,9 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
                 Text("Selector.prompt.\(Element.singularName)")
             }
         })
+        .wrapIf(!isMACOS, in: {
+            $0.foregroundStyle(.tint)
+        })
         .padding(.vertical, isMACOS ? 0 : 3)
         .onChange(of: selection, {
             if closeWindowOnSelectionChange {
