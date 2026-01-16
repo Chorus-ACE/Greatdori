@@ -455,6 +455,40 @@ extension EnvironmentValues {
 }
 
 extension View {
+    func onActivationChange(
+        eager: Bool = false,
+        perform action: @escaping (_ isActive: Bool) -> Void
+    ) -> some View {
+        modifier(ActivationChangeModifier(eager: eager, action: action))
+    }
+}
+private struct ActivationChangeModifier: ViewModifier {
+    var eager: Bool
+    var action: (Bool) -> Void
+    @Environment(\.scenePhase) private var scenePhase
+    #if os(macOS)
+    @Environment(\.appearsActive) private var appearsActive
+    #endif
+    
+    func body(content: Content) -> some View {
+        content
+            #if os(macOS)
+            .onChange(of: appearsActive) {
+                action(appearsActive)
+            }
+            #else
+            .onChange(of: scenePhase) {
+                if scenePhase == .active {
+                    action(true)
+                } else if scenePhase == (eager ? .inactive : .background) {
+                    action(false)
+                }
+            }
+            #endif
+    }
+}
+
+extension View {
     func _variadic<V: View>(@ViewBuilder process: @escaping (_VariadicView.Children) -> V) -> some View {
         modifier(VariadicModifier(process: process))
     }

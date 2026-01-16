@@ -305,6 +305,7 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
     @Binding var selection: Element?
     var closeWindowOnSelectionChange = false
     var updateList: () async -> [Element]? = { await Element.all() }
+    @Environment(\.isEnabled) private var isEnabled
     @State private var selectorWindowIsPresented = false
     var body: some View {
         Button(action: {
@@ -322,9 +323,9 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
                 Text("Selector.prompt.\(Element.singularName)")
             }
         })
-        .wrapIf(!isMACOS, in: {
-            $0.foregroundStyle(.tint)
-        })
+        .wrapIf(!isMACOS) {
+            $0.foregroundStyle(isEnabled ? .accent : .gray)
+        }
         .padding(.vertical, isMACOS ? 0 : 3)
         .onChange(of: selection, {
             if closeWindowOnSelectionChange {

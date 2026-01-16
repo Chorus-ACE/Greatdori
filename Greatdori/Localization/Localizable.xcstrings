@@ -4331,7 +4331,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "称号"
+            "value" : "称号不可用"
           }
         },
         "zh-Hant" : {
@@ -6624,7 +6624,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "称号不可用"
+            "value" : "称号"
           }
         },
         "zh-Hant" : {
