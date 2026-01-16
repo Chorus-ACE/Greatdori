@@ -132,9 +132,6 @@ struct HomeNewsView: View {
     }
     let totalNewsNumber = 4
     var body: some View {
-//        Button(action: {
-//            
-//        }, label: {
             CustomGroupBox {
                 HStack {
                     VStack(alignment: .leading) {
@@ -170,7 +167,6 @@ struct HomeNewsView: View {
                                 VStack(alignment: .leading) {
                                     Rectangle()
                                         .fill(Color.gray.opacity(0.15))
-//                                        .fill(Color.placeholderText)
                                         .frame(height: 40)
                                         .cornerRadius(5)
                                         .redacted(reason: .placeholder)
@@ -188,11 +184,24 @@ struct HomeNewsView: View {
                 }
             }
             .accessibilityElement(children: .contain)
-//        })
         .animation(.easeInOut(duration: loadingAnimationDuration), value: news?.count)
         .buttonStyle(.plain)
         .foregroundStyle(.primary)
-        .task {
+        .onAppear {
+            updateNews()
+        }
+        .onActivationChange { isActive in
+            if isActive {
+                updateNews()
+            }
+        }
+        .onTapGesture {
+            homeNavigate(to: .news)
+        }
+    }
+    
+    private func updateNews() {
+        Task {
             DoriCache.withCache(id: "Home_News", trait: .realTime) {
                 await DoriFrontend.News.list()
             } .onUpdate {
@@ -219,17 +228,10 @@ struct HomeNewsView: View {
                 }
             }
         }
-        .onTapGesture {
-            homeNavigate(to: .news)
-        }
     }
 }
 
 struct HomeBirthdayView: View {
-    @Environment(\.scenePhase) var scenePhase
-    #if os(macOS)
-    @Environment(\.appearsActive) var appearsActive
-    #endif
     @AppStorage("showBirthdayDate") var showBirthdayDate = showBirthdayDateDefaultValue
     @State var birthdays: [DoriFrontend.Characters.BirthdayCharacter]?
     @State var systemBirthdays: [DoriFrontend.Characters.BirthdayCharacter]?
@@ -394,19 +396,11 @@ struct HomeBirthdayView: View {
         .onAppear {
             updateBirthday()
         }
-        #if os(macOS)
-        .onChange(of: appearsActive) {
-            if appearsActive {
+        .onActivationChange { isActive in
+            if isActive {
                 updateBirthday()
             }
         }
-        #else
-        .onChange(of: scenePhase) {
-            if case .active = scenePhase {
-                updateBirthday()
-            }
-        }
-        #endif
     }
     func todaysHerBirthday(_ birthday: Date) -> Bool {
         let today = Date.now
@@ -454,10 +448,6 @@ struct HomeBirthdayView: View {
 }
 
 struct HomeEventsView: View {
-    @Environment(\.scenePhase) var scenePhase
-    #if os(macOS)
-    @Environment(\.appearsActive) var appearsActive
-    #endif
     @State var latestEvents: LocalizedData<DoriFrontend.Events.PreviewEvent>?
     @State var imageOpacity: Double = 0
     @State var placeholderOpacity: Double = 1
@@ -512,19 +502,11 @@ struct HomeEventsView: View {
         .task {
             updateEvent()
         }
-        #if os(macOS)
-        .onChange(of: appearsActive) {
-            if appearsActive {
+        .onActivationChange { isActive in
+            if isActive {
                 updateEvent()
             }
         }
-        #else
-        .onChange(of: scenePhase) {
-            if case .active = scenePhase {
-                updateEvent()
-            }
-        }
-        #endif
         .accessibilityElement(children: .contain)
     }
     
