@@ -365,153 +365,133 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
     @State private var isCustomGroupBoxActive = false
     
     var body: some View {
-        Group {
-            Group {
-                if let resultElements = searchedElements ?? elements {
-                    Group {
-                        if !resultElements.isEmpty {
-                            ScrollView {
-                                HStack {
-                                    Spacer(minLength: 0)
-                                    makeContainer(currentLayout, resultElements,
-                                        AnyView(
-                                            ForEach(resultElements, id: \.self) { element in
+        VStack {
+            if let resultElements = searchedElements ?? elements {
+                Group {
+                    if !resultElements.isEmpty {
+                        ScrollView {
+                            HStack {
+                                Spacer(minLength: 0)
+                                makeContainer(currentLayout, resultElements,
+                                    AnyView(
+                                        ForEach(resultElements, id: \.self) { element in
+                                            Group {
+                                                // There's a problem that only presents
+                                                // on macOS 26.0 below, we use a fallback
+                                                // as workaround.
+                                                if #available(macOS 26.0, *) {
+                                                    Button(action: {
+                                                        showFilterSheet = false
+                                                        presentingElement = element
+                                                    }, label: {
+                                                        makeElementLabel(for: element)
+                                                    })
+                                                } else {
+                                                    NavigationLink {
+                                                        makeDestination(element, elements ?? [])
+                                                            .onAppear {
+                                                                showFilterSheet = false
+                                                            }
+                                                    } label: {
+                                                        makeElementLabel(for: element)
+                                                    }
+                                                }
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
+                                    )
+                                ) { element in
+                                    AnyView(
+                                        Group {
+                                            // There's a problem that only presents
+                                            // on macOS 26.0 below, we use a fallback
+                                            // as workaround.
+                                            if #available(macOS 26.0, *) {
                                                 Button(action: {
                                                     showFilterSheet = false
                                                     presentingElement = element
                                                 }, label: {
-                                                    // # Why?
-                                                    // After updating CustomGroupBox to 2, some issue occured here.
-                                                    //
-                                                    // # What happened?
-                                                    // the `matchedTransitionSource(id:in:)` constraints a view's
-                                                    // viewport to its own frame, that is, our shadows are clipped
-                                                    // into the frame of the box itself.
-                                                    //
-                                                    // # How do we solve it?
-                                                    // First we add a preference key for custom group boxes,
-                                                    // if there's any active `CustomGroupBox` in the view
-                                                    // from `makeSomeContent(_:_:)`, we can receive the info
-                                                    // by the `onPreferenceChange` call below.
-                                                    // We suppress the group box in content by setting
-                                                    // the env value `_suppressCustomGroupBox` to `true`,
-                                                    // then add a custom group box
-                                                    // after the `matchedTransitionSource(id:in:)` call
-                                                    // if needed to solve this problem.
-                                                    // That's why codes here seem wired.
-                                                    CustomGroupBox(showGroupBox: isCustomGroupBoxActive) {
-                                                        makeSomeContent(currentLayout, element)
-                                                            .highlightKeyword($searchedText)
-                                                            .environment(\._suppressCustomGroupBox, true)
-                                                            .onPreferenceChange(CustomGroupBoxActivePreference.self) { isActive in
-                                                                isCustomGroupBoxActive = isActive
-                                                            }
-                                                            .wrapIf(true) { content in
-                                                                if #available(iOS 18.0, macOS 15.0, *) {
-                                                                    content
-                                                                        .matchedTransitionSource(id: element.hashValue, in: navigationAnimationNamespace)
-                                                                } else {
-                                                                    content
-                                                                }
-                                                            }
-                                                    }
+                                                    makeElementLabel(for: element)
                                                 })
-                                                .buttonStyle(.plain)
-                                            }
-                                        )
-                                    ) { element in
-                                        AnyView(
-                                            Button(action: {
-                                                showFilterSheet = false
-                                                presentingElement = element
-                                            }, label: {
-                                                CustomGroupBox(showGroupBox: isCustomGroupBoxActive) {
-                                                    makeSomeContent(currentLayout, element)
-                                                        .highlightKeyword($searchedText)
-                                                        .environment(\._suppressCustomGroupBox, true)
-                                                        .onPreferenceChange(CustomGroupBoxActivePreference.self) { isActive in
-                                                            isCustomGroupBoxActive = isActive
+                                            } else {
+                                                NavigationLink {
+                                                    makeDestination(element, elements ?? [])
+                                                        .onAppear {
+                                                            showFilterSheet = false
                                                         }
-                                                        .wrapIf(true) { content in
-                                                            if #available(iOS 18.0, macOS 15.0, *) {
-                                                                content
-                                                                    .matchedTransitionSource(id: element.hashValue, in: navigationAnimationNamespace)
-                                                            } else {
-                                                                content
-                                                            }
-                                                        }
+                                                } label: {
+                                                    makeElementLabel(for: element)
                                                 }
-                                            })
-                                            .buttonStyle(.plain)
-                                        )
-                                    }
-                                    .padding(.horizontal)
-                                    Spacer(minLength: 0)
-                                }
-                            }
-                            .geometryGroup()
-                            .navigationDestination(item: $presentingElement) { element in
-                                makeDestination(element, elements ?? [])
-                                #if !os(macOS)
-                                    .wrapIf(true, in: { content in
-                                        if #available(iOS 18.0, *) {
-                                            content
-                                                .navigationTransition(.zoom(sourceID: element.hashValue, in: navigationAnimationNamespace))
-                                        } else {
-                                            content
+                                            }
                                         }
-                                    })
-                                #endif
+                                        .buttonStyle(.plain)
+                                    )
+                                }
+                                .padding(.horizontal)
+                                Spacer(minLength: 0)
                             }
-                        } else {
-                            ContentUnavailableView("Search.no-results", systemImage: "magnifyingglass", description: Text("Search.no-results.description"))
-                        }
-                    }
-                    .onSubmit {
-                        if let elements {
-                            searchedElements = elements.search(for: searchedText)
-                        }
-                    }
-                } else {
-                    if infoIsAvailable {
-                        ExtendedConstraints {
-                            ProgressView()
                         }
                     } else {
-                        ExtendedConstraints {
-                            ContentUnavailableView(unavailablePrompt, systemImage: Element.symbol, description: Text("Search.unavailable.description"))
-                                .onTapGesture {
-                                    Task {
-                                        await getList()
-                                    }
+                        ContentUnavailableView("Search.no-results", systemImage: "magnifyingglass", description: Text("Search.no-results.description"))
+                    }
+                }
+            } else {
+                if infoIsAvailable {
+                    ExtendedConstraints {
+                        ProgressView()
+                    }
+                } else {
+                    ExtendedConstraints {
+                        ContentUnavailableView(unavailablePrompt, systemImage: Element.symbol, description: Text("Search.unavailable.description"))
+                            .onTapGesture {
+                                Task {
+                                    await getList()
                                 }
-                        }
+                            }
                     }
                 }
             }
-            .searchable(text: $searchedText, prompt: searchPlaceholder)
-            .navigationTitle(Element.pluralName)
-            .wrapIf(searchedElements != nil, in: { content in
-                if #available(iOS 26.0, *) {
-                    content.navigationSubtitle((searchedText.isEmpty && !filter.isFiltered) ? (getResultCountDescription?(searchedElements!.count) ?? "Search.item.\(searchedElements!.count)") :  "Search.result.\(searchedElements!.count)")
-                } else {
-                    content
-                }
-            })
-            .toolbar {
-                ToolbarItem {
-                    makeLayoutPicker($currentLayout)
-                }
-                if #available(iOS 26.0, macOS 26.0, *) {
-                    ToolbarSpacer()
-                }
-                ToolbarItemGroup {
-                    FilterAndSorterPicker(showFilterSheet: $showFilterSheet, sorter: $sorter, filterIsFiltering: filter.isFiltered, sorterKeywords: Element.applicableSortingTypes, hasEndingDate: false)
-                }
+        }
+        .searchable(text: $searchedText, prompt: searchPlaceholder)
+        .onSubmit {
+            if let elements {
+                searchedElements = elements.search(for: searchedText)
             }
-            .onDisappear {
-                showFilterSheet = false
+        }
+        .navigationTitle(Element.pluralName)
+        .navigationDestination(item: $presentingElement) { element in
+            makeDestination(element, elements ?? [])
+            #if !os(macOS)
+                .wrapIf(true) { content in
+                    if #available(iOS 18.0, *) {
+                        content
+                            .navigationTransition(.zoom(sourceID: element.hashValue, in: navigationAnimationNamespace))
+                    } else {
+                        content
+                    }
+                }
+            #endif
+        }
+        .wrapIf(searchedElements != nil) { content in
+            if #available(iOS 26.0, *) {
+                content.navigationSubtitle((searchedText.isEmpty && !filter.isFiltered) ? (getResultCountDescription?(searchedElements!.count) ?? "Search.item.\(searchedElements!.count)") :  "Search.result.\(searchedElements!.count)")
+            } else {
+                content
             }
+        }
+        .toolbar {
+            ToolbarItem {
+                makeLayoutPicker($currentLayout)
+            }
+            if #available(iOS 26.0, macOS 26.0, *) {
+                ToolbarSpacer()
+            }
+            ToolbarItemGroup {
+                FilterAndSorterPicker(showFilterSheet: $showFilterSheet, sorter: $sorter, filterIsFiltering: filter.isFiltered, sorterKeywords: Element.applicableSortingTypes, hasEndingDate: false)
+            }
+        }
+        .onDisappear {
+            showFilterSheet = false
         }
         .withSystemBackground()
         .wrapIf(sizeClass == .regular) { content in
@@ -553,7 +533,46 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         })
     }
     
-    func getList() async {
+    @ViewBuilder
+    private func makeElementLabel(for element: Element) -> some View {
+        // # Why?
+        // After updating CustomGroupBox to 2, some issue occured here.
+        //
+        // # What happened?
+        // the `matchedTransitionSource(id:in:)` constraints a view's
+        // viewport to its own frame, that is, our shadows are clipped
+        // into the frame of the box itself.
+        //
+        // # How do we solve it?
+        // First we add a preference key for custom group boxes,
+        // if there's any active `CustomGroupBox` in the view
+        // from `makeSomeContent(_:_:)`, we can receive the info
+        // by the `onPreferenceChange` call below.
+        // We suppress the group box in content by setting
+        // the env value `_suppressCustomGroupBox` to `true`,
+        // then add a custom group box
+        // after the `matchedTransitionSource(id:in:)` call
+        // if needed to solve this problem.
+        // That's why codes here seem wired.
+        CustomGroupBox(showGroupBox: isCustomGroupBoxActive) {
+            makeSomeContent(currentLayout, element)
+                .highlightKeyword($searchedText)
+                .environment(\._suppressCustomGroupBox, true)
+                .onPreferenceChange(CustomGroupBoxActivePreference.self) { isActive in
+                    isCustomGroupBoxActive = isActive
+                }
+                .wrapIf(true) { content in
+                    if #available(iOS 18.0, macOS 15.0, *) {
+                        content
+                            .matchedTransitionSource(id: element.hashValue, in: navigationAnimationNamespace)
+                    } else {
+                        content
+                    }
+                }
+        }
+    }
+    
+    private func getList() async {
         infoIsAvailable = true
         withDoriCache(id: "\(Element.pluralName.key)List_\(filter.identity)", trait: .realTime) {
             await updateList()
