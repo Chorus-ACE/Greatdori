@@ -55,7 +55,10 @@ struct GreatdoriApp: App {
         WindowGroup {
             ZStack {
                 ContentView()
-                    .frame(minWidth: 400)
+                    .wrapIf(isMACOS) { content in
+                        content
+                            .frame(minWidth: 400)
+                    }
                 if enableRulerOverlay {
                     DebugRulerOverlay()
                 }
