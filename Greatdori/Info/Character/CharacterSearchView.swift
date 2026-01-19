@@ -33,6 +33,7 @@ struct CharacterSearchView: View {
     @State var infoIsAvailable = true
     @State var infoIsReady = false
     @State var otherCharacters: [PreviewCharacter] = []
+    @State var characterIDMap: [PreviewCharacter: Int64] = [:]
     var body: some View {
         Group {
             if infoIsReady {
@@ -57,6 +58,12 @@ struct CharacterSearchView: View {
                                                         if #available(iOS 18.0, *) {
                                                             content
                                                                 .navigationTransition(.zoom(sourceID: char.id, in: detailNavigation))
+                                                                .onDisappear {
+                                                                    characterIDMap.updateValue(
+                                                                        Int64(CFAbsoluteTimeGetCurrent() * 1000),
+                                                                        forKey: char
+                                                                    )
+                                                                }
                                                         } else {
                                                             content
                                                         }
@@ -66,10 +73,12 @@ struct CharacterSearchView: View {
                                                 CharacterImageView(character: char)
                                             })
                                             .buttonStyle(.plain)
+                                            .id(characterIDMap[char] ?? Int64(char.hashValue))
                                             .wrapIf(true, in: { content in
                                                 if #available(iOS 18.0, macOS 15.0, *) {
                                                     content
                                                         .matchedTransitionSource(id: char.id, in: detailNavigation)
+                                                    
                                                 } else {
                                                     content
                                                 }
