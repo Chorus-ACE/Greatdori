@@ -362,6 +362,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
     @State private var searchedText = ""
     @State private var showFilterSheet = false
     @State private var presentingElement: Element?
+    @State private var elementIDMap: [Element: Int64] = [:]
     @State private var isCustomGroupBoxActive = false
     
     var body: some View {
@@ -466,6 +467,12 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                     if #available(iOS 18.0, *) {
                         content
                             .navigationTransition(.zoom(sourceID: element.hashValue, in: navigationAnimationNamespace))
+                            .onDisappear {
+                                elementIDMap.updateValue(
+                                    Int64(CFAbsoluteTimeGetCurrent() * 1000),
+                                    forKey: element
+                                )
+                            }
                     } else {
                         content
                     }
@@ -570,6 +577,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                     }
                 }
         }
+        .id(elementIDMap[element] ?? Int64(element.hashValue))
     }
     
     private func getList() async {
