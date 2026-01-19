@@ -33,7 +33,7 @@ struct CharacterSearchView: View {
     @State var infoIsAvailable = true
     @State var infoIsReady = false
     @State var otherCharacters: [PreviewCharacter] = []
-    @State var characterIDMap: [PreviewCharacter: Int] = [:]
+    @State var characterIDMap: [PreviewCharacter: Int64] = [:]
     var body: some View {
         Group {
             if infoIsReady {
@@ -60,7 +60,7 @@ struct CharacterSearchView: View {
                                                                 .navigationTransition(.zoom(sourceID: char.id, in: detailNavigation))
                                                                 .onDisappear {
                                                                     characterIDMap.updateValue(
-                                                                        Int.random(in: .min...(.max)),
+                                                                        Int64(CFAbsoluteTimeGetCurrent() * 1000),
                                                                         forKey: char
                                                                     )
                                                                 }
@@ -73,7 +73,7 @@ struct CharacterSearchView: View {
                                                 CharacterImageView(character: char)
                                             })
                                             .buttonStyle(.plain)
-                                            .id(characterIDMap[char] ?? char.hashValue)
+                                            .id(characterIDMap[char] ?? Int64(char.hashValue))
                                             .wrapIf(true, in: { content in
                                                 if #available(iOS 18.0, macOS 15.0, *) {
                                                     content
