@@ -463,12 +463,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
             makeDestination(element, elements ?? [])
             #if !os(macOS)
                 .wrapIf(true) { content in
-                    if #available(iOS 18.0, *) {
-                        content
-                            .navigationTransition(.zoom(sourceID: element.hashValue, in: navigationAnimationNamespace))
-                    } else {
-                        content
-                    }
+                    content.applyZoomDestinationFix(id: element.hashValue, in: navigationAnimationNamespace)
                 }
             #endif
         }
@@ -562,12 +557,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                     isCustomGroupBoxActive = isActive
                 }
                 .wrapIf(true) { content in
-                    if #available(iOS 18.0, macOS 15.0, *) {
-                        content
-                            .matchedTransitionSource(id: element.hashValue, in: navigationAnimationNamespace)
-                    } else {
-                        content
-                    }
+                    content.applyZoomSourceFix(id: element.hashValue, in: navigationAnimationNamespace)
                 }
         }
     }

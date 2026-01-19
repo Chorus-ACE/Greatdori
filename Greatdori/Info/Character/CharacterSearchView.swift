@@ -54,12 +54,7 @@ struct CharacterSearchView: View {
                                                 CharacterDetailView(id: char.id, allCharacters: allCharacters)
                                                 #if !os(macOS)
                                                     .wrapIf(true, in: { content in
-                                                        if #available(iOS 18.0, *) {
-                                                            content
-                                                                .navigationTransition(.zoom(sourceID: char.id, in: detailNavigation))
-                                                        } else {
-                                                            content
-                                                        }
+                                                        content.applyZoomDestinationFix(id: char.id, in: detailNavigation)
                                                     })
                                                 #endif
                                             }, label: {
@@ -67,12 +62,7 @@ struct CharacterSearchView: View {
                                             })
                                             .buttonStyle(.plain)
                                             .wrapIf(true, in: { content in
-                                                if #available(iOS 18.0, macOS 15.0, *) {
-                                                    content
-                                                        .matchedTransitionSource(id: char.id, in: detailNavigation)
-                                                } else {
-                                                    content
-                                                }
+                                                content.applyZoomSourceFix(id: char.id, in: detailNavigation)
                                             })
                                             .accessibilityLabel(char.characterName.forPreferredLocale() ?? "")
                                         }

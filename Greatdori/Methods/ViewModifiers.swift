@@ -508,3 +508,40 @@ private struct VariadicModifier<V: View>: ViewModifier {
         }
     }
 }
+
+// Fix #22
+extension View {
+    func applyZoomSourceFix<ID: Hashable>(id: ID, in namespace: Namespace.ID) -> some View {
+        modifier(ZoomSourceFixModifier(id: id, namespace: namespace))
+    }
+    
+    func applyZoomDestinationFix<ID: Hashable>(id: ID, in namespace: Namespace.ID) -> some View {
+        modifier(ZoomDestinationFixModifier(id: id, namespace: namespace))
+    }
+}
+private struct ZoomSourceFixModifier<ID: Hashable>: ViewModifier {
+    var id: ID
+    var namespace: Namespace.ID
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+        } else if #available(iOS 18.0, macOS 15.0, *) {
+            content.matchedTransitionSource(id: id, in: namespace)
+        } else {
+            content
+        }
+    }
+}
+private struct ZoomDestinationFixModifier<ID: Hashable>: ViewModifier {
+    var id: ID
+    var namespace: Namespace.ID
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+        } else if #available(iOS 18.0, *) {
+            content.navigationTransition(.zoom(sourceID: id, in: namespace))
+        } else {
+            content
+        }
+    }
+}
