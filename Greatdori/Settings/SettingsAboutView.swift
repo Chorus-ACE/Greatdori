@@ -161,7 +161,10 @@ struct SettingsAboutDetailListView: View {
                     .bold()
             }
         }
-        .buttonStyle(.plain)
+        .foregroundStyle(.primary)
+        #if os(macOS)
+        .buttonStyle(.link)
+        #endif
         SettingsDocumentButton(document: "Privacy", preferNavigationLink: true) {
             HStack {
                 Text("Settings.about.privacy-policy")
@@ -172,7 +175,10 @@ struct SettingsAboutDetailListView: View {
                     .bold()
             }
         }
-        .buttonStyle(.plain)
+        .foregroundStyle(.primary)
+        #if os(macOS)
+        .buttonStyle(.link)
+        #endif
         NavigationLink(destination: {
             SettingsAboutAcknowledgementsView()
         }, label: {
