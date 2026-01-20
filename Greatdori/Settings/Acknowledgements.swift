@@ -12,143 +12,277 @@
 //
 //===----------------------------------------------------------------------===//
 
-func getAcknowledgements() -> [AcknowledgementItem] {
-    return rawAcknowledgements.filter { item in
-        !((isMACOS && item.notes == "iOS Only") || (isMACOS && item.notes == "macOS Only"))
+struct AcknowledgementItem: Equatable, Hashable {
+    var title: String
+    var subtitle: String
+    var licenseVerbatim: String
+    
+    fileprivate init(
+        _ title: String,
+        licenseName subtitle: String,
+        content licenseVerbatim: String
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.licenseVerbatim = licenseVerbatim
     }
 }
 
-let rawAcknowledgements: [AcknowledgementItem] = [
-    AcknowledgementItem(
-        title: "Alamofire",
-        subtitle: "MIT License",
-        licenseVerbatim: MIT_License(year: "2014-2022", name: "Alamofire Software Foundation (http://alamofire.org/)")),
+@resultBuilder
+private struct AcknowledgementBuilder {
+    static func buildExpression(_ expression: AcknowledgementItem) -> [AcknowledgementItem] {
+        [expression]
+    }
     
-    AcknowledgementItem(
-        title: "cmark-gfm",
-        subtitle: "BSD2 License",
-        licenseVerbatim: cmarkGfmLicense),
+    static func buildBlock(_ components: [AcknowledgementItem]...) -> [AcknowledgementItem] {
+        components.flatMap { $0 }
+    }
     
-    AcknowledgementItem(
-        title: "Cryptor",
-        subtitle: "Apache License 2.0",
-        licenseVerbatim: Apache_License_2_0),
-    
-    AcknowledgementItem(
-        title: "CryptorECC",
-        subtitle: "Apache License 2.0",
-        licenseVerbatim: Apache_License_2_0),
-    
-    AcknowledgementItem(
-        title: "CryptorRSA",
-        subtitle: "Apache License 2.0",
-        licenseVerbatim: Apache_License_2_0),
-    
-    AcknowledgementItem(
-        title: "EFQRCode",
-        subtitle: "MIT License",
-        licenseVerbatim: MIT_License(year: "2017-2025", name: "EyreFree <eyrefree@eyrefree.org>")),
-    
-    AcknowledgementItem(
-        title: "KituraContracts",
-        subtitle: "Apache License 2.0",
-        licenseVerbatim: Apache_License_2_0),
-    
-    AcknowledgementItem(
-        title: "LoggerAPI",
-        subtitle: "Apache License 2.0 License",
-        licenseVerbatim: Apache_License_2_0),
+    static func buildOptional(_ component: [AcknowledgementItem]?) -> [AcknowledgementItem] {
+        component ?? []
+    }
+}
 
-    AcknowledgementItem(
-        title: "Mute",
-        subtitle: "MIT License",
-        licenseVerbatim: MIT_License(year: "2017", name: "Akram Hussein <akramhussein@gmail.com>"),
-        notes: "iOS Only"),
-    
-    AcknowledgementItem(
-        title: "NetworkImage",
-        subtitle: "MIT License",
-        licenseVerbatim: "MIT License\n\n" + MIT_License(year: "2020", name: "Guille Gonzalez")),
-    
-    AcknowledgementItem(
-        title: "SDWebImage",
-        subtitle: "MIT License",
-        licenseVerbatim: MIT_License(year: "2009-2020", name: "Olivier Poitrey rs@dailymotion.com")),
-    
-    AcknowledgementItem(
-        title: "SDWebImageSVGCoder",
-        subtitle: "MIT License",
-        licenseVerbatim: MIT_License(year: "2018", name: "lizhuoli1126@126.com <lizhuoli1126@126.com>")),
-    
-    AcknowledgementItem(
-        title: "SDWebImageSwiftUI",
-        subtitle: "MIT License",
-        licenseVerbatim: MIT_License(year: "2019", name: "lizhuoli1126@126.com <lizhuoli1126@126.com>")),
-    
-    AcknowledgementItem(
-        title: "swift-argument-parser",
-        subtitle: "Apache License 2.0",
-        licenseVerbatim: Apache_License_2_0 + swiftSuffix),
-    
-    AcknowledgementItem(
-        title: "swift-gyb",
-        subtitle: "MIT License",
-        licenseVerbatim: MIT_License(year: "2018", name: "Read Evaluate Press, LLC")),
-    
-    AcknowledgementItem(
-        title: "swift-log",
-        subtitle: "MIT License",
-        licenseVerbatim: Apache_License_2_0),
-    
-    AcknowledgementItem(
-        title: "swift-markdown-ui",
-        subtitle: "MIT License",
-        licenseVerbatim: "The MIT License (MIT)\n\n" + MIT_License(year: "2020", name: "Guillermo Gonzalez")),
-    
-    AcknowledgementItem(
-        title: "swift-syntax",
-        subtitle: "Apache License 2.0",
-        licenseVerbatim: Apache_License_2_0 + swiftSuffix),
-    
-    AcknowledgementItem(
-        title: "SwiftDraw",
-        subtitle: "MIT License",
-        licenseVerbatim: MIT_License(year: "2019", name: "Simon Whitty")),
-    
-    AcknowledgementItem(
-        title: "SwiftJWT",
-        subtitle: "Apache License 2.0",
-        licenseVerbatim: Apache_License_2_0),
-    
-    AcknowledgementItem(
-        title: "swiftui-introspect",
-        subtitle: "MIT License",
-        licenseVerbatim: MIT_License(year: "2019", name: "Timber Software")),
+let packageAcknowledgements = _packageAcknowledgements()
+let codeSnippetAcknowledgements = _codeSnippetAcknowledgements()
 
+@AcknowledgementBuilder
+private func _packageAcknowledgements() -> [AcknowledgementItem] {
     AcknowledgementItem(
-        title: "SwiftyJSON",
-        subtitle: "MIT License",
-        licenseVerbatim: "The MIT License (MIT)\n\n" + MIT_License(year: "2017", name: "Ruoyu Fu")),
-]
+        "Alamofire",
+        licenseName: "MIT License",
+        content: MIT_License(
+            year: "2014-2022",
+            name: "Alamofire Software Foundation (http://alamofire.org/)"
+        )
+    )
+    
+    AcknowledgementItem(
+        "cmark-gfm",
+        licenseName: "BSD2 License",
+        content: cmarkGfmLicense
+    )
+    
+    AcknowledgementItem(
+        "Cryptor",
+        licenseName: "Apache License 2.0",
+        content: Apache_License_2_0
+    )
+    
+    AcknowledgementItem(
+        "CryptorECC",
+        licenseName: "Apache License 2.0",
+        content: Apache_License_2_0
+    )
+    
+    AcknowledgementItem(
+        "CryptorRSA",
+        licenseName: "Apache License 2.0",
+        content: Apache_License_2_0
+    )
+    
+    AcknowledgementItem(
+        "EFQRCode",
+        licenseName: "MIT License",
+        content: MIT_License(
+            year: "2017-2025",
+            name: "EyreFree <eyrefree@eyrefree.org>"
+        )
+    )
+    
+    AcknowledgementItem(
+        "KituraContracts",
+        licenseName: "Apache License 2.0",
+        content: Apache_License_2_0
+    )
+    
+    AcknowledgementItem(
+        "LoggerAPI",
+        licenseName: "Apache License 2.0 License",
+        content: Apache_License_2_0
+    )
+    
+    AcknowledgementItem(
+        "LRUCache",
+        licenseName: "MIT License",
+        content: "MIT License\n\n" + MIT_License(
+            year: "2021",
+            name: "Nick Lockwood"
+        )
+    )
+    
+    if !isMACOS {
+        AcknowledgementItem(
+            "Mute",
+            licenseName: "MIT License",
+            content: MIT_License(
+                year: "2017",
+                name: "Akram Hussein <akramhussein@gmail.com>"
+            )
+        )
+    }
+    
+    AcknowledgementItem(
+        "NetworkImage",
+        licenseName: "MIT License",
+        content: "MIT License\n\n" + MIT_License(
+            year: "2020",
+            name: "Guille Gonzalez"
+        )
+    )
+    
+    AcknowledgementItem(
+        "SDWebImage",
+        licenseName: "MIT License",
+        content: MIT_License(
+            year: "2009-2020",
+            name: "Olivier Poitrey rs@dailymotion.com"
+        )
+    )
+    
+    AcknowledgementItem(
+        "SDWebImageSVGCoder",
+        licenseName: "MIT License",
+        content: MIT_License(
+            year: "2018",
+            name: "lizhuoli1126@126.com <lizhuoli1126@126.com>"
+        )
+    )
+    
+    AcknowledgementItem(
+        "SDWebImageSwiftUI",
+        licenseName: "MIT License",
+        content: MIT_License(
+            year: "2019",
+            name: "lizhuoli1126@126.com <lizhuoli1126@126.com>"
+        )
+    )
+    
+    AcknowledgementItem(
+        "swift_qrcodejs",
+        licenseName: "MIT License",
+        content: "MIT License\n\n" + MIT_License(
+            year: "2017-2020",
+            name: "Zhiyu Zhu/朱智语/ApolloZhu"
+        )
+    )
+    
+    AcknowledgementItem(
+        "swift-argument-parser",
+        licenseName: "Apache License 2.0",
+        content: Apache_License_2_0 + swiftSuffix
+    )
+    
+    AcknowledgementItem(
+        "swift-atomics",
+        licenseName: "Apache License 2.0",
+        content: Apache_License_2_0 + swiftSuffix
+    )
+    
+    AcknowledgementItem(
+        "swift-gyb",
+        licenseName: "MIT License",
+        content: MIT_License(
+            year: "2018",
+            name: "Read Evaluate Press, LLC"
+        )
+    )
+    
+    AcknowledgementItem(
+        "swift-log",
+        licenseName: "MIT License",
+        content: Apache_License_2_0
+    )
+    
+    AcknowledgementItem(
+        "swift-markdown-ui",
+        licenseName: "MIT License",
+        content: "The MIT License (MIT)\n\n" + MIT_License(
+            year: "2020",
+            name: "Guillermo Gonzalez"
+        )
+    )
+    
+    AcknowledgementItem(
+        "swift-syntax",
+        licenseName: "Apache License 2.0",
+        content: Apache_License_2_0 + swiftSuffix
+    )
+    
+    AcknowledgementItem(
+        "SwiftDraw",
+        licenseName: "MIT License",
+        content: MIT_License(
+            year: "2019",
+            name: "Simon Whitty"
+        )
+    )
+    
+    AcknowledgementItem(
+        "SwiftJWT",
+        licenseName: "Apache License 2.0",
+        content: Apache_License_2_0
+    )
+    
+    AcknowledgementItem(
+        "SwiftSoup",
+        licenseName: "MIT License",
+        content: swiftSoupMITLicense
+    )
+    
+    AcknowledgementItem(
+        "swiftui-introspect",
+        licenseName: "MIT License",
+        content: MIT_License(
+            year: "2019",
+            name: "Timber Software"
+        )
+    )
+    
+    AcknowledgementItem(
+        "SwiftyJSON",
+        licenseName: "MIT License",
+        content: "The MIT License (MIT)\n\n" + MIT_License(
+            year: "2017",
+            name: "Ruoyu Fu"
+        )
+    )
+    
+    AcknowledgementItem(
+        "SymbolAvailability",
+        licenseName: "MIT License",
+        content: "MIT License\n\n" + MIT_License(
+            year: "2026",
+            name: "WindowsMEMZ"
+        )
+    )
+}
 
-let codeSnippetsAck: [AcknowledgementItem] = [
+@AcknowledgementBuilder
+private func _codeSnippetAcknowledgements() -> [AcknowledgementItem] {
     AcknowledgementItem(
-        title: "gyb.py",
-        subtitle: "Apache License 2.0",
-        licenseVerbatim: Apache_License_2_0 + swiftSuffix),
+        "gyb.py",
+        licenseName: "Apache License 2.0",
+        content: Apache_License_2_0 + swiftSuffix
+    )
     
     AcknowledgementItem(
-        title: "live2d.min.js",
-        subtitle: "Live2D Proprietary Software 使用許諾契約書",
-        licenseVerbatim: Live2D_Proprietary_Software_License),
+        "live2d.min.js",
+        licenseName: "Live2D Proprietary Software 使用許諾契約書",
+        content: Live2D_Proprietary_Software_License
+    )
     
     AcknowledgementItem(
-        title: "NSTextView-LineNumberView",
-        subtitle: "MIT License",
-        licenseVerbatim: MIT_License(year: "2015", name: "Yichi Zhang")),
-]
+        "NSTextView-LineNumberView",
+        licenseName: "MIT License",
+        content: MIT_License(
+            year: "2015",
+            name: "Yichi Zhang"
+        )
+    )
+}
                         
-func MIT_License(year: String, name: String) -> String {
+private func MIT_License(year: String, name: String) -> String {
     """
     Copyright (c) \(year) \(name)
     
@@ -172,7 +306,7 @@ func MIT_License(year: String, name: String) -> String {
     """
 }
 
-let Apache_License_2_0 = """
+private let Apache_License_2_0 = """
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -377,7 +511,7 @@ let Apache_License_2_0 = """
 """
 
 
-let cmarkGfmLicense = """
+private let cmarkGfmLicense = """
 Copyright (c) 2014, John MacFarlane
 
 All rights reserved.
@@ -550,7 +684,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-let swiftSuffix = """
+private let swiftSuffix = """
 
 
 
@@ -564,7 +698,7 @@ let swiftSuffix = """
     otherwise be required by Sections 4(a), 4(b) and 4(d) of the License.
 """
 
-let Live2D_Proprietary_Software_License = """
+private let Live2D_Proprietary_Software_License = """
 Live2D Proprietary Software 使用許諾契約書
 
 対象ソフトウェア
@@ -902,4 +1036,29 @@ Live2D社は、お客様が次の各号に該当した場合（お客様が法�
 バージョン： 2.1
 
 改定日： 2025 年2月3日
+"""
+
+private let swiftSoupMITLicense = """
+The MIT License
+
+Copyright (c) 2009-2025 Jonathan Hedley <https://jsoup.org/>  
+Swift port copyright (c) 2016-2025 Nabil Chatbi  
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 """
