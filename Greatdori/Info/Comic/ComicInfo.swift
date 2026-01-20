@@ -35,12 +35,12 @@ struct ComicInfo: View {
                     .resizable()
                     .antialiased(true)
                     .aspectRatio(184/134, contentMode: .fit)
-                    .frame(width: 184, height: 134)
+                    .frame(width: 184 / 3 * 2, height: 134 / 3 * 2)
                     .cornerRadius(5)
             } placeholder: {
                 RoundedRectangle(cornerRadius: 5)
                     .fill(getPlaceholderColor())
-                    .frame(width: 184, height: 134)
+                    .frame(width: 184 / 3 * 2, height: 134 / 3 * 2)
             }
             .interpolation(.high)
         } detail: {
