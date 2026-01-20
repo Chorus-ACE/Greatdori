@@ -16,6 +16,7 @@ import Alamofire
 import AVKit
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 import UniformTypeIdentifiers
 
 @_spi(Advanced) import SwiftUIIntrospect
@@ -81,7 +82,7 @@ struct AssetTextViewer: View {
                     Button(action: {
                         dismiss()
                     }, label: {
-                        Image(systemName: "xmark")
+                        Image(systemName: .xmark)
                     })
                 }
             }
@@ -128,7 +129,7 @@ struct AssetAudioPlayer: View {
                 Button(action: {
                     player.seek(to: .init(seconds: currentTime - 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
                 }, label: {
-                    Image(systemName: "15.arrow.trianglehead.counterclockwise")
+                    Image(systemName: .gobackward15)
                 })
                 .font(.system(size: 20))
                 Button(action: {
@@ -139,16 +140,16 @@ struct AssetAudioPlayer: View {
                     }
                 }, label: {
                     if isPlaying {
-                        Image(systemName: "pause.fill")
+                        Image(systemName: .pauseFill)
                     } else {
-                        Image(systemName: "play.fill")
+                        Image(systemName: .playFill)
                     }
                 })
                 .font(.system(size: 40))
                 Button(action: {
                     player.seek(to: .init(seconds: currentTime + 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
                 }, label: {
-                    Image(systemName: "15.arrow.trianglehead.clockwise")
+                    Image(systemName: .goforward15)
                 })
                 .font(.system(size: 20))
             }
@@ -318,7 +319,7 @@ struct AssetAudioPlayer: View {
                     Button(action: {
                         assetAudioPlayer.seek(to: .init(seconds: currentTime - 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
                     }, label: {
-                        Image(systemName: "15.arrow.trianglehead.counterclockwise")
+                        Image(systemName: .gobackward15)
                     })
                     .font(.system(size: 30))
                     Button(action: {
@@ -329,16 +330,16 @@ struct AssetAudioPlayer: View {
                         }
                     }, label: {
                         if isPlaying {
-                            Image(systemName: "pause.fill")
+                            Image(systemName: .pauseFill)
                         } else {
-                            Image(systemName: "play.fill")
+                            Image(systemName: .playFill)
                         }
                     })
                     .font(.system(size: 60))
                     Button(action: {
                         assetAudioPlayer.seek(to: .init(seconds: currentTime + 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
                     }, label: {
-                        Image(systemName: "15.arrow.trianglehead.clockwise")
+                        Image(systemName: .goforward15)
                     })
                     .font(.system(size: 30))
                 }
@@ -346,12 +347,12 @@ struct AssetAudioPlayer: View {
                 Spacer()
                     .frame(height: 20)
                 HStack(spacing: 20) {
-                    Image(systemName: "speaker.fill")
+                    Image(systemName: .speakerFill)
                     Slider(value: $volume)
                         .onChange(of: volume) {
                             assetAudioPlayer.volume = Float(volume)
                         }
-                    Image(systemName: "speaker.wave.3.fill")
+                    Image(systemName: .speakerWave3Fill)
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal)
@@ -432,7 +433,7 @@ struct AssetVideoPlayer: View {
                                     #endif
                                     dismiss()
                                 }, label: {
-                                    Image(systemName: "xmark")
+                                    Image(systemName: .xmark)
                                 })
                             }
                         }

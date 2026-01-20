@@ -14,8 +14,9 @@
 
 import AVKit
 import DoriKit
-import SDWebImageSwiftUI
 import SwiftUI
+import SDWebImageSwiftUI
+import SymbolAvailability
 
 struct ISVBacklogView: View {
     var ir: StoryIR
@@ -107,7 +108,7 @@ struct ISVBacklogView: View {
                                     .resizable()
                                     .frame(width: 40, height: 40)
                                 if let voice = talk.voicePath, let audioData = audios[voice] {
-                                    Image(systemName: "speaker.wave.3.fill")
+                                    Image(systemName: .speakerWave3Fill)
                                         .modifier(StrokeTextModifier(width: 1, color: .white))
                                         .foregroundStyle(Color(red: 255 / 255, green: 59 / 255, blue: 114 / 255))
                                         .shadow(radius: 1)

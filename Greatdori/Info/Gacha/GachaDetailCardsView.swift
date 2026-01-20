@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 
 // MARK: GachaDetailCardsView
 struct GachaDetailCardsView: View {
@@ -45,7 +46,7 @@ struct GachaDetailCardsView: View {
                                             Text("\(cardsCount)")
                                                 .foregroundStyle(.secondary)
                                         }
-                                        Image(systemName: "chevron.forward")
+                                        Image(systemName: .chevronForward)
                                             .foregroundStyle(.secondary)
                                             .rotationEffect(Angle(degrees: (raritySectionIsExpanded[rarity] ?? false) ? 90 : 0))
                                             .font(isMACOS ? .body : .caption)

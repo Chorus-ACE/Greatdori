@@ -15,6 +15,7 @@
 import DoriKit
 import SwiftUI
 import SDWebImageSwiftUI
+import SymbolAvailability
 
 struct SongDetailMatchView: View {
     var song: Song
@@ -59,7 +60,7 @@ struct SongDetailMatchView: View {
                                     }
                                     Spacer()
                                     if result.appleMusicURL != nil || result.shazamURL != nil {
-                                        Image(systemName: "arrow.up.forward.app")
+                                        Image(systemName: .arrowUpForwardApp)
                                             .foregroundStyle(.secondary)
                                             .font(.title3)
                                     }

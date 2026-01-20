@@ -15,7 +15,7 @@
 import DoriKit
 import MarkdownUI
 import SwiftUI
-
+import SymbolAvailability
 
 struct NewsDetailView: View {
     var id: Int
@@ -128,7 +128,7 @@ struct GreatdoriRichContentProvider: ImageProvider {
                     case "event":
                         EventInfo(information as! Event)
                     default:
-                        Image(systemName: "questionmark.circle")
+                        Image(systemName: .questionmarkCircle)
                             .foregroundStyle(.secondary)
                     }
                 } else {

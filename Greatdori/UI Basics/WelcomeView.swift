@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 
 // MARK: ようこそ、Greatdori!の世界へ
 struct WelcomeView: View {
@@ -278,7 +279,7 @@ struct WelcomeView: View {
                             Button(action: {
                                 isLicenseAgreementPresented = false
                             }, label: {
-                                Image(systemName: "xmark")
+                                Image(systemName: .xmark)
                             })
                         }
                     }

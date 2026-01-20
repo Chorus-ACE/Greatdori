@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 @_spi(Advanced) import SwiftUIIntrospect
 
 enum StoryType: String, CaseIterable, Hashable {
@@ -103,7 +104,7 @@ struct MultiCharacterSelectorButton: View {
             HStack {
                 Text(multiCharSelectorLabel(for: filter))
                     .multilineTextAlignment(.trailing)
-                Image(systemName: "chevron.up.chevron.down")
+                Image(systemName: .chevronUpChevronDown)
                     .bold(isMACOS)
                     .font(.footnote)
             }

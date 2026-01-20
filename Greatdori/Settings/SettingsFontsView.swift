@@ -17,6 +17,7 @@ import CoreText
 import DoriKit
 import MarkdownUI
 import SwiftUI
+import SymbolAvailability
 import UniformTypeIdentifiers
 
 let fontManagerSampleText: [DoriLocale: String] = [.jp: "あなたの輝きが道を照らす", .en: "Your Spark Will Light the Way", .tw: "你的光芒照耀漫漫長路", .cn: "你的光芒会照亮前行之路", .kr: "당신의 반짝임이 길을 밝힌다"]
@@ -173,7 +174,7 @@ struct SettingsFontsView: View {
                         .font(.custom(fontName, size: 18))
                         .fontWeight(.regular)
                     Spacer()
-                    Image(systemName: "info.circle")
+                    Image(systemName: .infoCircle)
                         .foregroundStyle(.secondary)
                 }
                 .contentShape(Rectangle())

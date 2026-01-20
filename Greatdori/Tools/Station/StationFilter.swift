@@ -15,6 +15,7 @@
 import DoriKit
 import SDWebImageSwiftUI
 import SwiftUI
+import SymbolAvailability
 
 #if os(iOS)
 import UIKit
@@ -342,7 +343,7 @@ struct TextCapsuleWithDeleteButton<Content: View>: View {
                 Button(action: {
                     deleteAction()
                 }, label: {
-                    Image(systemName: "xmark")
+                    Image(systemName: .xmark)
                         .font(showDivider ? .body : .caption)
                 })
             }

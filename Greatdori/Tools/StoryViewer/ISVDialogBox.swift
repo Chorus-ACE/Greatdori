@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 
 struct ISVDialogBoxView: View {
     var data: TalkData
@@ -111,7 +112,7 @@ struct ISVDialogBoxView: View {
                 Spacer()
                 if isShowingAutoPlayLabel {
                     HStack(spacing: 2) {
-                        Image(systemName: "arrowtriangle.forward.fill")
+                        Image(systemName: .arrowtriangleForwardFill)
                             .scaleEffect(x: 0.7, y: 1, anchor: .trailing)
                         Text(verbatim: "AUTO")
                     }

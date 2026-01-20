@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 
 // MARK: EventDetailGoalsView
 struct EventDetailGoalsView: View {
@@ -70,7 +71,7 @@ struct EventDetailGoalsView: View {
                         Text(type.localizedString)
                             .bold()
                         Spacer()
-                        Image(systemName: "chevron.forward")
+                        Image(systemName: .chevronForward)
                             .foregroundStyle(.secondary)
                             .rotationEffect(.init(degrees: isExpanded ? 90 : 0))
                             .font(isMACOS ? .body : .caption)

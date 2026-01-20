@@ -22,6 +22,7 @@ import DoriKit
 import SwiftUI
 import CoreMotion
 import SDWebImageSwiftUI
+import SymbolAvailability
 
 // MARK: Constants
 let bannerWidth: CGFloat = isMACOS ? 370 : 420
@@ -54,7 +55,7 @@ struct Banner<Content: View>: View {
                     Button(action: {
                         isPresented.wrappedValue = false
                     }, label: {
-                        Image(systemName: "xmark")
+                        Image(systemName: .xmark)
                             .foregroundStyle(.secondary)
                     })
                     .buttonStyle(.plain)
@@ -379,7 +380,7 @@ struct DetailsIDSwitcher<Content: View>: View {
                 NavigationLink(destination: {
                     destination()
                 }, label: {
-                    Image(systemName: "list.bullet")
+                    Image(systemName: .listBullet)
                 })
             }
         }
@@ -483,7 +484,7 @@ struct FilterAndSorterPicker: View {
                     .mask {
                         // We use `mask` to prgacha unexpected blink
                         // while changing `foregroundStyle`.
-                        Image(systemName: "line.3.horizontal.decrease")
+                        Image(systemName: .line3HorizontalDecrease)
                     }
                     .background {
                         if filterIsFiltering {
@@ -504,7 +505,7 @@ struct FilterAndSorterPicker: View {
                     .mask {
                         // We use `mask` to prgacha unexpected blink
                         // while changing `foregroundStyle`.
-                        Image(systemName: "line.3.horizontal.decrease")
+                        Image(systemName: .line3HorizontalDecrease)
                     }
                     .background {
                         if filterIsFiltering {
@@ -512,7 +513,7 @@ struct FilterAndSorterPicker: View {
                         }
                     }
             } else {
-                Image(systemName: "line.3.horizontal.decrease")
+                Image(systemName: .line3HorizontalDecrease)
                     .foregroundStyle(filterIsFiltering ? Color.white : .blue)
                     .background {
                         if filterIsFiltering {

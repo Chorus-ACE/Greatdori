@@ -15,6 +15,7 @@
 import Alamofire
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 import UniformTypeIdentifiers
 
 struct AssetExplorerView: View {
@@ -114,7 +115,7 @@ struct AssetListView: View {
                                                                 Group {
                                                                     switch item.type {
                                                                     case .folder:
-                                                                        Image(systemName: "folder.fill")
+                                                                        Image(systemName: .folderFill)
                                                                             .foregroundStyle(Color(red: 121 / 255, green: 190 / 255, blue: 230 / 255).gradient)
                                                                             .background {
                                                                                 Rectangle()
@@ -123,7 +124,7 @@ struct AssetListView: View {
                                                                                     .offset(y: 1)
                                                                             }
                                                                     case .rip:
-                                                                        Image(systemName: "zipper.page")
+                                                                        Image(systemName: .docZipper)
                                                                             .foregroundStyle(Color(red: 121 / 255, green: 190 / 255, blue: 230 / 255).gradient)
                                                                     default:
                                                                         EmptyView()

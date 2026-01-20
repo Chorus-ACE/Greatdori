@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 private import Builtin
 
 struct SettingsStoryView: View {
@@ -81,7 +82,7 @@ struct SettingsStoryView: View {
                                 playDemoAnimation()
                             } label: {
                                 HStack {
-                                    Image(systemName: "play.fill")
+                                    Image(systemName: .playFill)
                                     if shouldAutoplayDemoAnimation {
                                         Text("Settings.story-viewer.demo.replay")
                                     } else {

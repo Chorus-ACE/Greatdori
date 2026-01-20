@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 
 struct ExternalLinksSection: View {
     var links: [ExternalLink] = []
@@ -31,7 +32,7 @@ struct ExternalLinksSection: View {
                                     HStack {
                                         Text(item.name)
                                         Spacer()
-                                        Image(systemName: "arrow.up.forward.app")
+                                        Image(systemName: .arrowUpForwardApp)
                                             .foregroundStyle(.secondary)
                                     }
                                     .contentShape(Rectangle())
