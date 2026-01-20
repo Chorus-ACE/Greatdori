@@ -15,6 +15,7 @@
 import Combine
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct ZeileStoryViewerView: View {
@@ -114,7 +115,7 @@ struct ZeileStoryViewerView: View {
                             Label(String("Sirius"), systemImage: "sparkles")
                         })
                     }, label: {
-                        Image(systemName: "ant")
+                        Image(systemName: .ant)
                     })
                 }
             }

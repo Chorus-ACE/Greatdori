@@ -18,6 +18,7 @@ import Combine
 import SDWebImageSwiftUI
 import SwiftyJSON
 import SwiftUI
+import SymbolAvailability
 
 struct StationView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
@@ -181,7 +182,7 @@ struct StationItemView: View {
                         image
                             .resizable()
                     }, placeholder: {
-                        Image(systemName: "person.crop.circle")
+                        Image(systemName: .personCropCircle)
                             .resizable()
                             .foregroundStyle(.gray)
                     })

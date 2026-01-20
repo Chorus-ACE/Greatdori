@@ -15,6 +15,7 @@
 import DoriKit
 import SwiftUI
 import SDWebImageSwiftUI
+import SymbolAvailability
 
 struct EventDetailRotationMusicView: View {
     var information: ExtendedEvent
@@ -31,7 +32,7 @@ struct EventDetailRotationMusicView: View {
                                 Text("Event.songs.rotation-music")
                                     .bold()
                                 Spacer()
-                                Image(systemName: "chevron.forward")
+                                Image(systemName: .chevronForward)
                                     .foregroundStyle(.secondary)
                                     .rotationEffect(.init(degrees: isExpanded ? 90 : 0))
                                     .font(isMACOS ? .body : .caption)

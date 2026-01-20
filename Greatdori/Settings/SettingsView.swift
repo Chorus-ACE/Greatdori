@@ -19,6 +19,7 @@ import DoriKit
 import EventKit
 import WidgetKit
 import UserNotifications
+import SymbolAvailability
 
 let birthdayTimeZoneNameDict: [BirthdayTimeZone: LocalizedStringResource] = [.adaptive: "Settings.birthday-time-zone.name.adaptive", .JST: "Settings.birthday-time-zone.name.JST", .UTC: "Settings.birthday-time-zone.name.UTC", .CST: "Settings.birthday-time-zone.name.CST", .PT: "Settings.birthday-time-zone.name.PT"]
 let showBirthdayDateDefaultValue = 1
@@ -52,7 +53,7 @@ struct SettingsView: View {
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             DismissButton(action: dismiss.callAsFunction) {
-                                Image(systemName: "xmark")
+                                Image(systemName: .xmark)
                             }
                         }
                     }

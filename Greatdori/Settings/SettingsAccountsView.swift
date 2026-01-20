@@ -15,6 +15,7 @@
 import DoriKit
 import SDWebImageSwiftUI
 import SwiftUI
+import SymbolAvailability
 
 struct SettingsAccountsView: View {
     @State var addSheetIsDisplaying = false
@@ -264,7 +265,7 @@ struct SettingsAccountsPreview: View {
                 image
                     .resizable()
             }, placeholder: {
-                Image(systemName: "person.crop.circle")
+                Image(systemName: .personCropCircle)
                     .resizable()
                     .foregroundStyle(.gray)
             })
@@ -287,7 +288,7 @@ struct SettingsAccountsPreview: View {
             }
             Spacer()
             if account.isAutoRenewable {
-                Image(systemName: "clock.arrow.trianglehead.clockwise.rotate.90.path.dotted")
+                Image(systemName: .Fallbackable.clockArrowTriangleheadClockwiseRotate90PathDotted)
                     .foregroundStyle(.secondary)
                     .help("Settings.account.item.auto-renew-is-on")
             }

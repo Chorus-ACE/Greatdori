@@ -16,6 +16,7 @@ import SwiftUI
 import DoriKit
 import Combine
 import SDWebImageSwiftUI
+import SymbolAvailability
 
 let loadingAnimationDuration = 0.1
 
@@ -97,7 +98,7 @@ struct HomeView: View {
                         Button(action: {
                             showSettingsSheet = true
                         }, label: {
-                            Image(systemName: "gear")
+                            Image(systemName: .gear)
                         })
                     })
                 }
@@ -527,7 +528,7 @@ struct HomeBannersView: View {
     var body: some View {
         #if !(DORIKIT_ENABLE_PRECACHE)
         Banner(color: .red) {
-            Image(systemName: "exclamationmark.circle")
+            Image(systemName: .exclamationmarkCircle)
                 .font(.title3)
                 .bold()
             VStack(alignment: .leading) {
@@ -539,7 +540,7 @@ struct HomeBannersView: View {
         }
         #endif
         Banner(isPresented: $advSettingsHaveReset, dismissable: true) {
-            Image(systemName: "exclamationmark.circle")
+            Image(systemName: .exclamationmarkCircle)
                 .font(.title3)
                 .bold()
             VStack(alignment: .leading) {

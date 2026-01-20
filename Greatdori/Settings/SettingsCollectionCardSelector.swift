@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 
 // MARK: CollectionEditorView
 struct CollectionEditorView: View {
@@ -132,7 +133,7 @@ struct CollectionEditorView: View {
                                     })
 //                                    .progressViewStyle(.circular)
                             } else {
-                                Image(systemName: "checkmark.circle")
+                                Image(systemName: .checkmarkCircle)
                             }
                         })
                         .popover(isPresented: $selectAllPopoverIsPresenting) {
@@ -152,7 +153,7 @@ struct CollectionEditorView: View {
                                     Label(title: {
                                         Text("Settings.widgets.collection.selector.select.select-all.progress.succeed")
                                     }, icon: {
-                                        Image(systemName: "checkmark.circle")
+                                        Image(systemName: .checkmarkCircle)
                                             .foregroundStyle(.green)
                                     })
                                     Spacer()
@@ -163,7 +164,7 @@ struct CollectionEditorView: View {
                                     Label(title: {
                                         Text("Settings.widgets.collection.selector.select.select-all.progress.failure")
                                     }, icon: {
-                                        Image(systemName: "xmark.circle")
+                                        Image(systemName: .xmarkCircle)
                                             .foregroundStyle(.red)
                                     })
                                     Spacer()
@@ -174,7 +175,7 @@ struct CollectionEditorView: View {
                                     Label(title: {
                                         Text("Settings.widgets.collection.selector.select.select-all.progress.existed")
                                     }, icon: {
-                                        Image(systemName: "exclamationmark.circle")
+                                        Image(systemName: .exclamationmarkCircle)
                                             .foregroundStyle(.yellow)
                                     })
                                     Spacer()
@@ -185,7 +186,7 @@ struct CollectionEditorView: View {
                                     Label(title: {
                                         Text("Settings.widgets.collection.selector.select.select-all.progress.pending")
                                     }, icon: {
-                                        Image(systemName: "ellipsis.circle")
+                                        Image(systemName: .ellipsisCircle)
                                             .foregroundStyle(.gray)
                                     })
                                     Spacer()
@@ -254,7 +255,7 @@ struct CollectionEditorView: View {
                             })
                         }
                     }, label: {
-                        Image(systemName: "ellipsis")
+                        Image(systemName: .ellipsis)
                     })
                 }
                 if #available(iOS 26.0, macOS 26.0, *) {
@@ -267,7 +268,7 @@ struct CollectionEditorView: View {
                 } else {
                     ToolbarItem {
                         DismissButton(action: {}, label: {
-                            Image(systemName: "checkmark")
+                            Image(systemName: .checkmark)
                         })
                         .wrapIf(true, in: { content in
                             if #available(iOS 26.0, macOS 26.0, *) {

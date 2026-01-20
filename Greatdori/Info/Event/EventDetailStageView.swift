@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 
 struct EventDetailStageView: View {
     var information: ExtendedEvent
@@ -28,7 +29,7 @@ struct EventDetailStageView: View {
                             Text("Event.stages")
                                 .bold()
                             Spacer()
-                            Image(systemName: "chevron.forward")
+                            Image(systemName: .chevronForward)
                                 .foregroundStyle(.secondary)
                                 .rotationEffect(.init(degrees: isExpanded ? 90 : 0))
                                 .font(isMACOS ? .body : .caption)

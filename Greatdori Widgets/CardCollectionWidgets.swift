@@ -16,6 +16,7 @@ import DoriKit
 import SwiftUI
 import WidgetKit
 import AppIntents
+import SymbolAvailability
 private import Builtin
 
 struct CardCollectionWidgets: Widget {
@@ -156,7 +157,7 @@ private struct CardWidgetsEntryView : View {
                 HStack {
                     Spacer()
                     VStack {
-                        Image(systemName: "network.slash")
+                        Image(systemName: .networkSlash)
                         Text("Widget.collections.no-internet")
                     }
                     Spacer()

@@ -15,6 +15,7 @@
 import DoriKit
 import SwiftUI
 import SDWebImageSwiftUI
+import SymbolAvailability
 
 //MARK: NewsView
 struct NewsView: View {
@@ -145,13 +146,13 @@ struct NewsView: View {
                     .labelsHidden()
                 } label: {
                     if filter != nil {
-                        Image(systemName: "line.3.horizontal.decrease")
+                        Image(systemName: .line3HorizontalDecrease)
                             .foregroundStyle(.white)
                             .background {
                                 Capsule().foregroundStyle(Color.accentColor).scaledToFill().scaleEffect(1.3)
                             }
                     } else {
-                        Image(systemName: "line.3.horizontal.decrease")
+                        Image(systemName: .line3HorizontalDecrease)
                     }
                 }
             }
@@ -173,13 +174,13 @@ struct NewsView: View {
                     }
                 }, label: {
                     if filter != nil {
-                        Image(systemName: "line.3.horizontal.decrease")
+                        Image(systemName: .line3HorizontalDecrease)
                             .foregroundStyle(colorScheme == .dark ? .white : .black)
                             .background {
                                 Capsule().foregroundStyle(Color.accentColor).scaledToFill().scaleEffect(1.3)
                             }
                     } else {
-                        Image(systemName: "line.3.horizontal.decrease")
+                        Image(systemName: .line3HorizontalDecrease)
                     }
                 })
                 .pickerStyle(.menu)

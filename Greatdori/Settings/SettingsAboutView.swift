@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import SwiftUI
+import SymbolAvailability
 
 struct SettingsAboutView: View {
     var body: some View {
@@ -135,7 +136,7 @@ struct SettingsAboutDetailListView: View {
             HStack {
                 Text("Settings.about.github")
                 Spacer()
-                Image(systemName: "arrow.up.forward.app")
+                Image(systemName: .arrowUpForwardApp)
                     .foregroundStyle(.secondary)
             }
             .contentShape(Rectangle())
@@ -145,7 +146,7 @@ struct SettingsAboutDetailListView: View {
             HStack {
                 Text("Settings.about.report-a-problem")
                 Spacer()
-                Image(systemName: "arrow.up.forward.app")
+                Image(systemName: .arrowUpForwardApp)
                     .foregroundStyle(.secondary)
             }
             .contentShape(Rectangle())
@@ -155,7 +156,7 @@ struct SettingsAboutDetailListView: View {
             HStack {
                 Text("Settings.about.user-agreement-license")
                 Spacer()
-                Image(systemName: "chevron.forward")
+                Image(systemName: .chevronForward)
                     .foregroundStyle(.tertiary)
                     .font(.footnote)
                     .bold()
@@ -169,7 +170,7 @@ struct SettingsAboutDetailListView: View {
             HStack {
                 Text("Settings.about.privacy-policy")
                 Spacer()
-                Image(systemName: "chevron.forward")
+                Image(systemName: .chevronForward)
                     .foregroundStyle(.tertiary)
                     .font(.footnote)
                     .bold()
@@ -189,7 +190,7 @@ struct SettingsAboutDetailListView: View {
                 HStack {
                     Text(verbatim: "蜀ICP备2025125473号-17A")
                     Spacer()
-                    Image(systemName: "arrow.up.forward.app")
+                    Image(systemName: .arrowUpForwardApp)
                         .foregroundStyle(.secondary)
                 }
                 .contentShape(Rectangle())
@@ -239,7 +240,7 @@ struct SettingsAboutAcknowledgementsView: View {
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Image(systemName: "chevron.forward")
+                    Image(systemName: .chevronForward)
                         .foregroundStyle(.secondary)
                         .rotationEffect(Angle(degrees: isExpanded ? 90 : 0))
                 }

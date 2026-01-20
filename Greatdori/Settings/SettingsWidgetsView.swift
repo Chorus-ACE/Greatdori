@@ -20,6 +20,7 @@ import MarkdownUI
 import SwiftUI
 import WidgetKit
 import SDWebImageSwiftUI
+import SymbolAvailability
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct SettingsWidgetsView: View {
@@ -50,7 +51,7 @@ struct SettingsWidgetsView: View {
                                     Text("\(item.cards.count)")
                                         .foregroundStyle(.secondary)
                                 }
-                                Image(systemName: "chevron.forward")
+                                Image(systemName: .chevronForward)
                                     .foregroundStyle(.tertiary)
                                     .font(.footnote)
                                     .bold()
@@ -198,7 +199,7 @@ struct SettingsWidgetsView: View {
                                 Text("\(item.cards.count)")
                                     .foregroundStyle(.secondary)
                             }
-                            Image(systemName: "chevron.forward")
+                            Image(systemName: .chevronForward)
                                 .foregroundStyle(.tertiary)
                                 .font(.footnote)
                                 .bold()
@@ -541,9 +542,9 @@ struct SettingsWidgetsCollectionDetailsView: View {
                             showCollectionCodeDialog = true
                         }, label: {
                             if showExportCheckmark {
-                                Image(systemName: "checkmark")
+                                Image(systemName: .checkmark)
                             } else {
-                                Image(systemName: "square.and.arrow.up")
+                                Image(systemName: .squareAndArrowUp)
                             }
                         })
                     })
@@ -889,7 +890,7 @@ struct SettingsWidgetsCollectionsItemActionMenuView: View {
                 }
             }
         }, label: {
-            Image(systemName: "ellipsis.circle")
+            Image(systemName: .ellipsisCircle)
                 .font(isMACOS ? .body : .title3)
         })
     }

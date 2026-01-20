@@ -17,6 +17,7 @@ import DoriKit
 import SwiftUI
 import QuickLook
 import SDWebImageSwiftUI
+import SymbolAvailability
 
 @resultBuilder
 struct ArtsBuilder {
@@ -369,7 +370,7 @@ struct ImageLookView: View {
                                 }
                             }
                         } else {
-                            Image(systemName: "checkmark")
+                            Image(systemName: .checkmark)
                         }
                     }
                     if #available(iOS 26.0, *) {

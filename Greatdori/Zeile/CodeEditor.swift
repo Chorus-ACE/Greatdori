@@ -16,6 +16,7 @@ import Combine
 import SwiftUI
 import DoriKit
 import SDWebImageSwiftUI
+import SymbolAvailability
 
 #if os(macOS)
 import Carbon.HIToolbox.Events
@@ -1332,19 +1333,19 @@ private struct CodeCompletionView: View {
                                         Group {
                                             switch result.itemType {
                                             case .function:
-                                                Image(systemName: "f.cursive")
+                                                Image(systemName: .fCursive)
                                             case .staticMethod:
                                                 Text(verbatim: "M")
                                             case .instanceMethod:
                                                 Text(verbatim: "I")
                                             case .keyword:
-                                                Image(systemName: "circle.fill")
+                                                Image(systemName: .circleFill)
                                                     .font(.system(size: 3))
                                             case .file:
-                                                Image(systemName: "document.fill")
+                                                Image(systemName: .docFill)
                                                     .font(.system(size: 9, weight: .medium))
                                             case .folder:
-                                                Image(systemName: "folder.fill")
+                                                Image(systemName: .folderFill)
                                                     .font(.system(size: 9, weight: .medium))
                                             default:
                                                 Text(result.itemType.rawValue.first!.uppercased())

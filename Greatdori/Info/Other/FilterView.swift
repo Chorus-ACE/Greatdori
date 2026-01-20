@@ -15,6 +15,7 @@
 import DoriKit
 import SDWebImageSwiftUI
 import SwiftUI
+import SymbolAvailability
 #if os(iOS)
 import UIKit
 #endif
@@ -257,7 +258,7 @@ struct FilterItemView: View {
                                                     .frame(width: filterItemHeight, height: filterItemHeight)
                                                     .scaleEffect([DoriFrontend.Filter.Key.attribute, DoriFrontend.Filter.Key.character].contains(key) ? 0.9 : 0.75)
                                             } else {
-                                                Image(systemName: "person.fill")
+                                                Image(systemName: .personFill)
                                                     .frame(width: filterItemHeight*0.95, height: filterItemHeight*0.95)
                                             }
                                         }

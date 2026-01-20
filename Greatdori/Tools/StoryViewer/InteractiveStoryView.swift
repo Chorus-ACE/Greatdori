@@ -19,6 +19,7 @@ import SwiftUI
 import MetalKit
 import Alamofire
 import SDWebImageSwiftUI
+import SymbolAvailability
 @_spi(Advanced) import SwiftUIIntrospect
 
 @safe
@@ -356,7 +357,7 @@ struct InteractiveStoryView: View {
                     Button(action: {
                         interactivePlayerIsInFullScreen.wrappedValue = false
                     }, label: {
-                        Image(systemName: "xmark")
+                        Image(systemName: .xmark)
                     })
                 }
             }
@@ -465,7 +466,7 @@ struct InteractiveStoryView: View {
                 }
             }
         } label: {
-            Image(systemName: "ellipsis")
+            Image(systemName: .ellipsis)
                 .wrapIf(!isMACOS) {
                     $0.font(.system(size: 20)).padding(5)
                         .wrapIf(isvAlwaysFullScreen) { content in

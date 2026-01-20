@@ -73,6 +73,9 @@
 		8C499F8D2E4FD9CE0073FCB6 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 8C499F8C2E4FD9CE0073FCB6 /* SwiftUIIntrospect */; };
 		8C499F8F2E4FEAC20073FCB6 /* OnChange+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */; };
 		8C499F992E5177540073FCB6 /* NewsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F982E51774F0073FCB6 /* NewsDetailView.swift */; };
+		8C554EEB2F1D2F9000123F51 /* SymbolAvailability in Frameworks */ = {isa = PBXBuildFile; productRef = 8C554EEA2F1D2F9000123F51 /* SymbolAvailability */; };
+		8C554EED2F1D340800123F51 /* SymbolAvailability in Frameworks */ = {isa = PBXBuildFile; productRef = 8C554EEC2F1D340800123F51 /* SymbolAvailability */; };
+		8C5551F52F1F8EC700123F51 /* SymbolFallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5551F42F1F8EC200123F51 /* SymbolFallback.swift */; };
 		8C5AD1B02E46F96700E61653 /* SongMetaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5AD1AF2E46F96200E61653 /* SongMetaView.swift */; };
 		8C6264EF2E9105D600FF6950 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 8C6264EE2E9105D600FF6950 /* SwiftUIIntrospect */; };
 		8C6B8FC42E75373F00452D7B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9D96AA32E752BE7005E0F2C /* InfoPlist.strings */; };
@@ -570,6 +573,7 @@
 		8C499F892E4FCC050073FCB6 /* TestLyrics.json */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLyrics.json; sourceTree = "<group>"; };
 		8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnChange+.swift"; sourceTree = "<group>"; };
 		8C499F982E51774F0073FCB6 /* NewsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailView.swift; sourceTree = "<group>"; };
+		8C5551F42F1F8EC200123F51 /* SymbolFallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolFallback.swift; sourceTree = "<group>"; };
 		8C5AD1AF2E46F96200E61653 /* SongMetaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongMetaView.swift; sourceTree = "<group>"; };
 		8C5AD1B72E47317D00E61653 /* .mailmap */ = {isa = PBXFileReference; lastKnownFileType = text; path = .mailmap; sourceTree = "<group>"; };
 		8C6C0EC22E40D71300D1FB0A /* CommunityStoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityStoriesView.swift; sourceTree = "<group>"; };
@@ -868,6 +872,7 @@
 				8C923D842E304899003AFC0A /* SDWebImageSVGCoder in Frameworks */,
 				8C923D822E304899003AFC0A /* SDWebImageSwiftUI in Frameworks */,
 				8C2C89262E9E153400058FF7 /* DoriKit.framework in Frameworks */,
+				8C554EEB2F1D2F9000123F51 /* SymbolAvailability in Frameworks */,
 				E94944E22E92A19600E50D3F /* MarkdownUI in Frameworks */,
 				8C6264EF2E9105D600FF6950 /* SwiftUIIntrospect in Frameworks */,
 				8CE0BBAC2ED2FE1F00E22ED6 /* SwiftJWT in Frameworks */,
@@ -907,6 +912,7 @@
 				8CB4D4AF2E44871D0085D57A /* BuiltinCardCollections.framework in Frameworks */,
 				8C6C0ECD2E422F9000D1FB0A /* SwiftUI.framework in Frameworks */,
 				8C6C0ECB2E422F9000D1FB0A /* WidgetKit.framework in Frameworks */,
+				8C554EED2F1D340800123F51 /* SymbolAvailability in Frameworks */,
 				8C2C891F2E9E152600058FF7 /* DoriKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1530,6 +1536,7 @@
 				8C3DFB1F2EAFA1610004E1F5 /* URLHandler.swift */,
 				8CE0BBAD2ED2FE7200E22ED6 /* Secrets.swift.gyb */,
 				8C719D102EF03AE300E8645B /* StableHasher.swift */,
+				8C5551F42F1F8EC200123F51 /* SymbolFallback.swift */,
 			);
 			path = Methods;
 			sourceTree = "<group>";
@@ -1661,6 +1668,7 @@
 				8CE0BBAB2ED2FE1F00E22ED6 /* SwiftJWT */,
 				E97810BB2EE9486D000AD397 /* Mute */,
 				8C2EBE9A2F0428FD006BC253 /* EFQRCode */,
+				8C554EEA2F1D2F9000123F51 /* SymbolAvailability */,
 			);
 			productName = Greatdori;
 			productReference = 8C0C995D2E296A4400549B5C /* Greatdori!.app */;
@@ -1733,6 +1741,7 @@
 			);
 			name = "Greatdori Widgets";
 			packageProductDependencies = (
+				8C554EEC2F1D340800123F51 /* SymbolAvailability */,
 			);
 			productName = "Greatdori WidgetsExtension";
 			productReference = 8C6C0EC92E422F8F00D1FB0A /* Greatdori Widgets.appex */;
@@ -1881,6 +1890,7 @@
 				E97810BA2EE9486D000AD397 /* XCRemoteSwiftPackageReference "Mute" */,
 				E9CA1FD02EFEC7A0005932E5 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				8C2EBE992F0428FC006BC253 /* XCRemoteSwiftPackageReference "EFQRCode" */,
+				8C554EE92F1D2F9000123F51 /* XCRemoteSwiftPackageReference "SymbolAvailability" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8C0C995E2E296A4400549B5C /* Products */;
@@ -2114,6 +2124,7 @@
 				E949A5632EAA0231007441A6 /* ViewModifiers.swift in Sources */,
 				8C6C0EF82E42352700D1FB0A /* AppIntents.swift in Sources */,
 				E992283E2EF2AA0C00C123DC /* WhatsNewView.swift in Sources */,
+				8C5551F52F1F8EC700123F51 /* SymbolFallback.swift in Sources */,
 				E9BB28F02EF9B3EB0088B654 /* StoryCardView.swift in Sources */,
 				E94218F52E8AA38300F24974 /* CardInfo.swift in Sources */,
 				E9076E2F2E8B83A100A9F5AE /* SettingsAdvanced.swift in Sources */,
@@ -4176,6 +4187,14 @@
 				minimumVersion = 1.3.0;
 			};
 		};
+		8C554EE92F1D2F9000123F51 /* XCRemoteSwiftPackageReference "SymbolAvailability" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WindowsMEMZ/SymbolAvailability";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		8C8E44F92E5F6867005590F0 /* XCRemoteSwiftPackageReference "swift-syntax" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/swiftlang/swift-syntax";
@@ -4272,6 +4291,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8C499F8B2E4FD9CE0073FCB6 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = SwiftUIIntrospect;
+		};
+		8C554EEA2F1D2F9000123F51 /* SymbolAvailability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C554EE92F1D2F9000123F51 /* XCRemoteSwiftPackageReference "SymbolAvailability" */;
+			productName = SymbolAvailability;
+		};
+		8C554EEC2F1D340800123F51 /* SymbolAvailability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C554EE92F1D2F9000123F51 /* XCRemoteSwiftPackageReference "SymbolAvailability" */;
+			productName = SymbolAvailability;
 		};
 		8C6264EE2E9105D600FF6950 /* SwiftUIIntrospect */ = {
 			isa = XCSwiftPackageProductDependency;

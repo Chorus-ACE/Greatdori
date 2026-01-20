@@ -15,6 +15,7 @@
 import AVKit
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 
 struct CardDetailGachaVoicePlayer: View {
     var url: URL
@@ -55,7 +56,7 @@ struct CardDetailGachaVoicePlayer: View {
                 }
             }
             .background {
-                Image(systemName: "quote.opening")
+                Image(systemName: .quoteOpening)
                     .foregroundStyle(.tertiary)
                     .font(.system(size: 40))
                     .offset(x: -150, y: -10)

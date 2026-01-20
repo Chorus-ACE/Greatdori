@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 
 struct EventCalculatorView: View {
     @State var isChallengeLive: Bool = false
@@ -202,7 +203,7 @@ struct EventCalculatorView: View {
                                             Button(action: {
                                                 naturalFlamesRemainingHours = Double(currentLocaleRemainingHours)
                                             }, label: {
-                                                Image(systemName: "clock")
+                                                Image(systemName: .clock)
                                                     .bold(false)
                                             })
                                             .buttonStyle(.plain)
@@ -220,7 +221,7 @@ struct EventCalculatorView: View {
                                         HStack {
                                             Text("Event-calc.flames.efficiency")
                                             SettingsDocumentButton(document: "EventCalcEfficiency", label: {
-                                                Image(systemName: "questionmark.circle")
+                                                Image(systemName: .questionmarkCircle)
                                             })
                                             .bold(false)
                                             .buttonStyle(.plain)

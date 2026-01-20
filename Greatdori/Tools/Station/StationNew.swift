@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 
 struct StationAddView: View {
     @Environment(\.dismiss) var dismiss
@@ -92,7 +93,7 @@ struct StationAddView: View {
                                 Text("\(wordbank.count)")
                                     .foregroundStyle(.secondary)
                             }
-                            Image(systemName: "chevron.forward")
+                            Image(systemName: .chevronForward)
                                 .foregroundStyle(.secondary)
                                 .rotationEffect(Angle(degrees: wordbankIsExpanded ? 90 : 0))
                         }
@@ -128,7 +129,7 @@ struct StationAddView: View {
                                 wordbank.append(wordbankNewEntry)
                                 wordbankNewEntry = ""
                             }, label: {
-                                Image(systemName: "plus")
+                                Image(systemName: .plus)
                             })
                             .disabled(wordbank.contains(wordbankNewEntry) || wordbankNewEntry.isEmpty)
                         }

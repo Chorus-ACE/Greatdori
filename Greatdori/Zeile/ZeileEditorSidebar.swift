@@ -16,6 +16,7 @@ import Combine
 import DoriKit
 import SwiftUI
 import SDWebImageSwiftUI
+import SymbolAvailability
 import UniformTypeIdentifiers
 @_spi(Advanced) import SwiftUIIntrospect
 
@@ -155,7 +156,7 @@ private struct SidebarCodeListView: View {
         var body: some View {
             NavigationLink(value: project.codeFileWrapper(name: name)) {
                 HStack {
-                    Image(systemName: "curlybraces")
+                    Image(systemName: .curlybraces)
                     TextField("", text: $renameText)
                         .focused($isRenaming)
                         .onSubmit {

@@ -19,6 +19,7 @@ import Mute
 #endif
 import SwiftUI
 import SDWebImageSwiftUI
+import SymbolAvailability
 
 struct StoryDetailView: View {
     var title: LocalizedData<String>
@@ -201,21 +202,21 @@ struct StoryDetailView: View {
                                                                             WebImage(url: url) { image in
                                                                                 image
                                                                             } placeholder: {
-                                                                                Image(systemName: "person.crop.circle")
+                                                                                Image(systemName: .personCropCircle)
                                                                                     .bold()
                                                                             }
                                                                             .resizable()
                                                                             .frame(width: 20, height: 20)
                                                                         } else {
-                                                                            Image(systemName: "person.crop.circle")
+                                                                            Image(systemName: .personCropCircle)
                                                                                 .bold()
                                                                         }
                                                                     case .multiple:
-                                                                        Image(systemName: "person.3.fill")
+                                                                        Image(systemName: .person3Fill)
                                                                             .bold()
                                                                             .frame(height: 20)
                                                                     case .unknown:
-                                                                        Image(systemName: "person.crop.circle.badge.questionmark")
+                                                                        Image(systemName: .personCropCircleBadgeQuestionmark)
                                                                             .bold()
                                                                             .frame(width: 20, height: 20)
                                                                     }
@@ -305,7 +306,7 @@ struct StoryDetailView: View {
                         LocalePicker($locale)
                             .pickerStyle(.inline)
                     }, label: {
-                        Image(systemName: "globe")
+                        Image(systemName: .globe)
                     })
                     .onChange(of: locale) {
                         Task {
@@ -326,7 +327,7 @@ struct StoryDetailView: View {
                     Button(action: {
                         interactivePlayerIsInFullScreen.toggle()
                     }, label: {
-                        Image(systemName: "arrow.down.backward.and.arrow.up.forward")
+                        Image(systemName: .arrowDownBackwardAndArrowUpForward)
                     })
                 }
             }

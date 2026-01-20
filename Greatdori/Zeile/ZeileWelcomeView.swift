@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 
 struct ZeileWelcomeView: View {
     var body: some View {
@@ -77,7 +78,7 @@ private struct ZeileWelcomeActions: View {
                     #endif
                 }, label: {
                     HStack {
-                        Image(systemName: "plus.square")
+                        Image(systemName: .plusSquare)
                             .foregroundStyle(.secondary)
                             .frame(width: 20)
                         Text("Zeile.home.new")
@@ -92,7 +93,7 @@ private struct ZeileWelcomeActions: View {
                     isOpenProjectPresented = true
                 }, label: {
                     HStack {
-                        Image(systemName: "folder")
+                        Image(systemName: .folder)
                             .foregroundStyle(.secondary)
                             .frame(width: 20)
                         Text("Zeile.home.open")

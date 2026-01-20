@@ -14,6 +14,7 @@
 
 import DoriKit
 import SwiftUI
+import SymbolAvailability
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable & DoriTypeDescribable, Layout, LayoutPicker: View, Container: View, Content: View>: View {
@@ -315,7 +316,7 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
                 HStack {
                     Text(selection.title.forPreferredLocale() ?? "#\(selection.id)")
                         .multilineTextAlignment(.trailing)
-                    Image(systemName: "chevron.up.chevron.down")
+                    Image(systemName: .chevronUpChevronDown)
                         .bold(isMACOS)
                         .font(.footnote)
                 }
