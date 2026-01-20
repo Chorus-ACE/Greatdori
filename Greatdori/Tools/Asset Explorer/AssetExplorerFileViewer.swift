@@ -225,15 +225,15 @@ struct AssetAudioPlayer: View {
     }
 }
 #else
+private let assetAudioPlayer = AVPlayer()
 struct AssetAudioPlayer: View {
     var url: URL
     var name: String
-    private var player: AVPlayer
     
     init(url: URL, name: String) {
         self.url = url
         self.name = name
-        self.player = .init(url: url)
+        assetAudioPlayer.replaceCurrentItem(with: .init(url: url))
     }
     
     @Environment(\.dismiss) private var dismiss
@@ -300,7 +300,7 @@ struct AssetAudioPlayer: View {
                     .padding(.bottom)
                     Slider(value: $currentTime, in: 0...duration) { isEditing in
                         if !isEditing {
-                            player.seek(to: .init(seconds: currentTime, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                            assetAudioPlayer.seek(to: .init(seconds: currentTime, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
                         }
                         isTimeEditing = isEditing
                     }
@@ -316,16 +316,16 @@ struct AssetAudioPlayer: View {
                     .frame(height: 20)
                 HStack(spacing: 60) {
                     Button(action: {
-                        player.seek(to: .init(seconds: currentTime - 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                        assetAudioPlayer.seek(to: .init(seconds: currentTime - 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
                     }, label: {
                         Image(systemName: "15.arrow.trianglehead.counterclockwise")
                     })
                     .font(.system(size: 30))
                     Button(action: {
                         if isPlaying {
-                            player.pause()
+                            assetAudioPlayer.pause()
                         } else {
-                            player.play()
+                            assetAudioPlayer.play()
                         }
                     }, label: {
                         if isPlaying {
@@ -336,7 +336,7 @@ struct AssetAudioPlayer: View {
                     })
                     .font(.system(size: 60))
                     Button(action: {
-                        player.seek(to: .init(seconds: currentTime + 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+                        assetAudioPlayer.seek(to: .init(seconds: currentTime + 15, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
                     }, label: {
                         Image(systemName: "15.arrow.trianglehead.clockwise")
                     })
@@ -349,7 +349,7 @@ struct AssetAudioPlayer: View {
                     Image(systemName: "speaker.fill")
                     Slider(value: $volume)
                         .onChange(of: volume) {
-                            player.volume = Float(volume)
+                            assetAudioPlayer.volume = Float(volume)
                         }
                     Image(systemName: "speaker.wave.3.fill")
                 }
@@ -366,25 +366,27 @@ struct AssetAudioPlayer: View {
         .preferredColorScheme(.dark)
         .presentationBackground(Color.clear)
         .onAppear {
-            player.play()
+            #if !os(macOS)
+            try? AVAudioSession.sharedInstance().setActive(true)
+            #endif
+            assetAudioPlayer.play()
             timeUpdateTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
                 DispatchQueue.main.async {
                     if !isTimeEditing {
-                        currentTime = player.currentTime().seconds
+                        currentTime = assetAudioPlayer.currentTime().seconds
                     }
                 }
             }
         }
         .onDisappear {
             timeUpdateTimer?.invalidate()
-            player.pause()
         }
-        .onReceive(player.publisher(for: \.currentItem?.duration)) { duration in
+        .onReceive(assetAudioPlayer.publisher(for: \.currentItem?.duration)) { duration in
             if let duration, duration.seconds.isFinite {
                 self.duration = duration.seconds
             }
         }
-        .onReceive(player.publisher(for: \.timeControlStatus)) { status in
+        .onReceive(assetAudioPlayer.publisher(for: \.timeControlStatus)) { status in
             isPlaying = status == .playing
         }
     }
@@ -409,9 +411,9 @@ struct AssetVideoPlayer: View {
     
     init(url: URL) {
         self.player = .init(url: url)
-#if os(iOS)
+        #if os(iOS)
         setDeviceOrientation(allowing: .landscape)
-#endif
+        #endif
     }
     
     @Environment(\.dismiss) private var dismiss
@@ -425,9 +427,9 @@ struct AssetVideoPlayer: View {
                         .toolbar {
                             ToolbarItem {
                                 Button(action: {
-#if os(iOS)
+                                    #if os(iOS)
                                     setDeviceOrientation(to: .portrait, allowing: .portrait)
-#endif
+                                    #endif
                                     dismiss()
                                 }, label: {
                                     Image(systemName: "xmark")

@@ -95,7 +95,6 @@ struct ISVBacklogView: View {
                             if let voice = talk.voicePath, let audioData = audios[voice] {
                                 if let player = try? AVAudioPlayer(data: audioData) {
                                     currentAudioPlayer = player
-                                    setupAudioSession()
                                     currentAudioPlayer?.play()
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
                                         _fixLifetime(player)

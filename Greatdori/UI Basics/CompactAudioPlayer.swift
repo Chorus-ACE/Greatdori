@@ -46,10 +46,11 @@ struct CompactAudioPlayer: View {
     @State private var timeUpdateTimer: Timer?
     @State private var isTimeEditing = false
     var body: some View {
-        //        CustomGroupBox(cornerRadius: 3417) {
         HStack {
             Button(action: {
-                setupAudioSession()
+                #if !os(macOS)
+                try? AVAudioSession.sharedInstance().setActive(!isPlaying)
+                #endif
                 if let mediaInfo {
                     configureNowPlaying(title: mediaInfo.title, artist: mediaInfo.artist, player: player, artworkURL: mediaInfo.artwork)
                 }
@@ -85,7 +86,6 @@ struct CompactAudioPlayer: View {
                 })
             }
         }
-        //        }
         .onAppear {
             timeUpdateTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
                 DispatchQueue.main.async {
@@ -120,20 +120,6 @@ struct CompactAudioPlayer: View {
         return "\(minutes):\(seconds)"
     }
 }
-
-
-func setupAudioSession() {
-#if os(iOS)
-    let session = AVAudioSession.sharedInstance()
-    do {
-        try session.setCategory(.playback, mode: .default, options: [])
-        try session.setActive(true)
-    } catch {
-        print("Audio session error: \(error)")
-    }
-#endif
-}
-
 
 func configureNowPlaying(
     title: String?,
