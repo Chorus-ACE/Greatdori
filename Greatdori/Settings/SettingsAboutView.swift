@@ -204,14 +204,14 @@ struct SettingsAboutAcknowledgementsView: View {
     var body: some View {
         Form {
             Section {
-                ForEach(getAcknowledgements(), id: \.self) { item in
+                ForEach(packageAcknowledgements, id: \.self) { item in
                     SettingsAboutAcknowledgementItem(type: .package, item: item)
                 }
             } header: {
                 Text("Settings.about.acknowledgements.packages")
             }
             Section {
-                ForEach(codeSnippetsAck, id: \.self) { item in
+                ForEach(codeSnippetAcknowledgements, id: \.self) { item in
                     SettingsAboutAcknowledgementItem(type: .codeSnippet, item: item)
                 }
             } header: {
@@ -270,9 +270,4 @@ struct SettingsAboutAcknowledgementsView: View {
     }
 }
 
-struct AcknowledgementItem: Equatable, Hashable {
-    var title: String
-    var subtitle: String
-    var licenseVerbatim: String
-    var notes: String? = nil
-}
+
