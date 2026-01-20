@@ -403,13 +403,15 @@ struct EventTrackerView: View {
     
     func getEvents() async {
         eventListIsAvailabile = true
+        var previousDateUpdateTask: Task<Void, Never>?
         withDoriCache(id: "EventList", trait: .realTime) {
             await PreviewEvent.all()
         }.onUpdate {
             if let events = $0 {
                 self.eventList = events
                 self.selectedEvent = events.sorted(withDoriSorter: DoriSorter(keyword: .releaseDate(in: DoriLocale.primaryLocale))).first
-                Task {
+                previousDateUpdateTask?.cancel()
+                previousDateUpdateTask = Task {
                     await updateTrackerData()
                 }
             } else {
