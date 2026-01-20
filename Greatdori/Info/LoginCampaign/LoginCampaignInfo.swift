@@ -40,12 +40,12 @@ struct LoginCampaignInfo: View {
                     .resizable()
                     .antialiased(true)
                     .aspectRatio(184/110, contentMode: .fit)
-                    .frame(width: 184, height: 110)
+                    .frame(width: 184 / 3 * (isMACOS ? 3 : 2), height: 110 / 3 * (isMACOS ? 3 : 2))
                     .cornerRadius(5)
             } placeholder: {
                 RoundedRectangle(cornerRadius: 5)
                     .fill(getPlaceholderColor())
-                    .frame(width: 184, height: 110)
+                    .frame(width: 184 / 3 * (isMACOS ? 3 : 2), height: 110 / 3 * (isMACOS ? 3 : 2))
             }
             .interpolation(.high)
         } detail: {
