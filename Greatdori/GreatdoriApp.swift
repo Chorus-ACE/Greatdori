@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import AVFoundation
 import Combine
 import DoriKit
 import SDWebImage
@@ -19,13 +20,13 @@ import SDWebImageSVGCoder
 import SwiftUI
 import UserNotifications
 @_spi(Advanced) import SwiftUIIntrospect
+
 #if os(iOS)
 import UIKit
 import BackgroundTasks
 #else
 import AppKit
 #endif
-
 
 // MARK: System Orientation
 #if os(macOS)
@@ -146,18 +147,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         SDImageCodersManager.shared.addCoder(SDImageSVGCoder.shared)
         
-//        if isFirstLaunch {
-//            DoriAPI.preferredLocale = switch locale.language {
-//            case let x where x.hasCommonParent(with: .init(identifier: "ja-JP")): .jp
-//            case let x where x.hasCommonParent(with: .init(identifier: "en-US")): .en
-//            case let x where x.isEquivalent(to: .init(identifier: "zh-TW")): .tw
-//            case let x where x.hasCommonParent(with: .init(identifier: "zh-CN")): .cn
-//            case let x where x.hasCommonParent(with: .init(identifier: "ko-KO")): .kr
-//            default: .jp
-//            }
-//            isFirstLaunch = false
-//        }
-        
         // Don't say lazy
         _ = NetworkMonitor.shared
         
@@ -187,22 +176,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     ) -> Bool {
         SDImageCodersManager.shared.addCoder(SDImageSVGCoder.shared)
         
-//        if isFirstLaunch {
-//            DoriAPI.preferredLocale = switch locale.language {
-//            case let x where x.hasCommonParent(with: .init(identifier: "ja-JP")): .jp
-//            case let x where x.hasCommonParent(with: .init(identifier: "en-US")): .en
-//            case let x where x.isEquivalent(to: .init(identifier: "zh-TW")): .tw
-//            case let x where x.hasCommonParent(with: .init(identifier: "zh-CN")): .cn
-//            case let x where x.hasCommonParent(with: .init(identifier: "ko-KO")): .kr
-//            default: .jp
-//            }
-//            isFirstLaunch = false
-//        }
-        
         // Don't say lazy
         _ = NetworkMonitor.shared
         
         initializeISV_ABTest()
+        
+        try? AVAudioSession.sharedInstance().setCategory(
+            .playback,
+            mode: .default,
+            options: []
+        )
         
         return true
     }

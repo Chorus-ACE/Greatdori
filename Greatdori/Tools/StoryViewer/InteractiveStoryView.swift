@@ -257,7 +257,9 @@ struct InteractiveStoryView: View {
         }
         .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration))
         .onAppear {
-            setupAudioSession()
+            #if !os(macOS)
+            try? AVAudioSession.sharedInstance().setActive(true)
+            #endif
             if backgroundImageURL != nil {
                 return
             }
@@ -822,6 +824,9 @@ struct InteractiveStoryView: View {
         
         #if os(iOS)
         setDeviceOrientation(to: .portrait, allowing: .portrait)
+        #endif
+        #if !os(macOS)
+        try? AVAudioSession.sharedInstance().setActive(false)
         #endif
     }
 }
