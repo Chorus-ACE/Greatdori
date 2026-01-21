@@ -165,7 +165,8 @@ func _handleURL(_ url: URL) {
             }
         }
     case "share-collection.html":
-        if let code = components.queryItems?.first(where: { $0.name == "code" })?.value,
+        if #available(visionOS 26.0, *),
+           let code = components.queryItems?.first(where: { $0.name == "code" })?.value,
            decodeCollection(code) != nil {
             struct V: View {
                 var code: String

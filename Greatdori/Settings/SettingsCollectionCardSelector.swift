@@ -17,6 +17,7 @@ import SwiftUI
 import SymbolAvailability
 
 // MARK: CollectionEditorView
+@available(visionOS 26.0, *)
 struct CollectionEditorView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.dismiss) var dismiss
@@ -101,6 +102,7 @@ struct CollectionEditorView: View {
             }
             .searchable(text: $searchedText, prompt: "Search.prompt.\(String(localized: "Cards"))")
             .navigationTitle("Cards")
+            #if !os(visionOS)
             .wrapIf(searchedCards != nil, in: { content in
                 if #available(iOS 26.0, *) {
                     content.navigationSubtitle(showAutoSaveTip ? "Settings.widgets.collection.selector.auto-save" : ((searchedText.isEmpty && !filter.isFiltered) ? "Card.count.\(searchedCards!.count)" :  "Search.result.\(searchedCards!.count)"))
@@ -119,6 +121,7 @@ struct CollectionEditorView: View {
                     content
                 }
             })
+            #endif
             .toolbar {
                 if selectAllTotalRequestedItemsCount != 0 {
                     ToolbarItem {
@@ -258,9 +261,11 @@ struct CollectionEditorView: View {
                         Image(systemName: .ellipsis)
                     })
                 }
+                #if !os(visionOS)
                 if #available(iOS 26.0, macOS 26.0, *) {
                     ToolbarSpacer()
                 }
+                #endif
                 if isMACOS {
                     ToolbarItemGroup {
                         FilterAndSorterPicker(showFilterSheet: $showFilterSheet, sorter: $sorter, filterIsFiltering: filter.isFiltered, sorterKeywords: PreviewCard.applicableSortingTypes, hasEndingDate: false)
@@ -271,10 +276,18 @@ struct CollectionEditorView: View {
                             Image(systemName: .checkmark)
                         })
                         .wrapIf(true, in: { content in
+                            #if !os(visionOS)
                             if #available(iOS 26.0, macOS 26.0, *) {
                                 content
                                     .buttonStyle(.glassProminent)
+                            } else {
+                                content
+                                    .buttonStyle(.borderedProminent)
                             }
+                            #else
+                            content
+                                .buttonStyle(.borderedProminent)
+                            #endif
                         })
                     }
                 }
@@ -284,6 +297,7 @@ struct CollectionEditorView: View {
         .onDisappear {
             showFilterSheet = false
         }
+        #if !os(visionOS)
         .wrapIf(isMACOS, in: {
             $0.inspector(isPresented: $showFilterSheet) {
                 FilterView(filter: $filter, includingKeys: Set(CardWithBand.applicableFilteringKeys))
@@ -296,6 +310,14 @@ struct CollectionEditorView: View {
                     .presentationBackgroundInteraction(.enabled)
             }
         })
+        #else
+        .sheet(isPresented: $showFilterSheet) {
+            FilterView(filter: $filter, includingKeys: Set(CardWithBand.applicableFilteringKeys))
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackgroundInteraction(.enabled)
+        }
+        #endif
         .withSystemBackground()
         .task {
             await getCards()
@@ -439,6 +461,7 @@ struct CollectionEditorView: View {
     }
 }
 
+@available(visionOS 26.0, *)
 struct CollectionEditorItemView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     

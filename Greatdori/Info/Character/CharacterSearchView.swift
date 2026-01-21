@@ -149,6 +149,7 @@ struct CharacterSearchView: View {
             }
         }
         .navigationTitle("Character")
+        #if !os(visionOS)
         .wrapIf(isMACOS && bandArray.count > 0, in: { content in
             if #available(iOS 26.0, macOS 26.0, *) {
                 content
@@ -157,6 +158,7 @@ struct CharacterSearchView: View {
                 content
             }
         })
+        #endif
         .task {
             await getCharacters()
         }

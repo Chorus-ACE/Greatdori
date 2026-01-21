@@ -204,6 +204,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
             }
             .searchable(text: $searchedText, prompt: "Search.prompt.\(Element.pluralName)")
             .navigationTitle(Element.pluralName)
+            #if !os(visionOS)
             .wrapIf(searchedElements != nil, in: { content in
                 if #available(iOS 26.0, *) {
                     content.navigationSubtitle((searchedText.isEmpty && !filter.isFiltered) ? (getResultCountDescription?(searchedElements!.count) ?? "Search.item.\(searchedElements!.count)") :  "Search.result.\(searchedElements!.count)")
@@ -211,29 +212,42 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
                     content
                 }
             })
+            #endif
             .toolbar {
                 ToolbarItem {
                     makeLayoutPicker($currentLayout)
                 }
+                #if !os(visionOS)
                 if #available(iOS 26.0, macOS 26.0, *) {
                     ToolbarSpacer()
                 }
+                #endif
                 ToolbarItemGroup {
                     FilterAndSorterPicker(showFilterSheet: $showFilterSheet, sorter: $sorter, filterIsFiltering: filter.isFiltered, sorterKeywords: Element.applicableSortingTypes, hasEndingDate: false)
                 }
+                #if !os(visionOS)
                 if #available(iOS 26.0, macOS 26.0, *) {
                     ToolbarSpacer()
                 }
+                #endif
                 if !supportsMultipleWindows {
                     ToolbarItem {
                         Button("Done", systemImage: "checkmark") {
                             dismiss()
                         }
                         .wrapIf(true) { content in
+                            #if !os(visionOS)
                             if #available(iOS 26.0, macOS 26.0, *) {
                                 content
                                     .buttonStyle(.glassProminent)
+                            } else {
+                                content
+                                    .buttonStyle(.borderedProminent)
                             }
+                            #else
+                            content
+                                .buttonStyle(.borderedProminent)
+                            #endif
                         }
                     }
                 }
@@ -243,12 +257,14 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
             }
         }
         .withSystemBackground()
+        #if !os(visionOS)
         .inspector(isPresented: $showFilterSheet) {
             FilterView(filter: $filter, includingKeys: Set(Element.applicableFilteringKeys))
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackgroundInteraction(.enabled)
         }
+        #endif
         .withSystemBackground() // This modifier MUST be placed BOTH before
                                 // and after `inspector` to make it work as expected
         .task {

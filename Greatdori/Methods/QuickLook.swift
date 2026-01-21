@@ -18,7 +18,7 @@ import QuickLook
 import QuickLookUI
 #endif
 
-#if os(iOS)
+#if !os(macOS)
 struct QuickLookPreview: UIViewControllerRepresentable {
     let url: URL
     

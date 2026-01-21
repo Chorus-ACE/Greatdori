@@ -667,7 +667,11 @@ private struct ChartPlayerView: UIViewRepresentable {
         let view = MTKView()
         view.device = device
         view.delegate = context.coordinator
+        #if !os(visionOS)
         view.preferredFramesPerSecond = UIScreen.main.maximumFramesPerSecond
+        #else
+        view.preferredFramesPerSecond = 120
+        #endif
         return view
     }
     func updateUIView(_ uiView: UIViewType, context: Context) {}

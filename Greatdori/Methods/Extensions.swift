@@ -65,7 +65,7 @@ extension Button {
         action: @escaping @MainActor () -> Void,
         @ViewBuilder label: () -> Label
     ) {
-        if #available(iOS 26.0, macOS 26.0, *), let role = optionalRole {
+        if #available(iOS 26.0, macOS 26.0, visionOS 26.0, *), let role = optionalRole {
             var roleTable: [UniversalButtonRole: ButtonRole] = [.cancel: .cancel, .destructive: .destructive, .close: .close, .confirm: .confirm]
             self.init(role: roleTable[role]!, action: action, label: label)
         } else {

@@ -202,7 +202,6 @@ struct InteractiveStoryView: View {
                 }
                 .typesettingLanguage(locale.nsLocale().language)
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)).combined(with: .opacity))
-//                .scaleEffect()
             }
             
             // MARK: - Menu
@@ -211,20 +210,23 @@ struct InteractiveStoryView: View {
                     HStack {
                         Spacer()
                         VStack {
+                            #if !os(visionOS)
                             if #available(iOS 26.0, macOS 26.0, *) {
                                 actionMenu
-//                                    .font(.body)
                                     .buttonStyle(.glass)
                                     .buttonBorderShape(.circle)
-//                                    .frame(width: 30, height: 30)
                             } else {
                                 actionMenu
                                     .buttonStyle(.bordered)
                                     .buttonBorderShape(.circle)
                             }
+                            #else
+                            actionMenu
+                                .buttonStyle(.bordered)
+                                .buttonBorderShape(.circle)
+                            #endif
                             Spacer()
                         }
-                        //                    .border(.blue)
                     }
                     .padding(.vertical, 7)
                 }

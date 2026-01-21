@@ -78,6 +78,7 @@ struct NewsView: View {
         }
         .withSystemBackground()
         .navigationTitle("Home.news")
+        #if !os(visionOS)
         .wrapIf(filter != nil && !isMACOS, in: { content in
             if #available(iOS 26.0, *) {
                 content
@@ -86,6 +87,7 @@ struct NewsView: View {
                 content
             }
         })
+        #endif
         .task {
             DoriCache.withCache(id: "News_\(filter)", trait: .realTime) {
                 await DoriFrontend.News.list(filter: filter)

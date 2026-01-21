@@ -472,12 +472,14 @@ func determineCollectionCodeVersion(_ input: String) -> CollectionCodeVersion? {
     return nil
 }
 
+@available(visionOS 26.0, *)
 extension CardCollectionManager.Collection {
     public func toCollectionCodeStructure(hideName: Bool = false) -> CollectionEncodingInfo {
         return .init(name: hideName ? "" : self.name, cardList: self.cards.map { $0.isTrained ? -$0.id : $0.id })
     }
 }
 
+@available(visionOS 26.0, *)
 extension CollectionEncodingInfo {
     public func toCollectionManagerStructure() async -> CardCollectionManager.Collection {
         var allCollectionCards: [CardCollectionManager.Card] = []

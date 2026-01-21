@@ -21,7 +21,7 @@ import SwiftUI
 import UserNotifications
 @_spi(Advanced) import SwiftUIIntrospect
 
-#if os(iOS)
+#if !os(macOS)
 import UIKit
 import BackgroundTasks
 #else
@@ -94,7 +94,7 @@ struct GreatdoriApp: App {
             case .inactive:
                 break
             case .active:
-                #if os(iOS)
+                #if !os(macOS)
                 UNUserNotificationCenter.current().setBadgeCount(0)
                 UIApplication.shared.registerForRemoteNotifications()
                 #else

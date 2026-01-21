@@ -19,6 +19,7 @@ import WidgetKit
 import Foundation
 private import BuiltinCardCollections
 
+@available(visionOS 26.0, *)
 final class CardCollectionManager: @unchecked Sendable, ObservableObject {
     static let shared = CardCollectionManager()
     
@@ -243,6 +244,7 @@ final class CardCollectionManager: @unchecked Sendable, ObservableObject {
     }
 }
 
+@available(visionOS 26.0, *)
 extension CardCollectionManager.Collection {
     fileprivate init(builtin collection: BuiltinCardCollection) {
         self.init(

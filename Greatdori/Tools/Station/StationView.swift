@@ -97,9 +97,11 @@ struct StationView: View {
                 })
             }
             
+            #if !os(visionOS)
             if #available(iOS 26.0, macOS 26.0, *) {
                 ToolbarSpacer()
             }
+            #endif
             
             ToolbarItem {
                 Button(action: {
@@ -112,6 +114,7 @@ struct StationView: View {
         .sheet(isPresented: $newGameplaySheetIsDisplaying, content: {
             StationAddView()
         })
+        #if !os(visionOS)
         .wrapIf(sizeClass == .regular) { content in
             content
                 .inspector(isPresented: $filterIsDisplaying) {
@@ -129,6 +132,7 @@ struct StationView: View {
                         .presentationBackgroundInteraction(.enabled)
                 }
         }
+        #endif
     }
     
     func startConnection() {

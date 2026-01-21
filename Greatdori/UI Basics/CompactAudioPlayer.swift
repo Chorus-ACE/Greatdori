@@ -78,7 +78,7 @@ struct CompactAudioPlayer: View {
                     isTimeEditing = isEditing
                 }
                 .wrapIf(true, in: {
-                    if #available(iOS 26.0, macOS 26.0, *) {
+                    if #available(iOS 26.0, macOS 26.0, visionOS 26.0, *) {
                         $0.sliderThumbVisibility(.hidden)
                     } else {
                         $0

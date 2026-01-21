@@ -25,7 +25,7 @@ import SwiftyJSON
 import UniformTypeIdentifiers
 import Vision
 
-#if os(iOS)
+#if !os(macOS)
 import UIKit
 #else
 import IOKit
@@ -44,7 +44,7 @@ func bindingCast<T, U>(_ binding: Binding<T>, to type: U.Type) -> Binding<U>? {
 }
 
 func caffeinate(reason: String) -> UInt32? {
-    #if os(iOS)
+    #if !os(macOS)
     DispatchQueue.main.async {
         UIApplication.shared.isIdleTimerDisabled = true
     }
@@ -65,7 +65,7 @@ func caffeinate(reason: String) -> UInt32? {
     #endif
 }
 func decaffeinate(_ id: UInt32?) {
-    #if os(iOS)
+    #if !os(macOS)
     DispatchQueue.main.async {
         UIApplication.shared.isIdleTimerDisabled = false
     }
@@ -212,6 +212,7 @@ func getPlaceholderColor() -> Color {
 #endif
 }
 
+#if canImport(DoriAssetShims)
 // MARK: getProperDataSourceType
 @MainActor func getProperDataSourceType(dataPrefersInternet: Bool = false) -> OfflineAssetBehavior {
     let dataSourcePreference = DataSourcePreference(rawValue: UserDefaults.standard.string(forKey: "DataSourcePreference") ?? "hybrid") ?? .hybrid
@@ -228,11 +229,12 @@ func getPlaceholderColor() -> Color {
         return .disabled
     }
 }
+#endif // canImport(DoriAssetShims)
 
 // MARK: getSecondaryBackgroundColor
 @inline(__always)
 func getTertiaryLabelColor() -> Color {
-#if os(iOS)
+#if !os(macOS)
     return Color(UIColor.tertiaryLabel)
 #else
     return Color(NSColor.tertiaryLabelColor)

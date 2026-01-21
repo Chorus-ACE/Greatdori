@@ -92,6 +92,7 @@ struct SettingsStoryView: View {
                             }
                             .buttonBorderShape(.capsule)
                             .wrapIf(true) { content in
+                                #if !os(visionOS)
                                 if #available(iOS 26.0, macOS 26.0, *) {
                                     content
                                         .buttonStyle(.glass)
@@ -99,6 +100,10 @@ struct SettingsStoryView: View {
                                     content
                                         .buttonStyle(.bordered)
                                 }
+                                #else
+                                content
+                                    .buttonStyle(.bordered)
+                                #endif
                             }
                         }
                     }

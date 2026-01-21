@@ -235,11 +235,12 @@ struct Live2DDetailView: View {
             Spacer(minLength: 0)
         }
         .navigationTitle(costume?.description.forPreferredLocale() ?? seasonalCostume?.seasonCostumeType.localizedString ?? "")
-#if os(iOS)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(horizontalSizeClass == .compact && isInspectorVisible ? .hidden : .visible, for: .navigationBar)
-#endif
+        #endif
         .animation(.spring(duration: 0.3, bounce: 0.3), value: isInspectorVisible)
+        #if !os(visionOS)
         .inspector(isPresented: $isInspectorPresented) {
             Form {
                 Section {
@@ -304,6 +305,7 @@ struct Live2DDetailView: View {
             .presentationDragIndicator(.visible)
             .presentationBackgroundInteraction(.enabled)
         }
+        #endif
         .toolbar {
             ToolbarItem {
                 Button("Live2D.inspector", systemImage: "slider.horizontal.3") {

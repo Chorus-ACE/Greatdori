@@ -103,9 +103,9 @@ struct ArtsItem: Hashable, Equatable {
 struct DetailArtsSection: View {
     var information: [ArtsTab]
     @State var tab: String? = nil
-#if os(macOS)
+    #if os(macOS)
     @State private var previewController = PreviewController()
-#endif
+    #endif
     @State var nativeImages = [UUID: PlatformImage]()
     @State var imageFrames = [UUID: CGRect]()
     @State var quickLookOnFocusItem: ImageLookItem?
@@ -121,7 +121,7 @@ struct DetailArtsSection: View {
                         ForEach(tabContent.content, id: \.self) { item in
                             if !hiddenItems.contains(item.id) {
                                 Button(action: {
-                                    #if os(iOS)
+                                    #if !os(macOS)
                                     if let image = nativeImages[item.id], let frame = imageFrames[item.id] {
                                         quickLookOnFocusItem = .init(
                                             image: image,
@@ -208,7 +208,7 @@ struct DetailArtsSection: View {
                     tab = information.first!.id
                 }
             }
-            #if os(iOS)
+            #if !os(macOS)
             .fullScreenCover(item: $quickLookOnFocusItem) { item in
                 ImageLookView(image: item.image, title: item.title, subtitle: item.subtitle, imageFrame: item.imageFrame)
             }
@@ -230,7 +230,7 @@ extension DetailArtsSection {
     }
 }
 
-#if os(iOS)
+#if !os(macOS)
 struct ImageLookView: View {
     var image: UIImage
     var title: String
@@ -340,6 +340,7 @@ struct ImageLookView: View {
                         }
                         .padding(.vertical, 5)
                         .padding(.horizontal, 40)
+                        #if !os(visionOS)
                         .wrapIf(true) { content in
                             if #available(iOS 26.0, *) {
                                 content
@@ -348,6 +349,7 @@ struct ImageLookView: View {
                                 content
                             }
                         }
+                        #endif
                     }
                     ToolbarItemGroup(placement: .bottomBar) {
                         if !isCopied {
@@ -373,9 +375,11 @@ struct ImageLookView: View {
                             Image(systemName: .checkmark)
                         }
                     }
+                    #if !os(visionOS)
                     if #available(iOS 26.0, *) {
                         ToolbarSpacer(placement: .bottomBar)
                     }
+                    #endif
                     ToolbarItem(placement: .bottomBar) {
                         Button("Details.arts.share", systemImage: "square.and.arrow.up") {
                             isShareViewPresented = true
@@ -505,7 +509,7 @@ private struct _ImageShareView: UIViewControllerRepresentable {
     }
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}
 }
-#else // os(iOS)
+#else // !os(macOS)
 struct ImageLookView: View {
     var image: NSImage
     var title: String
@@ -597,4 +601,4 @@ private struct _ZoomScrollView<Content: View>: NSViewRepresentable {
         var hostingController: NSHostingController<Content>?
     }
 }
-#endif // os(iOS)
+#endif // !os(macOS)

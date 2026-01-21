@@ -31,7 +31,7 @@ struct SettingsView: View {
     var usedAsSheet: Bool = false
     
     var body: some View {
-        #if os(iOS)
+        #if !os(macOS)
         NavigationStack {
             Form {
                 ForEach(settingsTabs, id: \.self) { item in
@@ -92,7 +92,9 @@ struct SettingsView: View {
             case "permission":
                 SettingsPermissionsView()
             case "widget":
-                SettingsWidgetsView()
+                if #available(visionOS 26.0, *) {
+                    SettingsWidgetsView()
+                }
             case "font":
                 SettingsFontsView()
             case "account":
@@ -162,10 +164,16 @@ let settingsTabs: [SettingsTab] = [
     .init(symbol: "rectangle.3.group", name: "Settings.home-edit", destination: "home"),
     .init(symbol: "books.vertical", name: "Settings.story-viewer", destination: "story"),
     .init(symbol: "bell.badge", name: "Settings.permissions", destination: "permission"),
-    .init(symbol: "widget.small", name: "Settings.widgets", destination: "widget"),
+    {
+        if #available(visionOS 26.0, *) {
+            .init(symbol: "widget.small", name: "Settings.widgets", destination: "widget")
+        } else {
+            nil
+        }
+    }(),
     .init(symbol: "person.crop.circle", name: "Settings.account", destination: "account", note: "NO-FORM"),
     .init(symbol: "textformat", name: "Settings.fonts", destination: "font", note: "NO-FORM"),
     .init(symbol: "hammer", name: "Settings.advanced", destination: "advanced"),
     .init(symbol: "info.circle", name: "Settings.about", destination: "about", note: "NO-FORM"),
     .init(symbol: "ant", name: "Settings.debug", destination: "debug", note: "DEBUG")
-]
+].compactMap { $0 }

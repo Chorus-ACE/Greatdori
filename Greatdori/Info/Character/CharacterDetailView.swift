@@ -65,6 +65,7 @@ struct CharacterDetailView: View {
                                         Label("Character.random-card", systemImage: "arrow.clockwise")
                                     })
                                     .wrapIf(true) { content in
+                                        #if !os(visionOS)
                                         if #available(iOS 26.0, macOS 26.0, *) {
                                             content
                                                 .buttonStyle(.glass)
@@ -72,6 +73,10 @@ struct CharacterDetailView: View {
                                             content
                                                 .buttonStyle(.bordered)
                                         }
+                                        #else
+                                        content
+                                            .buttonStyle(.bordered)
+                                        #endif
                                     }
                                     .buttonBorderShape(.capsule)
                                 }

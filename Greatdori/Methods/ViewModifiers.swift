@@ -359,7 +359,7 @@ private struct _ImageUpscaleView<V: View, Result: View>: View {
         } else {
             imageView
                 .onSuccess { image, data, _ in
-                    if #available(iOS 26.0, macOS 26.0, *) {
+                    if #available(iOS 26.0, macOS 26.0, visionOS 26.0, *) {
                         guard useImageUpscaler else { return }
                         if ProcessInfo.processInfo.isLowPowerModeEnabled
                             || ProcessInfo.processInfo.thermalState.rawValue > 2 {
@@ -371,7 +371,7 @@ private struct _ImageUpscaleView<V: View, Result: View>: View {
                         guard let data = data ?? image.tiffRepresentation else { return }
                         #endif
                         DispatchQueue.main.async {
-                            #if os(iOS)
+                            #if !os(macOS)
                             sourceImage = .init(uiImage: image)
                             #else
                             sourceImage = .init(nsImage: image)
@@ -407,7 +407,7 @@ private struct _ImageUpscaleView<V: View, Result: View>: View {
                                     let context = CIContext()
                                     guard let sourceImage = CIImage(data: data) else { return }
                                     guard let cgImage = context.createCGImage(image, from: image.extent) else { return }
-                                    #if os(iOS)
+                                    #if !os(macOS)
                                     upscaledImage = .init(uiImage: .init(cgImage: cgImage))
                                     #else
                                     upscaledImage = .init(nsImage: .init(cgImage: cgImage, size: image.extent.size))

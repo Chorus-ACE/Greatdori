@@ -83,10 +83,18 @@ struct CharacterSelector: View {
                             dismiss()
                         }
                         .wrapIf(true) { content in
+                            #if !os(visionOS)
                             if #available(iOS 26.0, macOS 26.0, *) {
                                 content
                                     .buttonStyle(.glassProminent)
+                            } else {
+                                content
+                                    .buttonStyle(.borderedProminent)
                             }
+                            #else
+                            content
+                                .buttonStyle(.borderedProminent)
+                            #endif
                         }
                     }
                 }

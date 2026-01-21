@@ -16,6 +16,7 @@ import DoriKit
 import WidgetKit
 import AppIntents
 
+@available(visionOS 26.0, *)
 struct CardCollectionWidgetIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource { "Widget.collections" }
     static var description: IntentDescription { "Widget.collections.description" }

@@ -156,6 +156,7 @@ struct FilterItemView: View {
                                                 return "Accessibility.filter.selections-toggle.value.partially-selected"
                                             }
                                         }())
+                                    #if !os(visionOS)
                                         .accessibilityHint({
                                             if selectionStatus == false {
                                                 return "Accessibility.filter.selections-toggle.hint.select-all"
@@ -163,6 +164,7 @@ struct FilterItemView: View {
                                                 return "Accessibility.filter.selections-toggle.hint.deselect-all"
                                             }
                                         }())
+                                    #endif
                                 } else {
                                     let selectionStatus = (filterSet.count == allCases.count) ? true : (filterSet.count == 0 ? false : nil)
                                     CompactToggle(isLit: selectionStatus)
@@ -175,6 +177,7 @@ struct FilterItemView: View {
                                                 return "Accessibility.filter.selections-toggle.value.partially-selected"
                                             }
                                         }())
+                                    #if !os(visionOS)
                                         .accessibilityHint({
                                             if selectionStatus == false {
                                                 return "Accessibility.filter.selections-toggle.hint.select-all"
@@ -182,6 +185,7 @@ struct FilterItemView: View {
                                                 return "Accessibility.filter.selections-toggle.hint.deselect-all"
                                             }
                                         }())
+                                    #endif
                                 }
                             }
                         }

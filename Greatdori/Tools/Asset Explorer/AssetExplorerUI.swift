@@ -185,7 +185,7 @@ struct AssetListView: View {
                                 .highlightKeyword($searchField)
                             }
                         }
-//                        .padding()
+                        #if !os(visionOS)
                         .wrapIf(true, in: {
                             if #available(iOS 26, macOS 14.0, *) {
                                 $0.navigationSubtitle(Text(searchField.isEmpty ? "Search.item.\(filteredItems.count)" : "Search.result.\(filteredItems.count)"))
@@ -193,6 +193,7 @@ struct AssetListView: View {
                                 $0
                             }
                         })
+                        #endif
                     }
                 }
                 .searchable(text: $searchField, prompt: "Asset-explorer.search")

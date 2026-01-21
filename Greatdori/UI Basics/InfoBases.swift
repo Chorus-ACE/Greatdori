@@ -479,6 +479,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                 }
             #endif
         }
+        #if !os(visionOS)
         .wrapIf(searchedElements != nil) { content in
             if #available(iOS 26.0, *) {
                 content.navigationSubtitle((searchedText.isEmpty && !filter.isFiltered) ? (getResultCountDescription?(searchedElements!.count) ?? "Search.item.\(searchedElements!.count)") :  "Search.result.\(searchedElements!.count)")
@@ -486,13 +487,16 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                 content
             }
         }
+        #endif
         .toolbar {
             ToolbarItem {
                 makeLayoutPicker($currentLayout)
             }
+            #if !os(visionOS)
             if #available(iOS 26.0, macOS 26.0, *) {
                 ToolbarSpacer()
             }
+            #endif
             ToolbarItemGroup {
                 FilterAndSorterPicker(showFilterSheet: $showFilterSheet, sorter: $sorter, filterIsFiltering: filter.isFiltered, sorterKeywords: Element.applicableSortingTypes, hasEndingDate: false)
             }
@@ -503,12 +507,21 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         .withSystemBackground()
         .wrapIf(sizeClass == .regular) { content in
             content
+            #if !os(visionOS)
                 .inspector(isPresented: $showFilterSheet) {
                     FilterView(filter: $filter, includingKeys: Set(Element.applicableFilteringKeys))
                         .presentationDetents([.medium, .large])
                         .presentationDragIndicator(.visible)
                         .presentationBackgroundInteraction(.enabled)
                 }
+            #else
+                .sheet(isPresented: $showFilterSheet) {
+                    FilterView(filter: $filter, includingKeys: Set(Element.applicableFilteringKeys))
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackgroundInteraction(.enabled)
+                }
+            #endif
         } else: { content in
             content
                 .sheet(isPresented: $showFilterSheet) {

@@ -73,9 +73,9 @@
 		8C499F8D2E4FD9CE0073FCB6 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 8C499F8C2E4FD9CE0073FCB6 /* SwiftUIIntrospect */; };
 		8C499F8F2E4FEAC20073FCB6 /* OnChange+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F8E2E4FEABE0073FCB6 /* OnChange+.swift */; };
 		8C499F992E5177540073FCB6 /* NewsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C499F982E51774F0073FCB6 /* NewsDetailView.swift */; };
-		8C554EEB2F1D2F9000123F51 /* SymbolAvailability in Frameworks */ = {isa = PBXBuildFile; productRef = 8C554EEA2F1D2F9000123F51 /* SymbolAvailability */; };
 		8C554EED2F1D340800123F51 /* SymbolAvailability in Frameworks */ = {isa = PBXBuildFile; productRef = 8C554EEC2F1D340800123F51 /* SymbolAvailability */; };
 		8C5551F52F1F8EC700123F51 /* SymbolFallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5551F42F1F8EC200123F51 /* SymbolFallback.swift */; };
+		8C5554252F20CB8F00123F51 /* SymbolAvailability in Frameworks */ = {isa = PBXBuildFile; productRef = 8C5554242F20CB8F00123F51 /* SymbolAvailability */; };
 		8C5AD1B02E46F96700E61653 /* SongMetaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5AD1AF2E46F96200E61653 /* SongMetaView.swift */; };
 		8C6264EF2E9105D600FF6950 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 8C6264EE2E9105D600FF6950 /* SwiftUIIntrospect */; };
 		8C6B8FC42E75373F00452D7B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9D96AA32E752BE7005E0F2C /* InfoPlist.strings */; };
@@ -143,7 +143,7 @@
 		8CB4D4872E445F800085D57A /* BuiltinCardCollections.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB4D4792E445F700085D57A /* BuiltinCardCollections.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8CB4D4A12E4461790085D57A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB4D49F2E4461790085D57A /* main.swift */; };
 		8CB4D4A92E4481790085D57A /* BuiltinCardCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB4D4A82E4481780085D57A /* BuiltinCardCollections.swift */; };
-		8CB4D4AF2E44871D0085D57A /* BuiltinCardCollections.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB4D4792E445F700085D57A /* BuiltinCardCollections.framework */; platformFilters = (ios, macos, ); };
+		8CB4D4AF2E44871D0085D57A /* BuiltinCardCollections.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB4D4792E445F700085D57A /* BuiltinCardCollections.framework */; platformFilters = (ios, macos, xros, ); };
 		8CB4D4B52E44938E0085D57A /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8CB4D4B42E44938D0085D57A /* Localizable.xcstrings */; };
 		8CB4D4BB2E449CC80085D57A /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C6C0ECA2E422F8F00D1FB0A /* WidgetKit.framework */; };
 		8CB4D4BC2E449CC80085D57A /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C6C0ECC2E422F9000D1FB0A /* SwiftUI.framework */; };
@@ -872,7 +872,7 @@
 				8C923D842E304899003AFC0A /* SDWebImageSVGCoder in Frameworks */,
 				8C923D822E304899003AFC0A /* SDWebImageSwiftUI in Frameworks */,
 				8C2C89262E9E153400058FF7 /* DoriKit.framework in Frameworks */,
-				8C554EEB2F1D2F9000123F51 /* SymbolAvailability in Frameworks */,
+				8C5554252F20CB8F00123F51 /* SymbolAvailability in Frameworks */,
 				E94944E22E92A19600E50D3F /* MarkdownUI in Frameworks */,
 				8C6264EF2E9105D600FF6950 /* SwiftUIIntrospect in Frameworks */,
 				8CE0BBAC2ED2FE1F00E22ED6 /* SwiftJWT in Frameworks */,
@@ -1668,7 +1668,7 @@
 				8CE0BBAB2ED2FE1F00E22ED6 /* SwiftJWT */,
 				E97810BB2EE9486D000AD397 /* Mute */,
 				8C2EBE9A2F0428FD006BC253 /* EFQRCode */,
-				8C554EEA2F1D2F9000123F51 /* SymbolAvailability */,
+				8C5554242F20CB8F00123F51 /* SymbolAvailability */,
 			);
 			productName = Greatdori;
 			productReference = 8C0C995D2E296A4400549B5C /* Greatdori!.app */;
@@ -2302,6 +2302,7 @@
 			platformFilters = (
 				ios,
 				macos,
+				xros,
 			);
 			target = 8CB4D4782E445F700085D57A /* BuiltinCardCollections */;
 			targetProxy = 8CB4D4B12E44871D0085D57A /* PBXContainerItemProxy */;
@@ -2591,7 +2592,7 @@
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DORIKIT_ENABLE_PRECACHE DEBUG";
@@ -2600,7 +2601,8 @@
 				SWIFT_STRICT_MEMORY_SAFETY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Debug;
 		};
@@ -2661,7 +2663,7 @@
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DORIKIT_ENABLE_PRECACHE;
@@ -2669,8 +2671,9 @@
 				SWIFT_STRICT_MEMORY_SAFETY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Release;
 		};
@@ -2797,7 +2800,7 @@
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2805,7 +2808,8 @@
 				SWIFT_STRICT_MEMORY_SAFETY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = DebWithoutPreCache;
 		};
@@ -2962,15 +2966,16 @@
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_MEMORY_SAFETY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = RelWithoutPreCache;
 		};
@@ -3190,14 +3195,16 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_MEMORY_SAFETY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
@@ -3234,15 +3241,17 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_MEMORY_SAFETY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = DebWithoutPreCache;
 		};
@@ -3279,15 +3288,17 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_MEMORY_SAFETY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -3324,15 +3335,17 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_MEMORY_SAFETY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = RelWithoutPreCache;
 		};
@@ -3364,7 +3377,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -3372,7 +3385,8 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
@@ -3420,7 +3434,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -3428,8 +3442,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = DebWithoutPreCache;
 		};
@@ -3477,7 +3492,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -3485,8 +3500,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -3534,7 +3550,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -3542,8 +3558,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = RelWithoutPreCache;
 		};
@@ -4221,10 +4238,10 @@
 		};
 		8CE0BBAA2ED2FE1E00E22ED6 /* XCRemoteSwiftPackageReference "Swift-JWT" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Kitura/Swift-JWT";
+			repositoryURL = "https://github.com/WindowsMEMZ/Swift-JWT";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.2;
+				branch = master;
+				kind = branch;
 			};
 		};
 		8CE186AB2E535324009C1C87 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
@@ -4292,12 +4309,12 @@
 			package = 8C499F8B2E4FD9CE0073FCB6 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = SwiftUIIntrospect;
 		};
-		8C554EEA2F1D2F9000123F51 /* SymbolAvailability */ = {
+		8C554EEC2F1D340800123F51 /* SymbolAvailability */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8C554EE92F1D2F9000123F51 /* XCRemoteSwiftPackageReference "SymbolAvailability" */;
 			productName = SymbolAvailability;
 		};
-		8C554EEC2F1D340800123F51 /* SymbolAvailability */ = {
+		8C5554242F20CB8F00123F51 /* SymbolAvailability */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8C554EE92F1D2F9000123F51 /* XCRemoteSwiftPackageReference "SymbolAvailability" */;
 			productName = SymbolAvailability;

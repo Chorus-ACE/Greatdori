@@ -29,7 +29,7 @@ struct SongDetailView: View {
             SongDetailMusicMovieView(musicVideos: information.song.musicVideos)
             DetailsEventsSection(events: information.events, applyLocaleFilter: true)
             SongDetailMatchView(song: information.song, songMatches: $songMatches)
-            if #available(iOS 26.0, macOS 26.0, *), let lyrics {
+            if #available(iOS 26.0, macOS 26.0, visionOS 26.0, *), let lyrics {
                 SongDetailLyricsView(lyrics: lyrics)
             }
             DetailArtsSection {

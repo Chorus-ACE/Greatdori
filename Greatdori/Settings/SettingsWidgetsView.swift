@@ -23,6 +23,7 @@ import SDWebImageSwiftUI
 import SymbolAvailability
 @_spi(Advanced) import SwiftUIIntrospect
 
+@available(visionOS 26.0, *)
 struct SettingsWidgetsView: View {
     @StateObject var collectionManager = CardCollectionManager.shared
     @State var destinationCollection: String = ""
@@ -296,6 +297,7 @@ struct SettingsWidgetsView: View {
     }
 }
 
+@available(visionOS 26.0, *)
 struct SettingsWidgetsCollectionDetailsView: View {
     @AppStorage("hideCollectionNameWhileSharing") var hideCollectionNameWhileSharing = false
     @Binding var collectionGivenName: String
@@ -503,12 +505,14 @@ struct SettingsWidgetsCollectionDetailsView: View {
             }
             .withSystemBackground()
             .navigationTitle(collectionName)
+            #if !os(visionOS)
             .wrapIf(true, in: { content in
                 if #available(iOS 26.0, macOS 26.0, *) {
                     content
                         .navigationSubtitle("Settings.widgets.collections.count.\(collection.cards.count)")
                 }
             })
+            #endif
             .onAppear {
                 collectionName = collection.name
                 if !collection.isBuiltIn {
@@ -520,9 +524,11 @@ struct SettingsWidgetsCollectionDetailsView: View {
                     ToolbarItem {
                         LayoutPicker(selection: $layoutType, options: [("Filter.view.list", "list.bullet", 1), ("Filter.view.gallery", "text.below.rectangle", 3)])
                     }
+                    #if !os(visionOS)
                     if #available(iOS 26.0, macOS 26.0, *) {
                         ToolbarSpacer()
                     }
+                    #endif
                 }
                 if isMACOS {
                     ToolbarItem {
@@ -532,9 +538,11 @@ struct SettingsWidgetsCollectionDetailsView: View {
                             Label("Settings.widgets.collections.edit", systemImage: "square.and.pencil")
                         })
                     }
+                    #if !os(visionOS)
                     if #available(iOS 26.0, macOS 26.0, *) {
                         ToolbarSpacer()
                     }
+                    #endif
                 }
                 if !collection.cards.isEmpty {
                     ToolbarItem(placement: .primaryAction, content: {
@@ -593,6 +601,7 @@ struct SettingsWidgetsCollectionDetailsView: View {
     }
 }
 
+@available(visionOS 26.0, *)
 struct SettingsWidgetsCollectionShareView: View {
     var name: String
     var collection: CardCollectionManager.Collection
@@ -724,6 +733,7 @@ struct SettingsWidgetsCollectionShareView: View {
     }
 }
 
+@available(visionOS 26.0, *)
 struct SettingsWidgetsCollectionsItemView: View {
     var collectionIndex: Int
     var collectionCard: CardCollectionManager.Card
@@ -846,6 +856,7 @@ struct SettingsWidgetsCollectionsItemView: View {
     }
 }
 
+@available(visionOS 26.0, *)
 struct SettingsWidgetsCollectionsItemActionMenuView: View {
     var collectionIndex: Int
     var collectionCard: CardCollectionManager.Card
@@ -899,6 +910,7 @@ struct SettingsWidgetsCollectionsItemActionMenuView: View {
 // These code should be placed in `CardCollectionManager.swift`.
 // However, it's shared with the widget target and we don't link Alamofire
 // for widgets, so it's placed here.
+@available(visionOS 26.0, *)
 extension CardCollectionManager.Card {
     func downloadForOffline() async throws {
         guard !availableInOffline else { return }
@@ -925,6 +937,7 @@ extension CardCollectionManager.Card {
     }
 }
 
+@available(visionOS 26.0, *)
 extension CardCollectionManager.Collection {
     func estimatedLocalImageSize() -> Int64 {
         return Int64(Float(self.cards.count)*0.53 * 1024 * 1024)

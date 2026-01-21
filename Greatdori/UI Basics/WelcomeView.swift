@@ -246,12 +246,18 @@ struct WelcomeView: View {
                             .padding(.vertical, 10)
                         })
                         .wrapIf(true) { content in
+                            #if !os(visionOS)
                             if #available(iOS 26.0, *) {
                                 content
                                     .buttonStyle(.glassProminent)
                             } else {
-                                content.buttonStyle(.borderedProminent)
+                                content
+                                    .buttonStyle(.borderedProminent)
                             }
+                            #else
+                            content
+                                .buttonStyle(.borderedProminent)
+                            #endif
                         }
                         .buttonBorderShape(.capsule)
                     }

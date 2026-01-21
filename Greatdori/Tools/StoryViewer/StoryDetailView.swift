@@ -147,11 +147,15 @@ struct StoryDetailView: View {
                                         
                                     }
                                     .wrapIf(true) {
+                                        #if !os(visionOS)
                                         if #available(iOS 26.0, macOS 26.0, *) {
                                             $0.buttonStyle(.glass)
                                         } else {
                                             $0.buttonStyle(.bordered)
                                         }
+                                        #else
+                                        $0.buttonStyle(.bordered)
+                                        #endif
                                     }
                                     .buttonBorderShape(.capsule)
                                     DetailSectionsSpacer(height: 15)

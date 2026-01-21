@@ -95,10 +95,12 @@ struct DebugBirthdayViewUnit: View {
 
 @available(iOS, unavailable)
 struct DebugOfflineAssetView: View {
+    #if os(macOS)
     @AppStorage("_OfflineAssetDebugFilePath") var filePath = ""
     @State var contents = [String]()
     @State var testCard: Card?
     @State var updateCheckerResult: DoriOfflineAsset.UpdateCheckerResult?
+    #endif
     var body: some View {
         #if os(macOS)
         Form {
@@ -372,9 +374,11 @@ struct DebugFilterExperimentView: View {
         .sheet(isPresented: $showFilterSheet, content: {
             FilterView(filter: $filter, includingKeys: showOptimizedFilter ? Set(optimizedKeys[focusingList]!) : Set(DoriFrontend.Filter.Key.allCases))
         })
+        #if !os(visionOS)
         .inspector(isPresented: .constant(true), content: {
             FilterView(filter: $filter, includingKeys: showOptimizedFilter ? Set(optimizedKeys[focusingList]!) : Set(DoriFrontend.Filter.Key.allCases))
         })
+        #endif
         .onAppear {
 //            focusingList = 0
             for i in 0...6 {
