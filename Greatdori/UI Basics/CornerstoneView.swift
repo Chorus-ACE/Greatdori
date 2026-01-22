@@ -150,7 +150,9 @@ struct CustomGroupBox<Content: View>: View {
             content()
                 .padding(.all, showGroupBox && !suppressCustomGroupBox ? nil : 0)
         }
+        #if os(visionOS)
         .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: cornerRadius))
+        #endif
         .background {
             if showGroupBox && !suppressCustomGroupBox {
                 GeometryReader { geometry in

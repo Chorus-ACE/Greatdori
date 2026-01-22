@@ -132,7 +132,9 @@ struct GreatdoriApp: App {
                 _AnyWindowView(data: data)
             }
         }
+        #if os(visionOS)
         .windowStyle(.plain)
+        #endif
         .commandsRemoved()
     }
 }

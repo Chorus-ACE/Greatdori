@@ -73,7 +73,9 @@ struct CharacterSearchView: View {
                                                 CharacterImageView(character: char)
                                             })
                                             .buttonStyle(.plain)
+                                            #if os(visionOS)
                                             .defaultHoverEffect(.empty)
+                                            #endif
                                             .id(characterIDMap[char] ?? Int64(char.hashValue))
                                             .wrapIf(true, in: { content in
                                                 if #available(iOS 18.0, macOS 15.0, *) {
@@ -200,6 +202,7 @@ struct CharacterSearchView: View {
     struct CharacterImageView: View {
         var character: PreviewCharacter
         @Environment(\.horizontalSizeClass) var sizeClass
+        @State var isHovering = false
         var body: some View {
             Group {
                 if sizeClass == .regular {
@@ -209,6 +212,7 @@ struct CharacterSearchView: View {
                         WebImage(url: character.keyVisualImageURL)
                             .resizable()
                             .scaledToFill()
+                        #if os(visionOS)
                             .hoverEffectDisabled(false)
                             .hoverEffect { content, isActive, _ in
                                 content
@@ -217,6 +221,9 @@ struct CharacterSearchView: View {
                                             .scaleEffect(isActive ? 1.05 : 1)
                                     }
                             }
+                        #else
+                            .scaleEffect(isHovering ? 1.05 : 1)
+                        #endif
                     }
                     .frame(width: 122, height: 480)
                 } else {
@@ -228,6 +235,7 @@ struct CharacterSearchView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .clipped()
+                            #if os(visionOS)
                                 .hoverEffectDisabled(false)
                                 .hoverEffect { content, isActive, _ in
                                     content
@@ -236,6 +244,9 @@ struct CharacterSearchView: View {
                                                 .scaleEffect(isActive ? 1.05 : 1)
                                         }
                                 }
+                            #else
+                                .scaleEffect(isHovering ? 1.05 : 1)
+                            #endif
                         }
                 }
             }
@@ -243,6 +254,10 @@ struct CharacterSearchView: View {
                 RoundedRectangle(cornerRadius: charVisualImageCornerRadius)
                     .aspectRatio(122/480, contentMode: .fill)
             }
+            .onHover { hovering in
+                isHovering = hovering
+            }
+            .animation(.spring(duration: 0.3, bounce: 0.1, blendDuration: 0), value: isHovering)
             .contentShape(RoundedRectangle(cornerRadius: charVisualImageCornerRadius))
         }
     }
