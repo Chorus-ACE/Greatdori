@@ -282,7 +282,14 @@ extension LocalizedData<Set<ExtendedCard.Source>> {
 
 // MARK: EnvironmentValues
 extension EnvironmentValues {
-@Entry var regularInfoImageSizeFactor: CGFloat = 1
+    @Entry var regularInfoImageSizeFactor: CGFloat = 1
+}
+
+// MARK: Equatable
+extension Equatable {
+    func isIn<C: Collection>(_ collection: C) -> Bool where C.Element == Self {
+        collection.contains(self)
+    }
 }
 
 // MARK: Image

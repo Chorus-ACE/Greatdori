@@ -58,7 +58,7 @@ struct GreatdoriApp: App {
         WindowGroup {
             ZStack {
                 ContentView()
-                    .wrapIf(isMACOS) { content in
+                    .wrapIf(platform == .macOS) { content in
                         content
                             .frame(minWidth: 400)
                     }
