@@ -129,7 +129,7 @@
 		8C923DA12E315E09003AFC0A /* CardListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C923DA02E315E05003AFC0A /* CardListView.swift */; };
 		8C94743F2E342F79003A90B4 /* EventListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C94743E2E342F76003A90B4 /* EventListView.swift */; };
 		8C9474472E34E1AF003A90B4 /* EventDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C9474462E34E1AB003A90B4 /* EventDetailView.swift */; };
-		8C94744D2E35DA49003A90B4 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8C94744B2E35DA49003A90B4 /* AppIcon.icon */; };
+		8C94744D2E35DA49003A90B4 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8C94744B2E35DA49003A90B4 /* AppIcon.icon */; platformFilters = (ios, macos, ); };
 		8C9474672E37ADD8003A90B4 /* UnavailableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C9474662E37ADD5003A90B4 /* UnavailableView.swift */; };
 		8C9474692E39CA1F003A90B4 /* EventTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C9474682E39CA19003A90B4 /* EventTrackerView.swift */; };
 		8C94746B2E3ADE27003A90B4 /* StoryViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C94746A2E3ADE21003A90B4 /* StoryViewerView.swift */; };
@@ -2539,6 +2539,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xros*]" = XRAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = space;
 				CLANG_ENABLE_MODULES = YES;
@@ -2610,6 +2611,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xros*]" = XRAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = space;
 				CLANG_ENABLE_MODULES = YES;
@@ -2747,6 +2749,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xros*]" = XRAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = space;
 				CLANG_ENABLE_MODULES = YES;
@@ -2913,6 +2916,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xros*]" = XRAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = space;
 				CLANG_ENABLE_MODULES = YES;

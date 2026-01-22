@@ -106,7 +106,7 @@ struct GreatdoriApp: App {
             }
         }
         
-#if os(macOS)
+        #if os(macOS)
         Window("Settings", id: "Secchi") {
             SettingsView()
         }
@@ -132,6 +132,7 @@ struct GreatdoriApp: App {
                 _AnyWindowView(data: data)
             }
         }
+        .windowStyle(.plain)
         .commandsRemoved()
     }
 }
@@ -139,6 +140,7 @@ private struct _AnyWindowView: View {
     var data: AnyWindowData
     @Environment(\.dismissWindow) private var dismissWindow
     @State private var dismissTimer: Timer?
+    @State private var isRemovingWindowBackground = false
     var body: some View {
         unsafe UnsafePointer<() -> AnyView>(bitPattern: data.content)!.pointee()
             .onAppear {
@@ -156,6 +158,12 @@ private struct _AnyWindowView: View {
                     unsafe UnsafePointer<() -> Void>(bitPattern: ptrOnDismiss)!.pointee()
                 }
             }
+        #if os(visionOS)
+            .glassBackgroundEffect(displayMode: isRemovingWindowBackground ? .never : .always)
+            .onPreferenceChange(RemoveWindowBackgroundPreference.self) { value in
+                isRemovingWindowBackground = value
+            }
+        #endif
         #if os(macOS)
             .introspect(.window, on: .macOS(.v14...)) { window in
                 window.isRestorable = false
@@ -231,6 +239,34 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return AppDelegate.orientationLock
+    }
+    
+    func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        let configuration = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
+        if connectingSceneSession.role == .windowApplication {
+            configuration.delegateClass = SceneDelegate.self
+        }
+        return configuration
+    }
+}
+
+@Observable
+class SceneDelegate: NSObject, UIWindowSceneDelegate {
+    weak var windowScene: UIWindowScene?
+    
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
+        guard let windowScene = scene as? UIWindowScene else {
+            return
+        }
+        self.windowScene = windowScene
     }
 }
 #endif

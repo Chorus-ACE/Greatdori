@@ -254,30 +254,30 @@ extension View {
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View {
-#if os(macOS)
+        #if !os(iOS)
         modifier(_AnyWindowModifier(isPresented: isPresented, onDismiss: onDismiss, content: content))
-#else
+        #else
         sheet(isPresented: isPresented, onDismiss: onDismiss) {
             NavigationStack(root: content)
         }
-#endif
+        #endif
     }
     func window<Content: View, Item: Identifiable>(
         item: Binding<Item?>,
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping (Item) -> Content
     ) -> some View {
-#if os(macOS)
+        #if !os(iOS)
         modifier(_AnyWindowModifier(isPresented: .init { item.wrappedValue != nil } set: { !$0 ? (item.wrappedValue = nil) : () }, onDismiss: onDismiss) {
             item.wrappedValue != nil ? content(item.wrappedValue!) : nil
         })
-#else
+        #else
         sheet(item: item, onDismiss: onDismiss) { item in
             NavigationStack {
                 content(item)
             }
         }
-#endif
+        #endif
     }
 }
 private struct _AnyWindowModifier<V: View>: ViewModifier {

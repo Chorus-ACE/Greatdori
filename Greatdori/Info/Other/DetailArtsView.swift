@@ -12,12 +12,15 @@
 //
 //===----------------------------------------------------------------------===//
 
-
 import DoriKit
 import SwiftUI
 import QuickLook
 import SDWebImageSwiftUI
 import SymbolAvailability
+
+#if os(visionOS)
+import RealityKit
+#endif
 
 @resultBuilder
 struct ArtsBuilder {
@@ -182,6 +185,7 @@ struct DetailArtsSection: View {
                                     .accessibilityAddTraits(.isImage)
                                 })
                                 .buttonStyle(.plain)
+                                .buttonBorderShape(.roundedRectangle(radius: 20))
                                 .imageContextMenu([.init(url: item.url, description: item.title)])
                             }
                         }
@@ -208,8 +212,12 @@ struct DetailArtsSection: View {
                     tab = information.first!.id
                 }
             }
-            #if !os(macOS)
+            #if os(iOS)
             .fullScreenCover(item: $quickLookOnFocusItem) { item in
+                ImageLookView(image: item.image, title: item.title, subtitle: item.subtitle, imageFrame: item.imageFrame)
+            }
+            #elseif os(visionOS)
+            .window(item: $quickLookOnFocusItem) { item in
                 ImageLookView(image: item.image, title: item.title, subtitle: item.subtitle, imageFrame: item.imageFrame)
             }
             #endif
@@ -230,7 +238,7 @@ extension DetailArtsSection {
     }
 }
 
-#if !os(macOS)
+#if os(iOS)
 struct ImageLookView: View {
     var image: UIImage
     var title: String
@@ -340,7 +348,6 @@ struct ImageLookView: View {
                         }
                         .padding(.vertical, 5)
                         .padding(.horizontal, 40)
-                        #if !os(visionOS)
                         .wrapIf(true) { content in
                             if #available(iOS 26.0, *) {
                                 content
@@ -349,7 +356,6 @@ struct ImageLookView: View {
                                 content
                             }
                         }
-                        #endif
                     }
                     ToolbarItemGroup(placement: .bottomBar) {
                         if !isCopied {
@@ -375,11 +381,9 @@ struct ImageLookView: View {
                             Image(systemName: .checkmark)
                         }
                     }
-                    #if !os(visionOS)
                     if #available(iOS 26.0, *) {
                         ToolbarSpacer(placement: .bottomBar)
                     }
-                    #endif
                     ToolbarItem(placement: .bottomBar) {
                         Button("Details.arts.share", systemImage: "square.and.arrow.up") {
                             isShareViewPresented = true
@@ -509,7 +513,221 @@ private struct _ImageShareView: UIViewControllerRepresentable {
     }
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}
 }
-#else // !os(macOS)
+#elseif os(visionOS) // os(iOS)
+struct ImageLookView: View {
+    var image: UIImage
+    var title: String
+    var subtitle: String
+    var imageFrame: CGRect
+    @Environment(\.dismiss) private var dismiss
+    @Environment(SceneDelegate.self) private var sceneDelegate
+    @State private var isShareViewPresented = false
+    @State private var spatial3DImage: AnyObject?
+    @State private var imageEntity = Entity()
+    @State private var imageAspectRatio: CGFloat = 1
+    @State private var component: (any Component)? // availability
+    var body: some View {
+        ZStack {
+            if let component, #available(visionOS 26.0, *) {
+                GeometryReader3D { geometry in
+                    RealityView { content in
+                        imageEntity.components.set(component)
+                        if let aspectRatio = (component as! ImagePresentationComponent).aspectRatio(for: .mono) {
+                            imageAspectRatio = CGFloat(aspectRatio)
+                        }
+                        let availableBounds = content.convert(geometry.frame(in: .local), from: .local, to: .scene)
+                        scaleImagePresentationToFit(in: availableBounds)
+                        content.add(imageEntity)
+                    } update: { content in
+                        let presentationScreenSize = (component as! ImagePresentationComponent).presentationScreenSize
+                        guard presentationScreenSize != .zero else {
+                            return
+                        }
+                        let originalPosition = imageEntity.position(relativeTo: nil)
+                        imageEntity.setPosition(
+                            .init(originalPosition.x, originalPosition.y, 0),
+                            relativeTo: nil
+                        )
+                        let availableBounds = content.convert(geometry.frame(in: .local), from: .local, to: .scene)
+                        scaleImagePresentationToFit(in: availableBounds)
+                    }
+                    .preferredSurroundingsEffect(.dark)
+                    .onAppear {
+                        guard let windowScene = sceneDelegate.windowScene else {
+                            return
+                        }
+                        windowScene.requestGeometryUpdate(.Vision(resizingRestrictions: .uniform))
+                    }
+                    .onChange(of: imageAspectRatio) {
+                        guard let windowScene = sceneDelegate.windowScene else {
+                            return
+                        }
+                        
+                        let windowSceneSize = windowScene.effectiveGeometry.coordinateSpace.bounds.size
+                        
+                        // width / height = aspect ratio
+                        // Change ONLY the width to match the aspect ratio
+                        let width = imageAspectRatio * windowSceneSize.height
+                        
+                        // Keep the height the same
+                        let size = CGSize(width: width, height: UIProposedSceneSizeNoPreference)
+                        
+                        UIView.performWithoutAnimation {
+                            // Update the scene size
+                            windowScene.requestGeometryUpdate(.Vision(size: size))
+                        }
+                    }
+                }
+                .frame(depth: 2)
+            } else {
+                Image(uiImage: image)
+                    .resizable()
+                    .interpolation(.high)
+                    .antialiased(true)
+                    .scaledToFit()
+            }
+            VStack {
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(Color(red: 0.4, green: 0.4, blue: 0.4))
+                            Label("Details.arts.dismiss", systemImage: "xmark")
+                        }
+                    }
+                    .frame(width: 30, height: 30)
+                    Spacer()
+                    Menu {
+                        Section {
+                            Button("Image.save.photos", systemImage: "photo.badge.plus") {
+                                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                            }
+                            Button("Image.copy.image", systemImage: "doc.on.doc") {
+                                UIPasteboard.general.image = image
+                            }
+                            Button("Image.copy.subject", systemImage: "circle.dashed.rectangle") {
+                                Task {
+                                    if let _data = image.pngData(), let result = await getImageSubject(_data) {
+                                        UIPasteboard.general.image = .init(data: result)
+                                    }
+                                }
+                            }
+                        }
+                        Section {
+                            Button("Details.arts.share", systemImage: "square.and.arrow.up") {
+                                isShareViewPresented = true
+                            }
+                        }
+                        if #available(visionOS 26.0, *) {
+                            Section {
+                                Button("Details.arts.create-spatial", systemImage: "spatial.capture") {
+                                    Task {
+                                        guard let spatial3DImage = spatial3DImage as? ImagePresentationComponent.Spatial3DImage else {
+                                            return
+                                        }
+                                        guard var imagePresentationComponent = imageEntity.components[ImagePresentationComponent.self] else {
+                                            return
+                                        }
+                                        // Set the desired viewing mode before generating so that it will trigger the
+                                        // generation animation
+                                        imagePresentationComponent.desiredViewingMode = .spatial3D
+                                        imageEntity.components.set(imagePresentationComponent)
+                                        try await spatial3DImage.generate()
+                                        
+                                        if let aspectRatio = imagePresentationComponent.aspectRatio(for: .spatial3D) {
+                                            imageAspectRatio = CGFloat(aspectRatio)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(Color(red: 0.4, green: 0.4, blue: 0.4))
+                            Label("Details.arts.actions", systemImage: "ellipsis")
+                        }
+                    }
+                    .menuStyle(.button)
+                    .frame(width: 30, height: 30)
+                }
+                .labelStyle(.iconOnly)
+                .buttonBorderShape(.circle)
+                Spacer()
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(title)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        Text(subtitle)
+                            .font(.subheadline)
+                    }
+                    Spacer()
+                }
+            }
+            .padding(30)
+            .frame(depth: 1)
+        }
+        .ignoresSafeArea()
+        .sheet(isPresented: $isShareViewPresented) {
+            _ImageShareView(image: image)
+        }
+        .aspectRatio(imageAspectRatio, contentMode: .fit)
+        .onAppear {
+            Task {
+                guard #available(visionOS 26.0, *) else { return }
+                if let data = image.pngData(),
+                   let source = CGImageSourceCreateWithData(data as CFData, nil) {
+                    do {
+                        let image = try await ImagePresentationComponent.Spatial3DImage(
+                            imageSource: source
+                        )
+                        let c = ImagePresentationComponent(spatial3DImage: image)
+                        component = c
+                        spatial3DImage = image
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+        }
+        .preference(key: RemoveWindowBackgroundPreference.self, value: true)
+    }
+    
+    private func scaleImagePresentationToFit(in boundsInMeters: BoundingBox) {
+        guard #available(visionOS 26.0, *) else { return }
+        guard let component = component as? ImagePresentationComponent else {
+            return
+        }
+
+        let presentationScreenSize = component.presentationScreenSize
+        let scale = min(
+            boundsInMeters.extents.x / presentationScreenSize.x,
+            boundsInMeters.extents.y / presentationScreenSize.y
+        )
+
+        imageEntity.scale = SIMD3<Float>(scale, scale, 1.0)
+    }
+}
+
+private struct _ImageShareView: UIViewControllerRepresentable {
+    var image: UIImage
+    
+    init(image: UIImage) {
+        self.image = image
+    }
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [image], applicationActivities: nil)
+    }
+    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}
+}
+
+@available(visionOS 26.0, *)
+extension ImagePresentationComponent.Spatial3DImage: @unchecked @retroactive Sendable {}
+#else // os(iOS)
 struct ImageLookView: View {
     var image: NSImage
     var title: String
@@ -601,4 +819,4 @@ private struct _ZoomScrollView<Content: View>: NSViewRepresentable {
         var hostingController: NSHostingController<Content>?
     }
 }
-#endif // !os(macOS)
+#endif // os(iOS)

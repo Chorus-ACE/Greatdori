@@ -73,6 +73,7 @@ struct CharacterSearchView: View {
                                                 CharacterImageView(character: char)
                                             })
                                             .buttonStyle(.plain)
+                                            .defaultHoverEffect(.empty)
                                             .id(characterIDMap[char] ?? Int64(char.hashValue))
                                             .wrapIf(true, in: { content in
                                                 if #available(iOS 18.0, macOS 15.0, *) {
@@ -118,6 +119,7 @@ struct CharacterSearchView: View {
                                             }
                                         })
                                         .buttonStyle(.plain)
+                                        .buttonBorderShape(.roundedRectangle(radius: 20))
                                     }
                                 }
                                 .frame(maxWidth: 650)
@@ -198,7 +200,6 @@ struct CharacterSearchView: View {
     struct CharacterImageView: View {
         var character: PreviewCharacter
         @Environment(\.horizontalSizeClass) var sizeClass
-        @State var isHovering = false
         var body: some View {
             Group {
                 if sizeClass == .regular {
@@ -208,7 +209,14 @@ struct CharacterSearchView: View {
                         WebImage(url: character.keyVisualImageURL)
                             .resizable()
                             .scaledToFill()
-                            .scaleEffect(isHovering ? 1.05 : 1)
+                            .hoverEffectDisabled(false)
+                            .hoverEffect { content, isActive, _ in
+                                content
+                                    .animation(.spring(duration: 0.3, bounce: 0.1, blendDuration: 0)) { content in
+                                        content
+                                            .scaleEffect(isActive ? 1.05 : 1)
+                                    }
+                            }
                     }
                     .frame(width: 122, height: 480)
                 } else {
@@ -220,17 +228,20 @@ struct CharacterSearchView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .clipped()
-                                .scaleEffect(isHovering ? 1.05 : 1)
+                                .hoverEffectDisabled(false)
+                                .hoverEffect { content, isActive, _ in
+                                    content
+                                        .animation(.spring(duration: 0.3, bounce: 0.1, blendDuration: 0)) { content in
+                                            content
+                                                .scaleEffect(isActive ? 1.05 : 1)
+                                        }
+                                }
                         }
                 }
             }
             .mask {
                 RoundedRectangle(cornerRadius: charVisualImageCornerRadius)
                     .aspectRatio(122/480, contentMode: .fill)
-            }
-            .animation(.spring(duration: 0.3, bounce: 0.1, blendDuration: 0), value: isHovering)
-            .onHover { hovering in
-                isHovering = hovering
             }
             .contentShape(RoundedRectangle(cornerRadius: charVisualImageCornerRadius))
         }

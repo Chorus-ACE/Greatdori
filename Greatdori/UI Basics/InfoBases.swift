@@ -399,6 +399,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                                                 }
                                             }
                                             .buttonStyle(.plain)
+                                            .buttonBorderShape(.roundedRectangle(radius: 20))
                                         }
                                     )
                                 ) { element in
@@ -426,6 +427,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                                             }
                                         }
                                         .buttonStyle(.plain)
+                                        .buttonBorderShape(.roundedRectangle(radius: 20))
                                     )
                                 }
                                 .padding(.horizontal)
@@ -505,23 +507,15 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
             showFilterSheet = false
         }
         .withSystemBackground()
+        #if !os(visionOS)
         .wrapIf(sizeClass == .regular) { content in
             content
-            #if !os(visionOS)
                 .inspector(isPresented: $showFilterSheet) {
                     FilterView(filter: $filter, includingKeys: Set(Element.applicableFilteringKeys))
                         .presentationDetents([.medium, .large])
                         .presentationDragIndicator(.visible)
                         .presentationBackgroundInteraction(.enabled)
                 }
-            #else
-                .sheet(isPresented: $showFilterSheet) {
-                    FilterView(filter: $filter, includingKeys: Set(Element.applicableFilteringKeys))
-                        .presentationDetents([.medium, .large])
-                        .presentationDragIndicator(.visible)
-                        .presentationBackgroundInteraction(.enabled)
-                }
-            #endif
         } else: { content in
             content
                 .sheet(isPresented: $showFilterSheet) {
@@ -531,6 +525,18 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                         .presentationBackgroundInteraction(.enabled)
                 }
         }
+        #else
+        .ornament(visibility: showFilterSheet ? .visible : .hidden, attachmentAnchor: .scene(.trailing)) {
+            HStack {
+                Spacer(minLength: 300)
+                FilterView(filter: $filter, includingKeys: Set(Element.applicableFilteringKeys))
+                    .padding(.top)
+                    .glassBackgroundEffect()
+                    .frame(width: 300, height: 600)
+            }
+            .rotation3DEffect(.degrees(-30), axis: .y)
+        }
+        #endif
         .withSystemBackground() // This modifier MUST be placed BOTH before
                                 // and after `inspector` to make it work as expected
         .task {

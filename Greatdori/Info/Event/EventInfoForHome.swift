@@ -26,7 +26,6 @@ struct EventInfoForHome: View {
     private var locale: DoriLocale?
     private var showsCountdown: Bool
     
-    //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 24)
     init(_ event: PreviewEvent, inLocale locale: DoriLocale?, showsCountdown: Bool = false) {
         self.eventImageURL = event.bannerImageURL(in: locale ?? DoriLocale.primaryLocale)!
         self.title = event.eventName
@@ -35,7 +34,6 @@ struct EventInfoForHome: View {
         self.locale = locale
         self.showsCountdown = showsCountdown
     }
-    //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 24)
     init(_ event: Event, inLocale locale: DoriLocale?, showsCountdown: Bool = false) {
         self.eventImageURL = event.bannerImageURL(in: locale ?? DoriLocale.primaryLocale)!
         self.title = event.eventName
@@ -44,7 +42,6 @@ struct EventInfoForHome: View {
         self.locale = locale
         self.showsCountdown = showsCountdown
     }
-    //#sourceLocation(file: "/Users/t785/Xcode/Greatdori/Greatdori Watch App/CardViews.swift.gyb", line: 33)
     
     var body: some View {
         VStack {
@@ -83,19 +80,18 @@ struct EventInfoForHome: View {
                        let endDate = locale != nil ? endAt.forLocale(locale!) : endAt.forPreferredLocale() {
                         if startDate > .now {
                             Text("Events.countdown.start-at.\(Text(startDate, style: .relative)).\(locale != nil ? "(\(locale!.rawValue.uppercased()))" : "")")
-                                .multilineTextAlignment(.center)
                         } else if endDate > .now {
                             Text("Events.countdown.end-at.\(Text(endDate, style: .relative)).\(locale != nil ? "(\(locale!.rawValue.uppercased()))" : "")")
-                                .multilineTextAlignment(.center)
                         } else {
                             Text("Events.countdown.ended.\(locale != nil ? "(\(locale!.rawValue.uppercased()))" : "")")
-                                .multilineTextAlignment(.center)
                         }
                     } else {
                         Text("Events.countdown.unstarted.\(locale != nil ? "(\(locale!.rawValue.uppercased()))" : "")")
-                            .multilineTextAlignment(.center)
                     }
                 }
+                #if !os(visionOS)
+                .multilineTextAlignment(.center)
+                #endif
             }
         }
     }

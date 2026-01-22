@@ -499,6 +499,7 @@ struct HomeEventsView: View {
             }
         })
         .buttonStyle(.plain)
+        .buttonBorderShape(.roundedRectangle(radius: 20))
         .foregroundStyle(.primary)
         .task {
             updateEvent()

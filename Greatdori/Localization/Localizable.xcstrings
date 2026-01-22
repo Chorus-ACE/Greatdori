@@ -4716,6 +4716,12 @@
         }
       }
     },
+    "Details.arts.actions" : {
+
+    },
+    "Details.arts.create-spatial" : {
+
+    },
     "Details.arts.dismiss" : {
       "localizations" : {
         "en" : {

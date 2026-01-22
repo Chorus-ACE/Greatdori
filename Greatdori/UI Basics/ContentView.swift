@@ -72,7 +72,7 @@ struct ContentView: View {
                                     })
                                 }
                             }, header: {
-                                Text("App.info")
+                                Label("App.info", systemImage: "rectangle.stack")
                             })
                         } else {
                             Tab("App.info", systemImage: "rectangle.stack", value: .info(.home)) {
@@ -97,7 +97,7 @@ struct ContentView: View {
                                     })
                                 }
                             }, header: {
-                                Text("App.tools")
+                                Label("App.tools", systemImage: "slider.horizontal.3")
                             })
                             
                         } else {
