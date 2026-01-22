@@ -30,8 +30,10 @@ import AppKit
 
 // MARK: System Orientation
 #if os(macOS)
+@available(*, deprecated, message: "Use `platform` instead.")
 let isMACOS = true
 #else
+@available(*, deprecated, message: "Use `platform` instead.")
 let isMACOS = false
 #endif
 
@@ -281,4 +283,22 @@ class NotificationDelegate: NSObject, @MainActor UNUserNotificationCenterDelegat
     ) {
         completionHandler([.banner, .sound])
     }
+}
+
+
+#if os(iOS)
+@const let platform = GreatdoriPlatform.iOS
+#elseif os(macOS)
+@const let platform = GreatdoriPlatform.macOS
+#elseif os(visionOS)
+@const let platform = GreatdoriPlatform.visionOS
+#else
+@const let platform = GreatdoriPlatform.unknown
+#endif
+
+enum GreatdoriPlatform {
+    case iOS
+    case macOS
+    case visionOS
+    case unknown
 }
