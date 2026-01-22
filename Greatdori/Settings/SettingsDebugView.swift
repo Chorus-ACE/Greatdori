@@ -35,7 +35,7 @@ struct SettingsDebugView: View {
             Section("Settings.debug.initialization") {
                 Toggle("Settings.debug.initialization.welcome", isOn: $isInitializationRequired)
                 Toggle("Settings.debug.initialization.always-welcome", isOn: $isFirstLaunchResettable.reversed())
-                Toggle("Settings.debug.initialization.start-up-failure", isOn: $isFirstLaunchResettable.reversed())
+                Toggle("Settings.debug.initialization.start-up-failure", isOn: $startUpSucceeded.reversed())
                 Toggle("Settings.debug.initialization.force-display-whats-new", isOn: $forceDisplayWhatsNewSheet)
             }
             

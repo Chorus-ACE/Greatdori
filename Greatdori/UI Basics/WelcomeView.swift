@@ -18,6 +18,7 @@ import SymbolAvailability
 
 // MARK: ようこそ、Greatdori!の世界へ
 struct WelcomeView: View {
+    @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
     @AppStorage("isFirstLaunchResettable") var isFirstLaunchResettable = true
@@ -189,7 +190,7 @@ struct WelcomeView: View {
                             .padding(.vertical, 10)
                             .background {
                                 RoundedRectangle(cornerRadius: 20)
-                                    .fill(colorScheme == .light ? Color(.systemGroupedBackground) : Color(.secondarySystemGroupedBackground))
+                                    .fill(colorScheme == .light && (sizeClass == .regular && platform == .iOS) ? Color(.systemGroupedBackground) : Color(.secondarySystemGroupedBackground))
                             }
                         }, footer: {
                             HStack {
