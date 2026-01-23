@@ -18,7 +18,7 @@ import SymbolAvailability
 struct SettingsAboutView: View {
     var body: some View {
         Group {
-            #if os(iOS)
+            #if !os(macOS)
             List {
                 HStack {
                     Spacer()

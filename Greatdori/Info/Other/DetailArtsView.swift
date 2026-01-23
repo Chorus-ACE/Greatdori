@@ -579,6 +579,7 @@ struct ImageLookView: View {
                     }
                 }
                 .frame(depth: 2)
+                .allowsHitTesting(false)
             } else {
                 Image(uiImage: image)
                     .resizable()

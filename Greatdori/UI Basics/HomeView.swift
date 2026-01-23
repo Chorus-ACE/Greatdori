@@ -33,7 +33,6 @@ enum NavigationPage: Hashable {
 
 struct HomeView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
-    @Environment(\.platform) var platform
     @Environment(\.colorScheme) var colorScheme
     @State var useCompactVariant = true
     @State var showSettingsSheet = false
@@ -93,14 +92,15 @@ struct HomeView: View {
                 }
             }
             .toolbar {
-                if platform != .mac && sizeClass == .compact {
-                    ToolbarItem(placement: .automatic, content: {
+                if platform != .macOS && (sizeClass == .compact || platform == .visionOS) {
+                    ToolbarItem {
                         Button(action: {
                             showSettingsSheet = true
                         }, label: {
                             Image(systemName: .gear)
                         })
-                    })
+                        .buttonBorderShape(.circle)
+                    }
                 }
             }
             .sheet(isPresented: $showSettingsSheet, content: {

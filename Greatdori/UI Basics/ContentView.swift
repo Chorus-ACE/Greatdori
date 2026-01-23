@@ -26,7 +26,6 @@ struct ContentView: View {
     @State private var selection: AppSection? = .home
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.scenePhase) var scenePhase
-    @Environment(\.platform) var platform
     @AppStorage("isInitializationRequired") var isInitializationRequired = true
     @AppStorage("isFirstLaunchResettable") var isFirstLaunchResettable = true
     @AppStorage("startUpSucceeded") var startUpSucceeded = true
@@ -105,13 +104,13 @@ struct ContentView: View {
                                 ToolsView()
                             }
                         }
-#if os(iOS)
+                        #if os(iOS)
                         if sizeClass == .regular {
                             Tab("App.settings", systemImage: "gear", value: .settings) {
                                 SettingsView()
                             }
                         }
-#endif
+                        #endif
                     }
                     .tabViewStyle(.sidebarAdaptable)
                     .wrapIf(true, in: { content in
@@ -128,7 +127,7 @@ struct ContentView: View {
                     })
                 } else {
                     // MARK: Fallback for Older Versions
-                    if platform == .mac || sizeClass == .regular {
+                    if platform == .macOS || sizeClass == .regular {
                         NavigationSplitView {
                             List(selection: $selection) {
                                 Label("App.home", systemImage: "house").tag(AppSection.home)
@@ -144,9 +143,9 @@ struct ContentView: View {
                                         Label(allToolsDestinationItems[itemIndex].title, systemImage: allToolsDestinationItems[itemIndex].symbol).tag(AppSection.tools(allToolsDestinationItems[itemIndex].tabValue))
                                     }
                                 })
-#if os(iOS)
+                                #if os(iOS)
                                 Label("App.settings", systemImage: "gear").tag(AppSection.settings)
-#endif
+                                #endif
                             }
                             .navigationTitle("Greatdori!")
                         } detail: {
@@ -184,11 +183,11 @@ struct ContentView: View {
                 if AppVersion.appHadUpdated(ignoreBuildNumber: false) ?? false && UserDefaults.standard.integer(forKey: "LastSeenWhatsNewHash") != stableHashOfWhatsNew() && !whatsNew.isEmpty || forceDisplayWhatsNewSheet {
                     showWhatsNewSheet = true
                 }
-#if !DORIKIT_ENABLE_PRECACHE
+                #if !DORIKIT_ENABLE_PRECACHE
                 if !isFirstLaunch {
                     showPreCacheAlert = true
                 }
-#endif
+                #endif
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     startUpSucceeded = true
                 }
@@ -299,31 +298,4 @@ enum InfoTab: Hashable {
 
 enum ToolTab: Hashable {
     case home, eventTracker, chartSimulator, storyViewer, live2dViewer, assetExplorer, station, zeileEditor, eventCalculator
-}
-
-enum Platform {
-    case iOS, mac, tv, watch, unknown
-}
-
-// [?]
-struct PlatformKey: EnvironmentKey {
-    static let defaultValue: Platform = {
-#if os(iOS)
-        return .iOS
-#elseif os(macOS)
-        return .mac
-#elseif os(tvOS)
-        return .tv
-#elseif os(watchOS)
-        return .watch
-#else
-        return .unknown
-#endif
-    }()
-}
-
-extension EnvironmentValues {
-    var platform: Platform {
-        self[PlatformKey.self]
-    }
 }

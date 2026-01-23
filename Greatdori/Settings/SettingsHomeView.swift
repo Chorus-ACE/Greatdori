@@ -87,12 +87,9 @@ struct SettingsHomeView: View {
                 Text(showCurrentDayPickerLabel[showBirthdayDate]!)
                     .multilineTextAlignment(.trailing)
             })
-            .wrapIf(!isMACOS, in: { content in
-#if os(iOS)
-                content
-                    .pickerStyle(.navigationLink)
-#endif
-            })
+            #if !os(macOS)
+            .pickerStyle(.navigationLink)
+            #endif
         }
     }
 }

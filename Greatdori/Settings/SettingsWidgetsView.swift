@@ -31,10 +31,10 @@ struct SettingsWidgetsView: View {
     @State var newCollectionSheetIsDisplaying = false // macOS only
     @State var newCollectionInput = ""
     @State var newCollectionIsImporting = false
-    #if os(iOS)
+    #if !os(macOS)
     @State var currentViewController: UIViewController!
     @State private var cardPreload: PreloadDescriptor<[PreviewCard]>?
-#endif
+    #endif
     @State var aboutCollectionCode: String = ""
     var body: some View {
         Group {
@@ -74,7 +74,7 @@ struct SettingsWidgetsView: View {
                                 })
                             }
                         }
-                        .wrapIf(isMACOS, in: { content in
+                        .wrapIf(platform == .macOS) { content in
                             content.contextMenu {
                                 if let duplicationName = CardCollectionManager.shared.duplicationName(item.name) {
                                     Button(action: {
@@ -90,7 +90,7 @@ struct SettingsWidgetsView: View {
                                         .foregroundStyle(.red)
                                 })
                             }
-                        })
+                        }
                     }
                     .onMove { from, to in
                         collectionManager.move(fromOffsets: from, toOffset: to)
@@ -101,7 +101,7 @@ struct SettingsWidgetsView: View {
                         .foregroundStyle(.secondary)
                 }
                 if !newCollectionIsImporting {
-#if os(iOS)
+                    #if !os(macOS)
                     Button(action: {
                         // We use `UIAlertController` for iOS to workaround
                         // some bugs about the alert presented by SwiftUI
@@ -162,7 +162,7 @@ struct SettingsWidgetsView: View {
                     }, label: {
                         Label("Settings.widgets.collections.user.add", systemImage: "plus")
                     })
-#endif
+                    #endif
                 } else {
                     HStack {
                         //                        ProgressView()
@@ -173,7 +173,7 @@ struct SettingsWidgetsView: View {
             }, header: {
                 Text("Settings.widgets.collections.user")
                     .toolbar {
-                        if isMACOS {
+                        if platform == .macOS {
                             ToolbarItem {
                                 Button(action: {
                                     newCollectionInput = ""
@@ -217,7 +217,7 @@ struct SettingsWidgetsView: View {
                             })
                         }
                     }
-                    .wrapIf(isMACOS, in: { content in
+                    .wrapIf(platform == .macOS) { content in
                         content.contextMenu {
                             if let duplicationName = CardCollectionManager.shared.duplicationName(item.name) {
                                 Button(action: {
@@ -227,7 +227,7 @@ struct SettingsWidgetsView: View {
                                 })
                             }
                         }
-                    })
+                    }
                 }
             }
         }
@@ -242,11 +242,11 @@ struct SettingsWidgetsView: View {
         }, message: {
             Text("Settings.widgets.collections.user.add.alert.message")
         })
-#if os(iOS)
-        .introspect(.viewController, on: .iOS(.v17...)) { viewController in
+        #if !os(macOS)
+        .introspect(.viewController, on: .iOS(.v17...), .visionOS(.v2...)) { viewController in
             currentViewController = viewController
         }
-#endif
+        #endif
     }
     
     struct CollectionAddingActions: View {

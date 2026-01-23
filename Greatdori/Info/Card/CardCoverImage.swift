@@ -147,9 +147,9 @@ struct CardCoverImageBorder: View {
     private let expectedCardRatio: CGFloat = 480/320
     private let cardFocusSwitchingAnimation: Animation = .easeOut(duration: 0.15)
     
+    @Namespace var hoverGroup
     @State var normalCardIsOnHover = false
     @State var trainedCardIsOnHover = false
-//    @State var isNormalImageUnavailable = false
     
     @State var isHovering: Bool = false
     var body: some View {
@@ -172,7 +172,9 @@ struct CardCoverImageBorder: View {
                 Group {
                     if let cardCoverAfterTrainingImageURL = card.coverAfterTrainingImageURL, displayType != .normalOnly {
                         if displayType == .both && !isNormalImageUnavailable.wrappedValue {
-                            // Both
+                            #if !os(visionOS) // As `onHover` doesn't work
+                                              // on visionOS, we have to rewrite
+                                              // this view for it
                             HStack(spacing: 0) {
                                 WebImage(url: card.coverNormalImageURL) { image in
                                     image
@@ -191,7 +193,7 @@ struct CardCoverImageBorder: View {
                                 .scaledToFill()
                                 .frame(width: proxy.size.width * CGFloat(normalCardIsOnHover ? 0.75 : (trainedCardIsOnHover ? 0.25 : 0.5)))
                                 .clipped()
-#if !os(macOS)
+                                #if !os(macOS)
                                 .onTapGesture {
                                     withAnimation(cardFocusSwitchingAnimation) {
                                         if !normalCardIsOnHover {
@@ -202,7 +204,7 @@ struct CardCoverImageBorder: View {
                                         }
                                     }
                                 }
-#endif
+                                #endif // !os(macOS)
                                 .onHover { isHovering in
                                     withAnimation(cardFocusSwitchingAnimation) {
                                         if isHovering {
@@ -227,7 +229,7 @@ struct CardCoverImageBorder: View {
                                 .scaledToFill()
                                 .frame(width: proxy.size.width * CGFloat(trainedCardIsOnHover ? 0.75 : (normalCardIsOnHover ? 0.25 : 0.5)))
                                 .clipped()
-#if !os(macOS)
+                                #if !os(macOS)
                                 .onTapGesture {
                                     withAnimation(cardFocusSwitchingAnimation) {
                                         if !trainedCardIsOnHover {
@@ -238,7 +240,7 @@ struct CardCoverImageBorder: View {
                                         }
                                     }
                                 }
-#endif
+                                #endif // !os(macOS)
                                 .onHover { isHovering in
                                     withAnimation(cardFocusSwitchingAnimation) {
                                         if isHovering {
@@ -252,6 +254,91 @@ struct CardCoverImageBorder: View {
                                 .contentShape(Rectangle())
                             }
                             .allowsHitTesting(true)
+                            #else // !os(visionOS)
+                            ZStack {
+                                WebImage(url: card.coverNormalImageURL) { image in
+                                    image
+                                } placeholder: {
+                                    RoundedRectangle(cornerRadius: 0)
+                                        .fill(getPlaceholderColor())
+                                }
+                                .resizable()
+                                .onFailure { _ in
+                                    DispatchQueue.main.async {
+                                        isNormalImageUnavailable.wrappedValue = true
+                                    }
+                                }
+                                .interpolation(.high)
+                                .antialiased(true)
+                                .scaledToFill()
+                                .hoverEffect(.empty, in: .init(id: "leadingActivatesTrailing", in: hoverGroup))
+                                .hoverEffect(in: .init(id: "trailingActivatesLeading", in: hoverGroup, behavior: .followsGroup)) { content, isActive, proxy in
+                                    content
+                                        .animation(cardFocusSwitchingAnimation) { content in
+                                            content
+                                                .offset(x: -(isActive ? proxy.size.width / 8 : 0))
+                                                .clipShape(.rect.size(
+                                                    width: isActive ? proxy.size.width * 0.5 : proxy.size.width,
+                                                    height: proxy.size.height,
+                                                    anchor: .leading
+                                                ))
+                                        }
+                                }
+                                .hoverEffect { content, isActive, proxy in
+                                    content
+                                        .animation(cardFocusSwitchingAnimation) { content in
+                                            content
+                                                .offset(x: -(isActive ? proxy.size.width / 8 : proxy.size.width / 4))
+                                                .clipShape(.rect.size(
+                                                    width: isActive ? proxy.size.width * 0.75 : proxy.size.width * 0.5,
+                                                    height: proxy.size.height,
+                                                    anchor: .leading
+                                                ))
+                                        }
+                                }
+                                .clipped()
+                                .contentShape(Rectangle())
+                                
+                                WebImage(url: cardCoverAfterTrainingImageURL) { image in
+                                    image
+                                } placeholder: {
+                                    RoundedRectangle(cornerRadius: 0)
+                                        .fill(getPlaceholderColor())
+                                }
+                                .resizable()
+                                .interpolation(.high)
+                                .antialiased(true)
+                                .scaledToFill()
+                                .hoverEffect(.empty, in: .init(id: "trailingActivatesLeading", in: hoverGroup))
+                                .hoverEffect(in: .init(id: "leadingActivatesTrailing", in: hoverGroup, behavior: .followsGroup)) { content, isActive, proxy in
+                                    content
+                                        .animation(cardFocusSwitchingAnimation) { content in
+                                            content
+                                                .offset(x: isActive ? proxy.size.width / 8 : 0)
+                                                .clipShape(.rect.size(
+                                                    width: isActive ? proxy.size.width * 0.5 : proxy.size.width,
+                                                    height: proxy.size.height,
+                                                    anchor: .trailing
+                                                ))
+                                        }
+                                }
+                                .hoverEffect { content, isActive, proxy in
+                                    content
+                                        .animation(cardFocusSwitchingAnimation) { content in
+                                            content
+                                                .offset(x: isActive ? proxy.size.width / 8 : proxy.size.width / 4)
+                                                .clipShape(.rect.size(
+                                                    width: isActive ? proxy.size.width * 0.75 : proxy.size.width * 0.5,
+                                                    height: proxy.size.height,
+                                                    anchor: .trailing
+                                                ))
+                                        }
+                                }
+                                .clipped()
+                                .contentShape(Rectangle())
+                            }
+                            .allowsHitTesting(true)
+                            #endif // !os(visionOS)
                         } else {
                             WebImage(url: cardCoverAfterTrainingImageURL) { image in
                                 image
@@ -279,7 +366,6 @@ struct CardCoverImageBorder: View {
                 .scaledToFill()
                 .frame(width: proxy.size.width, height: proxy.size.height)
                 .clipped()
-                //                    .scaleEffect(0.97)
             }
         }
     }

@@ -40,16 +40,16 @@ private struct Provider: AppIntentTimelineProvider {
 
     func snapshot(for configuration: CardCollectionWidgetIntent, in context: Context) async -> CardEntry {
         if context.isPreview {
-            return entry(in: "BUILTIN_CARD_COLLECTION_GREATDORI", frequency: configuration.shuffleFrequency)
+            return entry(in: "BUILTIN_CARD_COLLECTION_GREATDORI", frequency: configuration.shuffleFrequency, ctx: context)
         }
-        return entry(in: configuration.collectionName, frequency: configuration.shuffleFrequency)
+        return entry(in: configuration.collectionName, frequency: configuration.shuffleFrequency, ctx: context)
     }
     
     func timeline(for configuration: CardCollectionWidgetIntent, in context: Context) async -> Timeline<Entry> {
         if configuration.shuffleFrequency == .onTap {
             return .init(
                 entries: [
-                    entry(align: false, in: configuration.collectionName, frequency: configuration.shuffleFrequency)
+                    entry(align: false, in: configuration.collectionName, frequency: configuration.shuffleFrequency, ctx: context)
                 ],
                 policy: .never
             )
@@ -67,7 +67,8 @@ private struct Provider: AppIntentTimelineProvider {
                 for: .now.addingTimeInterval(60 * 60 * Double(i)),
                 align: false,
                 in: configuration.collectionName,
-                frequency: configuration.shuffleFrequency
+                frequency: configuration.shuffleFrequency,
+                ctx: context
             ))
         }
         return .init(entries: entries, policy: policy)
@@ -77,13 +78,22 @@ private struct Provider: AppIntentTimelineProvider {
         for date: Date = .now,
         align: Bool = true,
         in collection: String?,
-        frequency: CardCollectionWidgetIntent.ShuffleFrequency
+        frequency: CardCollectionWidgetIntent.ShuffleFrequency,
+        ctx: Context
     ) -> CardEntry {
         guard let collectionName = collection else { return .init(frequency: frequency) }
         guard let collection = CardCollectionManager.shared._collection(named: collectionName) else { return .init(frequency: frequency) }
         var generator = seed(for: date, align: align)
         guard let card = collection.cards.randomElement(using: &generator) else { return .init(frequency: frequency) }
-        guard let image = card.image else { return .init(frequency: frequency, emptyReason: 1) }
+        guard var image = card.image else { return .init(frequency: frequency, emptyReason: 1) }
+        #if os(visionOS)
+        if ctx.family == .systemMedium {
+            // `.systemMedium` on visionOS has an image size limit '984403.2'
+            // which is lower than the raw card image resolution.
+            // We have to resize it here
+            image = image.resized(to: .init(width: 572, height: 429))
+        }
+        #endif // os(visionOS)
         return .init(date: date, frequency: frequency, cardID: card.id, image: image)
     }
     
@@ -176,3 +186,24 @@ private struct CardWidgetsEntryView : View {
         }
     }
 }
+
+#if !os(macOS)
+extension UIImage {
+    func resized(to newSize: CGSize) -> UIImage {
+        let widthRatio = newSize.width / size.width
+        let heightRatio = newSize.height / size.height
+        let scaleFactor = max(widthRatio, heightRatio)
+        let scaledSize = CGSize(
+            width: size.width * scaleFactor,
+            height: size.height * scaleFactor
+        )
+        let x = (scaledSize.width - newSize.width) / 2
+        let y = (scaledSize.height - newSize.height) / 2
+        let cropRect = CGRect(origin: CGPoint(x: -x, y: -y), size: scaledSize)
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        defer { UIGraphicsEndImageContext() }
+        draw(in: cropRect)
+        return UIGraphicsGetImageFromCurrentImageContext()!
+    }
+}
+#endif // !os(macOS)

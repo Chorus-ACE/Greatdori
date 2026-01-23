@@ -76,7 +76,7 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
                 ScrollView {
                     HStack {
                         Spacer(minLength: 0)
-                        LazyVStack(spacing: 35, pinnedViews: .sectionHeaders) {
+                        LazyVStack(spacing: platform == .visionOS ? 45 : 35, pinnedViews: .sectionHeaders) {
                             makeContent(information)
                         }
                         .padding()
@@ -659,6 +659,7 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
                         ForEach((showAll ? elements : Array(elements.prefix(3))), id: \.self) { item in
                             makeEachContent(item)
                                 .buttonStyle(.plain)
+                                .buttonBorderShape(.roundedRectangle(radius: 20))
                         }
                     }
                     if let appendingView {

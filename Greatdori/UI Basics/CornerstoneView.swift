@@ -439,6 +439,7 @@ struct DismissButton<L: View>: View {
         }, label: {
             label()
         })
+        .buttonBorderShape(.circle)
     }
 }
 

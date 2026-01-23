@@ -140,7 +140,7 @@ struct EventDetailOverviewView: View {
                                     }, value: {
                                         WrappingHStack(alignment: .trailing) {
                                             ForEach(valueArray, id: \.self) { value in
-#if os(macOS)
+                                                #if os(macOS)
                                                 NavigationLink(destination: {
                                                     CharacterDetailView(id: value.characterID)
                                                 }, label: {
@@ -150,7 +150,7 @@ struct EventDetailOverviewView: View {
                                                         .frame(width: imageButtonSize, height: imageButtonSize)
                                                 })
                                                 .buttonStyle(.plain)
-#else
+                                                #else // os(macOS)
                                                 Menu(content: {
                                                     NavigationLink(destination: {
                                                         CharacterDetailView(id: value.characterID)
@@ -175,7 +175,11 @@ struct EventDetailOverviewView: View {
                                                         .resizable()
                                                         .frame(width: imageButtonSize, height: imageButtonSize)
                                                 })
-#endif
+                                                #if os(visionOS)
+                                                .buttonStyle(.plain)
+                                                .buttonBorderShape(.circle)
+                                                #endif // os(visionOS)
+                                                #endif // os(macOS)
                                             }
                                         }
                                         Text("+\(firstKey)%")
@@ -292,6 +296,7 @@ struct EventDetailOverviewView: View {
                                                     CardPreviewImage(card, sideLength: cardThumbnailSideLength, showNavigationHints: true)
                                                 })
                                                 .buttonStyle(.plain)
+                                                .buttonBorderShape(.roundedRectangle(radius: 2))
                                             }
                                         }
                                         .accessibilityRepresentation {
@@ -336,6 +341,7 @@ struct EventDetailOverviewView: View {
                                             })
                                             .contentShape(Rectangle())
                                             .buttonStyle(.plain)
+                                            .buttonBorderShape(.roundedRectangle(radius: 2))
                                         }
                                     })
                                     .accessibilityValue("Accessibility.event.card.\(rewardsArray.count)")
