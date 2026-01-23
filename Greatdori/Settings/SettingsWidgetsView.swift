@@ -34,7 +34,7 @@ struct SettingsWidgetsView: View {
     #if os(iOS)
     @State var currentViewController: UIViewController!
     @State private var cardPreload: PreloadDescriptor<[PreviewCard]>?
-    #endif
+#endif
     @State var aboutCollectionCode: String = ""
     var body: some View {
         Group {
@@ -233,20 +233,20 @@ struct SettingsWidgetsView: View {
         }
         .navigationTitle("Settings.widgets")
         .navigationDestination(isPresented: $showDestination, destination: {
-//            if let destinationCollection {
-                SettingsWidgetsCollectionDetailsView(collectionGivenName: $destinationCollection, isPresented: $showDestination)
-//            }
+            //            if let destinationCollection {
+            SettingsWidgetsCollectionDetailsView(collectionGivenName: $destinationCollection, isPresented: $showDestination)
+            //            }
         })
         .alert("Settings.widgets.collections.user.add.alert.title", isPresented: $newCollectionSheetIsDisplaying, actions: {
             CollectionAddingActions(newCollectionTitle: $newCollectionInput, newCollectionIsAdding: $newCollectionIsImporting)
         }, message: {
             Text("Settings.widgets.collections.user.add.alert.message")
         })
-        #if os(iOS)
+#if os(iOS)
         .introspect(.viewController, on: .iOS(.v17...)) { viewController in
             currentViewController = viewController
         }
-        #endif
+#endif
     }
     
     struct CollectionAddingActions: View {

@@ -155,7 +155,20 @@ struct SettingsTab: Hashable {
     var note: String?
     
     var isDisplayable: Bool {
-        !((self.note == "DEBUG" && !AppFlag.DEBUG) || (self.note == "HIDDEN"))
+        switch note {
+        case "DEBUG":
+            return AppFlag.DEBUG
+        case "HIDDEN":
+            return false
+        case "WIDGETKIT":
+            if #available(visionOS 26.0, *) {
+                return true
+            } else {
+                return false
+            }
+        default:
+            return true
+        }
     }
 }
 
@@ -164,16 +177,10 @@ let settingsTabs: [SettingsTab] = [
     .init(symbol: "rectangle.3.group", name: "Settings.home-edit", destination: "home"),
     .init(symbol: "books.vertical", name: "Settings.story-viewer", destination: "story"),
     .init(symbol: "bell.badge", name: "Settings.permissions", destination: "permission"),
-    {
-        if #available(visionOS 26.0, *) {
-            .init(symbol: "widget.small", name: "Settings.widgets", destination: "widget")
-        } else {
-            nil
-        }
-    }(),
+    .init(symbol: "widget.small", name: "Settings.widgets", destination: "widget", note: "WIDGETKIT"),
     .init(symbol: "person.crop.circle", name: "Settings.account", destination: "account", note: "NO-FORM"),
     .init(symbol: "textformat", name: "Settings.fonts", destination: "font", note: "NO-FORM"),
     .init(symbol: "hammer", name: "Settings.advanced", destination: "advanced"),
     .init(symbol: "info.circle", name: "Settings.about", destination: "about", note: "NO-FORM"),
     .init(symbol: "ant", name: "Settings.debug", destination: "debug", note: "DEBUG")
-].compactMap { $0 }
+]
