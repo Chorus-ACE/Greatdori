@@ -354,6 +354,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.colorScheme) private var colorScheme
     @Namespace private var navigationAnimationNamespace
+    @AppStorage("Adv_InfoUseFuzzySearch") private var useFuzzySearch = false
     @State private var filter: DoriFrontend.Filter
     @State private var sorter = DoriSorter(keyword: Element.applicableSortingTypes.contains(.releaseDate(in: .jp)) ? .releaseDate(in: .jp) : .id, direction: .descending)
     @State private var elements: [Element]?
@@ -456,7 +457,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         .searchable(text: $searchedText, prompt: searchPlaceholder)
         .onSubmit {
             if let elements {
-                searchedElements = elements.search(for: searchedText)
+                searchedElements = elements.search(for: searchedText, with: useFuzzySearch ? nil : [])
             }
         }
         .navigationTitle(Element.pluralName)
@@ -525,17 +526,17 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         }
         .onChange(of: filter) {
             if let elements {
-                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText, with: nil).sorted(withDoriSorter: sorter)
+                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText, with: useFuzzySearch ? nil : []).sorted(withDoriSorter: sorter)
             }
         }
         .onChange(of: sorter) {
             if let elements {
-                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText, with: nil).sorted(withDoriSorter: sorter)
+                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText, with: useFuzzySearch ? nil : []).sorted(withDoriSorter: sorter)
             }
         }
         .onChange(of: searchedText, {
             if let elements {
-                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText, with: nil).sorted(withDoriSorter: sorter)
+                searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText, with: useFuzzySearch ? nil : []).sorted(withDoriSorter: sorter)
             }
         })
     }

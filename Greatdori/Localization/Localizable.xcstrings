@@ -14055,6 +14055,72 @@
         }
       }
     },
+    "Settings.advanced.search" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜尋"
+          }
+        }
+      }
+    },
+    "Settings.advanced.search.info-fuzzy-search" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Enhanced Fuzzy Search"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用增强模糊搜索"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用增強模糊搜尋"
+          }
+        }
+      }
+    },
+    "Settings.advanced.search.info-fuzzy-search.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enhanced fuzzy search enables you to find contents quicker, but it may cause performance problems on some devices."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "增强模糊搜索允许你更快找到内容，但可能会在一些设备上造成性能问题。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "增強模糊搜尋允許你更快找到內容，但可能會在一些裝置上造成效能問題。"
+          }
+        }
+      }
+    },
     "Settings.advanced.storage" : {
       "localizations" : {
         "en" : {
@@ -14710,6 +14776,12 @@
             "state" : "translated",
             "value" : "操作"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作"
+          }
         }
       }
     },
@@ -14725,6 +14797,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "复制Debug密钥"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷貝偵錯密碼"
           }
         }
       }
@@ -14742,6 +14820,12 @@
             "state" : "translated",
             "value" : "禁用Debug"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "關閉偵錯"
+          }
         }
       }
     },
@@ -14758,6 +14842,12 @@
             "state" : "translated",
             "value" : "[DEBUG] 关闭DEBUG"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[DEBUG] 關閉偵錯"
+          }
         }
       }
     },
@@ -14773,6 +14863,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "禁用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停用"
           }
         }
       }
@@ -14900,6 +14996,12 @@
             "state" : "translated",
             "value" : "稍后再说"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "稍後再說"
+          }
         }
       }
     },
@@ -14988,6 +15090,12 @@
             "state" : "translated",
             "value" : "功能与旗帜"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "功能與標誌"
+          }
         }
       }
     },
@@ -15000,6 +15108,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "演示模式"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "演示模式"
@@ -15020,6 +15134,12 @@
             "state" : "translated",
             "value" : "故事调试模式"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "故事調試模式"
+          }
         }
       }
     },
@@ -15036,6 +15156,12 @@
             "state" : "translated",
             "value" : "显示测距尺"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示標尺"
+          }
         }
       }
     },
@@ -15048,6 +15174,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初始化"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "初始化"
@@ -15068,6 +15200,12 @@
             "state" : "translated",
             "value" : "始终显示欢迎页"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "總是顯示歡迎頁"
+          }
         }
       }
     },
@@ -15083,6 +15221,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "强制显示最近更新"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "強制顯示新功能頁"
           }
         }
       }
@@ -15100,6 +15244,12 @@
             "state" : "translated",
             "value" : "标记启动失败"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標記啟動為失敗"
+          }
         }
       }
     },
@@ -15116,6 +15266,12 @@
             "state" : "translated",
             "value" : "显示欢迎页"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示歡迎頁"
+          }
         }
       }
     },
@@ -15128,6 +15284,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "值"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "值"
@@ -15148,6 +15310,12 @@
             "state" : "translated",
             "value" : "否"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "否"
+          }
         }
       }
     },
@@ -15160,6 +15328,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "是"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "是"
@@ -15180,6 +15354,12 @@
             "state" : "translated",
             "value" : "ISV默认布局"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ISV 預設佈局"
+          }
         }
       }
     },
@@ -15195,6 +15375,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "通知Token"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知 Token"
           }
         }
       }
@@ -15212,6 +15398,12 @@
             "state" : "translated",
             "value" : "Sayuru版本"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sayuru 版本"
+          }
         }
       }
     },
@@ -15228,6 +15420,12 @@
             "state" : "translated",
             "value" : "视图"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "視圖"
+          }
         }
       }
     },
@@ -15240,6 +15438,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生日"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "生日"
@@ -15260,6 +15464,12 @@
             "state" : "translated",
             "value" : "过滤器"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "篩選"
+          }
         }
       }
     },
@@ -15272,6 +15482,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playground"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Playground"
@@ -15291,6 +15507,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "存储"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "儲存"
           }
         }
       }

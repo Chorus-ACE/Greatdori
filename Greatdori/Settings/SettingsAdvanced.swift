@@ -48,6 +48,7 @@ struct SettingsAdvancedView: View {
     func settingsAdvancedSections() -> some View {
         SettingsAdvancedBannersSection(isInLowPowerMode: $isInLowPowerMode, thermalState: $thermalState)
         SettingsAdvancedImageSection(disablePowerConsumingFeatures: isInLowPowerMode || thermalState == .critical)
+        SettingsAdvancedSearchSection()
         SettingsAdvancedUISection()
         SettingsAdvancedStorageSection()
     }
@@ -120,9 +121,25 @@ struct SettingsAdvancedImageSection: View {
     }
 }
 
+struct SettingsAdvancedSearchSection: View {
+    @AppStorage("Adv_InfoUseFuzzySearch") var infoUseFuzzySearch = false
+    var body: some View {
+        Section {
+            Toggle(isOn: $infoUseFuzzySearch) {
+                VStack(alignment: .leading) {
+                    Text("Settings.advanced.search.info-fuzzy-search")
+                    Text("Settings.advanced.search.info-fuzzy-search.description")
+                        .foregroundStyle(.secondary)
+                        .font(.footnote)
+                }
+            }
+        } header: {
+            Text("Settings.advanced.search")
+        }
+    }
+}
+
 struct SettingsAdvancedUISection: View {
-    @AppStorage("ISVStyleTestFlag") var isvStyleTestFlag = 0
-    @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
     var body: some View {
         Section {
             Toggle(isOn: .init(get: { AppFlag.CharacterRandomCardsContainAllCards }, set: { AppFlag.set($0, forKey: "CharacterRandomCardsContainAllCards") }), label: {
