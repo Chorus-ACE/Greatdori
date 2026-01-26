@@ -12,6 +12,7 @@ built with [DoriKit](https://github.com/Greatdori/DoriKit).
 |---:|:---:|
 | iOS & watchOS | ![Greatdori iOS & watchOS Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori.yml)|
 | macOS         | ![Greatdori macOS Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori-mac.yml)|
+| visionOS      | ![Greatdori visionOS Build Status](https://img.shields.io/github/actions/workflow/status/Greatdori/Greatdori/build-greatdori-xr.yml)|
 
 This open source version is called *Sayuru*,
 which enables features like music streaming that App Store might not allow to do so.
