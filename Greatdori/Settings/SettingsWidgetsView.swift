@@ -26,8 +26,6 @@ import SymbolAvailability
 @available(visionOS 26.0, *)
 struct SettingsWidgetsView: View {
     @StateObject var collectionManager = CardCollectionManager.shared
-    @State var destinationCollection: String = ""
-    @State var showDestination = false
     @State var newCollectionSheetIsDisplaying = false // macOS only
     @State var newCollectionInput = ""
     @State var newCollectionIsImporting = false
@@ -41,10 +39,9 @@ struct SettingsWidgetsView: View {
             Section(content: {
                 if !collectionManager.userCollections.isEmpty {
                     ForEach(collectionManager.userCollections, id: \.self) { item in
-                        Button(action: {
-                            destinationCollection = item.name
-                            showDestination = true
-                        }, label: {
+                        NavigationLink {
+                            SettingsWidgetsCollectionDetailsView(collectionGivenName: item.name)
+                        } label: {
                             HStack {
                                 Text(item.name)
                                 Spacer()
@@ -52,13 +49,9 @@ struct SettingsWidgetsView: View {
                                     Text("\(item.cards.count)")
                                         .foregroundStyle(.secondary)
                                 }
-                                Image(systemName: .chevronForward)
-                                    .foregroundStyle(.tertiary)
-                                    .font(.footnote)
-                                    .bold()
                             }
                             .contentShape(Rectangle())
-                        })
+                        }
                         .buttonStyle(.plain)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive, action: {
@@ -189,10 +182,9 @@ struct SettingsWidgetsView: View {
             
             Section("Settings.widgets.collections.built-in") {
                 ForEach(collectionManager.builtinCollections, id: \.self) { item in
-                    Button(action: {
-                        destinationCollection = item.name
-                        showDestination = true
-                    }, label: {
+                    NavigationLink {
+                        SettingsWidgetsCollectionDetailsView(collectionGivenName: item.name)
+                    } label: {
                         HStack {
                             Text(item.name)
                             Spacer()
@@ -200,13 +192,9 @@ struct SettingsWidgetsView: View {
                                 Text("\(item.cards.count)")
                                     .foregroundStyle(.secondary)
                             }
-                            Image(systemName: .chevronForward)
-                                .foregroundStyle(.tertiary)
-                                .font(.footnote)
-                                .bold()
                         }
                         .contentShape(Rectangle())
-                    })
+                    }
                     .buttonStyle(.plain)
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         if let duplicationName = CardCollectionManager.shared.duplicationName(item.name) {
@@ -232,11 +220,6 @@ struct SettingsWidgetsView: View {
             }
         }
         .navigationTitle("Settings.widgets")
-        .navigationDestination(isPresented: $showDestination, destination: {
-            //            if let destinationCollection {
-            SettingsWidgetsCollectionDetailsView(collectionGivenName: $destinationCollection, isPresented: $showDestination)
-            //            }
-        })
         .alert("Settings.widgets.collections.user.add.alert.title", isPresented: $newCollectionSheetIsDisplaying, actions: {
             CollectionAddingActions(newCollectionTitle: $newCollectionInput, newCollectionIsAdding: $newCollectionIsImporting)
         }, message: {
@@ -299,10 +282,10 @@ struct SettingsWidgetsView: View {
 
 @available(visionOS 26.0, *)
 struct SettingsWidgetsCollectionDetailsView: View {
+    @State var collectionGivenName: String
+    @Environment(\.dismiss) var dismiss
     @AppStorage("hideCollectionNameWhileSharing") var hideCollectionNameWhileSharing = false
-    @Binding var collectionGivenName: String
     @StateObject var collectionManager = CardCollectionManager.shared
-    @Binding var isPresented: Bool
     @State var collectionName: String = ""
     @State var showCollectionDeleteAlert = false
     @State var cards: [Int: Card] = [:]
@@ -435,7 +418,7 @@ struct SettingsWidgetsCollectionDetailsView: View {
                                             .alert("Settings.widgets.collections.delete.alert.title.\(collection.name)", isPresented: $showCollectionDeleteAlert, actions: {
                                                 Button(role: .destructive, action: {
                                                     collectionManager.remove(at: collectionManager.userCollections.firstIndex{$0.name == collectionName}!)
-                                                    isPresented = false
+                                                    dismiss()
                                                 }, label: {
                                                     Text("Settings.widgets.collections.delete.alert.delete")
                                                 })
@@ -506,12 +489,14 @@ struct SettingsWidgetsCollectionDetailsView: View {
             .withSystemBackground()
             .navigationTitle(collectionName)
             #if !os(visionOS)
-            .wrapIf(true, in: { content in
+            .wrapIf(true) { content in
                 if #available(iOS 26.0, macOS 26.0, *) {
                     content
                         .navigationSubtitle("Settings.widgets.collections.count.\(collection.cards.count)")
+                } else {
+                    content
                 }
-            })
+            }
             #endif
             .onAppear {
                 collectionName = collection.name
@@ -558,24 +543,20 @@ struct SettingsWidgetsCollectionDetailsView: View {
                     })
                 }
             }
-            .wrapIf(isMACOS, in: { content in
-                #if os(macOS)
-                content
-                    .window(isPresented: $showCollectionEditorSheet, content: {
-                        CollectionEditorView(collection: collection)
-                            .introspect(.window, on: .macOS(.v14...)) { window in
-                                window.standardWindowButton(.zoomButton)?.isEnabled = false
-                                window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
-                                window.level = .floating
-                            }
-                    })
-                #endif
-            }, else: { content in
-                content
-                    .sheet(isPresented: $showCollectionEditorSheet) {
-                        CollectionEditorView(collection: collection)
+            #if os(macOS)
+            .window(isPresented: $showCollectionEditorSheet, content: {
+                CollectionEditorView(collection: collection)
+                    .introspect(.window, on: .macOS(.v14...)) { window in
+                        window.standardWindowButton(.zoomButton)?.isEnabled = false
+                        window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
+                        window.level = .floating
                     }
             })
+            #else
+            .sheet(isPresented: $showCollectionEditorSheet) {
+                CollectionEditorView(collection: collection)
+            }
+            #endif
             .sheet(isPresented: $showCollectionCodeDialog) {
                 if let collection = collectionManager.allCollections.first(where: { $0.name == collectionGivenName }) {
                     NavigationStack {
