@@ -1,10 +1,10 @@
 #===---*- Greatdori! -*----------------------------------------------------===#
 #
-# build-greatdori-mac.yml
+# build-greatdori-xr.yml
 #
 # This source file is part of the Greatdori! open source project
 #
-# Copyright (c) 2025 the Greatdori! project authors
+# Copyright (c) 2026 the Greatdori! project authors
 # Licensed under Apache License v2.0
 #
 # See https://greatdori.com/LICENSE.txt for license information
@@ -12,7 +12,7 @@
 #
 #===-----------------------------------------------------------------------===#
 
-name: Build Greatdori macOS
+name: Build Greatdori visionOS
 
 on:
   push:
@@ -23,6 +23,9 @@ jobs:
   build:
     name: Build
     runs-on: macos-26
+    strategy:
+      matrix:
+        destination: ["visionOS Simulator", "visionOS"]
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
@@ -35,10 +38,10 @@ jobs:
       - name: Create build folder
         run: mkdir build
       - name: Build
-        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -derivedDataPath ./build -destination "generic/platform=macOS" -skipPackagePluginValidation build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_STYLE=Manual DEVELOPMENT_TEAM=""
+        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -derivedDataPath ./build -destination "generic/platform=${{ matrix.destination }}" -skipPackagePluginValidation build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_STYLE=Manual DEVELOPMENT_TEAM=""
       - name: Upload build result
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: Greatdori-macOS.app
+          name: Greatdori-${{ matrix.destination }}.app
           path: ./build/Build/Products/*/Greatdori!.app
           if-no-files-found: error

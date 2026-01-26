@@ -579,7 +579,6 @@ struct ImageLookView: View {
                     }
                 }
                 .frame(depth: 2)
-                .allowsHitTesting(false)
             } else {
                 Image(uiImage: image)
                     .resizable()
@@ -669,7 +668,7 @@ struct ImageLookView: View {
                 }
             }
             .padding(30)
-            .frame(depth: 1)
+            .frame(depth: 3)
         }
         .ignoresSafeArea()
         .sheet(isPresented: $isShareViewPresented) {

@@ -827,11 +827,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		8C085ACA2E71968C00447B05 /* ci_scripts */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ci_scripts;
-			sourceTree = "<group>";
-		};
 		8C7B4A0F2E7AB61C00EE0C89 /* .github */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = .github;
@@ -963,7 +958,6 @@
 				8C9474452E34DF5F003A90B4 /* .gitattributes */,
 				8C5AD1B72E47317D00E61653 /* .mailmap */,
 				8C7B4A0F2E7AB61C00EE0C89 /* .github */,
-				8C085ACA2E71968C00447B05 /* ci_scripts */,
 				8CD13FE32E300ACE00673E15 /* utils */,
 				8C923D982E30AF1E003AFC0A /* AppShared */,
 				8C0C99812E296A5500549B5C /* Greatdori */,
