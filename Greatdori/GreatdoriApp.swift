@@ -28,14 +28,21 @@ import BackgroundTasks
 import AppKit
 #endif
 
-// MARK: System Orientation
-#if os(macOS)
-@available(*, deprecated, message: "Use `platform` instead.")
-let isMACOS = true
+#if os(iOS)
+@const let platform = AppPlatform.iOS
+#elseif os(macOS)
+@const let platform = AppPlatform.macOS
+#elseif os(visionOS)
+@const let platform = AppPlatform.visionOS
 #else
-@available(*, deprecated, message: "Use `platform` instead.")
-let isMACOS = false
+@const let platform = AppPlatform.unknown
 #endif
+
+@available(*, deprecated, message: "Use 'platform' instead.")
+@_transparent
+var isMACOS: Bool {
+    platform == .macOS
+}
 
 @const let isSayuruVersion = true
 
@@ -347,18 +354,7 @@ class NotificationDelegate: NSObject, @MainActor UNUserNotificationCenterDelegat
     }
 }
 
-
-#if os(iOS)
-@const let platform = GreatdoriPlatform.iOS
-#elseif os(macOS)
-@const let platform = GreatdoriPlatform.macOS
-#elseif os(visionOS)
-@const let platform = GreatdoriPlatform.visionOS
-#else
-@const let platform = GreatdoriPlatform.unknown
-#endif
-
-enum GreatdoriPlatform {
+enum AppPlatform {
     case iOS
     case macOS
     case visionOS
