@@ -867,7 +867,7 @@ struct MultilingualText: View {
     }
     var body: some View {
         Group {
-#if os(iOS)
+            #if !os(macOS)
             Menu(content: {
                 ForEach(allLocaleTexts, id: \.self) { localeValue in
                     Button(action: {
@@ -902,10 +902,14 @@ struct MultilingualText: View {
                 })
             })
             .menuStyle(.button)
+            #if !os(visionOS)
             .buttonStyle(.borderless)
+            #else
+            .buttonStyle(.plain) // Plain style for xrOS to remove default inset
+            #endif
             .menuIndicator(.hidden)
             .foregroundStyle(.primary)
-#else
+            #else
             MultilingualTextInternalLabel(source: source, showSecondaryText: showSecondaryText, showLocaleKey: showLocaleKey)
                 .onHover { isHovering in
                     if allowPopover {
@@ -926,7 +930,7 @@ struct MultilingualText: View {
                     }
                     .padding()
                 }
-#endif
+            #endif
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(source.forPreferredLocale() ?? "")

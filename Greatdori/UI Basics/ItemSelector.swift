@@ -264,6 +264,17 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
                 .presentationDragIndicator(.visible)
                 .presentationBackgroundInteraction(.enabled)
         }
+        #else
+        .ornament(visibility: showFilterSheet ? .visible : .hidden, attachmentAnchor: .scene(.trailing)) {
+            HStack {
+                Spacer(minLength: 300)
+                FilterView(filter: $filter, includingKeys: Set(Element.applicableFilteringKeys))
+                    .padding(.top)
+                    .glassBackgroundEffect()
+                    .frame(width: 300, height: 600)
+            }
+            .rotation3DEffect(.degrees(-30), axis: .y)
+        }
         #endif
         .withSystemBackground() // This modifier MUST be placed BOTH before
                                 // and after `inspector` to make it work as expected
@@ -353,7 +364,7 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
             selectorWindowIsPresented = false
         }
         .window(isPresented: $selectorWindowIsPresented) {
-            Group {
+            NavigationStack {
                 if let eventBinding = bindingCast($selection, to: PreviewEvent?.self) {
                     EventSelector(selection: eventBinding)
                 } else if let cardBinding = bindingCast($selection, to: PreviewCard?.self) {

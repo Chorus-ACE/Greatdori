@@ -38,6 +38,9 @@ struct ExternalLinksSection: View {
                                     .contentShape(Rectangle())
                                 })
                                 .buttonStyle(.plain)
+                                #if os(visionOS)
+                                .defaultHoverEffect(.empty)
+                                #endif
                                 .id(item.id)
                             }
                             .insert {
@@ -46,6 +49,10 @@ struct ExternalLinksSection: View {
                         }
                     }
                     .frame(maxWidth: infoContentMaxWidth)
+                    #if os(visionOS)
+                    .hoverEffect()
+                    .hoverEffectGroup()
+                    #endif
                 }
             } header: {
                 HStack {

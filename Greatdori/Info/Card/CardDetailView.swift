@@ -58,6 +58,9 @@ struct CardDetailView: View {
                     ArtsItem(title: "Card.arts.livesd", url: information.card.sdImageURL)
                 }
             }
+            #if os(visionOS)
+            .environment(\.imageSupportsCreateSpatial, true)
+            #endif
             ExternalLinksSection(links: [ExternalLink(name: "External-link.bestdori", url: URL(string: "https://bestdori.com/info/cards/\(id)")!)])
         } switcherDestination: {
             CardSearchView()

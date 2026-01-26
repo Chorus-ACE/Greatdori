@@ -11,6 +11,18 @@
         }
       },
       "idiom" : "universal"
+    },
+    {
+      "color" : {
+        "color-space" : "display-p3",
+        "components" : {
+          "alpha" : "1.000",
+          "blue" : "0xFF",
+          "green" : "0xA9",
+          "red" : "0x94"
+        }
+      },
+      "idiom" : "vision"
     }
   ],
   "info" : {

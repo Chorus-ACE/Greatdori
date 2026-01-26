@@ -61,9 +61,9 @@ struct CardInfo: View {
                     }
                 } else {
                     CardCoverImage(previewCard, band: band)
-#if !os(macOS)
+                    #if os(iOS)
                         .allowsHitTesting(false)
-#endif
+                    #endif
                 }
             }
             .accessibilityHidden(true)

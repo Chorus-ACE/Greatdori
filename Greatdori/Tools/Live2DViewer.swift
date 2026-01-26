@@ -242,68 +242,21 @@ struct Live2DDetailView: View {
         .animation(.spring(duration: 0.3, bounce: 0.3), value: isInspectorVisible)
         #if !os(visionOS)
         .inspector(isPresented: $isInspectorPresented) {
-            Form {
-                Section {
-                    Picker(selection: $currentMotion, content: {
-                        ForEach(motions, id: \.self) { motion in
-                            Text(motion.name).tag(motion)
-                        }
-                    }, label: {
-                        Text("Live2D.detail.motion")
-                    }, optionalCurrentValueLabel: {
-                        Text(currentMotion?.name ?? String(localized: "Live2D.detail.motion.none"))
-                    })
-                    //                    .onChange(of: motions, initial: true, {
-                    //                        if !motions.isEmpty {
-                    //                            currentMotion = motions.first(where: { $0.name == "idle01" })
-                    //                        }
-                    //                    })
-                    .onAppear {
-                        isInspectorVisible = true
-                    }
-                    .onDisappear {
-                        isInspectorVisible = false
-                    }
-                    Picker(selection: $currentExpression, content: {
-                        ForEach(expressions, id: \.self) { expression in
-                            Text(expression.name).tag(expression)
-                        }
-                    }, label: {
-                        Text("Live2D.detail.expression")
-                    }, optionalCurrentValueLabel: {
-                        Text(currentExpression?.name ?? String(localized: "Live2D.detail.expression.none"))
-                    })
-                    .onChange(of: expressions, initial: true, {
-                        if !expressions.isEmpty {
-                            currentExpression = expressions.first(where: { $0.name == "default" })
-                        }
-                    })
-                    Toggle("Live2D.detail.sway", isOn: $isSwayEnabled)
-                    Toggle("Live2D.detail.breath", isOn: $isBreathEnabled)
-                    Toggle("Live2D.detail.blink", isOn: $isEyeBlinkEnabled)
-                }
-                Section {
-                    Toggle("Live2D.detail.track-parameters", isOn: $isTrackingParameters)
-                    Toggle("Live2D.detail.freeze-animation", isOn: $isPaused)
-                    Group {
-                        ForEach(Array(parameters.enumerated()), id: \.element.id) { index, parameter in
-                            VStack(alignment: .leading) {
-                                Text("\(parameter.id)\(Text("Typography.bold-dot-seperater"))\(unsafe String(format: "%.2f", parameter.value))")
-                                    .foregroundStyle(.gray)
-                                Slider(value: $parameters[index].value, in: parameter.minimumValue...parameter.maximumValue)
-                            }
-                            .accessibilityAddTraits(isTrackingParameters && !isPaused ? .updatesFrequently : [])
-                        }
-                    }
-                    .disabled(!isPaused)
-                } header: {
-                    Text("Live2D.parameters")
-                }
+            inspector
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackgroundInteraction(.enabled)
+        }
+        #else
+        .ornament(visibility: isInspectorPresented ? .visible : .hidden, attachmentAnchor: .scene(.trailing)) {
+            HStack {
+                Spacer(minLength: 300)
+                inspector
+                    .padding(.top)
+                    .glassBackgroundEffect()
+                    .frame(width: 300, height: 600)
             }
-            .formStyle(.grouped)
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-            .presentationBackgroundInteraction(.enabled)
+            .rotation3DEffect(.degrees(-30), axis: .y)
         }
         #endif
         .toolbar {
@@ -313,5 +266,68 @@ struct Live2DDetailView: View {
                 }
             }
         }
+    }
+    
+    @ViewBuilder
+    private var inspector: some View {
+        Form {
+            Section {
+                Picker(selection: $currentMotion, content: {
+                    ForEach(motions, id: \.self) { motion in
+                        Text(motion.name).tag(motion)
+                    }
+                }, label: {
+                    Text("Live2D.detail.motion")
+                }, optionalCurrentValueLabel: {
+                    Text(currentMotion?.name ?? String(localized: "Live2D.detail.motion.none"))
+                })
+//                .onChange(of: motions, initial: true, {
+//                    if !motions.isEmpty {
+//                        currentMotion = motions.first(where: { $0.name == "idle01" })
+//                    }
+//                })
+                .onAppear {
+                    isInspectorVisible = true
+                }
+                .onDisappear {
+                    isInspectorVisible = false
+                }
+                Picker(selection: $currentExpression, content: {
+                    ForEach(expressions, id: \.self) { expression in
+                        Text(expression.name).tag(expression)
+                    }
+                }, label: {
+                    Text("Live2D.detail.expression")
+                }, optionalCurrentValueLabel: {
+                    Text(currentExpression?.name ?? String(localized: "Live2D.detail.expression.none"))
+                })
+                .onChange(of: expressions, initial: true, {
+                    if !expressions.isEmpty {
+                        currentExpression = expressions.first(where: { $0.name == "default" })
+                    }
+                })
+                Toggle("Live2D.detail.sway", isOn: $isSwayEnabled)
+                Toggle("Live2D.detail.breath", isOn: $isBreathEnabled)
+                Toggle("Live2D.detail.blink", isOn: $isEyeBlinkEnabled)
+            }
+            Section {
+                Toggle("Live2D.detail.track-parameters", isOn: $isTrackingParameters)
+                Toggle("Live2D.detail.freeze-animation", isOn: $isPaused)
+                Group {
+                    ForEach(Array(parameters.enumerated()), id: \.element.id) { index, parameter in
+                        VStack(alignment: .leading) {
+                            Text("\(parameter.id)\(Text("Typography.bold-dot-seperater"))\(unsafe String(format: "%.2f", parameter.value))")
+                                .foregroundStyle(.gray)
+                            Slider(value: $parameters[index].value, in: parameter.minimumValue...parameter.maximumValue)
+                        }
+                        .accessibilityAddTraits(isTrackingParameters && !isPaused ? .updatesFrequently : [])
+                    }
+                }
+                .disabled(!isPaused)
+            } header: {
+                Text("Live2D.parameters")
+            }
+        }
+        .formStyle(.grouped)
     }
 }

@@ -109,6 +109,9 @@ struct DetailArtsSection: View {
     #if os(macOS)
     @State private var previewController = PreviewController()
     #endif
+    #if os(visionOS)
+    @Environment(\.imageSupportsCreateSpatial) private var supportsCreateSpatial
+    #endif
     @State var nativeImages = [UUID: PlatformImage]()
     @State var imageFrames = [UUID: CGRect]()
     @State var quickLookOnFocusItem: ImageLookItem?
@@ -219,6 +222,7 @@ struct DetailArtsSection: View {
             #elseif os(visionOS)
             .window(item: $quickLookOnFocusItem) { item in
                 ImageLookView(image: item.image, title: item.title, subtitle: item.subtitle, imageFrame: item.imageFrame)
+                    .environment(\.imageSupportsCreateSpatial, supportsCreateSpatial)
             }
             #endif
         }
@@ -519,8 +523,9 @@ struct ImageLookView: View {
     var title: String
     var subtitle: String
     var imageFrame: CGRect
-    @Environment(\.dismiss) private var dismiss
     @Environment(SceneDelegate.self) private var sceneDelegate
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.imageSupportsCreateSpatial) private var supportsCreateSpatial
     @State private var isShareViewPresented = false
     @State private var spatial3DImage: AnyObject?
     @State private var imageEntity = Entity()
@@ -594,11 +599,40 @@ struct ImageLookView: View {
                         ZStack {
                             Circle()
                                 .fill(Color(red: 0.4, green: 0.4, blue: 0.4))
+                                .opacity(0.8)
                             Label("Details.arts.dismiss", systemImage: "xmark")
                         }
                     }
                     .frame(width: 30, height: 30)
                     Spacer()
+                    if #available(visionOS 26.0, *), supportsCreateSpatial {
+                        Button {
+                            if (component as? ImagePresentationComponent)?.desiredViewingMode == .spatial3D {
+                                if var c = component as? ImagePresentationComponent {
+                                    c.desiredViewingMode = .mono
+                                    component = c
+                                    imageEntity.components.set(c)
+                                }
+                            } else {
+                                createSpatial()
+                            }
+                        } label: {
+                            ZStack {
+                                if (component as? ImagePresentationComponent)?.desiredViewingMode == .spatial3D {
+                                    Circle()
+                                        .fill(.white)
+                                } else {
+                                    Circle()
+                                        .fill(Color(red: 0.4, green: 0.4, blue: 0.4))
+                                        .opacity(0.8)
+                                }
+                                Label("Details.arts.spatial-scene", systemImage: "spatial.capture")
+                                    .foregroundColor((component as? ImagePresentationComponent)?.desiredViewingMode == .spatial3D ? .black : .primary)
+                            }
+                        }
+                        .frame(width: 30, height: 30)
+                        .padding(.trailing, 20)
+                    }
                     Menu {
                         Section {
                             Button("Image.save.photos", systemImage: "photo.badge.plus") {
@@ -620,25 +654,19 @@ struct ImageLookView: View {
                                 isShareViewPresented = true
                             }
                         }
-                        if #available(visionOS 26.0, *) {
+                        if #available(visionOS 26.0, *), supportsCreateSpatial {
                             Section {
-                                Button("Details.arts.create-spatial", systemImage: "spatial.capture") {
-                                    Task {
-                                        guard let spatial3DImage = spatial3DImage as? ImagePresentationComponent.Spatial3DImage else {
-                                            return
+                                if (component as? ImagePresentationComponent)?.desiredViewingMode == .spatial3D {
+                                    Button("Details.arts.undo-create-spatial", systemImage: "spatial.capture.slash") {
+                                        if var c = component as? ImagePresentationComponent {
+                                            c.desiredViewingMode = .mono
+                                            component = c
+                                            imageEntity.components.set(c)
                                         }
-                                        guard var imagePresentationComponent = imageEntity.components[ImagePresentationComponent.self] else {
-                                            return
-                                        }
-                                        // Set the desired viewing mode before generating so that it will trigger the
-                                        // generation animation
-                                        imagePresentationComponent.desiredViewingMode = .spatial3D
-                                        imageEntity.components.set(imagePresentationComponent)
-                                        try await spatial3DImage.generate()
-                                        
-                                        if let aspectRatio = imagePresentationComponent.aspectRatio(for: .spatial3D) {
-                                            imageAspectRatio = CGFloat(aspectRatio)
-                                        }
+                                    }
+                                } else {
+                                    Button("Details.arts.create-spatial", systemImage: "spatial.capture") {
+                                        createSpatial()
                                     }
                                 }
                             }
@@ -647,6 +675,7 @@ struct ImageLookView: View {
                         ZStack {
                             Circle()
                                 .fill(Color(red: 0.4, green: 0.4, blue: 0.4))
+                                .opacity(0.8)
                             Label("Details.arts.actions", systemImage: "ellipsis")
                         }
                     }
@@ -696,6 +725,27 @@ struct ImageLookView: View {
         .preference(key: RemoveWindowBackgroundPreference.self, value: true)
     }
     
+    @available(visionOS 26.0, *)
+    private func createSpatial() {
+        Task {
+            guard let spatial3DImage = spatial3DImage as? ImagePresentationComponent.Spatial3DImage else {
+                return
+            }
+            guard var imagePresentationComponent = imageEntity.components[ImagePresentationComponent.self] else {
+                return
+            }
+            // Set the desired viewing mode before generating so that it will trigger the
+            // generation animation
+            imagePresentationComponent.desiredViewingMode = .spatial3D
+            component = imagePresentationComponent
+            imageEntity.components.set(imagePresentationComponent)
+            try await spatial3DImage.generate()
+            
+            if let aspectRatio = imagePresentationComponent.aspectRatio(for: .spatial3D) {
+                imageAspectRatio = CGFloat(aspectRatio)
+            }
+        }
+    }
     private func scaleImagePresentationToFit(in boundsInMeters: BoundingBox) {
         guard #available(visionOS 26.0, *) else { return }
         guard let component = component as? ImagePresentationComponent else {
@@ -723,6 +773,10 @@ private struct _ImageShareView: UIViewControllerRepresentable {
         UIActivityViewController(activityItems: [image], applicationActivities: nil)
     }
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}
+}
+
+extension EnvironmentValues {
+    @Entry var imageSupportsCreateSpatial = false
 }
 
 @available(visionOS 26.0, *)
