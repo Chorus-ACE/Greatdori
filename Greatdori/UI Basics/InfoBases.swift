@@ -264,7 +264,7 @@ extension EnvironmentValues {
 @MainActor let verticalAndHorizontalLayouts: [(LocalizedStringKey, String, SummaryLayout)] = [("Filter.view.list", "list.bullet", SummaryLayout.horizontal), ("Filter.view.grid", "square.grid.2x2", SummaryLayout.vertical(hidesDetail: false))]
 @MainActor let bannerLayouts: [(LocalizedStringKey, String, Bool)] = [("Filter.view.banner-and-details", "text.below.rectangle", true), ("Filter.view.banner-only", "rectangle.grid.1x2", false)]
 
-struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable & DoriTypeDescribable, Layout, LayoutPicker: View, Container: View, Content: View, Destination: View>: View {
+struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFilterable & DoriSortable & DoriSearchable & DoriTypeDescribable, Layout: Equatable, LayoutPicker: View, Container: View, Content: View, Destination: View>: View {
     var updateList: @Sendable () async -> [Element]?
     var makeLayoutPicker: (Binding<Layout>) -> LayoutPicker
     var makeContainer: (Layout, [Element], AnyView, @escaping (Element) -> AnyView) -> Container
@@ -344,7 +344,13 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         self.makeContainer = container
         self.makeSomeContent = eachContent
         self.makeDestination = destination
-        self._currentLayout = .init(initialValue: initialLayout)
+        if let L = Layout.self as? Codable.Type,
+           let data = UserDefaults.standard.data(forKey: "StoredLayout_\(Element.self)"),
+           let value = try? JSONDecoder().decode(L.self, from: data) {
+            self._currentLayout = .init(initialValue: value as! Layout)
+        } else {
+            self._currentLayout = .init(initialValue: initialLayout)
+        }
         self.unavailablePrompt = "Search.unavailable.\(Element.singularName)"
         self.searchPlaceholder = "Search.prompt.\(Element.pluralName)"
         self._filter = .init(initialValue: .recoverable(id: Element.pluralName.key))
@@ -553,11 +559,17 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                 searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText, with: useFuzzySearch ? nil : []).sorted(withDoriSorter: sorter)
             }
         }
-        .onChange(of: searchedText, {
+        .onChange(of: searchedText) {
             if let elements {
                 searchedElements = elements.filter(withDoriFilter: filter).search(for: searchedText, with: useFuzzySearch ? nil : []).sorted(withDoriSorter: sorter)
             }
-        })
+        }
+        .onChange(of: currentLayout) {
+            if let l = currentLayout as? any Codable,
+               let data = try? JSONEncoder().encode(l) {
+                UserDefaults.standard.set(data, forKey: "StoredLayout_\(Element.self)")
+            }
+        }
     }
     
     @ViewBuilder
