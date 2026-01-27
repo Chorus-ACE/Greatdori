@@ -100,90 +100,92 @@ struct InteractiveStoryView: View {
     var body: some View {
         ZStack {
             // MARK: - Characters
-            Group {
-                GeometryReader { geometry in
-                    ZStack {
-                        ForEach(Array(allDiffLayouts.enumerated()), id: \.element.modelPath) { index, layout in
-                            HStack {
+            GeometryReader { geometry in
+                ZStack {
+                    ForEach(Array(allDiffLayouts.enumerated()), id: \.element.modelPath) { index, layout in
+                        HStack {
+                            Spacer(minLength: 0)
+                            VStack {
                                 Spacer(minLength: 0)
-                                VStack {
-                                    Spacer(minLength: 0)
-                                    let offsetX = { () -> CGFloat in
-                                        if let state = showingLayoutIndexs[index] {
-                                            return switch state.position.base {
-                                            case .left: -(geometry.size.width / 4)
-                                            case .leftOutside: -(geometry.size.width / 3)
-                                            case .leftInside: -(geometry.size.width / 6)
-                                            case .center: 0
-                                            case .centerBottom: 0
-                                            case .right: geometry.size.width / 4
-                                            case .rightOutside: geometry.size.width / 3
-                                            case .rightInside: geometry.size.width / 6
-                                            case .leftBottom: -(geometry.size.width / 4)
-                                            case .leftInsideBottom: -(geometry.size.width / 6)
-                                            case .rightBottom: geometry.size.width / 4
-                                            case .rightInsideBottom: geometry.size.width / 6
-                                            @unknown default: 0
-                                            }
-                                        } else {
-                                            return 0
+                                let offsetX = { () -> CGFloat in
+                                    if let state = showingLayoutIndexs[index] {
+                                        return switch state.position.base {
+                                        case .left: -(geometry.size.width / 4)
+                                        case .leftOutside: -(geometry.size.width / 3)
+                                        case .leftInside: -(geometry.size.width / 6)
+                                        case .center: 0
+                                        case .centerBottom: 0
+                                        case .right: geometry.size.width / 4
+                                        case .rightOutside: geometry.size.width / 3
+                                        case .rightInside: geometry.size.width / 6
+                                        case .leftBottom: -(geometry.size.width / 4)
+                                        case .leftInsideBottom: -(geometry.size.width / 6)
+                                        case .rightBottom: geometry.size.width / 4
+                                        case .rightInsideBottom: geometry.size.width / 6
+                                        @unknown default: 0
                                         }
-                                    }()
-                                    let offsetY = { () -> CGFloat in
-                                        if let state = showingLayoutIndexs[index] {
-                                            return switch state.position.base {
-                                            case .leftBottom,
-                                                    .leftInsideBottom,
-                                                    .centerBottom,
-                                                    .rightBottom,
-                                                    .rightInsideBottom: geometry.size.height / 6
-                                            default: 0
-                                            }
-                                        } else {
-                                            return 0
+                                    } else {
+                                        return 0
+                                    }
+                                }()
+                                let offsetY = { () -> CGFloat in
+                                    if let state = showingLayoutIndexs[index] {
+                                        return switch state.position.base {
+                                        case .leftBottom,
+                                                .leftInsideBottom,
+                                                .centerBottom,
+                                                .rightBottom,
+                                                .rightInsideBottom: geometry.size.height / 6
+                                        default: 0
                                         }
-                                    }()
-                                    ISVLive2DView(modelPath: layout.modelPath, state: showingLayoutIndexs[index], currentSpeckerID: currentTalk?.characterIDs.first ?? -1)
-                                        .safeVoicePlayer($voicePlayer)
-                                        .frame(width: geometry.size.height, height: geometry.size.height)
-                                        .offset(x: offsetX, y: offsetY)
-                                        .opacity(showingLayoutIndexs[index] != nil ? 1 : 0)
-                                        .environment(\._layoutViewVisible, showingLayoutIndexs[index] != nil)
-                                        .animation(.spring(duration: 0.4, bounce: 0.25), value: showingLayoutIndexs)
-                                }
-                                Spacer(minLength: 0)
+                                    } else {
+                                        return 0
+                                    }
+                                }()
+                                ISVLive2DView(modelPath: layout.modelPath, state: showingLayoutIndexs[index], currentSpeckerID: currentTalk?.characterIDs.first ?? -1)
+                                    .safeVoicePlayer($voicePlayer)
+                                    .frame(width: geometry.size.height, height: geometry.size.height)
+                                    .offset(x: offsetX, y: offsetY)
+                                    .opacity(showingLayoutIndexs[index] != nil ? 1 : 0)
+                                    .environment(\._layoutViewVisible, showingLayoutIndexs[index] != nil)
+                                    .animation(.spring(duration: 0.4, bounce: 0.25), value: showingLayoutIndexs)
                             }
+                            Spacer(minLength: 0)
                         }
                     }
                 }
-#if os(iOS)
-                .ignoresSafeArea()
-#endif
+                #if os(visionOS)
+                .offset(z: 10)
+                #endif
             }
+            #if os(iOS)
+            .ignoresSafeArea()
+            #endif
             
             // MARK: - Dialog Box
-            Group {
-                if let currentTalk, !uiIsHiding {
-                    VStack {
+            if let currentTalk, !uiIsHiding {
+                VStack {
+                    Spacer()
+                    HStack {
                         Spacer()
-                        HStack {
-                            Spacer()
-                            ISVDialogBoxView(
-                                data: currentTalk,
-                                locale: ir.locale,
-                                isDelaying: false,
-                                isAutoPlaying: isAutoPlaying,
-                                isAnimating: $lineIsAnimating,
-                                shakeDuration: $talkShakeDuration
-                            )
-                            .padding(isMACOS ? .all : .horizontal)
-                            Spacer()
-                        }
-                        .padding(.bottom)
+                        ISVDialogBoxView(
+                            data: currentTalk,
+                            locale: ir.locale,
+                            isDelaying: false,
+                            isAutoPlaying: isAutoPlaying,
+                            isAnimating: $lineIsAnimating,
+                            shakeDuration: $talkShakeDuration
+                        )
+                        .padding(platform != .iOS ? .all : .horizontal)
+                        Spacer()
                     }
+                    .padding(.bottom)
                 }
+                .typesettingLanguage(locale.nsLocale().language)
+                #if os(visionOS)
+                .offset(z: 40)
+                #endif
             }
-            .typesettingLanguage(locale.nsLocale().language)
             
             // MARK: - Telop
             if let currentTelop {
@@ -202,11 +204,14 @@ struct InteractiveStoryView: View {
                 }
                 .typesettingLanguage(locale.nsLocale().language)
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)).combined(with: .opacity))
+                #if os(visionOS)
+                .offset(z: 40)
+                #endif
             }
             
             // MARK: - Menu
             Group {
-                if !uiIsHiding && !isMACOS {
+                if !uiIsHiding && platform == .iOS {
                     HStack {
                         Spacer()
                         VStack {
@@ -220,10 +225,6 @@ struct InteractiveStoryView: View {
                                     .buttonStyle(.bordered)
                                     .buttonBorderShape(.circle)
                             }
-                            #else
-                            actionMenu
-                                .buttonStyle(.bordered)
-                                .buttonBorderShape(.circle)
                             #endif
                             Spacer()
                         }
@@ -236,12 +237,15 @@ struct InteractiveStoryView: View {
                 Rectangle()
                     .fill(Color.white)
                     .opacity(whiteCoverIsDisplaying ? 1 : 0)
-                    .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
+                    .ignoresSafeArea(edges: platform == .macOS ? .vertical : .all)
                 Rectangle()
                     .fill(Color.black)
                     .opacity(blackCoverIsShowing ? 1 : 0)
-                    .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
+                    .ignoresSafeArea(edges: platform == .macOS ? .vertical : .all)
             }
+            #if os(visionOS)
+            .offset(z: 50)
+            #endif
         }
         // MARK: - Modifiers
         .focusable()
@@ -256,9 +260,12 @@ struct InteractiveStoryView: View {
                 .resizable()
                 .aspectRatio(isBackgroundImageNative ? 4 / 3 : nil, contentMode: .fill)
                 .clipped()
-                .ignoresSafeArea(edges: isMACOS ? .vertical : .all)
+                .ignoresSafeArea(edges: platform == .macOS ? .vertical : .all)
         }
         .modifier(ShakeScreenModifier(shakeDuration: $screenShakeDuration))
+        #if os(visionOS)
+        .preferredSurroundingsEffect(.ultraDark)
+        #endif
         .onAppear {
             #if !os(macOS)
             try? AVAudioSession.sharedInstance().setActive(true)
@@ -266,6 +273,13 @@ struct InteractiveStoryView: View {
             if backgroundImageURL != nil {
                 return
             }
+            
+            #if os(visionOS)
+            if #available(visionOS 26.0, *) {
+                bgmPlayer.intendedSpatialAudioExperience = .fixed
+                // Other players have default head-tracked experiences
+            }
+            #endif
             
             func resolvePre(actions: [StoryIR.StepAction]) {
                 for action in actions {
@@ -349,10 +363,11 @@ struct InteractiveStoryView: View {
                 }
             }
         }
-#if os(macOS)
+        #if !os(iOS)
         .toolbar {
             ToolbarItem {
                 actionMenu
+                    .buttonBorderShape(.circle)
             }
             if interactivePlayerIsInFullScreen.wrappedValue {
                 ToolbarItem(placement: .navigation) {
@@ -361,10 +376,11 @@ struct InteractiveStoryView: View {
                     }, label: {
                         Image(systemName: .xmark)
                     })
+                    .buttonBorderShape(.circle)
                 }
             }
         }
-#endif
+        #endif
     }
     
     // MARK: - actionMenu
@@ -530,6 +546,7 @@ struct InteractiveStoryView: View {
                    let voice = talkAudios[voicePath],
                    let newPlayer = try? AVAudioPlayer(data: voice) {
                     newPlayer.isMeteringEnabled = true
+                    voicePlayer?.stop()
                     voicePlayer = newPlayer
                     if let voicePlayer {
                         voicePlayer.volume = isMuted.wrappedValue ? 0 : 1

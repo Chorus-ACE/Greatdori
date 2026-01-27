@@ -148,6 +148,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
                                                     .groupBoxStrokeLineWidth(selection.contains(element) ? 3 : 0)
                                             })
                                             .buttonStyle(.plain)
+                                            .buttonBorderShape(.roundedRectangle(radius: 20))
                                         }
                                       )
                                     ) { element in
@@ -169,6 +170,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
                                                     .groupBoxStrokeLineWidth(selection.contains(element) ? 3 : 0)
                                             })
                                             .buttonStyle(.plain)
+                                            .buttonBorderShape(.roundedRectangle(radius: 20))
                                         )
                                     }
                                     .padding(.horizontal)

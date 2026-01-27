@@ -125,5 +125,6 @@ struct StoryCardView: View {
             .typesettingLanguage(locale.nsLocale().language)
         }
         .buttonStyle(.plain)
+        .buttonBorderShape(.roundedRectangle(radius: 20))
     }
 }

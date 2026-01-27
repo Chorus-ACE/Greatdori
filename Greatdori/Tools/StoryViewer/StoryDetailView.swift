@@ -245,7 +245,12 @@ struct StoryDetailView: View {
                                                         }
                                                         .foregroundStyle(Color.primary)
                                                     })
+                                                    #if !os(visionOS)
                                                     .buttonStyle(.borderless)
+                                                    #else
+                                                    .buttonStyle(.plain)
+                                                    .defaultHoverEffect(.empty)
+                                                    #endif
                                                 }
                                                 .groupBoxStrokeLineWidth(!isvAlwaysFullScreen && (isvCurrentBlockingActionIndex == transcript.sourceIndex ?? -3417) ? 3 : 0)
                                                 #if os(macOS)
@@ -258,6 +263,10 @@ struct StoryDetailView: View {
                                                     }
                                                 }
                                                 #endif // os(macOS)
+                                                #if os(visionOS)
+                                                .hoverEffect()
+                                                .hoverEffectGroup()
+                                                #endif // os(visionOS)
                                             }
                                         }
                                         .typesettingLanguage(locale.nsLocale().language)
@@ -270,13 +279,13 @@ struct StoryDetailView: View {
                         Spacer(minLength: 0)
                     }
                 }
-                .ignoresSafeArea(interactivePlayerIsInFullScreen && !isMACOS ? .all : [], edges: .all)
+                .ignoresSafeArea(interactivePlayerIsInFullScreen && platform == .iOS ? .all : [], edges: .all)
                 .scrollDisabled(interactivePlayerIsInFullScreen)
                 .onFrameChange { geometry in
                     screenWidth = geometry.size.width
                     screenHeight = geometry.size.height
                     
-                    if !isMACOS {
+                    if platform == .iOS {
                         var insets = geometry.safeAreaInsets
                         insets.bottom += 30
                         self.safeAreaInsets = insets
@@ -312,6 +321,7 @@ struct StoryDetailView: View {
                     }, label: {
                         Image(systemName: .globe)
                     })
+                    .buttonBorderShape(.circle)
                     .onChange(of: locale) {
                         Task {
                             await loadAssets()
@@ -326,13 +336,14 @@ struct StoryDetailView: View {
                 }
             }
             #endif
-            if isvAlwaysFullScreen || !isMACOS && !fullScreenButtonIsOnScreen {
+            if !interactivePlayerIsInFullScreen && (isvAlwaysFullScreen || platform != .macOS && !fullScreenButtonIsOnScreen) {
                 ToolbarItem {
                     Button(action: {
                         interactivePlayerIsInFullScreen.toggle()
                     }, label: {
                         Image(systemName: .arrowDownBackwardAndArrowUpForward)
                     })
+                    .buttonBorderShape(.circle)
                 }
             }
         }
