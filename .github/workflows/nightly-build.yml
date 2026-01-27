@@ -43,7 +43,7 @@ jobs:
     if: ${{ needs.check.outputs.HAS_NEW_COMMITS != 0 }}
     strategy:
       matrix:
-        destination: ["macOS", "iOS"]
+        destination: ["macOS", "iOS", "visionOS"]
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
@@ -103,7 +103,7 @@ jobs:
       - build
     strategy:
       matrix:
-        destination: ["macOS", "iOS"]
+        destination: ["macOS", "iOS", "visionOS"]
     steps:
       - name: Download App archive
         uses: actions/download-artifact@v6.0.0
@@ -175,7 +175,7 @@ jobs:
       - name: Upload IPA file
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: ${{ matrix.destination == 'macOS' && 'Greatdori!-Intermediate.pkg' || 'Greatdori!.ipa' }}
+          name: ${{ matrix.destination == 'macOS' && 'Greatdori!-Intermediate.pkg' || format('Greatdori!-{0}.ipa', matrix.destination) }}
           path: ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }}
   deploy:
     name: Deploy to TestFlight
@@ -184,7 +184,7 @@ jobs:
       - export
     strategy:
       matrix:
-        destination: ["macOS", "iOS"]
+        destination: ["macOS", "iOS", "visionOS"]
     env:
       ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
       ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
@@ -193,7 +193,7 @@ jobs:
       - name: Download exported file
         uses: actions/download-artifact@v6.0.0
         with:
-          name: ${{ matrix.destination == 'macOS' && 'Greatdori!-Intermediate.pkg' || 'Greatdori!.ipa' }}
+          name: ${{ matrix.destination == 'macOS' && 'Greatdori!-Intermediate.pkg' || format('Greatdori!-{0}.ipa', matrix.destination) }}
       - name: Prepare API Key
         run: |
           mkdir ~/.private_keys
@@ -201,7 +201,7 @@ jobs:
       - name: Upload to App Store Connect
         id: upload
         run: |
-          RESULT=$(xcrun altool --upload-app -f ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }} -t ${{ matrix.destination == 'macOS' && 'macos' || 'ios' }} --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --output-format json)
+          RESULT=$(xcrun altool --upload-app -f ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }} -t ${{ toLower(matrix.destination) }} --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --output-format json)
           DELIVERY_UUID=$(echo "$RESULT" | awk '/^{/ {p=1} p' | jq -r '.details["delivery-uuid"]')
           echo "DELIVERY_UUID=$DELIVERY_UUID" >> "$GITHUB_OUTPUT"
       - name: Wait for processing
@@ -419,7 +419,7 @@ jobs:
       - name: Download IPA
         uses: actions/download-artifact@v6.0.0
         with:
-          name: Greatdori!.ipa
+          name: Greatdori!-iOS.ipa
       - name: Deploy installer
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
