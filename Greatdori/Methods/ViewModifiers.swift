@@ -67,11 +67,17 @@ struct _ImageContextMenuModifier<V: View>: ViewModifier {
                     otherContent()
                 }
                 Section {
-#if os(macOS)
+                    #if os(macOS)
                     forEachImageInfo("Image.save.download", systemImage: "square.and.arrow.down") { info in
                         Task {
                             guard let downloadsFolder = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else { return }
-                            try? await info.resolvedData()?.write(to: downloadsFolder.appending(path: info.url.lastPathComponent))
+                            let destination = downloadsFolder.appending(path: info.url.lastPathComponent)
+                            if (try? await info.resolvedData()?.write(to: destination)) != nil {
+                                DistributedNotificationCenter.default.post(
+                                    name: .init("com.apple.DownloadFileFinished"),
+                                    object: destination.resolvingSymlinksInPath().path
+                                )
+                            }
                         }
                     }
                     forEachImageInfo("Image.save.as", systemImage: "square.and.arrow.down") { info in
@@ -82,8 +88,8 @@ struct _ImageContextMenuModifier<V: View>: ViewModifier {
                             }
                         }
                     }
-#endif
-#if os(iOS)
+                    #endif
+                    #if os(iOS)
                     // FIXME: Unavailable in macOS...
                     forEachImageInfo("Image.save.photos", systemImage: "photo.badge.plus") { info in
                         Task {
@@ -92,26 +98,26 @@ struct _ImageContextMenuModifier<V: View>: ViewModifier {
                             }
                         }
                     }
-#endif
+                    #endif
                 }
                 Section {
                     forEachImageInfo("Image.copy.link", systemImage: "doc.on.doc") { info in
-#if os(macOS)
+                        #if os(macOS)
                         NSPasteboard.general.clearContents()
                         NSPasteboard.general.setString(info.url.absoluteString, forType: .string)
-#else
+                        #else
                         UIPasteboard.general.string = info.url.absoluteString
-#endif
+                        #endif
                     }
                     forEachImageInfo("Image.copy.image", systemImage: "doc.on.doc") { info in
                         Task {
                             if let data = await info.resolvedData() {
-#if os(macOS)
+                                #if os(macOS)
                                 NSPasteboard.general.clearContents()
                                 NSPasteboard.general.setData(data, forType: .png)
-#else
+                                #else
                                 UIPasteboard.general.image = .init(data: data)
-#endif
+                                #endif
                             }
                         }
                     }
@@ -133,12 +139,12 @@ struct _ImageContextMenuModifier<V: View>: ViewModifier {
                                     }
                                     
                                     if let subjectImageData {
-#if os(macOS)
+                                        #if os(macOS)
                                         NSPasteboard.general.clearContents()
                                         NSPasteboard.general.setData(subjectImageData, forType: .png)
-#else
+                                        #else
                                         UIPasteboard.general.image = .init(data: subjectImageData)
-#endif
+                                        #endif
                                     } else {
                                         print("Subject Fetch Failed")
                                     }
