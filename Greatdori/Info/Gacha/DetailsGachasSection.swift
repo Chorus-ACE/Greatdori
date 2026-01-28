@@ -24,7 +24,7 @@ struct DetailsGachasSection: View {
     var applyLocaleFilter: Bool = false
     @State var gachasFromList = LocalizedData<[PreviewGacha]>(repeating: nil)
     @State var gachasFromSources = LocalizedData<[PreviewGacha]>(repeating: nil)
-    @State var probabilityDict: [PreviewGacha: Double] = [:]
+    @State var probabilityDict: [Int /* Gacha ID */: Double] = [:]
     @State var showAll = false
     @State var sourcePreference: Int
     
@@ -55,7 +55,7 @@ struct DetailsGachasSection: View {
                 NavigationLink(destination: {
                     GachaDetailView(id: item.id)
                 }, label: {
-                    GachaInfo(item, subtitle: unsafe "Details.gachas.source.chance.\(String(format: "%.2f", (probabilityDict[item] ?? 0)*100) + String("%"))", showDetails: true)
+                    GachaInfo(item, subtitle: unsafe "Details.gachas.source.chance.\(String(format: "%.2f", (probabilityDict[item.id] ?? 0)*100) + String("%"))", showDetails: true)
                         .frame(maxWidth: infoContentMaxWidth)
                 })
             }
@@ -73,7 +73,7 @@ struct DetailsGachasSection: View {
         if sourcePreference == 0 {
             if let gachas {
                 for locale in DoriLocale.allCases {
-                    gachasFromList._set(
+                    gachasFromList.set(
                         gachas
                             .filter { applyLocaleFilter ? $0.publishedAt.availableInLocale(locale) : true }
                             .sorted(withDoriSorter: .init(keyword: .releaseDate(in: locale))),
@@ -88,13 +88,13 @@ struct DetailsGachasSection: View {
                         switch item {
                         case .gacha(let dict):
                             for (gacha, probability) in dict {
-                                gachasFromSources._set(
+                                gachasFromSources.set(
                                     (gachasFromSources.forLocale(locale) ?? []) + [gacha],
                                     forLocale: locale
                                 )
-                                probabilityDict.updateValue(probability, forKey: gacha)
+                                probabilityDict.updateValue(probability, forKey: gacha.id)
                             }
-                            gachasFromSources[_mutating: locale]?.sort(withDoriSorter: .init(keyword: .releaseDate(in: locale)))
+                            gachasFromSources[locale]?.sort(withDoriSorter: .init(keyword: .releaseDate(in: locale)))
                         default: break
                         }
                     }
