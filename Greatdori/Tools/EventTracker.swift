@@ -41,7 +41,6 @@ struct EventTrackerView: View {
                                 .disabled(focusOnLatestEvent)
                         })
                         .onChange(of: selectedEvent) {
-                            //                                    isEventSelectorPresented = false
                             Task {
                                 await updateTrackerData()
                             }
@@ -426,13 +425,13 @@ struct EventTrackerView: View {
             if selectedTier > 10 {
                 if let trackerData = await DoriFrontend.Events.trackerData(for: event, in: locale, tier: selectedTier, smooth: true) {
                     self.trackerData = .tracker(trackerData)
-                } else {
+                } else if !Task.isCancelled {
                     trackerIsAvailable = false
                 }
             } else {
                 if let topData = await DoriFrontend.Events.topData(of: event.id, in: locale) {
                     self.trackerData = .top(topData)
-                } else {
+                } else if !Task.isCancelled {
                     trackerIsAvailable = false
                 }
             }
