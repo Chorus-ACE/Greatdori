@@ -152,6 +152,16 @@ struct SettingsAboutDetailListView: View {
             .contentShape(Rectangle())
         }
         .foregroundStyle(.primary)
+        Link(destination: URL(string: "https://apps.apple.com/app/id6749022770?action=write-review")!) {
+            HStack {
+                Text("Settings.about.rate-for-app")
+                Spacer()
+                Image(systemName: .arrowUpForwardApp)
+                    .foregroundStyle(.secondary)
+            }
+            .contentShape(Rectangle())
+        }
+        .foregroundStyle(.primary)
         SettingsDocumentButton(document: "T&C", preferNavigationLink: true) {
             HStack {
                 Text("Settings.about.user-agreement-license")
