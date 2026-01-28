@@ -2413,7 +2413,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -2451,7 +2451,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -2516,7 +2516,7 @@
 					/Library/Frameworks,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule -enable-experimental-feature CompileTimeValues";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
@@ -2586,7 +2586,7 @@
 					/Library/Frameworks,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule -enable-experimental-feature CompileTimeValues";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
@@ -2722,7 +2722,7 @@
 					/Library/Frameworks,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule -enable-experimental-feature CompileTimeValues";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
@@ -2765,7 +2765,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -2887,7 +2887,7 @@
 					/Library/Frameworks,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule -enable-experimental-feature CompileTimeValues";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori;
 				PRODUCT_MODULE_NAME = Greatdori;
@@ -2930,7 +2930,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -3115,7 +3115,7 @@
 					/Library/Frameworks,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3159,7 +3159,7 @@
 					/Library/Frameworks,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3204,7 +3204,7 @@
 					/Library/Frameworks,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3249,7 +3249,7 @@
 					/Library/Frameworks,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_SWIFT_FLAGS = "-enable-experimental-feature BuiltinModule";
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3290,7 +3290,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.memz233.Greatdori.Background-Assets";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -3341,7 +3341,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.memz233.Greatdori.Background-Assets";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
@@ -3398,7 +3398,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.memz233.Greatdori.Background-Assets";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
@@ -3455,7 +3455,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.memz233.Greatdori.Background-Assets";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
@@ -3858,7 +3858,7 @@
 					"@executable_path/../../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.watchkitapp.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -3894,7 +3894,7 @@
 					"@executable_path/../../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.watchkitapp.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -3931,7 +3931,7 @@
 					"@executable_path/../../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.watchkitapp.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -3967,7 +3967,7 @@
 					"@executable_path/../../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.memz233.Greatdori.watchkitapp.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;

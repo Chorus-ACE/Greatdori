@@ -37,7 +37,7 @@ let isMACOS = true
 let isMACOS = false
 #endif
 
-@const let isSayuruVersion = true
+@const let isSayuruVersion = false
 
 // MARK: GreatdoriApp (@main)
 @main
