@@ -29,8 +29,8 @@ struct SettingsStoryView: View {
     @State private var demoHeight: CGFloat = 400
     @State private var isDemoRotated = false
     @State private var isDemoTouchPressed = false
-    @State private var isDemoTouchVisible = true
-    @State private var isDemoReplayAvailable = false
+    @State private var isDemoTouchVisible = false
+    @State private var isDemoReplayAvailable = true
     @State private var demoAnimationCancellation: Any?
     var body: some View {
         Group {
