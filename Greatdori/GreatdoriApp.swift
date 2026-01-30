@@ -143,6 +143,14 @@ struct GreatdoriApp: App {
         .windowStyle(.plain)
         #endif
         .commandsRemoved()
+        
+        #if os(visionOS)
+        ImmersiveSpace(id: "AnyImmersiveSpace", for: AnyImmersiveSpaceData.self) { $data in
+            if let data, data.isValid {
+                _AnyImmersiveSpaceView(data: data)
+            }
+        }
+        #endif
     }
 }
 private struct _AnyWindowView: View {
@@ -180,6 +188,34 @@ private struct _AnyWindowView: View {
         #endif
     }
 }
+#if os(visionOS)
+private struct _AnyImmersiveSpaceView: View {
+    var data: AnyImmersiveSpaceData
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @State private var dismissTimer: Timer?
+    @State private var isRemovingWindowBackground = false
+    var body: some View {
+        unsafe UnsafePointer<() -> AnyView>(bitPattern: data.content)!.pointee()
+            .onAppear {
+                dismissTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                    if unsafe !UnsafePointer<Binding<Bool>>(bitPattern: data.isPresented)!.pointee.wrappedValue {
+                        dismissTimer?.invalidate()
+                        Task {
+                            await dismissImmersiveSpace()
+                        }
+                    }
+                }
+            }
+            .onDisappear {
+                dismissTimer?.invalidate()
+                unsafe UnsafePointer<Binding<Bool>>(bitPattern: data.isPresented)!.pointee.wrappedValue = false
+                if let ptrOnDismiss = unsafe data.onDismiss {
+                    unsafe UnsafePointer<() -> Void>(bitPattern: ptrOnDismiss)!.pointee()
+                }
+            }
+    }
+}
+#endif
 
 //MARK: AppDelegate
 #if os(macOS)

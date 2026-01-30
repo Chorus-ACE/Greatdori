@@ -21,6 +21,7 @@ struct ISVDialogBoxView: View {
     var locale: DoriLocale
     var isDelaying: Bool
     var isAutoPlaying: Bool
+    var usedInImmersive: Bool = false
     @AppStorage("interactiveStoryViewerShowsNextIndicator") var interactiveStoryViewerShowsNextIndicator = false
     @Binding var isAnimating: Bool
     @Binding var shakeDuration: Double
@@ -38,48 +39,56 @@ struct ISVDialogBoxView: View {
     @State var nameTagBarHeight: CGFloat = 0
     var body: some View {
         ZStack(alignment: .topLeading) {
-            // MARK: Background
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(Color.white.opacity(0.9))
-                .overlay {
+            VStack(spacing: 0) {
+                Rectangle()
+                    .fill(.clear)
+                    .frame(height: usedInImmersive ? 30 : 0)
+                
+                // MARK: Background
+                ZStack(alignment: .topLeading) {
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .strokeBorder(Color.gray.opacity(0.8))
+                        .fill(Color.white.opacity(0.9))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .strokeBorder(Color.gray.opacity(0.8))
+                        }
+                        .shadow(radius: 20)
+                    
+                    // MARK: Text
+                    Text({
+                        var result = AttributedString()
+                        for character in currentBody {
+                            var str = AttributedString(String(character))
+                            //                if locale == .cn && "[，。！？；：（）【】「」『』、“”‘’——…]".contains(character) {
+                            //                    // The font for cn has too wide punctuations,
+                            //                    // we have to fix it here.
+                            //                    // System font seems higher than cn font,
+                            //                    // we use a smaller size for it to prevent
+                            //                    // the line height being changed during animation
+                            //#if os(macOS)
+                            //                    str.font = .system(size: 19, weight: .medium)
+                            //#else
+                            //                    str.font = .system(size: 15, weight: .medium)
+                            //#endif
+                            //                }
+                            result.append(str)
+                        }
+                        return result
+                    }())
+                    .font(.custom(fontName(in: locale), size: fontSize))
+                    .wrapIf(locale == .en || locale == .tw) { content in
+                        // TODO: Require Revision
+                        content
+                            .lineSpacing(locale == .en ? 10 : -5)
+                    }
+                    .typesettingLanguage(locale.nsLocale().language)
+                    //            .textSelection(.enabled)
+                    .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
+                    .padding(.horizontal, boxWidth/40)
+                    .padding(.top, boxHeight/10)
                 }
-                .shadow(radius: 20)
-                .aspectRatio(6.8, contentMode: .fit)
-            
-            // MARK: Text
-            Text({
-                var result = AttributedString()
-                for character in currentBody {
-                    var str = AttributedString(String(character))
-                    //                if locale == .cn && "[，。！？；：（）【】「」『』、“”‘’——…]".contains(character) {
-                    //                    // The font for cn has too wide punctuations,
-                    //                    // we have to fix it here.
-                    //                    // System font seems higher than cn font,
-                    //                    // we use a smaller size for it to prevent
-                    //                    // the line height being changed during animation
-                    //#if os(macOS)
-                    //                    str.font = .system(size: 19, weight: .medium)
-                    //#else
-                    //                    str.font = .system(size: 15, weight: .medium)
-                    //#endif
-                    //                }
-                    result.append(str)
-                }
-                return result
-            }())
-            .font(.custom(fontName(in: locale), size: fontSize))
-            .wrapIf(locale == .en || locale == .tw) { content in
-                // TODO: Require Revision
-                content
-                    .lineSpacing(locale == .en ? 10 : -5)
             }
-            .typesettingLanguage(locale.nsLocale().language)
-            //            .textSelection(.enabled)
-            .foregroundStyle(Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255))
-            .padding(.horizontal, boxWidth/40)
-            .padding(.top, boxHeight/10)
+            .aspectRatio(usedInImmersive ? 4 : 6.8, contentMode: .fit)
             
             // MARK: Label
             ZStack(alignment: .leading) {
@@ -107,7 +116,7 @@ struct ISVDialogBoxView: View {
                     .padding(.vertical)
                     .padding(.leading, nameTagBarHeight*6.5/15)
             }
-            .offset(y: -boxWidth*0.0207-18.615)
+            .offset(y: usedInImmersive ? 0 : -boxWidth*0.0207-18.615)
             HStack {
                 Spacer()
                 if isShowingAutoPlayLabel {
@@ -122,17 +131,16 @@ struct ISVDialogBoxView: View {
                 }
             }
             .padding(.horizontal, boxWidth/20)
-            .offset(y: -5)
-            
+            .offset(y: usedInImmersive ? 0 : -5)
         }
-        .onFrameChange(perform: { geometry in
+        .onFrameChange { geometry in
             boxWidth = geometry.size.width
             boxHeight = geometry.size.height
             
             cornerRadius = boxWidth/40
             fontSize = boxWidth/40
-            nameTagBarHeight = boxHeight/4
-        })
+            nameTagBarHeight = usedInImmersive ? boxHeight / 5 : boxHeight / 4
+        }
         .offset(shakingOffset)
         .onAppear {
             animateText()

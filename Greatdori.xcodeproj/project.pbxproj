@@ -184,6 +184,7 @@
 		8CD580BC2EA7CE73007A3F49 /* AssetExplorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */; };
 		8CE0BBAC2ED2FE1F00E22ED6 /* SwiftJWT in Frameworks */ = {isa = PBXBuildFile; productRef = 8CE0BBAB2ED2FE1F00E22ED6 /* SwiftJWT */; };
 		8CE0BBAE2ED2FE7B00E22ED6 /* Secrets.swift.gyb in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0BBAD2ED2FE7200E22ED6 /* Secrets.swift.gyb */; };
+		8CE408712F2C9BDB004757C6 /* ImmersiveStory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE408702F2C9BD3004757C6 /* ImmersiveStory.swift */; };
 		8CEA20C52EAB6362009D41C5 /* SongDetailMatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEA20C42EAB62DA009D41C5 /* SongDetailMatchView.swift */; };
 		8CF826D42E8AC1120045CA97 /* FallingWebImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF826D32E8AC10D0045CA97 /* FallingWebImage.swift */; };
 		8CF827A92E8ACD380045CA97 /* LoginCampaignInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF827A82E8ACD380045CA97 /* LoginCampaignInfo.swift */; };
@@ -680,6 +681,7 @@
 		8CD506BD2EFC2E590073409C /* Collections */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Collections; sourceTree = "<group>"; };
 		8CD580BB2EA7CE6D007A3F49 /* AssetExplorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetExplorer.swift; sourceTree = "<group>"; };
 		8CE0BBAD2ED2FE7200E22ED6 /* Secrets.swift.gyb */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Secrets.swift.gyb; sourceTree = "<group>"; };
+		8CE408702F2C9BD3004757C6 /* ImmersiveStory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveStory.swift; sourceTree = "<group>"; };
 		8CEA20C42EAB62DA009D41C5 /* SongDetailMatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailMatchView.swift; sourceTree = "<group>"; };
 		8CF826D32E8AC10D0045CA97 /* FallingWebImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallingWebImage.swift; sourceTree = "<group>"; };
 		8CF827A82E8ACD380045CA97 /* LoginCampaignInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginCampaignInfo.swift; sourceTree = "<group>"; };
@@ -1388,6 +1390,7 @@
 				E9BB28F12EF9B4650088B654 /* StorySupportiveStuffs.swift */,
 				E9BB28EF2EF9B3EB0088B654 /* StoryCardView.swift */,
 				E960D3372EB64CDC00EA6A5E /* StoryDetailView.swift */,
+				8CE408702F2C9BD3004757C6 /* ImmersiveStory.swift */,
 				8C2B64012E940B2100D003D1 /* InteractiveStoryView.swift */,
 				E978109E2EE86376000AD397 /* ISVActionMenu.swift */,
 				E930F7812EE03CDF00E8847F /* ISVLive2DView.swift */,
@@ -1982,6 +1985,7 @@
 				E930F7A42EE048AF00E8847F /* SongDetailOverviewView.swift in Sources */,
 				E94219132E8AA53D00F24974 /* ComicInfo.swift in Sources */,
 				E930F7822EE03CE100E8847F /* ISVLive2DView.swift in Sources */,
+				8CE408712F2C9BDB004757C6 /* ImmersiveStory.swift in Sources */,
 				8C3DFB0E2EAF6B8D0004E1F5 /* CharacterSelector.swift in Sources */,
 				E94219392E8AA7B300F24974 /* GachaDetailView.swift in Sources */,
 				E94219112E8AA51600F24974 /* SongInfo.swift in Sources */,

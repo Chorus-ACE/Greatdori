@@ -21,6 +21,10 @@ import SwiftUI
 import SDWebImageSwiftUI
 import SymbolAvailability
 
+#if os(visionOS)
+import RealityKit
+#endif
+
 struct StoryDetailView: View {
     var title: LocalizedData<String>
     var scenarioID: String
@@ -46,6 +50,7 @@ struct StoryDetailView: View {
     @State var isMuted = false
     
     @State var fullScreenButtonIsOnScreen = false
+    @State var isImmersivePlayerPresented = false // visionOS only
     
     init(
         title: LocalizedData<String>,
@@ -337,13 +342,21 @@ struct StoryDetailView: View {
             }
             #endif
             if !interactivePlayerIsInFullScreen && (isvAlwaysFullScreen || platform != .macOS && !fullScreenButtonIsOnScreen) {
-                ToolbarItem {
+                ToolbarItemGroup {
                     Button(action: {
                         interactivePlayerIsInFullScreen.toggle()
                     }, label: {
                         Image(systemName: .arrowDownBackwardAndArrowUpForward)
                     })
                     .buttonBorderShape(.circle)
+                    if platform == .visionOS {
+                        Button(action: {
+                            isImmersivePlayerPresented.toggle()
+                        }, label: {
+                            Image(systemName: .panoBadgePlay)
+                        })
+                        .buttonBorderShape(.circle)
+                    }
                 }
             }
         }
@@ -382,6 +395,18 @@ struct StoryDetailView: View {
             ISVLayoutPickerSheet()
                 .interactiveDismissDisabled()
         }
+        #if os(visionOS)
+        .modifier(
+            ImmersiveStoryPresentor(
+                isPresented: $isImmersivePlayerPresented,
+                storyIR: ir,
+                locale: locale,
+                isMuted: $isMuted,
+                interactivePlayerIsInFullScreen: $interactivePlayerIsInFullScreen,
+                isvCurrentBlockingActionIndex: $isvCurrentBlockingActionIndex
+            )
+        )
+        #endif
     }
     
     

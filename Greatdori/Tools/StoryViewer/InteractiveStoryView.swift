@@ -74,6 +74,8 @@ struct InteractiveStoryView: View {
     private var fullScreenToggleIsAvailable: Bool
     private var mutingIsAvailable: Bool
     
+    private var onTalkUpdate: ((TalkData?, Bool, Binding<Bool>, Binding<Double>) -> Void)?
+    
     init(_ ir: StoryIR, assetFolder: URL? = nil, fullScreenToggleIsAvailable: Bool = false, mutingIsAvailable: Bool = false, locale: DoriLocale = DoriLocale.primaryLocale) {
         // We assign an ID for ISV so that we can identify data related
         // to this view in some global states
@@ -96,6 +98,24 @@ struct InteractiveStoryView: View {
         self.mutingIsAvailable = true
         self.locale = locale
     }
+    
+    #if os(visionOS)
+    init(
+        _ ir: StoryIR,
+        assetFolder: URL? = nil,
+        locale: DoriLocale = DoriLocale.primaryLocale,
+        onTalkUpdate: @escaping (TalkData?, Bool, Binding<Bool>, Binding<Double>) -> Void
+    ) {
+        self.init(
+            ir,
+            assetFolder: assetFolder,
+            fullScreenToggleIsAvailable: false,
+            mutingIsAvailable: true,
+            locale: locale
+        )
+        self.onTalkUpdate = onTalkUpdate
+    }
+    #endif
     
     var body: some View {
         ZStack {
@@ -184,6 +204,7 @@ struct InteractiveStoryView: View {
                 .typesettingLanguage(locale.nsLocale().language)
                 #if os(visionOS)
                 .offset(z: 40)
+                .opacity(onTalkUpdate == nil ? 1 : 0)
                 #endif
             }
             
@@ -379,6 +400,11 @@ struct InteractiveStoryView: View {
                     .buttonBorderShape(.circle)
                 }
             }
+        }
+        #endif
+        #if os(visionOS)
+        .onChange(of: currentTalk, isAutoPlaying) {
+            onTalkUpdate?(currentTalk, isAutoPlaying, $lineIsAnimating, $talkShakeDuration)
         }
         #endif
     }
