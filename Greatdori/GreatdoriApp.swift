@@ -44,7 +44,11 @@ var isMACOS: Bool {
     platform == .macOS
 }
 
+#if !APP_STORE
 @const let isSayuruVersion = true
+#else
+@const let isSayuruVersion = false
+#endif
 
 // MARK: GreatdoriApp (@main)
 @main
