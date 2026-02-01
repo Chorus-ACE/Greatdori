@@ -232,7 +232,7 @@ struct InteractiveStoryView: View {
             
             // MARK: - Menu
             Group {
-                if !uiIsHiding && platform == .iOS {
+                if !uiIsHiding && (platform == .iOS || (platform == .visionOS && onTalkUpdate != nil)) {
                     HStack {
                         Spacer()
                         VStack {
@@ -246,6 +246,10 @@ struct InteractiveStoryView: View {
                                     .buttonStyle(.bordered)
                                     .buttonBorderShape(.circle)
                             }
+                            #else
+                            actionMenu
+                                .buttonStyle(.bordered)
+                                .buttonBorderShape(.circle)
                             #endif
                             Spacer()
                         }

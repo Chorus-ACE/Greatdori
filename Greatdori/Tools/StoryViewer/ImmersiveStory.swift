@@ -111,11 +111,10 @@ private struct SpaceView: View {
     @Binding var isLineAnimating: Binding<Bool>
     @Binding var talkShakeDuration: Binding<Double>
     @Binding var storyWindowFrame: Rect3D
-    private let session = ARKitSession()
-    private let worldTrackingProvider = WorldTrackingProvider()
+    
     var body: some View {
         RealityView { content, attachments in
-            try? await session.run([worldTrackingProvider])
+            FollowSystem.registerSystem()
         } update: { content, attachments in
             if let box = attachments.entity(for: "DialogBox") {
                 content.entities.removeAll()
@@ -123,18 +122,8 @@ private struct SpaceView: View {
                 anchor.anchoring.trackingMode = .continuous
                 box.setParent(anchor)
                 
-                var windowPoint = content.convert(storyWindowFrame.center, from: .immersiveSpace, to: .scene)
-                let deviceTransform: Transform
-                if let deviceAnchor = worldTrackingProvider.queryDeviceAnchor(atTimestamp: CACurrentMediaTime()) {
-                    deviceTransform = .init(matrix: deviceAnchor.originFromAnchorTransform)
-                } else {
-                    deviceTransform = .identity
-                }
-                windowPoint -= deviceTransform.translation
-                let baseDistance = -(sqrt(pow(windowPoint.z, 2) + pow(windowPoint.x, 2) + pow(windowPoint.y, 2)))
-                box.transform.translation.z = baseDistance + abs(baseDistance) * 0.15
-                box.transform.translation.y = -0.15
-                box.transform.rotation.vector.x = -0.1
+                let windowPoint = content.convert(storyWindowFrame.center, from: .immersiveSpace, to: .scene)
+                box.components.set(FollowComponent(windowPoint: windowPoint))
                 
                 content.add(anchor)
             }
@@ -153,6 +142,49 @@ private struct SpaceView: View {
                     .frame(width: 600)
                     .allowsHitTesting(false)
                 }
+            }
+        }
+    }
+}
+
+private struct FollowComponent: Component {
+    var windowPoint: SIMD3<Float>
+}
+private struct FollowSystem: System {
+    private let session = ARKitSession()
+    private let worldTrackingProvider = WorldTrackingProvider()
+    
+    init(scene: RealityKit.Scene) {
+        runSession()
+    }
+    func runSession() {
+        Task {
+            try? await session.run([worldTrackingProvider])
+        }
+    }
+    
+    func update(context: SceneUpdateContext) {
+        let entities = context.entities(
+            matching: .init(where: .has(FollowComponent.self)),
+            updatingSystemWhen: .rendering
+        )
+        
+        for entity in entities {
+            if let component = entity.components[FollowComponent.self] {
+                var windowPoint = component.windowPoint
+                let deviceTransform: Transform
+                if let deviceAnchor = worldTrackingProvider.queryDeviceAnchor(atTimestamp: CACurrentMediaTime()) {
+                    deviceTransform = .init(matrix: deviceAnchor.originFromAnchorTransform)
+                } else {
+                    deviceTransform = .identity
+                }
+                windowPoint -= deviceTransform.translation
+                let baseDistance = -(sqrt(pow(windowPoint.z, 2) + pow(windowPoint.x, 2) + pow(windowPoint.y, 2)))
+                let baseDistanceAbsolute = abs(baseDistance)
+                entity.transform.translation.z = baseDistance + baseDistanceAbsolute * 0.15
+                entity.transform.translation.y = -0.15
+                entity.transform.rotation.vector.x = -0.1
+                entity.transform.scale = [baseDistanceAbsolute, baseDistanceAbsolute, 1]
             }
         }
     }
