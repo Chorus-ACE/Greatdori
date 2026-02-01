@@ -55,7 +55,12 @@ private struct Provider: AppIntentTimelineProvider {
             )
         }
         
+        #if !os(visionOS)
         let preloadEntryCount = 8
+        #else
+        // visionOS may need to resize images which uses much memory
+        let preloadEntryCount = 1
+        #endif
         let policy: TimelineReloadPolicy = switch configuration.shuffleFrequency {
         case .onTap: Builtin.unreachable()
         case .hourly: .after(Date.now.addingTimeInterval(60 * 60 * Double(preloadEntryCount)).componentsRewritten(minute: 0, second: 0))
