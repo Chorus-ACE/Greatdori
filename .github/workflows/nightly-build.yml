@@ -201,7 +201,7 @@ jobs:
       - name: Upload to App Store Connect
         id: upload
         run: |
-          RESULT=$(xcrun altool --upload-app -f ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }} -t ${{ case(matrix.destination == 'macOS', 'macos', matrix.destination == 'iOS', 'ios', matrix.destination == 'visionOS', 'visionos', '_preconditionFailure') }} --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --output-format json)
+          RESULT=$(xcrun altool --upload-app -f ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }} -t ${{ case(matrix.destination == 'macOS', 'macos', matrix.destination == 'iOS', 'ios', matrix.destination == 'visionOS', 'visionos --apple-id 6749022770', '_preconditionFailure') }} --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --output-format json)
           DELIVERY_UUID=$(echo "$RESULT" | awk '/^{/ {p=1} p' | jq -r '.details["delivery-uuid"]')
           echo "DELIVERY_UUID=$DELIVERY_UUID" >> "$GITHUB_OUTPUT"
       - name: Wait for processing
