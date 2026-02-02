@@ -513,7 +513,7 @@ struct FilterAndSorterPicker: View {
                     }
                     .background {
                         if filterIsFiltering {
-                            Capsule().foregroundStyle(Color.accentColor).scaledToFill().scaleEffect(isMACOS ? 1.1 : 1.65)
+                            Capsule().foregroundStyle(Color.accentColor).scaledToFill().scaleEffect(platform != .iOS ? 1.1 : 1.65)
                         }
                     }
             } else {
@@ -528,6 +528,7 @@ struct FilterAndSorterPicker: View {
                     }
             }
         })
+        .buttonBorderShape(.circle)
         .animation(.easeInOut(duration: 0.2), value: filterIsFiltering)
         .accessibilityLabel("Filter")
         .accessibilityValue(filterIsFiltering ? "Accessibility.filter.active" : "Accessibility.filter.not-active")

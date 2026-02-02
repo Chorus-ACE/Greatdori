@@ -250,6 +250,7 @@ struct InteractiveStoryView: View {
                             actionMenu
                                 .buttonStyle(.bordered)
                                 .buttonBorderShape(.circle)
+                                .padding(20)
                             #endif
                             Spacer()
                         }

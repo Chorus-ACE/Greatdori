@@ -561,7 +561,7 @@ struct SorterPickerView: View {
     @State var isMenuPresented = false // iOS only
     var body: some View {
         Group {
-#if os(iOS)
+            #if !os(macOS)
             Menu(content: {
                 Picker(selection: Binding.init(get: {
                     sorter.keyword
@@ -600,7 +600,8 @@ struct SorterPickerView: View {
             }, label: {
                 Label("Sort", systemImage: "arrow.up.arrow.down")
             })
-#else
+            .buttonBorderShape(.circle)
+            #else
             Menu(content: {
                 Section {
                     Picker(selection: Binding.init(get: {
@@ -641,7 +642,7 @@ struct SorterPickerView: View {
                 Label("Sort", systemImage: "arrow.up.arrow.down")
             })
             .menuIndicator(.hidden)
-#endif
+            #endif
         }
         .accessibilityValue(String("\(sorter.keyword.localizedString(hasEndingDate: sortingItemsHaveEndingDate)), \(sorter.localizedDirectionName())"))
     }
