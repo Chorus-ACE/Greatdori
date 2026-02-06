@@ -261,7 +261,15 @@ extension View {
         @ViewBuilder content: @escaping () -> Content
     ) -> some View {
         #if !os(iOS)
-        modifier(_AnyWindowModifier(isPresented: isPresented, onDismiss: onDismiss, content: content))
+        modifier(_AnyWindowModifier(isPresented: isPresented, onDismiss: onDismiss) {
+            #if os(visionOS)
+            NavigationStack {
+                content()
+            }
+            #else
+            content()
+            #endif
+        })
         #else
         sheet(isPresented: isPresented, onDismiss: onDismiss) {
             NavigationStack(root: content)
@@ -275,7 +283,11 @@ extension View {
     ) -> some View {
         #if !os(iOS)
         modifier(_AnyWindowModifier(isPresented: .init { item.wrappedValue != nil } set: { !$0 ? (item.wrappedValue = nil) : () }, onDismiss: onDismiss) {
+            #if os(visionOS)
+            item.wrappedValue != nil ? NavigationStack { content(item.wrappedValue!) } : nil
+            #else
             item.wrappedValue != nil ? content(item.wrappedValue!) : nil
+            #endif
         })
         #else
         sheet(item: item, onDismiss: onDismiss) { item in

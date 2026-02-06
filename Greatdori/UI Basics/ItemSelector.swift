@@ -366,7 +366,7 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
             selectorWindowIsPresented = false
         }
         .window(isPresented: $selectorWindowIsPresented) {
-            NavigationStack {
+            Group {
                 if let eventBinding = bindingCast($selection, to: PreviewEvent?.self) {
                     EventSelector(selection: eventBinding)
                 } else if let cardBinding = bindingCast($selection, to: PreviewCard?.self) {
