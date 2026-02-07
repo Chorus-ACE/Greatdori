@@ -1,0 +1,450 @@
+#===---*- Greatdori! -*----------------------------------------------------===#
+#
+# build-greatdori.yml
+#
+# This source file is part of the Greatdori! open source project
+#
+# Copyright (c) 2025 the Greatdori! project authors
+# Licensed under Apache License v2.0
+#
+# See https://greatdori.com/LICENSE.txt for license information
+# See https://greatdori.com/CONTRIBUTORS.txt for the list of Greatdori! project authors
+#
+#===-----------------------------------------------------------------------===#
+
+name: Nightly Build
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 20 * * *"
+
+jobs:
+  check:
+    name: Check for New Commits
+    runs-on: ubuntu-latest
+    outputs:
+      HAS_NEW_COMMITS: ${{ steps.check.outputs.HAS_NEW_COMMITS }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
+      - name: Check
+        id: check
+        run: |
+          COUNT=$(git rev-list --count HEAD --since="24 hours ago")
+          echo "HAS_NEW_COMMITS=$COUNT" >> "$GITHUB_OUTPUT"
+  build:
+    name: Build & Archive
+    runs-on: macos-26
+    needs:
+      - check
+    if: ${{ needs.check.outputs.HAS_NEW_COMMITS != 0 }}
+    strategy:
+      matrix:
+        destination: ["macOS", "iOS", "visionOS"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
+      - name: Remove runner local related libs
+        run: brew remove --ignore-dependencies libssh2
+      - name: Update checkout
+        run: utils/update-checkout --clone
+      - name: Generate workspace
+        run: utils/generate-workspace
+      - name: Create build folder
+        run: mkdir build
+      - name: Install Apple certificate and provisioning profile
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          # import certificate and provisioning profile from secrets
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+          # apply provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      - name: Copy secrets
+        run: |
+          mkdir secrets
+          echo "${{ secrets.ANON_API_PRIVATE_KEY }}" > secrets/anon_api_private_key.key
+          echo "${{ secrets.STATS_API_PRIVATE_KEY }}" > secrets/stats_api_private_key.key
+      - name: Archive
+        run: xcodebuild -workspace ../Greatdori.xcworkspace -scheme Greatdori -configuration Release -archivePath ./Greatdori.xcarchive -destination "generic/platform=${{ matrix.destination }}" -quiet -skipPackagePluginValidation archive CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=B57D8PP775 CURRENT_PROJECT_VERSION=$(git rev-list --count HEAD)
+      - name: Prepare archive result
+        run: tar -czvf Greatdori.xcarchive.tar.gz ./Greatdori.xcarchive
+      - name: Upload archive result
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: Greatdori-${{ matrix.destination }}.xcarchive.tar.gz
+          path: ./Greatdori.xcarchive.tar.gz
+          if-no-files-found: error
+  export:
+    name: Export Archive
+    runs-on: macos-26
+    needs:
+      - build
+    strategy:
+      matrix:
+        destination: ["macOS", "iOS", "visionOS"]
+    steps:
+      - name: Download App archive
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: Greatdori-${{ matrix.destination }}.xcarchive.tar.gz
+          path: ./
+      - name: Retrieve App archive
+        run: tar -zxvf ./Greatdori.xcarchive.tar.gz
+      - name: Install Apple certificate and provisioning profile
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          # import certificate and provisioning profile from secrets
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+          # apply provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      - name: Prepare export option
+        run: |
+          cat <<EOF > export-option.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>compileBitcode</key>
+            <false/>
+            <key>destination</key>
+            <string>export</string>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>teamID</key>
+            <string>B57D8PP775</string>
+            <key>thinning</key>
+            <string>&lt;none&gt;</string>
+          </dict>
+          </plist>
+          EOF
+      - name: Prepare API Key
+        env:
+          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+          ASCAPI_KEY: ${{ secrets.ASCAPI_KEY }}
+        run: |
+          mkdir ~/.private_keys
+          echo "$ASCAPI_KEY" >> ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
+      - name: Export IPA file
+        env:
+          ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
+          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+        run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./export-option.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES -allowProvisioningUpdates -authenticationKeyIssuerID $ASCAPI_ISSUER_ID -authenticationKeyID $ASCAPI_KEY_ID -authenticationKeyPath ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
+      - name: Upload IPA file
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: ${{ matrix.destination == 'macOS' && 'Greatdori!-Intermediate.pkg' || format('Greatdori!-{0}.ipa', matrix.destination) }}
+          path: ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }}
+  deploy:
+    name: Deploy to TestFlight
+    runs-on: macos-26
+    needs:
+      - export
+    strategy:
+      matrix:
+        destination: ["macOS", "iOS", "visionOS"]
+    env:
+      ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
+      ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+      ASCAPI_KEY: ${{ secrets.ASCAPI_KEY }}
+    steps:
+      - name: Download exported file
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: ${{ matrix.destination == 'macOS' && 'Greatdori!-Intermediate.pkg' || format('Greatdori!-{0}.ipa', matrix.destination) }}
+      - name: Prepare API Key
+        run: |
+          mkdir ~/.private_keys
+          echo "$ASCAPI_KEY" >> ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
+      - name: Upload to App Store Connect
+        id: upload
+        run: |
+          RESULT=$(xcrun altool --upload-app -f ./${{ matrix.destination == 'macOS' && 'Greatdori!.pkg' || 'Greatdori!.ipa' }} -t ${{ case(matrix.destination == 'macOS', 'macos', matrix.destination == 'iOS', 'ios', matrix.destination == 'visionOS', 'visionos --apple-id 6749022770', '_preconditionFailure') }} --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --output-format json)
+          DELIVERY_UUID=$(echo "$RESULT" | awk '/^{/ {p=1} p' | jq -r '.details["delivery-uuid"]')
+          echo "DELIVERY_UUID=$DELIVERY_UUID" >> "$GITHUB_OUTPUT"
+      - name: Wait for processing
+        env:
+          DELIVERY_UUID: ${{ steps.upload.outputs.DELIVERY_UUID }}
+        run: xcrun altool --build-status --delivery-id $DELIVERY_UUID --wait --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --output-format json
+      - name: Wait for another time # I guess we need this because it always
+        if: ${{ matrix.destination == 'macOS' }} # show 'Build is not
+        run: sleep 5m               # assignable' for macOS build.
+      - name: Add to TestFlight group
+        env:
+          DELIVERY_UUID: ${{ steps.upload.outputs.DELIVERY_UUID }}
+        run: |
+          JWT=$(/Applications/Xcode.app/Contents/SharedFrameworks/ContentDelivery.framework/Resources/altool --generate-jwt --apiKey $ASCAPI_KEY_ID --apiIssuer $ASCAPI_ISSUER_ID --p8-file-path ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8 2>&1 >/dev/null)
+          curl -H "Authorization: Bearer $JWT" -H 'Content-Type: application/json' "https://api.appstoreconnect.apple.com/v1/betaGroups/00bd1037-12b7-441e-a963-a30ba9d100a1/relationships/builds" -X POST -d '{"data": [{"type": "builds", "id": "'"$DELIVERY_UUID"'"}]}'
+          curl -H "Authorization: Bearer $JWT" -H 'Content-Type: application/json' "https://api.appstoreconnect.apple.com/v1/betaAppReviewSubmissions" -X POST -d '{"data": {"type": "betaAppReviewSubmissions", "relationships": {"build": {"data": {"type": "builds", "id": "'"$DELIVERY_UUID"'"}}}}}'
+  export-notarize:
+    name: Export Archive for Notarization
+    runs-on: macos-26
+    needs:
+      - build
+    steps:
+      - name: Download App archive
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: Greatdori-macOS.xcarchive.tar.gz
+          path: ./
+      - name: Retrieve App archive
+        run: tar -zxvf ./Greatdori.xcarchive.tar.gz
+      - name: Install Apple certificate and provisioning profile
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.DEVID_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          DEVID_APP_PROFILE_BASE64: ${{ secrets.DEVID_APP_PROFILE_BASE64 }}
+          DEVID_BGASSET_PROFILE_BASE64: ${{ secrets.DEVID_BGASSET_PROFILE_BASE64 }}
+          DEVID_WIDGETS_PROFILE_BASE64: ${{ secrets.DEVID_WIDGETS_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          APP_PROFILE_PATH=$RUNNER_TEMP/Greatdori_app_GitHub_actions_devid.provisionprofile
+          BGASSET_PROFILE_PATH=$RUNNER_TEMP/Greatdori_bgasset_GitHub_actions_devid.provisionprofile
+          WIDGETS_PROFILE_PATH=$RUNNER_TEMP/Greatdori_widgets_GitHub_actions_devid.provisionprofile
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          # import certificate and provisioning profile from secrets
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          echo -n "$DEVID_APP_PROFILE_BASE64" | base64 --decode -o $APP_PROFILE_PATH
+          echo -n "$DEVID_BGASSET_PROFILE_BASE64" | base64 --decode -o $BGASSET_PROFILE_PATH
+          echo -n "$DEVID_WIDGETS_PROFILE_BASE64" | base64 --decode -o $WIDGETS_PROFILE_PATH
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+          # apply provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $APP_PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $BGASSET_PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $WIDGETS_PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      - name: Prepare export option
+        run: |
+          cat <<EOF > export-option.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>destination</key>
+            <string>export</string>
+            <key>method</key>
+            <string>developer-id</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.memz233.Greatdori</key>
+              <string>Greatdori! app GitHub actions devid</string>
+              <key>com.memz233.Greatdori.Background-Assets</key>
+              <string>Greatdori! bgasset GitHub actions devid</string>
+              <key>com.memz233.Greatdori.Widgets</key>
+              <string>Greatdori! widgets GitHub actions devid</string>
+            </dict>
+            <key>signingCertificate</key>
+            <string>06EFAE3588897BD8F7688C23B0D839AB42A8BC07</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>teamID</key>
+            <string>B57D8PP775</string>
+          </dict>
+          </plist>
+          EOF
+      - name: Export App
+        run: xcodebuild -exportArchive -archivePath ./Greatdori.xcarchive -exportPath ./ -exportOptionsPlist ./export-option.plist -DVTProvisioningIsManaged=YES -DVTSkipCertificateValidityCheck=YES
+      - name: Prepare App result
+        run: tar -czvf Greatdori!.app.tar.gz ./Greatdori!.app
+      - name: Upload App
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: Greatdori!-Intermediate.app.tar.gz
+          path: ./Greatdori!.app.tar.gz
+  notarize:
+    name: Notarize macOS App
+    runs-on: macos-26
+    needs:
+      - export-notarize
+    steps:
+      - name: Download exported App
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: Greatdori!-Intermediate.app.tar.gz
+          path: ./
+      - name: Retrieve exported App
+        run: tar -zxvf ./Greatdori!.app.tar.gz
+      - name: Create archive for notarization
+        run: /usr/bin/ditto -c -k --keepParent ./Greatdori!.app ./Greatdori!.app.zip
+      - name: Prepare API Key
+        env:
+          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+          ASCAPI_KEY: ${{ secrets.ASCAPI_KEY }}
+        run: |
+          mkdir ~/.private_keys
+          echo "$ASCAPI_KEY" >> ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
+      - name: Submit for notarization
+        env:
+          ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
+          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+        run: xcrun notarytool submit ./Greatdori!.app.zip --issuer $ASCAPI_ISSUER_ID --key-id $ASCAPI_KEY_ID --key ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8 --team-id B57D8PP775 --wait --timeout 2h
+      - name: Staple ticket
+        run: xcrun stapler staple ./Greatdori!.app
+      - name: Prepare App result
+        run: |
+          rm -rf Greatdori!.app.tar.gz
+          tar -czvf Greatdori!.app.tar.gz ./Greatdori!.app
+      - name: Upload notarized App
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: Greatdori!-Notarized.app.tar.gz
+          path: ./Greatdori!.app.tar.gz
+  generate-installer:
+    name: Generate macOS Installer
+    runs-on: macos-26
+    needs:
+      - notarize
+    steps:
+      - name: Download notarized App
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: Greatdori!-Notarized.app.tar.gz
+          path: ./
+      - name: Retrieve notarized App
+        run: tar -zxvf ./Greatdori!.app.tar.gz
+      - name: Install Apple certificate
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.DEVID_INSTALLER_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+      - name: Generate installer
+        run: productbuild --sign 'Developer ID Installer' --component ./Greatdori!.app /Applications ./Greatdori!.pkg
+      - name: Upload installer
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: Greatdori!-Installer-Intermediate.pkg
+          path: ./Greatdori!.pkg
+  notarize-installer:
+    name: Notarize macOS Installer
+    runs-on: macos-26
+    needs:
+      - generate-installer
+    steps:
+      - name: Download installer
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: Greatdori!-Installer-Intermediate.pkg
+          path: ./
+      - name: Prepare API Key
+        env:
+          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+          ASCAPI_KEY: ${{ secrets.ASCAPI_KEY }}
+        run: |
+          mkdir ~/.private_keys
+          echo "$ASCAPI_KEY" >> ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8
+      - name: Submit for notarization
+        env:
+          ASCAPI_ISSUER_ID: ${{ secrets.ASCAPI_ISSUER_ID }}
+          ASCAPI_KEY_ID: ${{ secrets.ASCAPI_KEY_ID }}
+        run: xcrun notarytool submit ./Greatdori!.pkg --issuer $ASCAPI_ISSUER_ID --key-id $ASCAPI_KEY_ID --key ~/.private_keys/AuthKey_${ASCAPI_KEY_ID}.p8 --team-id B57D8PP775 --wait --timeout 2h
+      - name: Staple ticket
+        run: xcrun stapler staple ./Greatdori!.pkg
+      - name: Upload notarized installer
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: Greatdori!-Installer-Notarized.pkg
+          path: ./Greatdori!.pkg
+
+  deploy-web:
+    name: Deploy to Server
+    runs-on: macos-26
+    needs:
+      - notarize-installer
+      - export
+    steps:
+      - name: Download installer
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: Greatdori!-Installer-Notarized.pkg
+          path: ./
+      - name: Download IPA
+        uses: actions/download-artifact@v6.0.0
+        with:
+          name: Greatdori!-iOS.ipa
+      - name: Deploy installer
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY }}
+          AWS_DEFAULT_REGION: 'auto'
+          AWS_EC2_METADATA_DISABLED: 'true'
+          ENDPOINT_URL: ${{ secrets.R2_ENDPOINT }}
+        run: aws s3 cp ./Greatdori!.pkg s3://greatdori-assets/Greatdori!-Nightly.pkg --endpoint-url "$ENDPOINT_URL"
+      - name: Deploy IPA
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY }}
+          AWS_DEFAULT_REGION: 'auto'
+          AWS_EC2_METADATA_DISABLED: 'true'
+          ENDPOINT_URL: ${{ secrets.R2_ENDPOINT }}
+        run: aws s3 cp ./Greatdori!.ipa s3://greatdori-assets/Greatdori!-Nightly.ipa --endpoint-url "$ENDPOINT_URL"
+      - name: Create date
+        run: |
+          DATE=$(date +"%Y/%m/%d")
+          echo "$DATE" > date.txt
+      - name: Deploy update date
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY }}
+          AWS_DEFAULT_REGION: 'auto'
+          AWS_EC2_METADATA_DISABLED: 'true'
+          ENDPOINT_URL: ${{ secrets.R2_ENDPOINT }}
+        run: aws s3 cp ./date.txt s3://greatdori-assets/NightlyUpdateDate.txt --endpoint-url "$ENDPOINT_URL"
