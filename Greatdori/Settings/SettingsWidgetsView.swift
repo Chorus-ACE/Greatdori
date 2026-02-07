@@ -710,7 +710,7 @@ struct SettingsWidgetsCollectionShareView: View {
                     )
                 )
             )
-        ).toImage(width: 200)
+        ).toImage(width: 600) // 200px@3x
     }
 }
 
