@@ -23,6 +23,7 @@ struct SettingsStoryView: View {
     @AppStorage("ISVStyleTestFlag") private var isvStyleTestFlag = 0
     @AppStorage("ISVAlwaysFullScreen") private var isvAlwaysFullScreen = false
     @AppStorage("ISVLayoutDemoPlayFlag") private var layoutDemoPlayFlag = 0
+    @AppStorage("ISVUsernameReplacement") private var usernameReplacement = ""
     @State private var selectedLayout: Bool? // isFullScreen
     @State private var storyViewerFonts: [DoriLocale: String] = [:]
     @State private var storyViewerUpdateIndex: Int = 0
@@ -35,7 +36,7 @@ struct SettingsStoryView: View {
     var body: some View {
         Group {
             if isvStyleTestFlag > 0 { // See the initializer in AppDelegate
-                Section(content: {
+                Section {
                     ZStack(alignment: .topTrailing) {
                         HStack {
                             Spacer()
@@ -154,12 +155,22 @@ struct SettingsStoryView: View {
                             )
                         }
                     }
-                }, header: {
+                } header: {
                     Text("Settings.story-viewer.layout")
-                })
+                }
             }
-            
-            Section(content: {
+            Section {
+                TextField("Settings.story-viewer.name.username", text: $usernameReplacement)
+                    .submitLabel(.done)
+                    .onSubmit {
+                        handleEmptyUsernameInput()
+                    }
+            } header: {
+                Text("Settings.story-viewer.name")
+            } footer: {
+                Text("Settings.story-viewer.name.description")
+            }
+            Section {
                 ForEach(DoriLocale.allCases, id: \.self) { locale in
                     NavigationLink(destination: {
                         SettingsFontsPicker(externalUpdateIndex: $storyViewerUpdateIndex, locale: locale)
@@ -172,20 +183,20 @@ struct SettingsStoryView: View {
                         }
                     })
                 }
-                if !isMACOS {
+                if platform != .macOS {
                     SettingsDocumentButton(document: "FontSuggestions") {
                         Text("Settings.fonts.learn-more")
                     }
                 }
-            }, header: {
+            } header: {
                 Text("Settings.story-viewer.fonts")
-            }, footer: {
-                if isMACOS {
+            } footer: {
+                if platform == .macOS {
                     SettingsDocumentButton(document: "FontSuggestions") {
                         Text("Settings.fonts.learn-more")
                     }
                 }
-            })
+            }
             .onChange(of: storyViewerUpdateIndex, initial: true) {
                 for locale in DoriLocale.allCases {
                     storyViewerFonts.updateValue(UserDefaults.standard.string(forKey: "StoryViewerFont\(locale.rawValue.uppercased())") ?? storyViewerDefaultFont[locale] ?? ".AppleSystemUIFont", forKey: locale)
@@ -193,6 +204,9 @@ struct SettingsStoryView: View {
             }
         }
         .navigationTitle("Settings.story-viewer")
+        .onAppear {
+            handleEmptyUsernameInput()
+        }
     }
     
     private var shouldAutoplayDemoAnimation: Bool {
@@ -243,6 +257,11 @@ struct SettingsStoryView: View {
                     }
                 }
             }
+        }
+    }
+    private func handleEmptyUsernameInput() {
+        if _slowPath(usernameReplacement.isEmpty) {
+            usernameReplacement = String(localized: "Settings.story-viewer.name.default")
         }
     }
 }

@@ -42,6 +42,7 @@ struct StoryDetailView: View {
     
     @AppStorage("ISVAlwaysFullScreen") var isvAlwaysFullScreen = false
     @AppStorage("ISVHadChosenOption") var ISVHadChosenOption = false
+    @AppStorage("ISVUsernameReplacement") private var usernameReplacement = ""
     @State var audioPlayer = AVPlayer()
     @State var interactivePlayerIsInFullScreen = false
     @State var screenWidth: CGFloat = 0
@@ -241,7 +242,7 @@ struct StoryDetailView: View {
                                                                 }
                                                                 .accessibilityElement(children: .combine)
                                                                 .accessibilityLabel(transcript.characterName ?? "Character.unknown")
-                                                                Text(transcript.text)
+                                                                Text(transcript.text.replacing("{{userName}}", with: usernameReplacement))
                                                                     .font(.body)
                                                                     .multilineTextAlignment(.leading)
                                                                     .fixedSize(horizontal: false, vertical: true)

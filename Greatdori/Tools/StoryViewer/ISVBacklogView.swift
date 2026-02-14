@@ -26,6 +26,7 @@ struct ISVBacklogView: View {
     @State var currentAudioPlayer: AVAudioPlayer? = nil
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("ISVUsernameReplacement") private var usernameReplacement = ""
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -127,7 +128,7 @@ struct ISVBacklogView: View {
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 10)
                             }
-                            Text(talk.text)
+                            Text(talk.text.replacing("{{userName}}", with: usernameReplacement))
                                 .font(.custom(fontName(in: locale), size: 16))
                                 .textSelection(.enabled)
                                 .foregroundStyle(colorScheme == .light ? Color(red: 80 / 255, green: 80 / 255, blue: 80 / 255) : .init(red: 238 / 255, green: 238 / 255, blue: 238 / 255))
