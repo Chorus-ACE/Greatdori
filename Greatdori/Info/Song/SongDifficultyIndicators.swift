@@ -72,19 +72,20 @@ struct SongDifficultiesIndicator: View {
 
 // MARK: SongDifficultyIndicator
 struct SongDifficultyIndicator: View {
+    static let diameter: CGFloat = imageButtonSize * 0.75
+    
     @Environment(\.colorScheme) var colorScheme
     var difficulty: DoriAPI.Songs.DifficultyType
     var level: Int
-    let diameter: CGFloat = imageButtonSize*0.75
     
     var body: some View {
         Circle()
             .foregroundStyle(colorScheme == .dark ? difficulty.darkColor : difficulty.color)
-            .frame(width: diameter, height: diameter)
+            .frame(width: Self.diameter, height: Self.diameter)
             .overlay {
                 Text("\(level)")
                     .fontWeight(.semibold)
             }
-            .frame(width: diameter, height: diameter)
+            .frame(width: Self.diameter, height: Self.diameter)
     }
 }

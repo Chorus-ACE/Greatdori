@@ -64,14 +64,14 @@ import SwiftUI
         symbol: "music.note.list",
         lightColor: .pink,
         tabValue: .songMeta,
-        destination: {EmptyView()}
+        destination: {SongMetaView()}
     ),
     InfoDestinationItem(
         title: "App.info.login-campaign",
         shortenedTitle: "App.info.login-campaign.abbr",
         symbol: "calendar",
         lightColor: .cyan,
-        tabValue: .songMeta,
+        tabValue: .loginCampaign,
         destination: {LoginCampaignSearchView()}
     ),
     InfoDestinationItem(
