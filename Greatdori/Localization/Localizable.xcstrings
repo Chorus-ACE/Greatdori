@@ -56,7 +56,7 @@
       "shouldTranslate" : false
     },
     "%lf" : {
-
+      "shouldTranslate" : false
     },
     "%lld" : {
       "shouldTranslate" : false
@@ -20329,6 +20329,12 @@
             "state" : "translated",
             "value" : "Song Meta"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Song Meta"
+          }
         }
       }
     },
@@ -20339,12 +20345,24 @@
             "state" : "translated",
             "value" : "Song Downtime"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "歌曲间隔"
+          }
         }
       }
     },
     "song-meta.config.fever" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fever"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fever"
@@ -20359,6 +20377,12 @@
             "state" : "translated",
             "value" : "Perfect Rate"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfect 率"
+          }
         }
       }
     },
@@ -20368,6 +20392,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skill"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "技能"
           }
         }
       }
@@ -20379,6 +20409,12 @@
             "state" : "translated",
             "value" : "Skill Level"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "技能等级"
+          }
         }
       }
     },
@@ -20389,12 +20425,24 @@
             "state" : "translated",
             "value" : "Configuration"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置"
+          }
         }
       }
     },
     "song-meta.table.bpm" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BPM"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "BPM"
@@ -20409,6 +20457,12 @@
             "state" : "translated",
             "value" : "Difficulty"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "难度"
+          }
         }
       }
     },
@@ -20418,6 +20472,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Efficiency"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "效率"
           }
         }
       }
@@ -20429,6 +20489,12 @@
             "state" : "translated",
             "value" : "Notes Per Second"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每秒音符数"
+          }
         }
       }
     },
@@ -20438,6 +20504,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rank"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "排名"
           }
         }
       }
@@ -20449,6 +20521,12 @@
             "state" : "translated",
             "value" : "Score"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分数"
+          }
         }
       }
     },
@@ -20458,6 +20536,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skill Reliance"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "技能依赖率"
           }
         }
       }
@@ -20469,6 +20553,12 @@
             "state" : "translated",
             "value" : "Length"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时长"
+          }
         }
       }
     },
@@ -20478,6 +20568,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Title"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "歌名"
           }
         }
       }
@@ -20489,6 +20585,12 @@
             "state" : "translated",
             "value" : "Notes"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音符数"
+          }
         }
       }
     },
@@ -20498,6 +20600,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Song Meta Unavailable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Song Meta 不可用"
           }
         }
       }
