@@ -17,6 +17,7 @@ import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct SongMetaView: View {
+    @Namespace private var transitionNamespace
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("SongMetaSkillLevel") private var skillLevel = 4
@@ -26,6 +27,7 @@ struct SongMetaView: View {
     @State private var allSkills: [Skill]?
     @State private var selectedSkill: Skill?
     @State private var locale = DoriLocale.primaryLocale
+    @State private var sorting = DoriFrontend.Songs.MetaSort.efficiency
     @State private var meta: [DoriFrontend.Songs.SongWithMeta]?
     @State private var isFailedToLoad = false
     @State private var isConfigurationPresented = false
@@ -57,8 +59,28 @@ struct SongMetaView: View {
                                 }
                             }
                             .presentationDetents([.medium, .large])
+                            #if os(iOS)
+                            .wrapIf(true) { content in
+                                if #available(iOS 26.0, *) {
+                                    content
+                                        .navigationTransition(.zoom(sourceID: "Configuration", in: transitionNamespace))
+                                } else {
+                                    content
+                                }
+                            }
+                            #endif
                         }
                     }
+                    #if os(iOS)
+                    .wrapIf(true) { content in
+                        if #available(iOS 26.0, *) {
+                            content
+                                .matchedTransitionSource(id: "Configuration", in: transitionNamespace)
+                        } else {
+                            content
+                        }
+                    }
+                    #endif
                 }
             } else {
                 if !isFailedToLoad {
@@ -277,6 +299,24 @@ struct SongMetaView: View {
                     .labelsHidden()
             }
             Toggle("song-meta.config.fever", isOn: $fever)
+            Picker("song-meta.config.sorting", selection: $sorting) {
+                Text("song-meta.config.sorting.difficulty")
+                    .tag(DoriFrontend.Songs.MetaSort.difficulty)
+                Text("song-meta.config.sorting.length")
+                    .tag(DoriFrontend.Songs.MetaSort.length)
+                Text("song-meta.config.sorting.score")
+                    .tag(DoriFrontend.Songs.MetaSort.score)
+                Text("song-meta.config.sorting.efficiency")
+                    .tag(DoriFrontend.Songs.MetaSort.efficiency)
+                Text("song-meta.config.sorting.bpm")
+                    .tag(DoriFrontend.Songs.MetaSort.bpm)
+                Text("song-meta.config.sorting.notes")
+                    .tag(DoriFrontend.Songs.MetaSort.notes)
+                Text("song-meta.config.sorting.notes-per-second")
+                    .tag(DoriFrontend.Songs.MetaSort.notesPerSecond)
+                Text("song-meta.config.sorting.skill-reliance")
+                    .tag(DoriFrontend.Songs.MetaSort.sr)
+            }
         }
         .formStyle(.grouped)
         .toolbar {
@@ -318,7 +358,8 @@ struct SongMetaView: View {
             skillLevel: skillLevel,
             perfectRate: perfectRate,
             downtime: downtime,
-            fever: fever
+            fever: fever,
+            sort: sorting
         )
     }
 }

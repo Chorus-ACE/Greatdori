@@ -572,6 +572,33 @@ public extension View {
     }
 }
 
+extension ToolbarContent {
+    @ToolbarContentBuilder
+    func wrapIf(
+        _ condition: Bool,
+        @ToolbarContentBuilder in container: (Self) -> some ToolbarContent
+    ) -> some ToolbarContent {
+        if condition {
+            container(self)
+        } else {
+            self
+        }
+    }
+    
+    @ToolbarContentBuilder
+    func wrapIf(
+        _ condition: Bool,
+        @ToolbarContentBuilder in container: (Self) -> some ToolbarContent,
+        @ToolbarContentBuilder else elseContainer: (Self) -> some ToolbarContent
+    ) -> some ToolbarContent {
+        if condition {
+            container(self)
+        } else {
+            elseContainer(self)
+        }
+    }
+}
+
 extension URL {
     func localeReplaced(to newLocale: DoriLocale) -> URL {
         .init(string: self.absoluteString.replacing(
