@@ -101,10 +101,11 @@ struct ChartSimulatorView: View {
                                     HStack(spacing: 0) {
                                         ForEach(chartScenes, id: \.self) { scene in
                                             SpriteView(scene: scene)
-                                                .frame(width: 240, height: 500)
+                                                .frame(width: 180, height: 500)
                                         }
                                     }
                                 }
+                                .clipShape(.rect(cornerRadius: 12))
                             } else {
                                 if isChartPlayerAssetAvailable {
                                     //                                            if let chart {
@@ -161,7 +162,7 @@ struct ChartSimulatorView: View {
                 let splitCount = Int(ceil(chartHeight / renderHeight))
                 chartScenes.removeAll()
                 for i in 0..<splitCount {
-                    chartScenes.append(.init(size: .init(width: 240, height: renderHeight), chart: chart, splitIndex: i))
+                    chartScenes.append(.init(size: .init(width: 180, height: renderHeight), chart: chart, splitIndex: i))
                 }
             }
         }
@@ -193,10 +194,10 @@ private class ChartViewerScene: SKScene {
         let combinedNode = SKNode()
         
         let chartHeight = (chartLastBeat(chart) + 1) * 100
-        let backgroundNode = LineBackgroundNode(size: .init(width: 240, height: chartHeight))
+        let backgroundNode = LineBackgroundNode(size: .init(width: 180, height: chartHeight))
         combinedNode.addChild(backgroundNode)
         
-        let notesNode = NotesNode(width: 210, chart: chart, textures: configuration.textureGroup())
+        let notesNode = NotesNode(width: 150, chart: chart, textures: configuration.textureGroup())
         notesNode.position.x += 15
         combinedNode.addChild(notesNode)
         
@@ -205,7 +206,7 @@ private class ChartViewerScene: SKScene {
             rect: .init(
                 x: 0,
                 y: CGFloat(splitIndex) * size.height,
-                width: 240,
+                width: 180,
                 height: size.height
             )
         )
@@ -237,6 +238,7 @@ private class ChartViewerScene: SKScene {
             let laneWidth = width / 7
             let beatHeight: CGFloat = 100
             
+            @inline(__always)
             func notePosition(lane: Double, beat: Double) -> CGPoint {
                 .init(x: laneWidth * lane + laneWidth / 2, y: beat * beatHeight)
             }
@@ -282,7 +284,7 @@ private class ChartViewerScene: SKScene {
                             height: nextConnectionPosition.y - connectionPosition.y
                         )
                         node.position = .init(
-                            x: max(connectionPosition.x, nextConnectionPosition.x) - node.size.width / 2 + 15,
+                            x: max(connectionPosition.x, nextConnectionPosition.x) - node.size.width / 2 + 11,
                             y: nextConnectionPosition.y - node.size.height / 2
                         )
                         addChild(node)
@@ -324,7 +326,7 @@ private class ChartViewerScene: SKScene {
                             height: nextConnectionPosition.y - connectionPosition.y
                         )
                         node.position = .init(
-                            x: max(connectionPosition.x, nextConnectionPosition.x) - node.size.width / 2 + 15,
+                            x: max(connectionPosition.x, nextConnectionPosition.x) - node.size.width / 2 + 11,
                             y: nextConnectionPosition.y - node.size.height / 2
                         )
                         node.shader = ChartViewerScene.NotesNode._longNoteLineShader
