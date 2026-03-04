@@ -399,6 +399,7 @@ struct SongMetaView: View {
             }
         }
         
+        let _t = CFAbsoluteTimeGetCurrent()
         meta = DoriFrontend.Songs._allMeta(
             rawMeta!,
             allSongs!,
@@ -410,6 +411,7 @@ struct SongMetaView: View {
             fever: fever,
             sort: sorting
         )
+        print(CFAbsoluteTimeGetCurrent() - _t)
     }
 }
 

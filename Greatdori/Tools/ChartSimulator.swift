@@ -145,7 +145,7 @@ struct ChartSimulatorView: View {
                 }
             }
         }
-        
+        .withSystemBackground()
         .navigationTitle("Chart-simulator")
         .onFrameChange { geometry in
             availableWidth = geometry.size.width

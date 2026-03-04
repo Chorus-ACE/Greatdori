@@ -639,6 +639,7 @@ struct EventCalculatorView: View {
                 result = DoriFrontend.Calculator.calculateEvent(.init(eventType: eventType, currentEventPoint: currentEventPoint, currentChallengePoint: currentChallengePoint, targetEventPoint: targetEventPoint, eventPointsGainPerFlame: epGainPerFlame, eventPointsGainPerChallengePoint: epGainPerCP, naturalFlamesCount: naturalFlames, otherFlamesCount: flamesFromBroadSenseOthers, zeroFlamesGameplayCount: zeroFlames, flameCostPerGameplay: flameUse, challengePointCostPerGameplay: cpUse, gameplayDuration: duration))
             }
         }
+        .withSystemBackground()
     }
 }
 
