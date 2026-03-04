@@ -129,8 +129,6 @@ func configureNowPlaying(
     skipForwardSeconds: Double = 10,
     skipBackwardSeconds: Double = 10
 ) {
-
-    // MARK: - 基础 Now Playing 信息
     var info: [String: Any] = [:]
 
     if let title = title {
@@ -162,19 +160,21 @@ func configureNowPlaying(
     // MARK: - 注册远程控制
     let command = MPRemoteCommandCenter.shared()
 
-    // 播放 / 暂停
+    command.playCommand.removeTarget(nil)
     command.playCommand.addTarget { _ in
         player.play()
         updateNowPlayingProgress(player: player)
         return .success
     }
-
+    
+    command.pauseCommand.removeTarget(nil)
     command.pauseCommand.addTarget { _ in
         player.pause()
         updateNowPlayingProgress(player: player)
         return .success
     }
-
+    
+    command.togglePlayPauseCommand.removeTarget(nil)
     command.togglePlayPauseCommand.addTarget { _ in
         if player.timeControlStatus == .playing {
             player.pause()
@@ -184,10 +184,8 @@ func configureNowPlaying(
         updateNowPlayingProgress(player: player)
         return .success
     }
-
-
-    // MARK: - 将上一首 / 下一首变成 快退 / 快进
-    // 快退
+    
+    command.skipBackwardCommand.removeTarget(nil)
     command.skipBackwardCommand.isEnabled = true
     command.skipBackwardCommand.preferredIntervals = [NSNumber(value: skipBackwardSeconds)]
     command.skipBackwardCommand.addTarget { event in
@@ -197,8 +195,8 @@ func configureNowPlaying(
         updateNowPlayingProgress(player: player)
         return .success
     }
-
-    // 快进
+    
+    command.skipForwardCommand.removeTarget(nil)
     command.skipForwardCommand.isEnabled = true
     command.skipForwardCommand.preferredIntervals = [NSNumber(value: skipForwardSeconds)]
     command.skipForwardCommand.addTarget { event in
@@ -210,9 +208,8 @@ func configureNowPlaying(
         updateNowPlayingProgress(player: player)
         return .success
     }
-
-
-    // MARK: - 支持控制中心拖动进度条
+    
+    command.changePlaybackPositionCommand.removeTarget(nil)
     command.changePlaybackPositionCommand.isEnabled = true
     command.changePlaybackPositionCommand.addTarget { event in
         guard let e = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
@@ -222,9 +219,7 @@ func configureNowPlaying(
         }
         return .success
     }
-
-
-    // MARK: - 下载封面（可选）
+    
     guard let artworkURL else { return }
 
     URLSession.shared.dataTask(with: artworkURL) { data, _, _ in
