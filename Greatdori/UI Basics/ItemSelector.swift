@@ -125,59 +125,65 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
                 if let resultElements = searchedElements ?? elements {
                     Group {
                         if !resultElements.isEmpty {
-                            ScrollView {
-                                HStack {
-                                    Spacer(minLength: 0)
-                                    makeContainer(currentLayout, resultElements,
-                                      AnyView(
-                                        ForEach(resultElements, id: \.self) { element in
-                                            Button(action: {
-                                                if !isMultipleSelectionDisabled {
-                                                    if selection.contains(element) {
-                                                        selection.removeAll { $0 == element }
-                                                    } else {
-                                                        selection.append(element)
-                                                    }
-                                                } else {
-                                                    selection = [element]
-                                                    dismiss()
+                            ScrollViewReader { scrollProxy in
+                                ScrollView {
+                                    HStack {
+                                        Spacer(minLength: 0)
+                                        makeContainer(currentLayout, resultElements,
+                                            AnyView(
+                                                ForEach(resultElements, id: \.self) { element in
+                                                    Button(action: {
+                                                        if !isMultipleSelectionDisabled {
+                                                            if selection.contains(element) {
+                                                                selection.removeAll { $0 == element }
+                                                            } else {
+                                                                selection.append(element)
+                                                            }
+                                                        } else {
+                                                            selection = [element]
+                                                            dismiss()
+                                                        }
+                                                    }, label: {
+                                                        makeSomeContent(currentLayout, element)
+                                                            .highlightKeyword($searchedText)
+                                                            .groupBoxStrokeLineWidth(selection.contains(element) ? 3 : 0)
+                                                    })
+                                                    .buttonStyle(.plain)
+                                                    .buttonBorderShape(.roundedRectangle(radius: 20))
                                                 }
-                                            }, label: {
-                                                makeSomeContent(currentLayout, element)
-                                                    .highlightKeyword($searchedText)
-                                                    .groupBoxStrokeLineWidth(selection.contains(element) ? 3 : 0)
-                                            })
-                                            .buttonStyle(.plain)
-                                            .buttonBorderShape(.roundedRectangle(radius: 20))
+                                            )
+                                        ) { element in
+                                            AnyView(
+                                                Button(action: {
+                                                    if !isMultipleSelectionDisabled {
+                                                        if selection.contains(element) {
+                                                            selection.removeAll { $0 == element }
+                                                        } else {
+                                                            selection.append(element)
+                                                        }
+                                                    } else {
+                                                        selection = [element]
+                                                        dismiss()
+                                                    }
+                                                }, label: {
+                                                    makeSomeContent(currentLayout, element)
+                                                        .highlightKeyword($searchedText)
+                                                        .groupBoxStrokeLineWidth(selection.contains(element) ? 3 : 0)
+                                                })
+                                                .buttonStyle(.plain)
+                                                .buttonBorderShape(.roundedRectangle(radius: 20))
+                                            )
                                         }
-                                      )
-                                    ) { element in
-                                        AnyView(
-                                            Button(action: {
-                                                if !isMultipleSelectionDisabled {
-                                                    if selection.contains(element) {
-                                                        selection.removeAll { $0 == element }
-                                                    } else {
-                                                        selection.append(element)
-                                                    }
-                                                } else {
-                                                    selection = [element]
-                                                    dismiss()
-                                                }
-                                            }, label: {
-                                                makeSomeContent(currentLayout, element)
-                                                    .highlightKeyword($searchedText)
-                                                    .groupBoxStrokeLineWidth(selection.contains(element) ? 3 : 0)
-                                            })
-                                            .buttonStyle(.plain)
-                                            .buttonBorderShape(.roundedRectangle(radius: 20))
-                                        )
+                                        .padding(.horizontal)
+                                        Spacer(minLength: 0)
                                     }
-                                    .padding(.horizontal)
-                                    Spacer(minLength: 0)
+                                }
+                                .onAppear {
+                                    if let sel = selection.first {
+                                        scrollProxy.scrollTo(sel, anchor: .top)
+                                    }
                                 }
                             }
-                            .geometryGroup()
                         } else {
                             ContentUnavailableView("Search.no-results", systemImage: "magnifyingglass", description: Text("Search.no-results.description"))
                         }
@@ -346,17 +352,17 @@ struct ItemSelectorButton<Element: Sendable & Hashable & Identifiable & DoriCach
                     Text(selection.title.forPreferredLocale() ?? "#\(selection.id)")
                         .multilineTextAlignment(.trailing)
                     Image(systemName: .chevronUpChevronDown)
-                        .bold(isMACOS)
+                        .bold(platform == .macOS)
                         .font(.footnote)
                 }
             } else {
                 Text("Selector.prompt.\(Element.singularName)")
             }
         })
-        .wrapIf(!isMACOS) {
-            $0.foregroundStyle(isEnabled ? .accent : .gray)
+        .wrapIf(platform != .macOS) {
+            $0.foregroundStyle(isEnabled ? .accent : .secondary)
         }
-        .padding(.vertical, isMACOS ? 0 : 3)
+        .padding(.vertical, platform == .macOS ? 0 : 3)
         .onChange(of: selection, {
             if closeWindowOnSelectionChange {
                 selectorWindowIsPresented = false
