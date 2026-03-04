@@ -53,6 +53,7 @@ struct ExternalLinksSection: View {
                     .hoverEffect()
                     .hoverEffectGroup()
                     #endif
+                    .withSystemBackground()
                 }
             } header: {
                 HStack {
