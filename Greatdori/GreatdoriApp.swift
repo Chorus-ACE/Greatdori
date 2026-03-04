@@ -161,7 +161,6 @@ private struct _AnyWindowView: View {
     var data: AnyWindowData
     @Environment(\.dismissWindow) private var dismissWindow
     @State private var dismissTimer: Timer?
-    @State private var isRemovingWindowBackground = false
     var body: some View {
         unsafe UnsafePointer<() -> AnyView>(bitPattern: data.content)!.pointee()
             .onAppear {
@@ -180,9 +179,10 @@ private struct _AnyWindowView: View {
                 }
             }
         #if os(visionOS)
-            .glassBackgroundEffect(displayMode: isRemovingWindowBackground ? .never : .always)
-            .onPreferenceChange(RemoveWindowBackgroundPreference.self) { value in
-                isRemovingWindowBackground = value
+            .wrapIf(!data.needsRemoveSystemBackground) { content in
+                NavigationStack {
+                    content
+                }
             }
         #endif
         #if os(macOS)

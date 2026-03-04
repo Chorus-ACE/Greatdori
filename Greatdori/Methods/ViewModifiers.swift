@@ -257,18 +257,13 @@ struct _ImageFileDocument: FileDocument {
 extension View {
     func window<Content: View>(
         isPresented: Binding<Bool>,
+        removeSystemBackground: Bool = false,
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View {
         #if !os(iOS)
-        modifier(_AnyWindowModifier(isPresented: isPresented, onDismiss: onDismiss) {
-            #if os(visionOS)
-            NavigationStack {
-                content()
-            }
-            #else
+        modifier(_AnyWindowModifier(isPresented: isPresented, onDismiss: onDismiss, removeSystemBackground: removeSystemBackground) {
             content()
-            #endif
         })
         #else
         sheet(isPresented: isPresented, onDismiss: onDismiss) {
@@ -278,16 +273,13 @@ extension View {
     }
     func window<Content: View, Item: Identifiable>(
         item: Binding<Item?>,
+        removeSystemBackground: Bool = false,
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping (Item) -> Content
     ) -> some View {
         #if !os(iOS)
-        modifier(_AnyWindowModifier(isPresented: .init { item.wrappedValue != nil } set: { !$0 ? (item.wrappedValue = nil) : () }, onDismiss: onDismiss) {
-            #if os(visionOS)
-            item.wrappedValue != nil ? NavigationStack { content(item.wrappedValue!) } : nil
-            #else
+        modifier(_AnyWindowModifier(isPresented: .init { item.wrappedValue != nil } set: { !$0 ? (item.wrappedValue = nil) : () }, onDismiss: onDismiss, removeSystemBackground: removeSystemBackground) {
             item.wrappedValue != nil ? content(item.wrappedValue!) : nil
-            #endif
         })
         #else
         sheet(item: item, onDismiss: onDismiss) { item in
@@ -301,6 +293,7 @@ extension View {
 private struct _AnyWindowModifier<V: View>: ViewModifier {
     var isPresented: Binding<Bool>
     var onDismiss: (() -> Void)?
+    var removeSystemBackground: Bool // visionOS only
     var content: () -> V
     @Environment(\.openWindow) private var openWindow
     func body(content body: Content) -> some View {
@@ -323,7 +316,8 @@ private struct _AnyWindowModifier<V: View>: ViewModifier {
                         value: AnyWindowData(
                             isPresented: Int(bitPattern: ptrIsPresented),
                             content: Int(bitPattern: ptrContent),
-                            onDismiss: ptrOnDismiss != nil ? Int(bitPattern: ptrOnDismiss.unsafelyUnwrapped) : nil
+                            onDismiss: ptrOnDismiss != nil ? Int(bitPattern: ptrOnDismiss.unsafelyUnwrapped) : nil,
+                            needsRemoveSystemBackground: removeSystemBackground
                         )
                     )
                 }
@@ -334,13 +328,15 @@ struct AnyWindowData: Hashable, Codable {
     @unsafe var isPresented: Int // Binding<Bool>
     @unsafe var content: Int // () -> AnyView
     @unsafe var onDismiss: Int? // () -> Void
+    var needsRemoveSystemBackground: Bool // visionOS only
     
     var _hash: Int
     
-    init(isPresented: Int, content: Int, onDismiss: Int? = nil) {
+    init(isPresented: Int, content: Int, onDismiss: Int? = nil, needsRemoveSystemBackground: Bool = false) {
         unsafe self.isPresented = isPresented
         unsafe self.content = content
         unsafe self.onDismiss = onDismiss
+        self.needsRemoveSystemBackground = needsRemoveSystemBackground
         self._hash = isPresented.hashValue & content.hashValue
         if let h = onDismiss?.hashValue {
             _hash &= h

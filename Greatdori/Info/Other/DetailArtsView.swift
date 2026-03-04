@@ -220,7 +220,7 @@ struct DetailArtsSection: View {
                 ImageLookView(image: item.image, title: item.title, subtitle: item.subtitle, imageFrame: item.imageFrame)
             }
             #elseif os(visionOS)
-            .window(item: $quickLookOnFocusItem) { item in
+            .window(item: $quickLookOnFocusItem, removeSystemBackground: true) { item in
                 ImageLookView(image: item.image, title: item.title, subtitle: item.subtitle, imageFrame: item.imageFrame)
                     .environment(\.imageSupportsCreateSpatial, supportsCreateSpatial)
             }
@@ -722,7 +722,6 @@ struct ImageLookView: View {
                 }
             }
         }
-        .preference(key: RemoveWindowBackgroundPreference.self, value: true)
     }
     
     @available(visionOS 26.0, *)

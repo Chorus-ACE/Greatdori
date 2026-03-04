@@ -607,12 +607,3 @@ extension URL {
         ))!
     }
 }
-
-#if os(visionOS)
-struct RemoveWindowBackgroundPreference: PreferenceKey {
-    static let defaultValue: Bool = false
-    static func reduce(value: inout Bool, nextValue: () -> Bool) {
-        value = nextValue()
-    }
-}
-#endif
