@@ -24,6 +24,8 @@ struct SongMetaView: View {
     @AppStorage("SongMetaPerfectRate") private var perfectRate = 100.0
     @AppStorage("SongMetaDowntime") private var downtime = 30.0
     @AppStorage("SongMetaFever") private var fever = true
+    @State private var rawMeta: DoriAPI.Songs.SongMeta?
+    @State private var allSongs: [PreviewSong]?
     @State private var allSkills: [Skill]?
     @State private var selectedSkill: Skill?
     @State private var locale = DoriLocale.primaryLocale
@@ -352,7 +354,54 @@ struct SongMetaView: View {
             isFailedToLoad = true
             return
         }
-        meta = await DoriFrontend.Songs.allMeta(
+        
+        if rawMeta == nil || allSongs == nil {
+            typealias GroupResult = (DoriAPI.Songs.SongMeta?, [PreviewSong]?)
+            let result = await withTaskGroup(
+                of: Optional<any Sendable>.self,
+                returning: GroupResult?.self
+            ) { group in
+                if rawMeta == nil {
+                    group.addTask {
+                        await DoriAPI.Songs.meta()
+                    }
+                }
+                if allSongs == nil {
+                    group.addTask {
+                        await DoriAPI.Songs.all()
+                    }
+                }
+                
+                var groupResult: GroupResult = (nil, nil)
+                for await result in group {
+                    if let value = result {
+                        if let value = value as? DoriAPI.Songs.SongMeta {
+                            groupResult.0 = value
+                        } else if let value = value as? [PreviewSong] {
+                            groupResult.1 = value
+                        }
+                    } else {
+                        return nil
+                    }
+                }
+                return groupResult
+            }
+            if let result {
+                if let r = result.0 {
+                    rawMeta = r
+                }
+                if let r = result.1 {
+                    allSongs = r
+                }
+            } else {
+                isFailedToLoad = true
+                return
+            }
+        }
+        
+        meta = DoriFrontend.Songs._allMeta(
+            rawMeta!,
+            allSongs!,
             with: selectedSkill,
             in: locale,
             skillLevel: skillLevel,
