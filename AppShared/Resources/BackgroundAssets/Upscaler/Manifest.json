@@ -3,7 +3,8 @@
 	"downloadPolicy": {
 		"prefetch": {
 			"installationEventTypes": [
-				"firstInstallation"
+				"firstInstallation",
+                "subsequentUpdate"
 			]
 		}
 	},
@@ -12,11 +13,12 @@
 			"directory": "Upscaler.mlpackage"
 		},
 		{
-                        "file": "UpscalerInfo.plist"
-                }
+            "file": "Info.plist"
+        }
 	],
 	"platforms": [
 		"iOS",
-		"macOS"
+		"macOS",
+        "visionOS"
 	]
 }

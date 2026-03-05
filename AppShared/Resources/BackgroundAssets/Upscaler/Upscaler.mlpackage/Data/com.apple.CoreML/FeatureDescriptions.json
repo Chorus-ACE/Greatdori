@@ -1,12 +1,12 @@
 {
   "Inputs" : {
     "input" : {
-      "MLFeatureShortDescription" : ""
+      "MLFeatureShortDescription" : "--"
     }
   },
   "Outputs" : {
     "activation_out" : {
-      "MLFeatureShortDescription" : ""
+      "MLFeatureShortDescription" : "--"
     }
   },
   "TrainingInputs" : {
