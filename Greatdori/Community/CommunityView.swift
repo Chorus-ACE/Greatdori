@@ -214,6 +214,7 @@ private struct PostSectionView: View {
                 .font(.title3)
                 Markdown(post.content.toMarkdown())
                     .markdownInlineImageProvider(.postContent(imageFrame: .init(width: 20, height: 20)))
+                    .markdownImageProvider(.postContent)
                 if !tagsText.isEmpty {
                     Text(tagsText)
                         .foregroundStyle(.secondary)

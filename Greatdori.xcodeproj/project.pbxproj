@@ -110,6 +110,7 @@
 		8C7B2D832E7C3A3A00EE0C89 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7B2D822E7C3A3500EE0C89 /* Network.swift */; };
 		8C7B2D852E7C3D0E00EE0C89 /* ImagePrefetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7B2D842E7C3D0400EE0C89 /* ImagePrefetch.swift */; };
 		8C7C32522EF9312F00CFAE61 /* SongDetailLyricsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7C32512EF9312800CFAE61 /* SongDetailLyricsView.swift */; };
+		8C80E1162F596FFB00FC241B /* ContentAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C80E1152F596FF500FC241B /* ContentAnalysis.swift */; };
 		8C889D9C2EA1258D00FBF01D /* CommunityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C889D9B2EA1258700FBF01D /* CommunityView.swift */; };
 		8C889DE42EA22C9700FBF01D /* StoryViewerAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C889DE32EA22C9700FBF01D /* StoryViewerAssets.xcassets */; };
 		8C889DE62EA2367900FBF01D /* StoryViewer.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8C889DE52EA2366200FBF01D /* StoryViewer.metal */; };
@@ -615,6 +616,7 @@
 		8C7F6C002E5975790040C206 /* libboringssl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libboringssl.tbd; path = usr/lib/libboringssl.tbd; sourceTree = SDKROOT; };
 		8C7F6C042E59922C0040C206 /* libDoriAssetShims */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libDoriAssetShims; path = "../../../Library/Developer/Xcode/DerivedData/Greatdori-aghqtexjlhuxqfcowlzrriajcttj/Build/Products/Debug-iphoneos/DoriAssetShims.framework/libDoriAssetShims"; sourceTree = "<group>"; };
 		8C7F6C122E5996A70040C206 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		8C80E1152F596FF500FC241B /* ContentAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentAnalysis.swift; sourceTree = "<group>"; };
 		8C818D722E2E671A00D0DD69 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = README.md; sourceTree = "<group>"; };
 		8C889D2D2EA10B5400FBF01D /* tmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = tmp.a; path = "../../../../Downloads/mbot-live2d-master/lib/Debug-iphoneos/tmp.a"; sourceTree = "<group>"; };
 		8C889D9B2EA1258700FBF01D /* CommunityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityView.swift; sourceTree = "<group>"; };
@@ -1228,6 +1230,7 @@
 			isa = PBXGroup;
 			children = (
 				8C889D9B2EA1258700FBF01D /* CommunityView.swift */,
+				8C80E1152F596FF500FC241B /* ContentAnalysis.swift */,
 			);
 			path = Community;
 			sourceTree = "<group>";
@@ -2113,6 +2116,7 @@
 				E97888C62E8A79EA00ABD33E /* QuickLook.swift in Sources */,
 				8C7C32522EF9312F00CFAE61 /* SongDetailLyricsView.swift in Sources */,
 				E9DA97202ED981A80047B464 /* DebugPlaygroundView.swift in Sources */,
+				8C80E1162F596FFB00FC241B /* ContentAnalysis.swift in Sources */,
 				8C0DB86E2EE9B555007674F6 /* EventDetailDegreesView.swift in Sources */,
 				8CF827AB2E8ACE1D0045CA97 /* LoginCampaignSearchView.swift in Sources */,
 				8CD3D3272F42FCD7006E5A76 /* SongMetaView.swift in Sources */,
