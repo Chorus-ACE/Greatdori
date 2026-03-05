@@ -65,6 +65,7 @@ struct CommunityView: View {
                         .padding()
                     }
                     .refreshable {
+                        pageOffset = 0
                         await getPosts()
                     }
                 } else {
