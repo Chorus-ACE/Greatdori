@@ -57,7 +57,7 @@ struct AsyncSensitiveDetectableImage: View {
                 }
             }
             .scaledToFit()
-            .blur(radius: shouldFlagSensitive && !isSensitiveCoverHidden ? 20 : 0)
+            .blur(radius: shouldFlagSensitive && !isSensitiveCoverHidden ? 20 : 0, opaque: true)
             .overlay {
                 if shouldFlagSensitive {
                     ZStack {
@@ -233,7 +233,10 @@ private struct SensitiveContentDescriptiveInterventionView: View {
                                 .buttonStyle(.borderedProminent)
                             #endif
                         }
-                        Button(action: continueAction) {
+                        Button {
+                            continueAction()
+                            dismiss()
+                        } label: {
                             HStack {
                                 Spacer()
                                 Text("Sensitive-content.descriptive.page2.continue")
