@@ -3916,6 +3916,18 @@
             "state" : "translated",
             "value" : "Actions"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作"
+          }
         }
       }
     },
@@ -3925,6 +3937,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "View Ways to Get Help"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看获取帮助的途径"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看求助方式"
           }
         }
       }
@@ -3936,6 +3960,18 @@
             "state" : "translated",
             "value" : "This may be sensitive."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可能包含敏感内容。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這可能包含敏感內容。"
+          }
         }
       }
     },
@@ -3945,6 +3981,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Show"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示"
           }
         }
       }
@@ -13961,6 +14009,18 @@
             "state" : "translated",
             "value" : "Dismiss"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "關閉"
+          }
         }
       }
     },
@@ -13970,6 +14030,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cancel"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
           }
         }
       }
@@ -13981,6 +14053,18 @@
             "state" : "translated",
             "value" : "I’m Sure"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我确定"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我確定"
+          }
         }
       }
     },
@@ -13990,6 +14074,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nude photos and videos can be used to hurt people. Once you view this, you can’t unsee it."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "裸露照片和视频可能会被用来伤害你。一旦查看就无法忘记。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "裸露照片或影片可能會對你造成傷害。一旦檢視就無法忘記。"
           }
         }
       }
@@ -14001,6 +14097,18 @@
             "state" : "translated",
             "value" : "The person in this may not have given consent to share it. How would they feel knowing other people saw it?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出镜人可能并不想被看到，甚至对分享毫不知情。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此內容中的對象可能不想被看到，分享時可能未經過他們同意。"
+          }
         }
       }
     },
@@ -14010,6 +14118,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This could be sensitive.\nAre you sure you want to view?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这可能包含敏感内容。\n确定查看吗？"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可能為敏感內容。\n確定要檢視嗎？"
           }
         }
       }
@@ -14021,6 +14141,18 @@
             "state" : "translated",
             "value" : "View Ways to Get Help"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看获取帮助的途径"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看求助方式"
+          }
         }
       }
     },
@@ -14030,6 +14162,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Don’t View"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不查看"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不要檢視"
           }
         }
       }
@@ -14041,6 +14185,18 @@
             "state" : "translated",
             "value" : "View"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢視"
+          }
         }
       }
     },
@@ -14050,6 +14206,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Don’t share anything you don’t want to. Talk to someone you trust if you feel pressured to view naked photos or videos."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不要分享任何违背你意愿的内容。如果查看裸露照片或视频让你感到有压力，去和信任的人谈一谈。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不要傳送你不想分享的內容。若你覺得被強迫要看裸露照片或影片，請與信任的人談談。"
           }
         }
       }
@@ -14061,6 +14229,18 @@
             "state" : "translated",
             "value" : "Do you feel OK? You’re not alone, and can always talk with someone who’s trained to help."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你并非孤立无援，随时可以与专业人士聊一聊，寻求帮助。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記得你並不孤單，永遠都可以與受過訓練的專業人士談談。"
+          }
         }
       }
     },
@@ -14070,6 +14250,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "It’s your choice, but make sure you feel safe."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这是你的选择，但请确保自己觉得安全。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這是你的決定，但請確定你未感到不安全。"
           }
         }
       }
