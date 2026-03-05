@@ -1,3 +1,6 @@
 {
-
+  "MLModelVersionStringKey" : "--",
+  "MLModelDescriptionKey" : "Greatdori! upscaler model.",
+  "MLModelAuthorKey" : "xinntao\/Real-ESRGAN, the Greatdori! project authors.",
+  "MLModelLicenseKey" : "BSD 3-Clause License"
 }
