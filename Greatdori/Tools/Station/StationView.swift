@@ -178,7 +178,7 @@ struct StationItemView: View {
                 HStack {
                     WebImage(url: {
                         if AppFlag.DEMO, let username = demoNames[item.room.creator.username ?? ""]  {
-                            return URL(string: "https://github.com/Greatdori/demo-image/blob/main/\(username).png?raw=true")!
+                            return URL(string: "https://asset.greatdori.com/_demo-image/\(username).png")!
                         } else {
                             return item.room.creator.avatarURL()
                         }

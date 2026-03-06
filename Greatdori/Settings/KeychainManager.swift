@@ -129,7 +129,7 @@ struct GreatdoriAccount: Codable, Hashable {
     func avatarURL() async -> URL? {
         if AppFlag.DEMO {
             let targetAvatar: [String: String] = ["@Aimi": "kasumi", "@SakuraAyane": "ran", "1227": "aya", "1026": "yukina", "0808": "kokoro"]
-            return URL(string: "https://github.com/Greatdori/demo-image/blob/main/\(targetAvatar[uid ?? ""] ?? "unknown").png?raw=true")
+            return URL(string: "https://asset.greatdori.com/_demo-image/\(targetAvatar[uid ?? ""] ?? "unknown").png")
         }
         
         switch platform {
