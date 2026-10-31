@@ -77,6 +77,7 @@ struct GreatdoriApp: App {
                     DebugRulerOverlay()
                 }
             }
+            .softNavigationBarEdge()
             .onOpenURL { url in
                 _handleURL(url)
             }
@@ -111,6 +112,7 @@ struct GreatdoriApp: App {
         #if os(macOS)
         Window("Settings", id: "Secchi") {
             SettingsView()
+                .softNavigationBarEdge()
         }
         #endif
         
@@ -227,7 +229,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     @Environment(\.locale) var locale
     @AppStorage("IsFirstLaunch") var isFirstLaunch = true
     
-    static var orientationLock = UIInterfaceOrientationMask.portrait
+    static var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
     
     func application(
         _ application: UIApplication,

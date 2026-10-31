@@ -19,6 +19,7 @@ import SymbolAvailability
 struct ExternalLinksSection: View {
     var links: [ExternalLink] = []
     @Environment(\.openURL) private var openURL
+    @Environment(\.defaultMinListRowHeight) private var rowHeight
     var body: some View {
         if !links.isEmpty {
             Section {
@@ -38,6 +39,7 @@ struct ExternalLinksSection: View {
                                     .contentShape(Rectangle())
                                 })
                                 .buttonStyle(.plain)
+                                .frame(minHeight: rowHeight * (platform == .iOS ? 0.75 : 1))
                                 #if os(visionOS)
                                 .defaultHoverEffect(.empty)
                                 #endif

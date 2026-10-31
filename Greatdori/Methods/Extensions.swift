@@ -433,11 +433,22 @@ extension URL {
 
 // MARK: View
 public extension View {
+    @ViewBuilder
+    func softNavigationBarEdge() -> some View {
+        #if os(iOS) || os(macOS)
+        if #available(iOS 26.0, macOS 26.0, *) {
+            self.scrollEdgeEffectStyle(.soft, for: .top)
+        } else {
+            self
+        }
+        #else
+        self
+        #endif
+    }
+
     // MARK: detailSectionHeader
     func detailSectionHeader() -> some View {
-        self
-            .padding(.bottom, -40)
-            .offset(y: 5)
+        modifier(DetailSectionHeaderLayout())
     }
     
     // MARK: emptyReplacement

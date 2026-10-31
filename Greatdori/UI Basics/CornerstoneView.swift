@@ -120,7 +120,7 @@ struct CompactToggle: View {
 }
 
 // MARK: CustomGroupBox
-struct CustomGroupBox<Content: View>: View {
+private struct LegacyCustomGroupBox<Content: View>: View {
     let content: () -> Content
     var cornerRadius: CGFloat
     var showGroupBox: Bool
@@ -226,6 +226,69 @@ struct CustomGroupBox<Content: View>: View {
         // other views that suppress the custom group box
         // to provide their own representation
         .preference(key: CustomGroupBoxActivePreference.self, value: showGroupBox)
+    }
+}
+
+struct CustomGroupBox<Content: View>: View {
+    let content: () -> Content
+    var cornerRadius: CGFloat
+    var showGroupBox: Bool
+    var strokeLineWidth: CGFloat
+    var useExtenedConstraints: Bool
+    @Environment(\._groupBoxStrokeLineWidth) var envStrokeLineWidth: CGFloat
+    @Environment(\._suppressCustomGroupBox) var suppressCustomGroupBox
+
+    init(
+        showGroupBox: Bool = true,
+        cornerRadius: CGFloat = 20,
+        useExtenedConstraints: Bool = false,
+        strokeLineWidth: CGFloat = 0,
+        customGroupBoxVersion: Int? = nil,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.showGroupBox = showGroupBox
+        self.cornerRadius = cornerRadius
+        self.strokeLineWidth = strokeLineWidth
+        self.useExtenedConstraints = useExtenedConstraints
+        self.content = content
+    }
+
+    var body: some View {
+        if showGroupBox && !suppressCustomGroupBox {
+            #if os(iOS) || os(macOS)
+            if #available(iOS 26.0, macOS 26.0, *) {
+                ExtendedConstraints(isActive: useExtenedConstraints) {
+                    content()
+                        .padding(.all, showGroupBox && !suppressCustomGroupBox ? nil : 0)
+                }
+                .glassEffect(.regular, in: .rect(cornerRadius: cornerRadius))
+                .overlay {
+                    if showGroupBox && !suppressCustomGroupBox {
+                        let strokeLineWidth = strokeLineWidth > 0 ? strokeLineWidth : envStrokeLineWidth
+                        if strokeLineWidth > 0 {
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .strokeBorder(.tint.opacity(0.9), lineWidth: strokeLineWidth)
+                                .allowsHitTesting(false)
+                        }
+                    }
+                }
+                .preference(key: CustomGroupBoxActivePreference.self, value: showGroupBox)
+            } else {
+                LegacyCustomGroupBox(showGroupBox: showGroupBox, cornerRadius: cornerRadius, useExtenedConstraints: useExtenedConstraints, strokeLineWidth: strokeLineWidth) {
+                    content()
+                }
+            }
+            #else
+            LegacyCustomGroupBox(showGroupBox: showGroupBox, cornerRadius: cornerRadius, useExtenedConstraints: useExtenedConstraints, strokeLineWidth: strokeLineWidth) {
+                content()
+            }
+            #endif
+        } else {
+            ExtendedConstraints(isActive: useExtenedConstraints) {
+                content()
+            }
+            .preference(key: CustomGroupBoxActivePreference.self, value: showGroupBox)
+        }
     }
 }
 
@@ -439,7 +502,6 @@ struct DismissButton<L: View>: View {
         }, label: {
             label()
         })
-        .buttonBorderShape(.circle)
     }
 }
 
@@ -479,56 +541,38 @@ struct FilterAndSorterPicker: View {
     let hasEndingDate: Bool
     var body: some View {
 #if os(macOS)
-        HStack(spacing: 0) {
-            Button(action: {
-                showFilterSheet.toggle()
-            }, label: {
-                (filterIsFiltering ? Color.white : .primary)
-                    .scaleEffect(2) // a larger value has no side effects because we're using `mask`
-                    .mask {
-                        // We use `mask` to prgacha unexpected blink
-                        // while changing `foregroundStyle`.
-                        Image(systemName: .line3HorizontalDecrease)
+        Button(action: {
+            showFilterSheet.toggle()
+        }, label: {
+            (filterIsFiltering ? Color.white : .primary)
+                .scaleEffect(2) // a larger value has no side effects because we're using `mask`
+                .mask {
+                    // We use `mask` to prgacha unexpected blink
+                    // while changing `foregroundStyle`.
+                    Image(systemName: "line.3.horizontal.decrease")
+                }
+                .background {
+                    if filterIsFiltering {
+                        Capsule().foregroundStyle(Color.accentColor).scaledToFill().scaleEffect(1.1)
                     }
-                    .background {
-                        if filterIsFiltering {
-                            Capsule().foregroundStyle(Color.accentColor).scaledToFill().scaleEffect(isMACOS ? 1.1 : 1.65)
-                        }
-                    }
-            })
-            .animation(.easeInOut(duration: 0.2), value: filterIsFiltering)
-            SorterPickerView(sorter: $sorter, allOptions: sorterKeywords, sortingItemsHaveEndingDate: hasEndingDate)
-        }
+                }
+        })
+        .animation(.easeInOut(duration: 0.2), value: filterIsFiltering)
+        SorterPickerView(sorter: $sorter, allOptions: sorterKeywords, sortingItemsHaveEndingDate: hasEndingDate)
 #else
         Button(action: {
             showFilterSheet.toggle()
         }, label: {
-            if #available(iOS 26.0, * /* Keep macOS */) {
-                (filterIsFiltering ? Color.white : .primary)
-                    .scaleEffect(2) // a larger value has no side effects because we're using `mask`
-                    .mask {
-                        // We use `mask` to prgacha unexpected blink
-                        // while changing `foregroundStyle`.
-                        Image(systemName: .line3HorizontalDecrease)
+            Image(systemName: "line.3.horizontal.decrease")
+                .foregroundStyle(filterIsFiltering ? Color.white : Color.primary)
+                .background {
+                    if filterIsFiltering {
+                        Circle()
+                            .fill(Color.accentColor)
+                            .scaleEffect(platform == .macOS ? 1.1 : 2.2)
                     }
-                    .background {
-                        if filterIsFiltering {
-                            Capsule().foregroundStyle(Color.accentColor).scaledToFill().scaleEffect(platform != .iOS ? 1.1 : 1.65)
-                        }
-                    }
-            } else {
-                Image(systemName: .line3HorizontalDecrease)
-                    .foregroundStyle(filterIsFiltering ? Color.white : .blue)
-                    .background {
-                        if filterIsFiltering {
-                            Circle()
-                                .foregroundStyle(Color.accentColor)
-                                .scaleEffect(1.65)
-                        }
-                    }
-            }
+                }
         })
-        .buttonBorderShape(.circle)
         .animation(.easeInOut(duration: 0.2), value: filterIsFiltering)
         .accessibilityLabel("Filter")
         .accessibilityValue(filterIsFiltering ? "Accessibility.filter.active" : "Accessibility.filter.not-active")
@@ -536,6 +580,7 @@ struct FilterAndSorterPicker: View {
 #endif
     }
 }
+
 // # Guidance for `FilterAndSorterPicker`
 //
 // ```swift
@@ -543,6 +588,51 @@ struct FilterAndSorterPicker: View {
 //     FilterAndSorterPicker(showFilterSheet: $showFilterSheet, sorter: $sorter, filterIsFiltering: filter.isFiltered, sorterKeywords: PreviewItem.applicableSortingTypes)
 // }
 //```
+
+/// An adaptive grid that measures and retains every cell, including offscreen cells.
+struct EagerVGrid: Layout {
+    var minimumWidth: CGFloat
+    var maximumWidth: CGFloat
+    var columns: Int? = nil
+    var alignment: HorizontalAlignment = .center
+    var spacing: CGFloat = 8
+
+    private func metrics(width: CGFloat?, subviews: Subviews) -> (width: CGFloat, columns: Int, cellWidth: CGFloat, heights: [CGFloat]) {
+        let proposedWidth = width ?? maximumWidth
+        let width = max(0, proposedWidth.isFinite ? proposedWidth : maximumWidth)
+        let count = max(1, columns ?? Int((width + spacing) / (minimumWidth + spacing)))
+        let cellWidth = min(maximumWidth, max(0, (width - CGFloat(count - 1) * spacing) / CGFloat(count)))
+        var heights = [CGFloat]()
+        for index in subviews.indices {
+            let row = index / count
+            if row == heights.count { heights.append(0) }
+            heights[row] = max(heights[row], subviews[index].sizeThatFits(.init(width: cellWidth, height: nil)).height)
+        }
+        return (width, count, cellWidth, heights)
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let grid = metrics(width: proposal.width, subviews: subviews)
+        return CGSize(width: grid.width, height: grid.heights.reduce(0, +) + CGFloat(max(0, grid.heights.count - 1)) * spacing)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let grid = metrics(width: bounds.width, subviews: subviews)
+        let gridWidth = CGFloat(grid.columns) * grid.cellWidth + CGFloat(grid.columns - 1) * spacing
+        let leadingSpace = alignment == .trailing ? bounds.width - gridWidth : alignment == .leading ? 0 : (bounds.width - gridWidth) / 2
+        var y = bounds.minY
+        for index in subviews.indices {
+            let row = index / grid.columns
+            let column = index % grid.columns
+            if column == 0 && row > 0 { y += grid.heights[row - 1] + spacing }
+            subviews[index].place(
+                at: CGPoint(x: bounds.minX + leadingSpace + CGFloat(column) * (grid.cellWidth + spacing), y: y),
+                anchor: .topLeading,
+                proposal: .init(width: grid.cellWidth, height: grid.heights[row])
+            )
+        }
+    }
+}
 
 // MARK: FlowHStack
 struct WrappingHStack: Layout {
@@ -843,6 +933,7 @@ struct MultilingualText: View {
     @State var isHovering = false
     @State var lastCopiedLocale: DoriLocale?
     @State var copyMessageIsDisplaying = false
+    @State private var expandSheetIsDisplaying = false
     
     init(_ text: LocalizedData<String>, showSecondaryText: Bool = true, showLocaleKey: Bool = false) {
         self.text = text
@@ -874,10 +965,16 @@ struct MultilingualText: View {
                         Text(reducedStrings[locale] ?? "")
                             .lineLimit(nil)
                             .multilineTextAlignment(.trailing)
-                            .textSelection(.enabled)
                             .typesettingLanguage(.explicit(locale.nsLocale().language))
                     })
                     .accessibilityHint("Accessibility.copiable")
+                }
+                Section {
+                    Button {
+                        expandSheetIsDisplaying = true
+                    } label: {
+                        Label("Message.read-more", systemImage: "book.pages")
+                    }
                 }
             }, label: {
                 ZStack(alignment: .trailing, content: {
@@ -902,6 +999,20 @@ struct MultilingualText: View {
             .foregroundStyle(.primary)
             #else
             LabelView(text: text, showSecondaryText: showSecondaryText, showLocaleKey: showLocaleKey)
+                .contextMenu {
+                    Button {
+                        if let content = text.forPreferredLocale() {
+                            copyStringToClipboard(content)
+                        }
+                    } label: {
+                        Label("Message.copy", systemImage: "doc.on.doc")
+                    }
+                    Button {
+                        expandSheetIsDisplaying = true
+                    } label: {
+                        Label("Message.read-more", systemImage: "book.pages")
+                    }
+                }
                 .onHover { hoverStatus in
                     isHovering = hoverStatus && !envDisablesPopover
                 }
@@ -914,7 +1025,7 @@ struct MultilingualText: View {
                         }
                         .wrapIf(reducedStrings.values.contains(where: { $0.contains("\n") })) { context in
                             context.insert {
-                                Text("")
+                                Divider()
                             }
                         }
                     }
@@ -925,6 +1036,37 @@ struct MultilingualText: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(text.forPreferredLocale() ?? "")
         .accessibilityHint("Accessibility.multilingual")
+        .sheet(isPresented: $expandSheetIsDisplaying, content: {
+            NavigationStack {
+                Form {
+                    ForEach(text.availableLocales, id: \.self) { locale in
+                        VStack(alignment: .leading) {
+                            Text(locale.rawValue.uppercased())
+                                .bold()
+                            Text(text[locale] ?? "")
+                                .multilineTextAlignment(.leading)
+                                .textSelection(.enabled)
+                                .typesettingLanguage(.explicit(locale.nsLocale().language))
+                        }
+                    }
+                }
+                .formStyle(.grouped)
+                .frame(minHeight: 200)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction, content: {
+                        Button(role: .cancel, action: {
+                            expandSheetIsDisplaying = false
+                        }, label: {
+                            Label("Message.read-more.close", systemImage: "xmark")
+                                .wrapIf(platform == .macOS, in: { content in
+                                    content
+                                        .labelStyle(.titleOnly)
+                                })
+                        })
+                    })
+                }
+            }
+        })
     }
     
     struct LabelView: View {
@@ -958,7 +1100,6 @@ struct MultilingualText: View {
                 }
             }
             .multilineTextAlignment(.trailing)
-            .textSelection(.enabled)
             .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -1287,6 +1428,7 @@ struct ListItem<Content1: View, Content2: View>: View {
     @Environment(\.listItemTextStyle) var textStyle
     @Environment(\.listItemValueIsLeading) var allowValueLeading
     @Environment(\.listItemTextSelectionIsEnabled) var allowTextSelection
+    @Environment(\.defaultMinListRowHeight) private var defaultMinListRowHeight
     let title: Content1
     let value: Content2
     @State private var totalAvailableWidth: CGFloat = 0
@@ -1316,11 +1458,17 @@ struct ListItem<Content1: View, Content2: View>: View {
                     Spacer()
                     value
                         .foregroundStyle(textStyle == .native ? .secondary: .primary)
-                        .wrapIf(allowTextSelection, in: { content in
-                            content.textSelection(.enabled)
-                        }, else: { content in
-                            content.textSelection(.disabled)
-                        })
+                        .wrapIf(true) { content in
+                            if let allowTextSelection {
+                                if allowTextSelection {
+                                    content.textSelection(.enabled)
+                                } else {
+                                    content.textSelection(.disabled)
+                                }
+                            } else {
+                                content
+                            }
+                        }
                         .onFrameChange(perform: { geometry in
                             valueAvailableWidth = geometry.size.width
                         })
@@ -1341,11 +1489,17 @@ struct ListItem<Content1: View, Content2: View>: View {
                         }
                         value
                             .foregroundStyle(textStyle == .native ? .secondary: .primary)
-                            .wrapIf(allowTextSelection, in: { content in
-                                content.textSelection(.enabled)
-                            }, else: { content in
-                                content.textSelection(.disabled)
-                            })
+                            .wrapIf(true) { content in
+                                if let allowTextSelection {
+                                    if allowTextSelection {
+                                        content.textSelection(.enabled)
+                                    } else {
+                                        content.textSelection(.disabled)
+                                    }
+                                } else {
+                                    content
+                                }
+                            }
                             .onFrameChange(perform: { geometry in
                                 valueAvailableWidth = geometry.size.width
                             })
@@ -1360,6 +1514,7 @@ struct ListItem<Content1: View, Content2: View>: View {
         .onFrameChange(perform: { geometry in
             totalAvailableWidth = geometry.size.width
         })
+        .frame(minHeight: defaultMinListRowHeight * (platform == .iOS ? 0.75 : 1))
         .accessibilityElement(children: .contain)
         .accessibilityElement(children: .combine)
         
@@ -1415,7 +1570,7 @@ struct ListItemWithWrappingView<Content1: View, Content2: View, Content3: View, 
                         }
                     }
                 } else {
-                    LazyVGrid(columns: columnNumbers == nil ? [.init(.adaptive(minimum: elementWidth, maximum: elementWidth))] : Array(repeating: .init(.fixed(elementWidth)), count: columnNumbers!), alignment: .trailing) {
+                    EagerVGrid(minimumWidth: elementWidth, maximumWidth: elementWidth, columns: columnNumbers, alignment: .trailing) {
                         ForEach(0..<contentArray.count, id: \.self) { index in
                             if contentArray[index] != nil {
                                 element(contentArray[index])
@@ -1479,7 +1634,7 @@ extension View {
         environment(\.listItemValueIsLeading, alignment == .leading)
     }
     
-    func listItemTextSelection(_ isEnabled: Bool) -> some View {
+    func listItemTextSelection(_ isEnabled: Bool?) -> some View {
         environment(\.listItemTextSelectionIsEnabled, isEnabled)
     }
 }
@@ -1488,7 +1643,7 @@ extension EnvironmentValues {
     @Entry var listItemLayout: ListItemLayout = .automatic
     @Entry var listItemTextStyle: ListItemTextStyle = .bold
     @Entry var listItemValueIsLeading: Bool = false
-    @Entry var listItemTextSelectionIsEnabled: Bool = true
+    @Entry var listItemTextSelectionIsEnabled: Bool? = nil
 }
 
 enum ListItemLayout: Hashable, Equatable {

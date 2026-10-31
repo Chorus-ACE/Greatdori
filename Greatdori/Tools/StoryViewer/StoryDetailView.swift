@@ -366,7 +366,7 @@ struct StoryDetailView: View {
             if interactivePlayerIsInFullScreen {
                 setDeviceOrientation(to: .landscape, allowing: [.landscapeLeft, .landscapeRight])
             } else {
-                setDeviceOrientation(to: .portrait, allowing: .portrait)
+                setDeviceOrientation(to: .portrait, allowing: [.portrait, .landscapeLeft, .landscapeRight])
             }
             #endif
         }

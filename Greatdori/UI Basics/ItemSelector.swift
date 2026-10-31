@@ -119,6 +119,14 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
     @State private var searchedText = ""
     @State private var showFilterSheet = false
     
+    private var isUISizeExpanded: Bool {
+        #if os(macOS)
+        true
+        #else
+        sizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
+        #endif
+    }
+
     var body: some View {
         Group {
             Group {
@@ -177,6 +185,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
                                         .padding(.horizontal)
                                         Spacer(minLength: 0)
                                     }
+                                    .padding(.vertical)
                                 }
                                 .onAppear {
                                     if let sel = selection.first {
@@ -213,9 +222,9 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
             .searchable(text: $searchedText, prompt: "Search.prompt.\(Element.pluralName)")
             .navigationTitle(Element.pluralName)
             #if !os(visionOS)
-            .wrapIf(searchedElements != nil, in: { content in
+            .wrapIf(true, in: { content in
                 if #available(iOS 26.0, *) {
-                    content.navigationSubtitle((searchedText.isEmpty && !filter.isFiltered) ? (getResultCountDescription?(searchedElements!.count) ?? "Search.item.\(searchedElements!.count)") :  "Search.result.\(searchedElements!.count)")
+                    content.navigationSubtitle(resultSubtitle)
                 } else {
                     content
                 }
@@ -238,7 +247,7 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
                     ToolbarSpacer()
                 }
                 #endif
-                if !supportsMultipleWindows {
+                if !isUISizeExpanded {
                     ToolbarItem {
                         Button("Done", systemImage: "checkmark") {
                             dismiss()
@@ -306,6 +315,14 @@ struct ItemSelectorView<Element: Sendable & Hashable & DoriCacheable & DoriFilte
         })
     }
     
+    private var resultSubtitle: LocalizedStringResource {
+        guard let searchedElements else { return "" }
+        if searchedText.isEmpty && !filter.isFiltered {
+            return getResultCountDescription?(searchedElements.count) ?? "Search.item.\(searchedElements.count)"
+        }
+        return "Search.result.\(searchedElements.count)"
+    }
+
     func getList() async {
         infoIsAvailable = true
         withDoriCache(id: "\(Element.singularName.key)List_\(filter.identity)", trait: .realTime) {
