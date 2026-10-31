@@ -73,16 +73,10 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
     var body: some View {
         Group {
             if let information {
-                ScrollView {
-                    HStack {
-                        Spacer(minLength: 0)
-                        LazyVStack(spacing: platform == .visionOS ? 45 : 35, pinnedViews: .sectionHeaders) {
-                            makeContent(information)
-                        }
-                        .padding()
-                        Spacer(minLength: 0)
-                    }
+                DetailSectionScrollView {
+                    makeContent(information)
                 }
+                .id(information.id)
                 .scrollDisablesPopover()
             } else {
                 if infoIsAvailable {
@@ -156,6 +150,142 @@ struct DetailViewBase<Information: Sendable & Identifiable & DoriCacheable & Tit
                 infoIsAvailable = false
             }
         }
+    }
+}
+
+// Let the native bar provide header spacing instead of the legacy pinned-stack offsets.
+extension EnvironmentValues {
+    @Entry var usesNativeDetailSectionHeaders = false
+}
+
+struct DetailSectionHeaderLayout: ViewModifier {
+    @Environment(\.usesNativeDetailSectionHeaders) private var usesNativeBar
+
+    func body(content: Content) -> some View {
+        if usesNativeBar {
+            content
+        } else {
+            content
+                .padding(.bottom, -40)
+                .offset(y: 5)
+        }
+    }
+}
+
+#if os(iOS) || os(macOS)
+/// Keeps section bodies mounted while sharing the system scroll edge effect with the toolbar.
+@available(iOS 26.0, macOS 26.0, *)
+private struct NativeDetailSectionScrollView<Content: View>: View {
+    @ViewBuilder var content: Content
+    @Namespace private var contentSpace
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var headerOffsets: [SectionConfiguration.ID: CGFloat] = [:]
+    @State private var scrollOffset: CGFloat = 0
+
+    var body: some View {
+        Group(sections: content) { sections in
+            let currentSection = sections.last { section in
+                !section.header.isEmpty
+                    && (headerOffsets[section.id] ?? .infinity) <= scrollOffset
+            }
+
+            ScrollView {
+                VStack(spacing: 35) {
+                    ForEach(sections) { section in
+                        VStack(spacing: 12) {
+                            if !section.header.isEmpty {
+                                HStack {
+                                    section.header
+                                }
+                                .frame(maxWidth: infoContentMaxWidth)
+                                .opacity(currentSection?.id == section.id ? 0 : 1)
+                                .allowsHitTesting(currentSection?.id != section.id)
+                                .accessibilityHidden(currentSection?.id == section.id)
+                                .onGeometryChange(for: CGFloat.self) { geometry in
+                                    geometry.frame(in: .named(contentSpace)).minY
+                                } action: { offset in
+                                    headerOffsets[section.id] = offset
+                                }
+                            }
+
+                            VStack(spacing: 12) {
+                                section.content
+                            }
+
+                            if !section.footer.isEmpty {
+                                HStack {
+                                    section.footer
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+                .padding()
+                .coordinateSpace(name: contentSpace)
+            }
+            .scrollEdgeEffectStyle(.soft, for: .top)
+            .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentOffset.y + geometry.contentInsets.top
+            } action: { _, offset in
+                scrollOffset = offset
+            }
+            .safeAreaBar(edge: .top, spacing: 0) {
+                pinnedHeader(currentSection)
+            }
+            .scrollEdgeEffectStyle(.soft, for: .top)
+        }
+        .environment(\.usesNativeDetailSectionHeaders, true)
+    }
+
+    private func pinnedHeader(_ section: SectionConfiguration?) -> some View {
+        ZStack {
+            if let section {
+                HStack {
+                    section.header
+                }
+                .frame(maxWidth: infoContentMaxWidth)
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .id(section.id)
+                .transition(reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 4)))
+            }
+        }
+        // Animate header handoffs, without animating the scrolling content.
+        .animation(.easeInOut(duration: reduceMotion ? 0.1 : 0.2), value: section?.id)
+    }
+}
+
+#endif
+
+/// Shares section presentation between the generic details and character details.
+struct DetailSectionScrollView<Content: View>: View {
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        #if os(iOS) || os(macOS)
+        if #available(iOS 26.0, macOS 26.0, *) {
+            NativeDetailSectionScrollView { content }
+        } else {
+            ScrollView {
+                VStack(spacing: 35) {
+                    content
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+            }
+            .environment(\.usesNativeDetailSectionHeaders, true)
+        }
+        #else
+        ScrollView {
+            LazyVStack(spacing: 45, pinnedViews: .sectionHeaders) {
+                content
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+        }
+        #endif
     }
 }
 
@@ -437,7 +567,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                                         .buttonBorderShape(.roundedRectangle(radius: 20))
                                     )
                                 }
-                                .padding(.horizontal)
+                                .padding()
                                 Spacer(minLength: 0)
                             }
                         }
@@ -449,6 +579,7 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                 if infoIsAvailable {
                     ExtendedConstraints {
                         ProgressView()
+                            .controlSize(.large)
                     }
                 } else {
                     ExtendedConstraints {
@@ -462,7 +593,8 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
                 }
             }
         }
-        .searchable(text: $searchedText, prompt: searchPlaceholder)
+        .searchable(text: $searchedText, placement: .toolbar, prompt: searchPlaceholder)
+        .scrollDismissesKeyboard(.interactively)
         .onSubmit {
             if let elements {
                 searchedElements = elements.search(for: searchedText, with: useFuzzySearch ? nil : [])
@@ -489,9 +621,9 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
             #endif
         }
         #if !os(visionOS)
-        .wrapIf(searchedElements != nil) { content in
+        .wrapIf(true) { content in
             if #available(iOS 26.0, *) {
-                content.navigationSubtitle((searchedText.isEmpty && !filter.isFiltered) ? (getResultCountDescription?(searchedElements!.count) ?? "Search.item.\(searchedElements!.count)") :  "Search.result.\(searchedElements!.count)")
+                content.navigationSubtitle(resultSubtitle)
             } else {
                 content
             }
@@ -612,6 +744,14 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
         .id(elementIDMap[element] ?? Int64(element.hashValue))
     }
     
+    private var resultSubtitle: LocalizedStringResource {
+        guard let searchedElements else { return "" }
+        if searchedText.isEmpty && !filter.isFiltered {
+            return getResultCountDescription?(searchedElements.count) ?? "Search.item.\(searchedElements.count)"
+        }
+        return "Search.result.\(searchedElements.count)"
+    }
+
     private func getList() async {
         infoIsAvailable = true
         withDoriCache(id: "\(Element.pluralName.key)List_\(filter.identity)", trait: .realTime) {
@@ -694,7 +834,9 @@ struct DetailSectionBase<Element: Hashable & DoriTypeDescribable, Content: View>
                 Spacer()
                 if (localizedElements.forLocale(locale)?.count ?? 0) > 3 {
                     Button(action: {
-                        showAll.toggle()
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showAll.toggle()
+                        }
                     }, label: {
                         Text(showAll ? "Details.show-less" : "Details.show-all.\(localizedElements.forLocale(locale)?.count ?? 0)")
                             .foregroundStyle(.secondary)
@@ -737,6 +879,7 @@ struct DetailInfoBase<Head: View>: View {
             }
         }
         .frame(maxWidth: infoContentMaxWidth)
+        .textSelection(.disabled)
     }
 }
 

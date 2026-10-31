@@ -874,7 +874,7 @@ struct InteractiveStoryView: View {
         }
         
         #if os(iOS)
-        setDeviceOrientation(to: .portrait, allowing: .portrait)
+        setDeviceOrientation(to: .portrait, allowing: [.portrait, .landscapeLeft, .landscapeRight])
         #endif
         #if !os(macOS)
         try? AVAudioSession.sharedInstance().setActive(false)

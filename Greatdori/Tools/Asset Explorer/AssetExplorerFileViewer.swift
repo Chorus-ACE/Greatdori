@@ -429,7 +429,7 @@ struct AssetVideoPlayer: View {
                             ToolbarItem {
                                 Button(action: {
                                     #if os(iOS)
-                                    setDeviceOrientation(to: .portrait, allowing: .portrait)
+                                    setDeviceOrientation(to: .portrait, allowing: [.portrait, .landscapeLeft, .landscapeRight])
                                     #endif
                                     dismiss()
                                 }, label: {

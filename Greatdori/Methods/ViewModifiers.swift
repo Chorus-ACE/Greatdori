@@ -46,20 +46,32 @@ private struct SystemBackgroundModifier: ViewModifier {
 
 extension View {
     func imageContextMenu<V: View>(
-        _ info: [_ImageContextMenuModifier<V>.ImageInfo],
+        _ info: [ImageInfo],
         otherContentAt placement: _ImageContextMenuModifier<V>.ContentPlacement = .start,
+        sectionTitle: LocalizedStringResource? = nil,
         @ViewBuilder otherContent: @escaping () -> V = { EmptyView() }
     ) -> some View {
         self
-            .modifier(_ImageContextMenuModifier(imageInfo: info, otherContentPlacement: placement, otherContent: otherContent))
+            .modifier(_ImageContextMenuModifier(imageInfo: info, otherContentPlacement: placement, otherContent: otherContent, sectionTitle: sectionTitle))
     }
 }
 struct _ImageContextMenuModifier<V: View>: ViewModifier {
     @State var imageInfo: [ImageInfo]
+    var sourceImageInfo: [ImageInfo]
     var otherContentPlacement: ContentPlacement
     var otherContent: (() -> V)?
+    var sectionTitle: LocalizedStringResource?
     @State private var isFileExporterPresented = false
     @State private var exportingImageDocument: _ImageFileDocument?
+
+    init(imageInfo: [ImageInfo], otherContentPlacement: ContentPlacement, otherContent: (() -> V)?, sectionTitle: LocalizedStringResource? = nil) {
+        self._imageInfo = State(initialValue: imageInfo)
+        self.sourceImageInfo = imageInfo
+        self.otherContentPlacement = otherContentPlacement
+        self.otherContent = otherContent
+        self.sectionTitle = sectionTitle
+    }
+
     func body(content: Content) -> some View {
         content
             .contextMenu {
@@ -99,6 +111,10 @@ struct _ImageContextMenuModifier<V: View>: ViewModifier {
                         }
                     }
                     #endif
+                } header: {
+                    if let sectionTitle {
+                        Text(sectionTitle)
+                    }
                 }
                 Section {
                     forEachImageInfo("Image.copy.link", systemImage: "doc.on.doc") { info in
@@ -174,12 +190,22 @@ struct _ImageContextMenuModifier<V: View>: ViewModifier {
                 exportingImageDocument = nil
             }
             .onAppear {
-                for (index, info) in imageInfo.enumerated() where info.data == nil {
-                    Task {
-                        imageInfo[index].data = await info.resolvedData()
-                    }
-                }
+                prefetchImages()
             }
+            .onChange(of: sourceImageInfo) {
+                imageInfo = sourceImageInfo
+                prefetchImages()
+            }
+    }
+
+    private func prefetchImages() {
+        for info in imageInfo where info.data == nil {
+            Task {
+                let data = await info.resolvedData()
+                guard let index = imageInfo.firstIndex(where: { $0.url == info.url }) else { return }
+                imageInfo[index].data = data
+            }
+        }
     }
     
     @ViewBuilder
@@ -207,32 +233,34 @@ struct _ImageContextMenuModifier<V: View>: ViewModifier {
         case start
         case end
     }
-    struct ImageInfo: Hashable, Sendable {
-        var url: URL
-        var data: Data?
-        var description: LocalizedStringResource?
-        
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(url)
-            hasher.combine(data)
-            if let description {
-                hasher.combine(String(localized: description))
-            }
+
+}
+struct ImageInfo: Hashable, Sendable {
+    var url: URL
+    var data: Data?
+    var description: LocalizedStringResource?
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(url)
+        hasher.combine(data)
+        if let description {
+            hasher.combine(String(localized: description))
         }
-        
-        func resolvedData() async -> Data? {
-            if let data {
-                return data
-            }
-            return await withCheckedContinuation { continuation in
-                DispatchQueue(label: "com.memz233.Greatdori.Resolve-Image-From-URL", qos: .userInitiated).async {
-                    let data = try? Data(contentsOf: url)
-                    continuation.resume(returning: data)
-                }
+    }
+
+    func resolvedData() async -> Data? {
+        if let data {
+            return data
+        }
+        return await withCheckedContinuation { continuation in
+            DispatchQueue(label: "com.memz233.Greatdori.Resolve-Image-From-URL", qos: .userInitiated).async {
+                let data = try? Data(contentsOf: url)
+                continuation.resume(returning: data)
             }
         }
     }
 }
+
 struct _ImageFileDocument: FileDocument {
     static let readableContentTypes: [UTType] = [.image]
     

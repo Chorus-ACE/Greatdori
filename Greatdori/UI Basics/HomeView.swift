@@ -41,43 +41,52 @@ struct HomeView: View {
     @AppStorage("homeEventServer2") var homeEventServer2 = "cn"
     @AppStorage("homeEventServer3") var homeEventServer3 = "tw"
     @AppStorage("homeEventServer4") var homeEventServer4 = "en"
+    private var isUISizeExpanded: Bool {
+        #if os(macOS)
+        true
+        #else
+        sizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
+        #endif
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                ZStack {
-                    VStack {
-                        HomeBannersView()
-                        HStack {
-                            VStack {
-                                HomeNewsView()
-                                CustomGroupBox { HomeBirthdayView() }
-                                HomeEventsView(locale: DoriLocale(rawValue: homeEventServer4) ?? .jp)
-                                Spacer()
-                            }
-                            VStack {
-                                HomeEventsView(locale: DoriLocale(rawValue: homeEventServer1) ?? .jp)
-                                HomeEventsView(locale: DoriLocale(rawValue: homeEventServer2) ?? .jp)
-                                HomeEventsView(locale: DoriLocale(rawValue: homeEventServer3) ?? .jp)
-                                Spacer()
-                            }
+                Group {
+                    if !useCompactVariant {
+                        VStack {
+                            HomeBannersView()
+                            DivisionAwareHStack(leading: {
+                                VStack {
+                                    HomeNewsView()
+                                    CustomGroupBox { HomeBirthdayView() }
+                                    HomeEventsView(locale: DoriLocale(rawValue: homeEventServer4) ?? .jp)
+                                    Spacer()
+                                }
+                            }, trailing: {
+                                VStack {
+                                    HomeEventsView(locale: DoriLocale(rawValue: homeEventServer1) ?? .jp)
+                                    HomeEventsView(locale: DoriLocale(rawValue: homeEventServer2) ?? .jp)
+                                    HomeEventsView(locale: DoriLocale(rawValue: homeEventServer3) ?? .jp)
+                                    Spacer()
+                                }
+                            })
                         }
+                        .padding(.horizontal)
+                    } else {
+                        VStack {
+                            HomeBannersView()
+                            HomeNewsView()
+                            CustomGroupBox { HomeBirthdayView() }
+                            HomeEventsView(locale: DoriLocale(rawValue: homeEventServer1) ?? .jp)
+                            HomeEventsView(locale: DoriLocale(rawValue: homeEventServer2) ?? .jp)
+                            HomeEventsView(locale: DoriLocale(rawValue: homeEventServer3) ?? .jp)
+                            HomeEventsView(locale: DoriLocale(rawValue: homeEventServer4) ?? .jp)
+                        }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
-                    .opacity(useCompactVariant ? 0 : 1)
-                    .frame(width: useCompactVariant ? 0 : nil, height: useCompactVariant ? 0 : nil)
-                    VStack {
-                        HomeBannersView()
-                        HomeNewsView()
-                        CustomGroupBox { HomeBirthdayView() }
-                        HomeEventsView(locale: DoriLocale(rawValue: homeEventServer1) ?? .jp)
-                        HomeEventsView(locale: DoriLocale(rawValue: homeEventServer2) ?? .jp)
-                        HomeEventsView(locale: DoriLocale(rawValue: homeEventServer3) ?? .jp)
-                        HomeEventsView(locale: DoriLocale(rawValue: homeEventServer4) ?? .jp)
-                    }
-                    .padding(.horizontal)
-                    .opacity(!useCompactVariant ? 0 : 1)
-                    .frame(width: !useCompactVariant ? 0 : nil, height: !useCompactVariant ? 0 : nil)
                 }
+                .padding(.vertical, useCompactVariant ? 0 : nil)
             }
             .withSystemBackground()
             .navigationTitle("App.home")
@@ -92,7 +101,7 @@ struct HomeView: View {
                 }
             }
             .toolbar {
-                if platform != .macOS && (sizeClass == .compact || platform == .visionOS) {
+                if !isUISizeExpanded {
                     ToolbarItem {
                         Button(action: {
                             showSettingsSheet = true

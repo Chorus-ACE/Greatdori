@@ -43,56 +43,54 @@ struct CharacterDetailView: View {
     var body: some View {
         Group {
             if let information {
-                ScrollView {
-                    LazyVStack(spacing: 35, pinnedViews: .sectionHeaders) {
-                        HStack {
-                            Spacer(minLength: 0)
-                            VStack {
-                                if let randomCard, information.band != nil {
-                                    CardCoverImage(randomCard, band: information.band!)
-                                        .wrapIf(sizeClass == .regular) { content in
-                                            content
-                                                .frame(maxWidth: 480*randomCardScalingFactor, maxHeight: 320*randomCardScalingFactor)
-                                        } else: { content in
-                                            content
-                                                .padding(.horizontal, -15)
-                                        }
-                                }
-                                if randomCard != nil && information.band != nil {
-                                    Button(action: {
-                                        updateRandomCard()
-                                    }, label: {
-                                        Label("Character.random-card", systemImage: "arrow.clockwise")
-                                    })
-                                    .wrapIf(true) { content in
-                                        #if !os(visionOS)
-                                        if #available(iOS 26.0, macOS 26.0, *) {
-                                            content
-                                                .buttonStyle(.glass)
-                                        } else {
-                                            content
-                                                .buttonStyle(.bordered)
-                                        }
-                                        #else
+                DetailSectionScrollView {
+                    HStack {
+                        Spacer(minLength: 0)
+                        VStack {
+                            if let randomCard, information.band != nil {
+                                CardCoverImage(randomCard, band: information.band!)
+                                    .wrapIf(sizeClass == .regular) { content in
+                                        content
+                                            .frame(maxWidth: 480*randomCardScalingFactor, maxHeight: 320*randomCardScalingFactor)
+                                    } else: { content in
+                                        content
+                                            .padding(.horizontal, -15)
+                                    }
+                            }
+                            if randomCard != nil && information.band != nil {
+                                Button(action: {
+                                    updateRandomCard()
+                                }, label: {
+                                    Label("Character.random-card", systemImage: "arrow.clockwise")
+                                })
+                                .wrapIf(true) { content in
+                                    #if !os(visionOS)
+                                    if #available(iOS 26.0, macOS 26.0, *) {
+                                        content
+                                            .buttonStyle(.glass)
+                                    } else {
                                         content
                                             .buttonStyle(.bordered)
-                                        #endif
                                     }
-                                    .buttonBorderShape(.capsule)
+                                    #else
+                                    content
+                                        .buttonStyle(.bordered)
+                                    #endif
                                 }
+                                .buttonBorderShape(.capsule)
                             }
-                            .padding(.horizontal)
-                            Spacer(minLength: 0)
                         }
-                        CharacterDetailOverviewView(information: information)
-                        DetailsCardsSection(cards: information.cards)
-                        DetailsCostumesSection(costumes: information.costumes)
-                        DetailsEventsSection(events: information.events)
-                        DetailsGachasSection(gachas: information.gacha)
-                        ExternalLinksSection(links: [ExternalLink(name: "External-link.bestdori", url: URL(string: "https://bestdori.com/info/characters/\(id)")!)])
+                        .padding(.horizontal)
+                        Spacer(minLength: 0)
                     }
-                    .padding()
+                    CharacterDetailOverviewView(information: information)
+                    DetailsCardsSection(cards: information.cards)
+                    DetailsCostumesSection(costumes: information.costumes)
+                    DetailsEventsSection(events: information.events)
+                    DetailsGachasSection(gachas: information.gacha)
+                    ExternalLinksSection(links: [ExternalLink(name: "External-link.bestdori", url: URL(string: "https://bestdori.com/info/characters/\(id)")!)])
                 }
+                .id(information.id)
                 .scrollDisablesPopover()
             } else {
                 if infoIsAvailable {

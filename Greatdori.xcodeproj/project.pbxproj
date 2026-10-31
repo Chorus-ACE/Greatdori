@@ -255,6 +255,7 @@
 		E94443CC2E8E6EDE00593F07 /* SettingsPermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94443CB2E8E6ED700593F07 /* SettingsPermissionsView.swift */; };
 		E94443CE2E8E80C200593F07 /* SettingsDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94443CD2E8E80BC00593F07 /* SettingsDebugView.swift */; };
 		E944DCB52ECB253F0005EE55 /* Acknowledgements.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DCB42ECB253A0005EE55 /* Acknowledgements.swift */; };
+		E94833873095AAF500EF0DCB /* DivisionHStackLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94833863095AAF500EF0DCB /* DivisionHStackLayout.swift */; };
 		E94944E22E92A19600E50D3F /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = E94944E12E92A19600E50D3F /* MarkdownUI */; };
 		E949A5612EAA00CB007441A6 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E949A5602EAA00C8007441A6 /* WelcomeView.swift */; };
 		E949A5632EAA0231007441A6 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E949A5622EAA0228007441A6 /* ViewModifiers.swift */; };
@@ -756,6 +757,7 @@
 		E94443CB2E8E6ED700593F07 /* SettingsPermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPermissionsView.swift; sourceTree = "<group>"; };
 		E94443CD2E8E80BC00593F07 /* SettingsDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDebugView.swift; sourceTree = "<group>"; };
 		E944DCB42ECB253A0005EE55 /* Acknowledgements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Acknowledgements.swift; sourceTree = "<group>"; };
+		E94833863095AAF500EF0DCB /* DivisionHStackLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DivisionHStackLayout.swift; sourceTree = "<group>"; };
 		E949A5602EAA00C8007441A6 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		E949A5622EAA0228007441A6 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
 		E949D28D2E93D9F100E50D3F /* Live2DViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Live2DViewer.swift; sourceTree = "<group>"; };
@@ -1386,6 +1388,7 @@
 				8C2BD6432E9248AE00D003D1 /* ItemSelector.swift */,
 				8C3593182EDC30B5009E41AD /* CompactAudioPlayer.swift */,
 				E930F7A12EE0461000E8847F /* ExternalLinks.swift */,
+				E94833863095AAF500EF0DCB /* DivisionHStackLayout.swift */,
 			);
 			path = "UI Basics";
 			sourceTree = "<group>";
@@ -2033,6 +2036,7 @@
 				E91D075F2F0419AA00A13FFD /* StationNew.swift in Sources */,
 				E94219202E8AA60700F24974 /* DetailsCardsSection.swift in Sources */,
 				E942190A2E8AA4B000F24974 /* SongSearchView.swift in Sources */,
+				E94833873095AAF500EF0DCB /* DivisionHStackLayout.swift in Sources */,
 				E930F7A62EE0540400E8847F /* EventDetailOverviewView.swift in Sources */,
 				E9AF51252EAC634100BB808F /* TypeNames.swift in Sources */,
 				8CB4D4712E4454890085D57A /* CardCollectionManager.swift in Sources */,

@@ -31,6 +31,7 @@ struct ContentView: View {
     @AppStorage("startUpSucceeded") var startUpSucceeded = true
     @AppStorage("lastDebugPassword") var lastDebugPassword = ""
     @AppStorage("forceDisplayWhatsNewSheet") var forceDisplayWhatsNewSheet = false
+    @AppStorage("IsFirstLaunch") var isFirstLaunch = true
     @State var mainAppShouldBeDisplayed = false
     @State var crashViewShouldBeDisplayed = false
     @State var lastStartUpWasSuccessful = true
@@ -40,6 +41,14 @@ struct ContentView: View {
     @State var showCrashAlert = false
     @State var showWhatsNewSheet = false
     
+    private var isUISizeExpanded: Bool {
+        #if os(macOS)
+        true
+        #else
+        sizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
+        #endif
+    }
+
     var body: some View {
         if mainAppShouldBeDisplayed {
             Group {
@@ -54,7 +63,7 @@ struct ContentView: View {
                             CommunityView()
                         }
                         
-                        if sizeClass == .regular {
+                        if isUISizeExpanded {
                             TabSection(content: {
                                 ForEach(0..<allInfoDestinationItems.count, id: \.self) { itemIndex in
                                     Tab(value: AppSection.info(allInfoDestinationItems[itemIndex].tabValue), content: {
@@ -79,7 +88,7 @@ struct ContentView: View {
                             }
                         }
                         
-                        if sizeClass == .regular {
+                        if isUISizeExpanded {
                             TabSection(content: {
                                 ForEach(0..<allToolsDestinationItems.count, id: \.self) { itemIndex in
                                     Tab(value: AppSection.tools(allToolsDestinationItems[itemIndex].tabValue), content: {
@@ -105,7 +114,7 @@ struct ContentView: View {
                             }
                         }
                         #if os(iOS)
-                        if sizeClass == .regular {
+                        if isUISizeExpanded {
                             Tab("App.settings", systemImage: "gear", value: .settings) {
                                 SettingsView()
                             }
@@ -127,7 +136,7 @@ struct ContentView: View {
                     })
                 } else {
                     // MARK: Fallback for Older Versions
-                    if platform == .macOS || sizeClass == .regular {
+                    if isUISizeExpanded {
                         NavigationSplitView {
                             List(selection: $selection) {
                                 Label("App.home", systemImage: "house").tag(AppSection.home)
