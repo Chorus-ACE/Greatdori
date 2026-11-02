@@ -594,7 +594,9 @@ struct SearchViewBase<Element: Sendable & Hashable & DoriCacheable & DoriFiltera
             }
         }
         .searchable(text: $searchedText, placement: .toolbar, prompt: searchPlaceholder)
+#if !os(visionOS)
         .scrollDismissesKeyboard(.interactively)
+#endif
         .onSubmit {
             if let elements {
                 searchedElements = elements.search(for: searchedText, with: useFuzzySearch ? nil : [])

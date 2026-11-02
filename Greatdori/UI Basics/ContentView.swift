@@ -52,7 +52,7 @@ struct ContentView: View {
     var body: some View {
         if mainAppShouldBeDisplayed {
             Group {
-                if #available(macOS 15.0, iOS 18.0, *) {
+                if #available(macOS 15.0, iOS 18.0, visionOS 26.0, *) {
                     // MARK: Currently Used Version
                     TabView(selection: $selection) {
                         Tab("App.home", systemImage: "house", value: .home) {
